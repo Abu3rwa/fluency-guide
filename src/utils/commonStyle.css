@@ -1,0 +1,62 @@
+/* Common Styles inspired by Flutter app theme */
+
+/* Background Colors */
+.bg-primary {
+  background-color: #ffffff; /* Replace with primary color */
+}
+
+.bg-secondary {
+  background-color: #f3faff26; /* Replace with secondary color */
+}
+
+/* Text Colors */
+.text-primary {
+  color: #333; /* Replace with primary text color */
+}
+
+.text-secondary {
+  color: #61dafb; /* Replace with secondary text color */
+}
+
+/* Font Styles */
+.font-main {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.font-highlight {
+  font-family: "Google Sans", sans-serif;
+  font-weight: bold;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: #2e3a59;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #18294d;
+}
+
+/* Card Styles */
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.card-header {
+  background-color: #2e3a59;
+  color: #fff;
+  padding: 10px;
+}
+
+.card-body {
+  padding: 20px;
+}

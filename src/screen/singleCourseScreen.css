@@ -1,0 +1,160 @@
+.single-course {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  min-height: 100vh;
+  /* padding: 20px; */
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.single-course h2 {
+  margin-bottom: 20px;
+}
+
+.single-course img {
+  width: 200px;
+  height: 200;
+  margin-bottom: 20px;
+}
+
+/* .single-course ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+} */
+.single-course .info {
+  width: 50%;
+  padding: 10px;
+  margin: 10px;
+}
+.single-course .edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60%;
+  justify-content: space-between;
+  min-height: 85%;
+  border-radius: 20px;
+  margin-top: 14px;
+}
+.single-course .image-desc-container {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+}
+.image-desc-container img {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+}
+.image-desc-container p,
+h4 {
+  padding-left: 10px;
+}
+.single-course .lessons {
+  background: #293945;
+  padding: 13px;
+  margin: 6px;
+  margin-right: 20px;
+  height: 55vh;
+  overflow-y: scroll;
+  border-radius: 12px;
+}
+/* .single-course .lessons::-webkit-scrollbar {
+  background-color: cyan;
+  border-radius: 39px;
+  width: 12px;
+} */
+.single-course .lessons::-webkit-scrollbar-button {
+  color: red;
+}
+.lessons.lessons::-webkit-scrollbar-thumb {
+  color: red;
+}
+.lesson {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  height: 50px;
+  padding: 5px;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s ease-in;
+  margin-top: 5px;
+}
+.lesson:hover {
+  background-color: #18194d;
+  width: 93%;
+}
+.lesson h5 {
+  color: cyan;
+}
+.no-lessons h2 {
+  align-self: center;
+  text-align: center;
+  color: cyan;
+  font-size: 43px;
+}
+.add-lesson button {
+  border-radius: 10px;
+  padding: 7px;
+  color: black;
+  border: 3px cyan solid;
+  background-color: whitesmoke;
+  font-size: 21px;
+  transition: all 0.4s ease-in-out;
+  font-weight: bold;
+}
+.add-lesson button:hover {
+  background: cyan;
+}
+.add-lesson {
+  width: 45%;
+  height: 100vh;
+  align-self: center;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.no-lessons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40vw;
+  height: 32vh;
+}
+.list {
+  padding: 5px;
+  width: 100%;
+  background: lightblue;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.list a {
+  width: 95%;
+  margin: 3px;
+  padding: 5px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border: none;
+  border: 1px cyan;
+}
+.drop .delete-btn {
+  color: white !important;
+  background: red;
+}
+.toggle-btn {
+  background-color: white;
+  color: #18194d;
+}

@@ -1,0 +1,197 @@
+.lesson-details {
+  padding-top: 70px !important;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+}
+.lesson-details .lesson-container {
+  margin-top: 10px;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  /* flex-direction: column; */
+  /* background-color: #017794; */
+  padding: 20px;
+}
+.lesson-details .lesson-container h4 {
+  font-size: 30px;
+  font-weight: bold;
+  margin: 20px;
+  color: #017794;
+  text-align: center;
+}
+.lesson-details .app-accordion {
+  width: 100%;
+  margin: 5px;
+}
+.lesson-details .lesson-container .lesson-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.192);
+  width: 40vw;
+}
+.lesson-details .lesson-container .lesson-actions {
+  width: 55vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 43px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+.lesson-details .lesson-info ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  list-style: none;
+  background: #017794;
+  color: white;
+  border-radius: 10px;
+  padding: 7px;
+  flex-direction: column;
+  align-items: start;
+}
+.lesson-details .ul-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px white solid;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 7px;
+  align-items: center;
+}
+.lesson-details .icon {
+  /* background: #ffffff; */
+  padding: 3px;
+  /* color: #017794; */
+  border-radius: 5px;
+  font-size: 30px;
+  cursor: pointer;
+  border: 1px white solid;
+}
+.lesson-details .edit-btn {
+  background: #017794;
+  color: white;
+  border: 1px white solid;
+  padding: 3px;
+  border-radius: 5px;
+  font-size: 30px;
+  cursor: pointer;
+}
+.lesson-details .icon:hover {
+  padding: 3px;
+  color: #017794;
+  border-radius: 5px;
+  font-size: 30px;
+  cursor: pointer;
+  background: white;
+  border: 1px #017794 solid;
+}
+.lesson-actions ul il {
+  width: 100%;
+}
+.lesson-details .info-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.lesson-details input {
+  padding: 3px;
+  border-radius: 7px;
+  width: 80%;
+  border: 1px #017794 solid;
+}
+.lesson-details .form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: start;
+  justify-content: center;
+  padding: 7px;
+  border-radius: 7px;
+  margin-bottom: 10px;
+}
+.lesson-details .update-btn {
+  background-color: #00ab05;
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 7px;
+}
+.lesson-details .cancel-btn {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 7px;
+}
+.lesson-details .delete-btn {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 7px;
+}
+.lesson-details .preview-btn {
+  background-color: #017794;
+  color: white;
+  border: 1px #ffffff solid;
+  padding: 5px;
+  border-radius: 7px;
+}
+.lesson-details .add-btn {
+  border: none;
+  background-color: #017794;
+  color: white;
+  padding: 5px;
+  border-radius: 7px;
+}
+
+.lesson-details .info-header h5 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #017794;
+}
+.lesson-details .textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px #017794 solid;
+  font-size: 16px;
+  resize: none;
+  height: 200px;
+  background-color: #fff;
+  color: black;
+  outline: none;
+}
+.lesson-details .edit-container {
+  width: 100%;
+}
+.lesson-details .lesson-actions-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+}
+.lesson-details h5 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #07191dc4;
+}
