@@ -11,11 +11,12 @@
 .pnp.js
 storage.rules
 .env
-/src/firebase.json
-/src/firebase.rules
-/src/firebase.settings.json
-/src/firebase.settings.rules
-/src/firebase.settings.rules
+firebase.json
+firebase.rules
+firebase.settings.json
+firebase.settings.rules
+
+ 
 # testing
 /coverage
 
