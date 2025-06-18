@@ -1,0 +1,945 @@
+{
+  "common": {
+    "appName": "ReapEnglish",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "more": "More",
+    "less": "Less",
+    "close": "Close",
+    "create": "Create",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "view": "View",
+    "hide": "Hide",
+    "show": "Show",
+    "all": "All",
+    "none": "None",
+    "required": "Required",
+    "optional": "Optional",
+    "status": "Status",
+    "actions": "Actions",
+    "details": "Details",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign Up",
+    "clearDraft": "Clear Draft",
+    "backToCourses": "Back to Courses"
+  },
+  "app": {
+    "name": "ReapEnglish"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions about our platform and services",
+    "question1": "How does the learning process work?",
+    "answer1": "Our learning process is designed to be interactive and engaging. You'll have access to video lessons, practice exercises, and real-time feedback from instructors. The curriculum is structured to help you progress from basic to advanced levels at your own pace.",
+    "question2": "What devices can I use to access the platform?",
+    "answer2": "You can access our platform from any device with an internet connection, including desktop computers, laptops, tablets, and smartphones. Our responsive design ensures a seamless learning experience across all devices.",
+    "question3": "How long does it take to become fluent?",
+    "answer3": "The time to achieve fluency varies depending on your starting level, learning goals, and dedication. With regular practice and our structured curriculum, most students see significant improvement within 3-6 months.",
+    "question4": "Is there a free trial available?",
+    "answer4": "Yes, we offer a 7-day free trial that gives you full access to our platform and courses. This allows you to experience our teaching methods and decide if our platform is right for you.",
+    "question5": "What support is available if I need help?",
+    "answer5": "We provide comprehensive support through multiple channels. You can reach our support team via email, live chat, or schedule a one-on-one session with an instructor. We also have a community forum where you can connect with other learners."
+  },
+  "auth": {
+    "login": "Login",
+    "signup": {
+      "title": "Create Account",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Sign Up",
+      "haveAccount": "Already have an account? Sign in"
+    },
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "continueWithGoogle": "Continue with Google",
+    "dontHaveAccount": "Don't have an account? Sign Up",
+    "alreadyHaveAccount": "Already have an account? Sign In",
+    "passwordResetSent": "Password reset email sent! Please check your inbox.",
+    "passwordResetError": "Failed to send password reset email"
+  },
+  "navigation": {
+    "home": "Home",
+    "courses": "Courses",
+    "about": "About",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "totalStudents": "Total Students",
+    "activeCourses": "Active Courses",
+    "pendingTasks": "Pending Tasks",
+    "completionRate": "Completion Rate",
+    "recentActivity": "Recent Activity",
+    "courseProgress": "Course Progress",
+    "studentPerformance": "Student Performance",
+    "overview": "Overview",
+    "reports": "Reports"
+  },
+  "courses": {
+    "title": "Explore Our Courses",
+    "subtitle": "Discover a wide range of English courses designed to help you achieve your language goals",
+    "searchPlaceholder": "Search courses...",
+    "noCoursesFound": "No courses found matching your criteria",
+    "enroll": "Enroll Now",
+    "continue": "Continue Learning",
+    "hours": "hours",
+    "level": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "language": {
+      "english": "English",
+      "arabic": "Arabic",
+      "french": "French",
+      "spanish": "Spanish",
+      "german": "German",
+      "italian": "Italian",
+      "portuguese": "Portuguese",
+      "russian": "Russian",
+      "chinese": "Chinese",
+      "japanese": "Japanese",
+      "korean": "Korean",
+      "hindi": "Hindi",
+      "turkish": "Turkish",
+      "dutch": "Dutch",
+      "swedish": "Swedish",
+      "polish": "Polish",
+      "greek": "Greek",
+      "hebrew": "Hebrew",
+      "thai": "Thai",
+      "vietnamese": "Vietnamese"
+    },
+    "filters": {
+      "level": "Level",
+      "language": "Language",
+      "category": "Category",
+      "all": "All",
+      "apply": "Apply Filters",
+      "clear": "Clear Filters"
+    },
+    "details": {
+      "overview": "Course Overview",
+      "description": "Description",
+      "instructor": "Instructor",
+      "level": "Level",
+      "duration": "Duration",
+      "format": "Format",
+      "schedule": "Schedule",
+      "language": "Language",
+      "category": "Category",
+      "support": "Support",
+      "supportHours": "Support Hours",
+      "responseTime": "Response Time",
+      "certificate": "Certificate",
+      "included": "Included",
+      "notIncluded": "Not Included",
+      "certificateTemplate": "Certificate Template",
+      "courseInfo": "Course Information",
+      "whatYouWillLearn": "What You Will Learn",
+      "courseMaterials": "Course Materials",
+      "maxStudents": "Maximum Students",
+      "totalLessons": "Total Lessons",
+      "totalAssignments": "Total Assignments",
+      "totalQuizzes": "Total Quizzes",
+      "rating": "Rating",
+      "reviews": "Reviews",
+      "actions": {
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "edit": "Edit Course",
+        "delete": "Delete Course",
+        "import": "Import Content",
+        "export": "Export Course",
+        "preview": "Preview Course",
+        "share": "Share Course"
+      },
+      "deleteConfirm": {
+        "title": "Delete Course",
+        "message": "Are you sure you want to delete this course? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
+    },
+    "lessons": {
+      "title": "Lessons",
+      "noLessons": "No lessons yet",
+      "createFirstLesson": "Create First Lesson",
+      "addLesson": "Add New Lesson",
+      "duration": "Duration",
+      "minutes": "minutes",
+      "order": "Order",
+      "createLesson": "Create New Lesson",
+      "editLesson": "Edit Lesson",
+      "deleteLesson": "Delete Lesson",
+      "status": "Status",
+      "statusdraft": "Draft",
+      "statuspublished": "Published",
+      "statusarchived": "Archived",
+      "deleteConfirm": {
+        "title": "Delete Lesson",
+        "message": "Are you sure you want to delete this lesson? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "deleteSuccess": "Lesson deleted successfully",
+      "deleteFailed": "Failed to delete lesson. Please try again.",
+      "updateSuccess": "Lesson updated successfully",
+      "updateFailed": "Failed to update lesson. Please try again.",
+      "createSuccess": "Lesson created successfully",
+      "createFailed": "Failed to create lesson. Please try again.",
+      "filterByModule": "Filter by Module",
+      "allModules": "All Modules"
+    },
+    "categories": {
+      "grammar": "Grammar",
+      "vocabulary": "Vocabulary",
+      "speaking": "Speaking",
+      "listening": "Listening",
+      "reading": "Reading",
+      "writing": "Writing",
+      "business": "Business English",
+      "exam": "Exam Preparation",
+      "conversation": "Conversation"
+    },
+    "errors": {
+      "notFound": "Course not found",
+      "deleteFailed": "Failed to delete course",
+      "updateFailed": "Failed to update course",
+      "addLessonFailed": "Failed to add lesson",
+      "addModuleFailed": "Failed to add module",
+      "updateModuleOrderFailed": "Failed to update module order",
+      "publishToggleFailed": "Failed to update course status",
+      "fetchFailed": "Failed to fetch course data"
+    },
+    "backToCourses": "Back to Courses",
+    "enrollment": {
+      "title": "Enroll in Course",
+      "success": "Successfully enrolled in course",
+      "confirm": "Are you sure you want to enroll in this course?",
+      "processing": "Processing enrollment...",
+      "error": "Failed to enroll in course"
+    },
+    "progress": {
+      "title": "Course Progress",
+      "overall": "Overall Progress",
+      "lessonsCompleted": "Lessons Completed",
+      "timeSpent": "Time Spent",
+      "lastAccessed": "Last Accessed",
+      "estimatedCompletion": "Estimated Completion",
+      "certificate": "Course Certificate",
+      "noProgress": "No progress yet",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "notStarted": "Not Started",
+      "started": "Started",
+      "paused": "Paused",
+      "resumed": "Resumed",
+      "cancelled": "Cancelled",
+      "failed": "Failed",
+      "passed": "Passed"
+    },
+    "reviews": {
+      "title": "Course Reviews",
+      "writeReview": "Write a Review",
+      "rating": "Rating",
+      "comment": "Comment",
+      "submit": "Submit Review",
+      "noReviews": "No reviews yet",
+      "helpful": "Helpful",
+      "report": "Report Review"
+    },
+    "screen": {
+      "title": "Available Courses",
+      "subtitle": "Join our specialized courses designed to help you achieve fluency through personalized learning and practical experience.",
+      "loading": "Loading courses...",
+      "error": "Failed to load courses. Please try again later.",
+      "apply": {
+        "button": "Apply Now",
+        "title": "Apply for Course",
+        "note": "Application Note",
+        "notePlaceholder": "Tell us why you're interested in this course...",
+        "submit": "Submit Application",
+        "cancel": "Cancel",
+        "success": "Application submitted successfully!",
+        "error": "Failed to submit application. Please try again.",
+        "loginRequired": "Please log in to apply for courses"
+      },
+      "course": {
+        "duration": "Duration",
+        "students": "Students",
+        "level": "Level",
+        "lessons": "Lessons",
+        "viewDetails": "View Details"
+      }
+    },
+    "analytics": {
+      "title": "Course Analytics",
+      "completionRate": "Completion Rate",
+      "averageScore": "Average Score",
+      "activeStudents": "Active Students",
+      "totalEnrolled": "Total Enrolled",
+      "averageTimeSpent": "Average Time Spent",
+      "satisfactionRate": "Satisfaction Rate"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "modules": "Modules",
+      "lessons": "Lessons",
+      "analytics": "Analytics"
+    },
+    "modules": {
+      "title": "Modules",
+      "description": "Organize course content into modules",
+      "createModule": "Create New Module",
+      "createFirstModule": "Create First Module",
+      "noModules": "No modules yet",
+      "addLesson": "Add Lesson",
+      "addDummyModules": "Add Dummy Modules",
+      "selectModule": "Select Module",
+      "selectModuleFirst": "Please select a module first",
+      "duration": "Duration",
+      "hours": "hours",
+      "lessons": "Lessons",
+      "objectives": "Objectives",
+      "addObjective": "Add a learning objective",
+      "editModule": "Edit Module",
+      "deleteModule": "Delete Module",
+      "lessonsCount": "{{count}} lessons",
+      "order": "Order",
+      "durationHelp": "Approximate time to complete this module",
+      "estimatedTimeHelp": "Estimated time to complete this module",
+      "prerequisites": "Module Prerequisites",
+      "resources": "Module Resources",
+      "quizzes": "Module Quizzes",
+      "assignments": "Module Assignments",
+      "actions": "Module Actions",
+      "create": "Create New Module",
+      "edit": "Edit Module",
+      "delete": "Delete Module",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
+      "addQuiz": "Add Quiz",
+      "addAssignment": "Add Assignment",
+      "addResource": "Add Resource",
+      "preview": "Preview Module",
+      "publish": "Publish Module",
+      "unpublish": "Unpublish Module",
+      "archive": "Archive Module",
+      "restore": "Restore Module",
+      "duplicate": "Duplicate Module",
+      "export": "Export Module",
+      "import": "Import Module",
+      "share": "Share Module",
+      "print": "Print Module",
+      "download": "Download Module",
+      "upload": "Upload Module",
+      "search": "Search Modules",
+      "filter": "Filter Modules",
+      "sort": "Sort Modules",
+      "view": "View Modules",
+      "hide": "Hide Modules",
+      "show": "Show Modules",
+      "more": "More Modules",
+      "less": "Less Modules",
+      "all": "All Modules",
+      "none": "No Modules",
+      "required": "Module Required",
+      "optional": "Module Optional",
+      "addModule": "Add Module",
+      "estimatedTime": "Estimated Time",
+      "difficulty": "Difficulty",
+      "difficultybeginner": "Beginner",
+      "difficultyintermediate": "Intermediate",
+      "difficultyadvanced": "Advanced",
+      "status": "Status",
+      "statusdraft": "Draft",
+      "statuspublished": "Published",
+      "statusarchived": "Archived"
+    },
+    "studentProgress": {
+      "title": "Student Progress",
+      "completion": "Completion",
+      "lastActivity": "Last Activity",
+      "noProgress": "No progress data available"
+    },
+    "validation": {
+      "title": "Content Validation",
+      "noResults": "No validation results available",
+      "checking": "Checking content...",
+      "success": "Content validation successful",
+      "error": "Content validation failed"
+    },
+    "preview": {
+      "title": "Course Preview",
+      "overview": "Overview",
+      "modules": "Modules",
+      "requirements": "Requirements",
+      "description": "Description",
+      "instructor": "Instructor",
+      "level": "Level",
+      "duration": "Duration",
+      "format": "Format",
+      "schedule": "Schedule",
+      "language": "Language",
+      "category": "Category",
+      "support": "Support",
+      "supportHours": "Support Hours",
+      "responseTime": "Response Time",
+      "certificate": "Certificate",
+      "included": "Included",
+      "notIncluded": "Not Included",
+      "certificateTemplate": "Certificate Template",
+      "courseInfo": "Course Information",
+      "whatYouWillLearn": "What You Will Learn",
+      "courseMaterials": "Course Materials",
+      "maxStudents": "Maximum Students",
+      "totalLessons": "Total Lessons",
+      "totalAssignments": "Total Assignments",
+      "totalQuizzes": "Total Quizzes",
+      "rating": "Rating",
+      "reviews": "Reviews"
+    },
+    "share": {
+      "title": "Share Course",
+      "description": "Share this course with others via email or copy the link below",
+      "emailLabel": "Enter email address",
+      "button": "Share",
+      "success": "Course shared successfully",
+      "error": "Failed to share course",
+      "linkCopied": "Link copied to clipboard"
+    }
+  },
+  "language": {
+    "en": "English",
+    "ar": "العربية",
+    "fr": "Français",
+    "changeLanguage": "Change Language",
+    "currentLanguage": "Current Language"
+  },
+  "errors": {
+    "required": "{{field}} is required",
+    "invalidEmail": "Invalid email address",
+    "passwordMismatch": "Passwords do not match",
+    "minLength": "{{field}} must be at least {{min}} characters",
+    "maxLength": "{{field}} must not exceed {{max}} characters",
+    "general": "Something went wrong. Please try again."
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "nameRequired": "Name is required",
+    "invalidCredentials": "Invalid email or password",
+    "emailInUse": "Email already in use",
+    "weakPassword": "Password is too weak"
+  },
+  "landing": {
+    "hero": {
+      "title": "Master English with",
+      "titleHighlight": "Confidence",
+      "subtitle": "Join thousands of successful students who have transformed their English skills with our expert-led courses",
+      "exploreCourses": "Explore Courses",
+      "watchDemo": "Watch Demo",
+      "startLearning": "Start Learning Now",
+      "stats": {
+        "activeLearners": "Active Learners",
+        "successRate": "Success Rate",
+        "supportAvailable": "Support Available",
+        "interactiveLessons": "Interactive Lessons"
+      }
+    },
+    "features": {
+      "title": "Why Choose Our Platform?",
+      "items": {
+        "interactiveLearning": {
+          "title": "Interactive Learning",
+          "description": "Engage with dynamic lessons that adapt to your learning style and pace."
+        },
+        "speakingPractice": {
+          "title": "Speaking Practice",
+          "description": "Practice pronunciation with AI-powered speech recognition technology."
+        },
+        "fastProgress": {
+          "title": "Fast Progress",
+          "description": "See measurable improvement in your English skills with our proven methodology."
+        },
+        "smartLearning": {
+          "title": "Smart Learning",
+          "description": "AI-powered platform that personalizes your learning journey."
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Success Stories",
+      "items": {
+        "sarah": {
+          "name": "Sarah Johnson",
+          "role": "Marketing Professional",
+          "quote": "This platform transformed my English skills. I can now confidently communicate with international clients."
+        },
+        "miguel": {
+          "name": "Miguel Rodriguez",
+          "role": "Software Engineer",
+          "quote": "The interactive lessons and speaking practice helped me land my dream job at a global tech company."
+        },
+        "aisha": {
+          "name": "Aisha Patel",
+          "role": "Medical Student",
+          "quote": "Perfect for busy professionals. I can study anytime, anywhere, and track my progress easily."
+        }
+      }
+    },
+    "benefits": {
+      "title": "Benefits of English Fluency",
+      "items": {
+        "careerGrowth": {
+          "title": "Career Growth",
+          "description": "Open doors to global job opportunities and higher salaries."
+        },
+        "globalConnections": {
+          "title": "Global Connections",
+          "description": "Connect with people from different cultures and backgrounds."
+        },
+        "digitalAccess": {
+          "title": "Digital Access",
+          "description": "Access a world of knowledge and entertainment in English."
+        },
+        "confidence": {
+          "title": "Confidence",
+          "description": "Build self-confidence in professional and social settings."
+        }
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions about our platform and services",
+      "question1": "How does the learning process work?",
+      "answer1": "Our learning process is designed to be interactive and engaging. You'll have access to video lessons, practice exercises, and real-time feedback from instructors. The curriculum is structured to help you progress from basic to advanced levels at your own pace.",
+      "question2": "What devices can I use to access the platform?",
+      "answer2": "You can access our platform from any device with an internet connection, including desktop computers, laptops, tablets, and smartphones. Our responsive design ensures a seamless learning experience across all devices.",
+      "question3": "How long does it take to become fluent?",
+      "answer3": "The time to achieve fluency varies depending on your starting level, learning goals, and dedication. With regular practice and our structured curriculum, most students see significant improvement within 3-6 months.",
+      "question4": "Is there a free trial available?",
+      "answer4": "Yes, we offer a 7-day free trial that gives you full access to our platform and courses. This allows you to experience our teaching methods and decide if our platform is right for you.",
+      "question5": "What support is available if I need help?",
+      "answer5": "We provide comprehensive support through multiple channels. You can reach our support team via email, live chat, or schedule a one-on-one session with an instructor. We also have a community forum where you can connect with other learners."
+    },
+    "appShowcase": {
+      "title": "Learn English On The Go",
+      "androidTitle": "Download Our Android App",
+      "androidDescription": "Take your English learning journey anywhere with our feature-rich Android app. Practice speaking, complete lessons, and track your progress on the go.",
+      "downloadAndroid": "Download for Android",
+      "viewPlayStore": "View on Play Store",
+      "rating": "4.8/5 Rating on Google Play Store",
+      "features": {
+        "lessonScreen": {
+          "title": "Lesson Screen",
+          "description": "Interactive lessons with real-time feedback"
+        },
+        "speakingPractice": {
+          "title": "Speaking Practice",
+          "description": "AI-powered pronunciation training"
+        },
+        "progressTracking": {
+          "title": "Progress Tracking",
+          "description": "Monitor your learning journey"
+        },
+        "vocabularyPractice": {
+          "title": "Vocabulary Practice",
+          "description": "Build your word bank effectively"
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to Transform Your English Skills?",
+      "description": "Join thousands of successful learners today and start your journey to English fluency.",
+      "button": "Start Your Journey Now"
+    },
+    "footer": {
+      "description": "Transform your English skills with our innovative learning platform.",
+      "links": {
+        "courses": "Courses",
+        "pricing": "Pricing",
+        "about": "About Us",
+        "contact": "Contact"
+      },
+      "quickLinks": "Quick Links",
+      "contactUs": "Contact Us",
+      "contact": "Contact",
+      "contactEmail": "3bdulhafeez@gmail.com",
+      "contactPhone": "+218 946828675",
+      "newsletter": "Newsletter",
+      "newsletterDescription": "Subscribe to our newsletter for updates and tips.",
+      "emailPlaceholder": "Your email address",
+      "subscribe": "Subscribe",
+      "copyright": "© {{year}} ReapEnglish. All rights reserved."
+    }
+  },
+  "messages": {
+    "chats": "Chats",
+    "newChat": "New Chat",
+    "searchChats": "Search conversations",
+    "noChats": "No conversations yet",
+    "noChatsFound": "No conversations found",
+    "selectChat": "Select a conversation to start messaging",
+    "noMessages": "No messages yet",
+    "typeMessage": "Type a message",
+    "send": "Send",
+    "startConversation": "Start Conversation",
+    "cancel": "Cancel",
+    "users": "Users",
+    "searchUsers": "Search users",
+    "message": "Message",
+    "role": {
+      "student": "Student",
+      "teacher": "Teacher",
+      "admin": "Admin"
+    }
+  },
+  "forms": {
+    "createTask": {
+      "title": "Create Task",
+      "taskTitle": "Task Title",
+      "taskInstructions": "Task Instructions",
+      "taskType": "Task Type",
+      "selectTaskType": "Select task type",
+      "taskTypes": {
+        "true_false": "True/False",
+        "fill_in_the_blank": "Fill in the Blank",
+        "matching": "Matching",
+        "short_answer": "Short Answer",
+        "choose_the_best_answer": "Choose the Best Answer"
+      },
+      "lesson": "Lesson",
+      "selectLesson": "Select lesson",
+      "addQuestion": "Add Question",
+      "questionText": "Question text",
+      "answers": "Answers",
+      "correctAnswer": "Correct Answer",
+      "addAnswer": "Add Answer",
+      "removeAnswer": "Remove Answer",
+      "create": "Create Task",
+      "reset": "Reset",
+      "success": "Task created successfully!",
+      "error": "Failed to create task. Please try again.",
+      "validation": {
+        "required": "Please fill in all required fields and add at least one question."
+      }
+    },
+    "createLesson": {
+      "title": "Create Lesson",
+      "lessonTitle": "Lesson Title",
+      "videoUrl": "Video URL",
+      "audioUrl": "Audio URL",
+      "instructions": "Instructions",
+      "description": "Description",
+      "lessonContent": "Lesson Content",
+      "add": "Add Lesson",
+      "adding": "Adding...",
+      "cancel": "Cancel",
+      "success": "Lesson added successfully!",
+      "error": "Failed to add lesson. Please try again."
+    },
+    "createCourse": {
+      "title": "Create Course",
+      "courseTitle": "Course Title",
+      "courseImage": "Course Image URL",
+      "coursePrice": "Course Price (SDG)",
+      "prerequisites": "Course Prerequisites",
+      "prerequisitesHelp": "Enter prerequisites separated by commas",
+      "objectives": "Course Objectives",
+      "objectivesHelp": "Enter learning objectives separated by commas",
+      "description": "Course Description",
+      "create": "Create Course",
+      "creating": "Creating...",
+      "success": "Course created successfully!",
+      "error": "Failed to create course. Please try again."
+    },
+    "createQuiz": {
+      "title": "Create Quiz",
+      "question": "Question",
+      "answer": "Correct Answer",
+      "options": "Options",
+      "add": "Add Quiz",
+      "success": "Quiz added successfully!",
+      "error": "Failed to add quiz. Please try again."
+    }
+  },
+  "lesson": {
+    "details": {
+      "title": "Lesson Details",
+      "delete": "Delete Lesson",
+      "addTask": "Add Task",
+      "instructions": "Lesson Instructions",
+      "description": "Lesson Description",
+      "script": "Lesson Script",
+      "deleteConfirm": {
+        "title": "Delete Lesson",
+        "message": "Are you sure you want to delete this lesson? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
+    }
+  },
+  "course": {
+    "details": {
+      "delete": "Delete Course",
+      "view": "View",
+      "deleteConfirm": {
+        "title": "Delete Course",
+        "message": "Are you sure you want to delete this course? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
+    }
+  },
+  "tables": {
+    "courses": {
+      "title": "Courses",
+      "actions": "Actions",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": {
+        "title": "Delete Course",
+        "message": "Are you sure you want to delete this course? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "columns": {
+        "title": "Title",
+        "price": "Price",
+        "students": "Students",
+        "lessons": "Lessons",
+        "createdAt": "Created At",
+        "status": "Status"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      },
+      "noData": "No courses found",
+      "loading": "Loading courses...",
+      "error": "Failed to load courses"
+    },
+    "students": {
+      "title": "Students",
+      "actions": "Actions",
+      "view": "View Profile",
+      "edit": "Edit",
+      "delete": "Remove",
+      "deleteConfirm": {
+        "title": "Remove Student",
+        "message": "Are you sure you want to remove this student from the course?",
+        "cancel": "Cancel",
+        "confirm": "Remove"
+      },
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "progress": "Progress",
+        "lastAccess": "Last Access",
+        "status": "Status",
+        "enrolledAt": "Enrolled At"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "completed": "Completed"
+      },
+      "noData": "No students found",
+      "loading": "Loading students...",
+      "error": "Failed to load students"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "description": "Description",
+      "type": "Type",
+      "types": {
+        "quiz": "Quiz",
+        "assignment": "Assignment",
+        "multipleChoice": "Multiple Choice",
+        "trueFalse": "True/False",
+        "fillInBlanks": "Fill in the Blanks",
+        "verbPractice": "Verb Practice",
+        "conversation": "Conversation"
+      },
+      "passingScore": "Passing Score (%)",
+      "timeLimit": "Time Limit (minutes)",
+      "sections": "Sections",
+      "addSection": "Add Section",
+      "sectionTitle": "Section Title",
+      "sectionType": "Section Type",
+      "questions": "Questions",
+      "addQuestion": "Add Question",
+      "questionText": "Question Text",
+      "option": "Option",
+      "addOption": "Add Option",
+      "points": "Points",
+      "createTask": "Create New Task",
+      "editTask": "Edit Task",
+      "deleteTask": "Delete Task",
+      "createSuccess": "Task created successfully",
+      "createError": "Failed to create task",
+      "updateSuccess": "Task updated successfully",
+      "updateError": "Failed to update task",
+      "deleteSuccess": "Task deleted successfully",
+      "deleteError": "Failed to delete task"
+    }
+  },
+  "cards": {
+    "course": {
+      "enroll": "Enroll Now",
+      "view": "View Course",
+      "price": "Price",
+      "students": "Students",
+      "lessons": "Lessons",
+      "prerequisites": "Prerequisites",
+      "objectives": "Objectives",
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    }
+  },
+  "components": {
+    "lesson": {
+      "description": {
+        "title": "Description",
+        "noDescription": "No description available"
+      },
+      "instructions": {
+        "title": "Instructions",
+        "noInstructions": "No instructions available"
+      },
+      "script": {
+        "title": "Lesson Script",
+        "noScript": "No script available"
+      }
+    },
+    "task": {
+      "title": "Task",
+      "instructions": "Instructions",
+      "type": "Type",
+      "submit": "Submit",
+      "reset": "Reset",
+      "success": "Task completed successfully!",
+      "error": "Failed to submit task. Please try again.",
+      "validation": {
+        "required": "Please answer all questions"
+      }
+    },
+    "quiz": {
+      "title": "Quiz",
+      "instructions": "Instructions",
+      "submit": "Submit Quiz",
+      "reset": "Reset",
+      "success": "Quiz submitted successfully!",
+      "error": "Failed to submit quiz. Please try again.",
+      "validation": {
+        "required": "Please answer all questions"
+      }
+    },
+    "spinner": {
+      "loading": "Loading...",
+      "processing": "Processing..."
+    },
+    "message": {
+      "send": "Send Message",
+      "reply": "Reply",
+      "delete": "Delete",
+      "deleteConfirm": {
+        "title": "Delete Message",
+        "message": "Are you sure you want to delete this message?",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "placeholder": "Type your message here...",
+      "noMessages": "No messages yet",
+      "error": "Failed to send message. Please try again."
+    },
+    "stats": {
+      "title": "Student Statistics",
+      "progress": "Course Progress",
+      "completion": "Completion Rate",
+      "averageScore": "Average Score",
+      "timeSpent": "Time Spent",
+      "noData": "No statistics available"
+    }
+  },
+  "header": {
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
+  },
+  "lessons": {
+    "addLesson": "Add New Lesson"
+  },
+  "tasks": {
+    "title": "Task",
+    "instructions": "Instructions",
+    "questionType": "Question Type",
+    "difficulty": {
+      "label": "Difficulty",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "attemptsAllowed": "Attempts Allowed",
+    "tags": "Tags",
+    "publish": "Publish Task",
+    "showFeedback": "Show Feedback",
+    "randomizeQuestions": "Randomize Questions",
+    "showCorrectAnswers": "Show Correct Answers",
+    "allowReview": "Allow Review",
+    "pointsPerQuestion": "Points per Question",
+    "totalPoints": "Total Points",
+    "timeLimit": "Time Limit (minutes)",
+    "passingScore": "Passing Score (%)",
+    "addQuestion": "Add Question",
+    "removeQuestion": "Remove Question",
+    "question": "Question",
+    "answer": "Answer",
+    "correctAnswer": "Correct Answer",
+    "options": "Options",
+    "addOption": "Add Option",
+    "removeOption": "Remove Option",
+    "type": {
+      "multipleChoice": "Multiple Choice",
+      "trueFalse": "True/False",
+      "fillInBlanks": "Fill in the Blanks",
+      "shortAnswer": "Short Answer"
+    },
+    "createTask": "Create Task",
+    "createSuccess": "Task created successfully",
+    "createError": "Failed to create task",
+    "updateSuccess": "Task updated successfully",
+    "updateError": "Failed to update task",
+    "deleteSuccess": "Task deleted successfully",
+    "deleteError": "Failed to delete task"
+  }
+}

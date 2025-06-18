@@ -48,7 +48,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import { db } from "../frebase";
+import { db } from "../firebase";
 import CustomSpinner from "./CustomSpinner";
 
 const headCells = [

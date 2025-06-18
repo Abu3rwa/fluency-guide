@@ -1,40 +1,58 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import {
   Box,
-  Drawer,
   AppBar,
   Toolbar,
-  List,
-  Typography,
-  Divider,
   IconButton,
+  Typography,
+  Drawer,
+  List,
   ListItem,
   ListItemIcon,
   ListItemText,
   useTheme,
   useMediaQuery,
-  Breadcrumbs,
   Avatar,
+  Badge,
   Menu,
   MenuItem,
-  Button,
+  Divider,
 } from "@mui/material";
-import {
-  Menu as MenuIcon,
-  Dashboard as DashboardIcon,
-  School as SchoolIcon,
-  Assignment as AssignmentIcon,
-  People as PeopleIcon,
-  Settings as SettingsIcon,
-  Notifications as NotificationsIcon,
-  AccountCircle as AccountCircleIcon,
-  Login as LoginIcon,
-} from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import MenuIcon from "@mui/icons-material/Menu";
+import SchoolIcon from "@mui/icons-material/School";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PeopleIcon from "@mui/icons-material/People";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MessageIcon from "@mui/icons-material/Message";
+import SettingsIcon from "@mui/icons-material/Settings";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
+import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useUser } from "../../contexts/UserContext";
+import { auth } from "../../firebase";
+import { signOut } from "firebase/auth";
+import ThemeToggle from "../ThemeToggle";
+import { alpha } from "@mui/material/styles";
+import {
+  Menu as MenuIconMui,
+  Dashboard as DashboardIconMui,
+  School as SchoolIconMui,
+  People as PeopleIconMui,
+  Settings as SettingsIconMui,
+  Notifications as NotificationsIconMui,
+  AccountCircle,
+  Logout as LogoutIconMui,
+  Assignment as AssignmentIconMui,
+  Analytics as AnalyticsIcon,
+} from "@mui/icons-material";
+import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
@@ -44,458 +62,125 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: `-${drawerWidth}px`,
+    marginLeft: 0,
     ...(open && {
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
       }),
-      marginLeft: 0,
+      marginLeft: `${drawerWidth}px`,
     }),
-    [theme.breakpoints.down("sm")]: {
-      padding: theme.spacing(2),
-      marginLeft: 0,
-    },
+    height: "100vh",
+    overflow: "auto",
   })
 );
 
-const StyledDrawer = styled(Drawer)(({ theme }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  "& .MuiDrawer-paper": {
-    width: drawerWidth,
-    boxSizing: "border-box",
-    backgroundColor: theme.palette.background.default,
-    borderRight: `1px solid ${theme.palette.divider}`,
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
-      maxWidth: drawerWidth,
-    },
-  },
-}));
-
-const StyledAppBar = styled(AppBar)(({ theme, open }) => ({
-  transition: theme.transitions.create(["margin", "width"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(["margin", "width"], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-  [theme.breakpoints.down("sm")]: {
-    width: "100%",
-    marginLeft: 0,
-  },
-}));
-
-const ToolbarSpacer = styled("div")(({ theme }) => ({
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  padding: theme.spacing(0, 1),
   ...theme.mixins.toolbar,
-  [theme.breakpoints.down("sm")]: {
-    minHeight: 64,
-  },
-}));
-
-const NavButton = styled(Button)(({ theme }) => ({
-  padding: theme.spacing(1, 2),
-  borderRadius: theme.shape.borderRadius,
-  textTransform: "none",
-  fontWeight: 500,
-  [theme.breakpoints.down("sm")]: {
-    padding: theme.spacing(0.75, 1.5),
-  },
+  justifyContent: "flex-end",
 }));
 
 const menuItems = [
-  { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
-  { text: "Courses", icon: <SchoolIcon />, path: "/courses/all" },
-  { text: "Tasks", icon: <AssignmentIcon />, path: "/tasks" },
-  { text: "Students", icon: <PeopleIcon />, path: "/students" },
-  { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
+  { text: "Dashboard", icon: <DashboardIconMui />, path: "/dashboard" },
+  { text: "Courses", icon: <SchoolIconMui />, path: "/courses" },
+  { text: "Students", icon: <PeopleIconMui />, path: "/students" },
+  { text: "Enrollments", icon: <AssignmentIconMui />, path: "/enrollments" },
+  { text: "Analytics", icon: <AnalyticsIcon />, path: "/analytics" },
+  { text: "Settings", icon: <SettingsIconMui />, path: "/settings" },
 ];
 
+const MotionListItem = motion.create(ListItem);
+
 const MainLayout = ({ children }) => {
-  const [open, setOpen] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [notificationAnchor, setNotificationAnchor] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [user, setUser] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const location = useLocation();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
-  const auth = getAuth();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      if (user) {
-        user.getIdTokenResult().then((idTokenResult) => {
-          setIsAdmin(idTokenResult.claims.admin === true);
-        });
-      } else {
-        setIsAdmin(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [auth]);
+  const location = useLocation();
+  const { user, userData, logout } = useUser();
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+  const isAdmin = userData?.isAdmin || false;
 
   const handleDrawerToggle = () => {
-    setOpen(!open);
+    setMobileOpen(!mobileOpen);
   };
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleNavigation = (path) => {
+    navigate(path);
+    if (isMobile) {
+      setMobileOpen(false);
+    }
   };
 
-  const handleNotificationMenuOpen = (event) => {
-    setNotificationAnchor(event.currentTarget);
+  const handleUserMenuOpen = (event) => {
+    setUserMenuAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setNotificationAnchor(null);
-  };
-
-  // Generate breadcrumbs based on current path
-  const generateBreadcrumbs = () => {
-    const paths = location.pathname.split("/").filter(Boolean);
-    return paths.map((path, index) => {
-      const url = `/${paths.slice(0, index + 1).join("/")}`;
-      return {
-        label: path.charAt(0).toUpperCase() + path.slice(1),
-        url,
-      };
-    });
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
   };
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      await logout();
       navigate("/login");
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Logout failed:", error);
     }
-    handleMenuClose();
   };
 
-  const isLandingPage = location.pathname === "/landing";
-  const showSidebar = !isLandingPage || (isLandingPage && isAdmin);
+  const handleProfile = () => {
+    handleUserMenuClose();
+    navigate("/profile");
+  };
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <StyledAppBar
-        position="fixed"
-        open={showSidebar && open}
-        sx={{
-          backgroundColor: "background.paper",
-          color: "text.primary",
-          boxShadow: 1,
-        }}
-      >
-        <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
-          {showSidebar && (
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{
-                mr: 2,
-                display: { sm: "flex" },
-                [theme.breakpoints.down("sm")]: {
-                  mr: 1,
-                },
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{
-              flexGrow: 1,
-              fontSize: { xs: "1.1rem", sm: "1.25rem" },
-              fontWeight: 600,
-            }}
-          >
-            ReapEnglish {isLandingPage ? "" : "Dashboard"}
-          </Typography>
-
-          {user ? (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <IconButton
-                size="large"
-                aria-label="show notifications"
-                color="inherit"
-                onClick={handleNotificationMenuOpen}
-                sx={{
-                  p: { xs: 0.75, sm: 1 },
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                  },
-                }}
-              >
-                <NotificationsIcon />
-              </IconButton>
-
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-                sx={{
-                  p: { xs: 0.75, sm: 1 },
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                  },
-                }}
-              >
-                <Avatar
-                  sx={{
-                    width: { xs: 28, sm: 32 },
-                    height: { xs: 28, sm: 32 },
-                    bgcolor: "primary.main",
-                  }}
-                >
-                  <AccountCircleIcon />
-                </Avatar>
-              </IconButton>
-            </Box>
-          ) : (
-            <NavButton
-              color="primary"
-              variant="contained"
-              startIcon={<LoginIcon />}
-              onClick={() => navigate("/login")}
-              sx={{
-                boxShadow: 2,
-                "&:hover": {
-                  boxShadow: 4,
-                },
-              }}
-            >
-              Login
-            </NavButton>
-          )}
-        </Toolbar>
-
-        {!isLandingPage && (
-          <Box
-            sx={{
-              px: { xs: 2, sm: 3 },
-              py: 1,
-              backgroundColor: "background.default",
-              borderBottom: 1,
-              borderColor: "divider",
-            }}
-          >
-            <Breadcrumbs
-              aria-label="breadcrumb"
-              sx={{
-                "& .MuiBreadcrumbs-separator": {
-                  mx: { xs: 0.5, sm: 1 },
-                },
-              }}
-            >
-              <Link
-                to="/"
-                style={{
-                  textDecoration: "none",
-                  color: "inherit",
-                  fontSize: "0.875rem",
-                }}
-              >
-                Home
-              </Link>
-              {generateBreadcrumbs().map((crumb, index) => (
-                <Link
-                  key={crumb.url}
-                  to={crumb.url}
-                  style={{
-                    textDecoration: "none",
-                    color: "inherit",
-                    opacity:
-                      index === generateBreadcrumbs().length - 1 ? 0.7 : 1,
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  {crumb.label}
-                </Link>
-              ))}
-            </Breadcrumbs>
-          </Box>
-        )}
-      </StyledAppBar>
-
-      {showSidebar && (
-        <StyledDrawer
-          variant={isMobile ? "temporary" : "persistent"}
-          open={open}
-          onClose={isMobile ? handleDrawerToggle : undefined}
+      <Header
+        onMenuClick={handleDrawerToggle}
+        isAdmin={isAdmin}
+        drawerWidth={drawerWidth}
+      />
+      {isAdmin && (
+        <Drawer
+          variant={isMobile ? "temporary" : "permanent"}
+          open={isMobile ? mobileOpen : true}
+          onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile
+            keepMounted: true,
+          }}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+              borderRight: (theme) => `1px solid ${theme.palette.divider}`,
+              background: (theme) =>
+                theme.palette.mode === "dark"
+                  ? theme.palette.background.default
+                  : theme.palette.background.paper,
+            },
           }}
         >
-          <ToolbarSpacer />
-          <Box
-            sx={{
-              overflow: "auto",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <List sx={{ px: 1 }}>
-              {menuItems.map((item) => (
-                <ListItem
-                  button
-                  key={item.text}
-                  component={Link}
-                  to={item.path}
-                  selected={location.pathname === item.path}
-                  sx={{
-                    borderRadius: 1,
-                    mb: 0.5,
-                    "&.Mui-selected": {
-                      backgroundColor: "primary.light",
-                      color: "primary.contrastText",
-                      "&:hover": {
-                        backgroundColor: "primary.main",
-                      },
-                      "& .MuiListItemIcon-root": {
-                        color: "inherit",
-                      },
-                    },
-                    "&:hover": {
-                      backgroundColor: "action.hover",
-                    },
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 40,
-                      color: "inherit",
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.text}
-                    primaryTypographyProps={{
-                      fontSize: "0.875rem",
-                      fontWeight: 500,
-                    }}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </StyledDrawer>
+          <Sidebar />
+        </Drawer>
       )}
-
-      <Main
-        open={showSidebar && open}
+      <Box
+        component="main"
         sx={{
-          pt: { xs: 7, sm: 8 },
-          px: { xs: 2, sm: 3 },
-          pb: { xs: 2, sm: 3 },
-          width: "100%",
-          maxWidth: "100%",
-          overflow: "auto",
+          flexGrow: 1,
+          p: 3,
+          width: { md: isAdmin ? `calc(100% - ${drawerWidth}px)` : "100%" },
+          ml: { md: isAdmin ? `${drawerWidth}px` : 0 },
+          mt: "64px",
         }}
       >
-        <ToolbarSpacer />
         {children}
-      </Main>
-
-      {/* Profile Menu */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        onClick={handleMenuClose}
-        PaperProps={{
-          elevation: 3,
-          sx: {
-            mt: 1.5,
-            minWidth: 180,
-            "& .MuiMenuItem-root": {
-              px: 2,
-              py: 1.5,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        <MenuItem component={Link} to="/profile">
-          <ListItemIcon>
-            <AccountCircleIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText
-            primary="Profile"
-            primaryTypographyProps={{ variant: "body2" }}
-          />
-        </MenuItem>
-        <MenuItem component={Link} to="/settings">
-          <ListItemIcon>
-            <SettingsIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText
-            primary="Settings"
-            primaryTypographyProps={{ variant: "body2" }}
-          />
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <LoginIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText
-            primary="Logout"
-            primaryTypographyProps={{ variant: "body2" }}
-          />
-        </MenuItem>
-      </Menu>
-
-      {/* Notifications Menu */}
-      <Menu
-        anchorEl={notificationAnchor}
-        open={Boolean(notificationAnchor)}
-        onClose={handleMenuClose}
-        onClick={handleMenuClose}
-        PaperProps={{
-          elevation: 3,
-          sx: {
-            mt: 1.5,
-            minWidth: 280,
-            maxWidth: "100%",
-            "& .MuiMenuItem-root": {
-              px: 2,
-              py: 1.5,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        <MenuItem>
-          <Typography variant="body2" color="text.secondary">
-            No new notifications
-          </Typography>
-        </MenuItem>
-      </Menu>
+      </Box>
     </Box>
   );
 };
