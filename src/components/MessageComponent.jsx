@@ -8,8 +8,6 @@ import {
   TextField,
   Button,
   Typography,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import { Chat as ChatIcon, Send as SendIcon } from "@mui/icons-material";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -21,11 +19,6 @@ const MessageComponent = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
   const currentUser = useContext(UserContext);
 
   const handleOpen = () => setOpen(true);
@@ -57,18 +50,8 @@ const MessageComponent = () => {
 
       setMessage("");
       handleClose();
-      setNotification({
-        open: true,
-        message: "Message sent successfully! We'll get back to you soon.",
-        severity: "success",
-      });
     } catch (error) {
       console.error("Error sending message:", error);
-      setNotification({
-        open: true,
-        message: "Failed to send message. Please try again.",
-        severity: "error",
-      });
     } finally {
       setLoading(false);
     }
@@ -136,19 +119,6 @@ const MessageComponent = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={() => setNotification({ ...notification, open: false })}
-      >
-        <Alert
-          onClose={() => setNotification({ ...notification, open: false })}
-          severity={notification.severity}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </>
   );
 };

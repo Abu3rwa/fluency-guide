@@ -14,6 +14,22 @@ import {
 import { db } from "../firebase";
 
 const moduleService = {
+  // Get all modules
+  async getAllModules() {
+    try {
+      const modulesRef = collection(db, "modules");
+      const querySnapshot = await getDocs(modulesRef);
+      const modules = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return modules.sort((a, b) => (a.order || 0) - (b.order || 0));
+    } catch (error) {
+      console.error("Error getting all modules:", error);
+      throw error;
+    }
+  },
+
   // Get all modules for a course
   async getModulesByCourseId(courseId) {
     try {

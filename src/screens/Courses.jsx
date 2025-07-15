@@ -45,7 +45,7 @@ import {
 import { getMessaging, getToken } from "firebase/messaging";
 import { db } from "../firebase";
 import { useUser } from "../contexts/UserContext";
-import CourseDialog from "../components/CourseDialog";
+import CourseDialog from "../components/course/CourseDialog";
 import LessonDialog from "../components/LessonDialog";
 import courseService from "../services/courseService";
 
@@ -54,6 +54,13 @@ const AnimatedCard = motion(Card);
 const AnimatedContainer = motion(Container);
 const AnimatedDialog = motion(Dialog);
 
+// Validation helper
+const validateCourse = (courseData) => {
+  if (!courseData.title || !courseData.description) return false;
+  // Add more validation as needed
+  return true;
+};
+
 const Courses = () => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -61,13 +68,10 @@ const Courses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState(null);
   const [applyDialogOpen, setApplyDialogOpen] = useState(false);
   const [applicationNote, setApplicationNote] = useState("");
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
   const { user: currentUser } = useUser();
   const [openCourseDialog, setOpenCourseDialog] = useState(false);
   const [openLessonDialog, setOpenLessonDialog] = useState(false);
@@ -135,11 +139,6 @@ const Courses = () => {
       setCourses(coursesData);
     } catch (error) {
       console.error("Error fetching courses:", error);
-      setNotification({
-        open: true,
-        message: "Error fetching courses. Please try again.",
-        severity: "error",
-      });
     } finally {
       setLoading(false);
     }
@@ -185,11 +184,6 @@ const Courses = () => {
 
   const handleSubmitApplication = async () => {
     if (!currentUser) {
-      setNotification({
-        open: true,
-        message: "Please log in to apply for courses",
-        severity: "error",
-      });
       return;
     }
 
@@ -207,30 +201,66 @@ const Courses = () => {
         fcmToken: token,
       });
 
-      setNotification({
-        open: true,
-        message: "Application submitted successfully!",
-        severity: "success",
-      });
       handleCloseDialog();
     } catch (err) {
       console.error("Error submitting application:", err);
-      setNotification({
-        open: true,
-        message: "Failed to submit application. Please try again.",
-        severity: "error",
-      });
     }
   };
 
   const handleCreateCourse = async (courseData) => {
+    if (!validateCourse(courseData)) {
+      return;
+    }
     try {
       await courseService.createCourse(courseData);
       setSuccess("Course created successfully");
+      setOpenCourseDialog(false);
       fetchCourses();
     } catch (error) {
       setError(error.message);
     }
+  };
+
+  const handleEditCourse = (course) => {
+    setSelectedCourse(course);
+    setOpenCourseDialog(true);
+  };
+
+  const handleUpdateCourse = async (courseData) => {
+    if (!validateCourse(courseData)) {
+      return;
+    }
+    try {
+      await courseService.updateCourse(courseData.id, courseData);
+      setSuccess("Course updated successfully");
+      setOpenCourseDialog(false);
+      setSelectedCourse(null);
+      fetchCourses();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleDeleteCourse = (course) => {
+    setCourseToDelete(course);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteCourse = async () => {
+    if (!courseToDelete) return;
+    try {
+      await courseService.deleteCourse(courseToDelete.id);
+      setDeleteDialogOpen(false);
+      setCourseToDelete(null);
+      fetchCourses();
+    } catch (error) {
+      //
+    }
+  };
+
+  const cancelDeleteCourse = () => {
+    setDeleteDialogOpen(false);
+    setCourseToDelete(null);
   };
 
   const handleCreateLesson = async (lessonData) => {
@@ -252,20 +282,10 @@ const Courses = () => {
     try {
       setIsCreatingDummy(true);
       await courseService.createDummyCourses();
-      setNotification({
-        open: true,
-        message: "Dummy courses created successfully!",
-        severity: "success",
-      });
-      // Refresh the courses list
+
       fetchCourses();
     } catch (error) {
       console.error("Error creating dummy courses:", error);
-      setNotification({
-        open: true,
-        message: "Error creating dummy courses. Please try again.",
-        severity: "error",
-      });
     } finally {
       setIsCreatingDummy(false);
     }
@@ -298,229 +318,249 @@ const Courses = () => {
   }
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
-            {t("courses.screen.title")}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {t("courses.screen.subtitle")}
-          </Typography>
+    <>
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              {t("courses.screen.title")}
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              {t("courses.screen.subtitle")}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="outlined"
+              onClick={handleCreateDummyCourses}
+              disabled={isCreatingDummy}
+              startIcon={
+                isCreatingDummy ? <CircularProgress size={20} /> : <AddIcon />
+              }
+            >
+              {isCreatingDummy ? "Creating..." : "Create Dummy Courses"}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setOpenCourseDialog(true)}
+              startIcon={<AddIcon />}
+            >
+              {t("courses.screen.createCourse")}
+            </Button>
+          </Box>
         </Box>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            variant="outlined"
-            onClick={handleCreateDummyCourses}
-            disabled={isCreatingDummy}
-            startIcon={
-              isCreatingDummy ? <CircularProgress size={20} /> : <AddIcon />
-            }
-          >
-            {isCreatingDummy ? "Creating..." : "Create Dummy Courses"}
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => setOpenCourseDialog(true)}
-            startIcon={<AddIcon />}
-          >
-            {t("courses.screen.createCourse")}
-          </Button>
-        </Box>
-      </Box>
 
-      <Grid container spacing={3}>
-        {courses.map((course) => (
-          <Grid item xs={12} sm={6} md={4} key={course.id}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {course.title}
-                </Typography>
+        <Grid container spacing={3}>
+          {courses.map((course) => (
+            <Grid item xs={12} sm={6} md={4} key={course.id}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {course.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                  >
+                    {course.description}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mb: 1,
+                    }}
+                  >
+                    <Typography variant="body2">Level:</Typography>
+                    <Typography variant="body2" color="primary">
+                      {course.level}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mb: 1,
+                    }}
+                  >
+                    <Typography variant="body2">Duration:</Typography>
+                    <Typography variant="body2">{course.duration}</Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography variant="body2">Students:</Typography>
+                    <Typography variant="body2">
+                      {course.maxStudents}
+                    </Typography>
+                  </Box>
+                </CardContent>
+                <CardActions
+                  sx={{ justifyContent: "space-between", px: 2, pb: 2 }}
+                >
+                  <Box>
+                    <Tooltip title="Edit Course">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditCourse(course)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete Course">
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteCourse(course)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                  <Tooltip title="Add Lesson">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleAddLesson(course.id)}
+                    >
+                      <AddCircleIcon />
+                    </IconButton>
+                  </Tooltip>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+
+        <CourseDialog
+          open={openCourseDialog}
+          onClose={() => {
+            setOpenCourseDialog(false);
+            setSelectedCourse(null);
+          }}
+          onSave={selectedCourse ? handleUpdateCourse : handleCreateCourse}
+          course={selectedCourse}
+        />
+
+        <AnimatePresence>
+          {applyDialogOpen && (
+            <AnimatedDialog
+              open={applyDialogOpen}
+              onClose={handleCloseDialog}
+              maxWidth="sm"
+              fullWidth
+              variants={dialogVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              PaperProps={{
+                sx: {
+                  borderRadius: 2,
+                  background: `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.background.default} 100%)`,
+                },
+              }}
+            >
+              <DialogTitle sx={{ pb: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{ color: theme.palette.primary.main }}
+                  >
+                    {t("courses.screen.apply.title")}
+                  </Typography>
+                  <IconButton onClick={handleCloseDialog} size="small">
+                    <CloseIcon />
+                  </IconButton>
+                </Box>
+              </DialogTitle>
+              <DialogContent>
                 <Typography
                   variant="body2"
                   color="text.secondary"
                   sx={{ mb: 2 }}
                 >
-                  {course.description}
+                  {t("courses.screen.apply.description")}
                 </Typography>
-                <Box
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  placeholder={t("courses.screen.apply.notePlaceholder")}
+                  value={applicationNote}
+                  onChange={(e) => setApplicationNote(e.target.value)}
+                  sx={{ mt: 2 }}
+                  variant="outlined"
+                />
+              </DialogContent>
+              <DialogActions sx={{ px: 3, pb: 3 }}>
+                <Button
+                  onClick={handleCloseDialog}
+                  sx={{ color: theme.palette.text.secondary }}
+                >
+                  {t("courses.screen.apply.cancel")}
+                </Button>
+                <Button
+                  onClick={handleSubmitApplication}
+                  variant="contained"
+                  disabled={!applicationNote.trim()}
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 1,
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
+                    color: "white",
+                    "&:hover": {
+                      background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.secondary.dark} 90%)`,
+                    },
                   }}
                 >
-                  <Typography variant="body2">Level:</Typography>
-                  <Typography variant="body2" color="primary">
-                    {course.level}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 1,
-                  }}
-                >
-                  <Typography variant="body2">Duration:</Typography>
-                  <Typography variant="body2">{course.duration}</Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography variant="body2">Students:</Typography>
-                  <Typography variant="body2">{course.maxStudents}</Typography>
-                </Box>
-              </CardContent>
-              <CardActions
-                sx={{ justifyContent: "space-between", px: 2, pb: 2 }}
-              >
-                <Box>
-                  <Tooltip title="Edit Course">
-                    <IconButton size="small">
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete Course">
-                    <IconButton size="small" color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-                <Tooltip title="Add Lesson">
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleAddLesson(course.id)}
-                  >
-                    <AddCircleIcon />
-                  </IconButton>
-                </Tooltip>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                  {t("courses.screen.apply.submit")}
+                </Button>
+              </DialogActions>
+            </AnimatedDialog>
+          )}
+        </AnimatePresence>
+      </Box>
 
-      <CourseDialog
-        open={openCourseDialog}
-        onClose={() => setOpenCourseDialog(false)}
-        onSave={handleCreateCourse}
-      />
-
-      <AnimatePresence>
-        {applyDialogOpen && (
-          <AnimatedDialog
-            open={applyDialogOpen}
-            onClose={handleCloseDialog}
-            maxWidth="sm"
-            fullWidth
-            variants={dialogVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            PaperProps={{
-              sx: {
-                borderRadius: 2,
-                background: `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.background.default} 100%)`,
-              },
-            }}
-          >
-            <DialogTitle sx={{ pb: 1 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ color: theme.palette.primary.main }}
-                >
-                  {t("courses.screen.apply.title")}
-                </Typography>
-                <IconButton onClick={handleCloseDialog} size="small">
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </DialogTitle>
-            <DialogContent>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {t("courses.screen.apply.description")}
-              </Typography>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                placeholder={t("courses.screen.apply.notePlaceholder")}
-                value={applicationNote}
-                onChange={(e) => setApplicationNote(e.target.value)}
-                sx={{ mt: 2 }}
-                variant="outlined"
-              />
-            </DialogContent>
-            <DialogActions sx={{ px: 3, pb: 3 }}>
-              <Button
-                onClick={handleCloseDialog}
-                sx={{ color: theme.palette.text.secondary }}
-              >
-                {t("courses.screen.apply.cancel")}
-              </Button>
-              <Button
-                onClick={handleSubmitApplication}
-                variant="contained"
-                disabled={!applicationNote.trim()}
-                sx={{
-                  background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
-                  color: "white",
-                  "&:hover": {
-                    background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.secondary.dark} 90%)`,
-                  },
-                }}
-              >
-                {t("courses.screen.apply.submit")}
-              </Button>
-            </DialogActions>
-          </AnimatedDialog>
-        )}
-      </AnimatePresence>
-
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={() => setNotification({ ...notification, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={cancelDeleteCourse}
+        maxWidth="xs"
+        fullWidth
       >
-        <Alert
-          onClose={() => setNotification({ ...notification, open: false })}
-          severity={notification.severity}
-          variant="filled"
-          sx={{
-            width: "100%",
-            borderRadius: 2,
-            boxShadow: 3,
-          }}
-        >
-          {notification.message === "Please log in to apply for courses"
-            ? t("courses.screen.apply.loginRequired")
-            : notification.message === "Application submitted successfully!"
-            ? t("courses.screen.apply.success")
-            : t("courses.screen.apply.error")}
-        </Alert>
-      </Snackbar>
-    </Box>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete the course "{courseToDelete?.title}
+            "?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDeleteCourse}>Cancel</Button>
+          <Button
+            onClick={confirmDeleteCourse}
+            color="error"
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

@@ -32,11 +32,6 @@ const MessageButton = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
   const { user } = useUser();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -76,19 +71,11 @@ const MessageButton = () => {
 
       await addDoc(collection(db, "messages"), messageData);
 
-      setNotification({
-        open: true,
-        message: "Message sent successfully! We'll get back to you soon.",
-        severity: "success",
-      });
+      // Removed notification logic
       handleClose();
     } catch (error) {
       console.error("Error sending message:", error);
-      setNotification({
-        open: true,
-        message: "Failed to send message. Please try again.",
-        severity: "error",
-      });
+      // Removed notification logic
     } finally {
       setLoading(false);
     }
@@ -240,25 +227,7 @@ const MessageButton = () => {
         </form>
       </Dialog>
 
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={() => setNotification({ ...notification, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setNotification({ ...notification, open: false })}
-          severity={notification.severity}
-          variant="filled"
-          sx={{
-            width: "100%",
-            borderRadius: 2,
-            boxShadow: 3,
-          }}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
+      {/* Removed Snackbar and Alert */}
     </>
   );
 };

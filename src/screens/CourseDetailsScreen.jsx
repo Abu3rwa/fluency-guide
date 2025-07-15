@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+// All text is now hardcoded in English; i18n removed.
+import CourseHeader from "../components/course/CourseHeader";
+import CourseOverview from "../components/course/CourseOverview";
+import CourseAnalytics from "../components/course/CourseAnalytics";
+import TaskFormTabs from "../components/tasks/TaskFormTabs";
+import TaskDialog from "../components/tasks/TaskDialog";
+
+import { updateTask, deleteTask, createTask } from "../services/taskService";
 import {
   Box,
   Typography,
@@ -36,9 +43,9 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Snackbar,
   Container,
   ListItemSecondaryAction,
+  Skeleton,
 } from "@mui/material";
 import {
   Edit as EditIcon,
@@ -73,38 +80,37 @@ import {
 import courseService from "../services/courseService";
 import { deleteLesson, updateLesson } from "../services/lessonService";
 import { useAuth } from "../contexts/AuthContext";
-import { useNotification } from "../contexts/NotificationContext";
-import moduleService from "../services/moduleService";
-import CourseDialog from "../components/CourseDialog";
+import CourseDialog from "../components/course/CourseDialog";
 import CreateLessonForm from "../components/CreateLessonForm";
-import AnalyticsCard from "../components/AnalyticsCard";
 import ModuleCard from "../components/ModuleCard";
 import StudentProgressList from "../components/StudentProgressList";
 import ContentValidationDialog from "../components/ContentValidationDialog";
-import CoursePreviewDialog from "../components/CoursePreviewDialog";
-import ShareCourseDialog from "../components/ShareCourseDialog";
+import CoursePreviewDialog from "../components/course/CoursePreviewDialog";
+import ShareCourseDialog from "../components/course/ShareCourseDialog";
 import CreateModuleForm from "../components/CreateModuleForm";
-import LessonCard from "../components/LessonCard";
-import {
-  createTask,
-  updateTask,
-  deleteTask,
-  getTasksByLesson,
-} from "../services/taskService";
-import TaskForm from "../components/tasks/TaskForm";
+import LessonList from "../components/lesson/management/LessonList";
+import LessonFilter from "../components/lesson/management/LessonFilter";
+import CreateLessonDialog from "../components/lesson/management/CreateLessonDialog";
+import DeleteLessonDialog from "../components/lesson/management/DeleteLessonDialog";
+import LessonActionsMenu from "../components/lesson/management/LessonActionsMenu";
+import { courseSchema, moduleSchema, lessonSchema } from "../utils/validation";
+import moduleService from "../services/moduleService";
+import ModuleSection from "../components/course/ModuleSection";
+import LessonSection from "../components/course/LessonSection";
+import TasksTable from "../components/tasks/TasksTable";
 
 const CourseDetailsScreen = () => {
-  const { t } = useTranslation();
+  // All text is now hardcoded in English; i18n removed.
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const [course, setCourse] = useState(null);
-  const [lessons, setLessons] = useState([]);
+  const [lessons, setLessons] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
+
   const [moduleDialogOpen, setModuleDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
@@ -123,217 +129,184 @@ const CourseDetailsScreen = () => {
   const [studentProgress, setStudentProgress] = useState([]);
   const [validationResults, setValidationResults] = useState(null);
   const [createModuleOpen, setCreateModuleOpen] = useState(false);
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
+  const [createLessonOpen, setCreateLessonOpen] = useState(false);
   const [selectedModuleId, setSelectedModuleId] = useState(null);
   const [selectedLesson, setSelectedLesson] = useState(null);
-  const [lessonEditDialogOpen, setLessonEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(false);
   const [expandedModules, setExpandedModules] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
-  const showNotification = (message, severity = "success") => {
-    setNotification({ open: true, message, severity });
-  };
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterAnchorEl, setFilterAnchorEl] = useState(null);
+  const [sortAnchorEl, setSortAnchorEl] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedSort, setSelectedSort] = useState("newest");
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [moduleLessons, setModuleLessons] = useState([]);
 
-  const handleCloseNotification = () => {
-    setNotification((prev) => ({ ...prev, open: false }));
-  };
-
-  const fetchCourseAndLessons = async () => {
+  const fetchCourseAndLessons = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      console.log("Fetching course data for ID:", id);
-
       // Fetch course details
       const courseData = await courseService.getCourseById(id);
-      console.log("Course data fetched:", courseData);
-
       if (!courseData) {
         throw new Error("Course not found");
       }
-
       setCourse(courseData);
 
       // Fetch modules
-      console.log("Fetching modules for course:", id);
       const modulesData = await moduleService.getModulesByCourseId(id);
-      console.log("Modules fetched:", modulesData);
-      setModules(modulesData);
+      setModules(Array.isArray(modulesData) ? modulesData : []);
 
       // Fetch lessons
-      console.log("Fetching lessons for modules");
       const lessonsData = {};
-      for (const module of modulesData) {
-        console.log("Fetching lessons for module:", module.id);
+      for (const module of modulesData || []) {
         const moduleLessons = await moduleService.getLessonsByModule(
           id,
           module.id
         );
-        console.log("Lessons fetched for module:", module.id, moduleLessons);
-        lessonsData[module.id] = moduleLessons;
+        lessonsData[module.id] = Array.isArray(moduleLessons)
+          ? moduleLessons
+          : [];
       }
       setLessons(lessonsData);
 
       // Fetch student progress if user is a student
       if (user?.role === "student") {
-        console.log("Fetching student progress for user:", user.uid);
         const progress = await courseService.getStudentProgress(id, user.uid);
-        console.log("Student progress fetched:", progress);
         setStudentProgress(progress);
       }
     } catch (error) {
       console.error("Error fetching course data:", error);
-      setError(error.message || t("courses.errors.fetchFailed"));
-      showNotification(
-        error.message || t("courses.errors.fetchFailed"),
-        "error"
-      );
+      setError(error.message || "Failed to fetch course data");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, user]);
 
   useEffect(() => {
     fetchCourseAndLessons();
-  }, [id, user]);
+  }, [fetchCourseAndLessons]);
 
   useEffect(() => {
     if (modules.length > 0 && !selectedModuleId) {
       setSelectedModuleId(modules[0].id);
     }
-  }, [modules]);
+  }, [modules, selectedModuleId]);
 
-  const selectedModule = modules.find((m) => m.id === selectedModuleId);
-  const moduleLessons = lessons[selectedModuleId] || [];
+  useEffect(() => {
+    if (lessons && selectedModuleId && lessons[selectedModuleId]) {
+      setModuleLessons(lessons[selectedModuleId]);
+    } else {
+      setModuleLessons([]);
+    }
+  }, [lessons, selectedModuleId]);
 
-  const handleModuleChange = (event) => {
-    setSelectedModuleId(event.target.value);
-  };
+  useEffect(() => {
+    // When moduleLessons change (i.e., module changes), auto-select the first lesson if none is selected or if the selected lesson is not in the new list
+    if (moduleLessons.length > 0) {
+      if (
+        !selectedLesson ||
+        !moduleLessons.some((l) => l.id === selectedLesson.id)
+      ) {
+        setSelectedLesson(moduleLessons[0]);
+      }
+    } else {
+      setSelectedLesson(null);
+    }
+  }, [moduleLessons, selectedLesson]);
 
-  const handleDeleteCourse = async () => {
+  const handleDeleteCourse = useCallback(async () => {
     try {
+      setSubmitting(true);
       await courseService.deleteCourse(id);
       navigate("/courses");
     } catch (error) {
-      setError(t("courses.errors.deleteFailed"));
+      setError("Failed to delete course");
+    } finally {
+      setSubmitting(false);
     }
-  };
+  }, [id, navigate]);
 
-  const handleEditCourse = async (updatedCourse) => {
-    try {
-      await courseService.updateCourse(id, updatedCourse);
-      setCourse(updatedCourse);
-      setEditDialogOpen(false);
-    } catch (error) {
-      setError(t("courses.errors.updateFailed"));
-    }
-  };
+  const handleEditCourse = useCallback(
+    async (updatedCourse) => {
+      try {
+        setSubmitting(true);
+        await courseService.updateCourse(id, updatedCourse);
+        setCourse(updatedCourse);
+        setEditDialogOpen(false);
+      } catch (error) {
+        setError("Failed to update course");
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [id]
+  );
 
-  const handleAddLesson = () => {
+  const handleAddLesson = useCallback(() => {
     if (modules.length === 0) {
-      showNotification(t("lessons.errors.noModules"), "error");
       return;
     }
-    setLessonDialogOpen(true);
-  };
+    setCreateLessonOpen(true);
+  }, [modules.length]);
 
-  const handleEditLesson = (lessonId) => {
-    const lesson = lessons[selectedModuleId].find((l) => l.id === lessonId);
-    setSelectedLesson(lesson);
-    setLessonEditDialogOpen(true);
-  };
+  const handleUpdateLesson = useCallback(
+    async (updatedLesson) => {
+      try {
+        setLoading(true);
+        const result = await updateLesson(
+          id,
+          selectedModuleId,
+          selectedLesson.id,
+          updatedLesson
+        );
+        setLessons((lessons) => ({
+          ...lessons,
+          [selectedModuleId]: lessons[selectedModuleId].map((l) =>
+            l.id === selectedLesson.id ? result : l
+          ),
+        }));
+        setCreateLessonOpen(false);
+        setSelectedLesson(null);
+      } catch (error) {
+        console.error("Error updating lesson:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [id, selectedModuleId, selectedLesson]
+  );
 
-  const handleDeleteLesson = async (lessonId) => {
+  const handleCreateLesson = useCallback(
+    async (lessonData) => {
+      try {
+        const newLesson = await courseService.createLesson({
+          ...lessonData,
+          courseId: id,
+          moduleId: selectedModuleId,
+        });
+        setLessons((lessons) => ({
+          ...lessons,
+          [selectedModuleId]: [...(lessons[selectedModuleId] || []), newLesson],
+        }));
+        setCreateLessonOpen(false);
+      } catch (error) {
+        setError("Failed to create lesson");
+      }
+    },
+    [id, selectedModuleId]
+  );
+
+  const handlePublishToggle = useCallback(async () => {
     try {
-      setLoading(true);
-      await deleteLesson(id, selectedModuleId, lessonId);
-      setLessons((lessons) => ({
-        ...lessons,
-        [selectedModuleId]: lessons[selectedModuleId].filter(
-          (l) => l.id !== lessonId
-        ),
-      }));
-      showNotification(t("courses.lessons.deleteSuccess"));
-    } catch (error) {
-      console.error("Error deleting lesson:", error);
-      showNotification(t("courses.lessons.deleteFailed"), "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdateLesson = async (updatedLesson) => {
-    try {
-      setLoading(true);
-      const result = await updateLesson(
-        id,
-        selectedModuleId,
-        selectedLesson.id,
-        updatedLesson
-      );
-      setLessons((lessons) => ({
-        ...lessons,
-        [selectedModuleId]: lessons[selectedModuleId].map((l) =>
-          l.id === selectedLesson.id ? result : l
-        ),
-      }));
-      setLessonEditDialogOpen(false);
-      setSelectedLesson(null);
-      showNotification(t("courses.lessons.updateSuccess"));
-    } catch (error) {
-      console.error("Error updating lesson:", error);
-      showNotification(t("courses.lessons.updateFailed"), "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreateLesson = async (lessonData) => {
-    try {
-      const newLesson = await courseService.createLesson({
-        ...lessonData,
-        courseId: id,
-        moduleId: selectedModuleId,
-      });
-      setLessons((lessons) => ({
-        ...lessons,
-        [selectedModuleId]: [...(lessons[selectedModuleId] || []), newLesson],
-      }));
-      setLessonDialogOpen(false);
-      showNotification(t("courses.lessons.createSuccess"));
-    } catch (error) {
-      setError(t("courses.lessons.createFailed"));
-    }
-  };
-
-  const handleDragEnd = async (result) => {
-    if (!result.destination) return;
-
-    const items = Array.from(modules);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setModules(items);
-    try {
-      await courseService.updateModuleOrder(
-        id,
-        items.map((item) => item.id)
-      );
-    } catch (error) {
-      setError(t("courses.errors.updateModuleOrderFailed"));
-    }
-  };
-
-  const handlePublishToggle = async () => {
-    try {
+      setSubmitting(true);
       const updatedCourse = {
         ...course,
         isPublished: !course.isPublished,
@@ -341,464 +314,293 @@ const CourseDetailsScreen = () => {
       await courseService.updateCourse(id, updatedCourse);
       setCourse(updatedCourse);
     } catch (error) {
-      setError(t("courses.errors.publishToggleFailed"));
+      setError("Failed to update course status");
+    } finally {
+      setSubmitting(false);
     }
-  };
+  }, [course, id]);
 
-  const handleAccessLevelChange = async (event) => {
+  const handleExportCourse = useCallback(async () => {
     try {
-      const updatedCourse = {
-        ...course,
-        accessLevel: event.target.value,
-      };
-      await courseService.updateCourse(id, updatedCourse);
-      setCourse(updatedCourse);
-    } catch (error) {
-      setError(t("courses.errors.accessLevelUpdateFailed"));
-    }
-  };
-
-  const handleValidateContent = async () => {
-    try {
-      const results = await courseService.validateCourseContent(id);
-      setValidationResults(results);
-      setValidationDialogOpen(true);
-    } catch (error) {
-      setError(t("courses.errors.validationFailed"));
-    }
-  };
-
-  const handleExportCourse = async () => {
-    try {
+      setSubmitting(true);
       await courseService.exportCourse(id);
     } catch (error) {
-      setError(t("courses.errors.exportFailed"));
+      setError("Failed to export course data");
+    } finally {
+      setSubmitting(false);
     }
-  };
+  }, [id]);
 
-  const handleImportContent = async (content) => {
-    try {
-      await courseService.importCourseContent(id, content);
-      // Refresh course data
-      const courseData = await courseService.getCourseById(id);
-      setCourse(courseData);
-    } catch (error) {
-      setError(t("courses.errors.importFailed"));
-    }
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-
-  const handleEditModule = async (moduleId, updatedData) => {
-    try {
-      await moduleService.updateModule(id, moduleId, updatedData);
-      await fetchCourseAndLessons();
-    } catch (error) {
-      console.error("Error updating module:", error);
-      setError(t("courses.modules.updateError"));
-    }
-  };
-
-  const handleDeleteModule = async (moduleId) => {
-    if (window.confirm(t("courses.modules.deleteConfirm"))) {
+  const handleImportContent = useCallback(
+    async (content) => {
       try {
-        await moduleService.deleteModule(moduleId);
-        await fetchCourseAndLessons();
+        setSubmitting(true);
+        await courseService.importCourseContent(id, content);
+        // Refresh course data
+        const courseData = await courseService.getCourseById(id);
+        setCourse(courseData);
       } catch (error) {
-        console.error("Error deleting module:", error);
-        setError(t("courses.modules.deleteError"));
+        setError("Failed to import course data");
+      } finally {
+        setSubmitting(false);
       }
-    }
-  };
+    },
+    [id]
+  );
 
-  const handleCreateModule = async (moduleData) => {
-    try {
-      await moduleService.createModule(id, moduleData);
-      await fetchCourseAndLessons();
-      setCreateModuleOpen(false);
-    } catch (error) {
-      console.error("Error creating module:", error);
-      setError(t("courses.modules.createError"));
-    }
-  };
+  const handleTabChange = useCallback((event, newValue) => {
+    setActiveTab(newValue);
+  }, []);
 
-  const handleCreateDummyModules = async () => {
-    try {
-      const newModules = await moduleService.createDummyModules(id);
-      setModules([...modules, ...newModules]);
-    } catch (error) {
-      setError(t("courses.errors.addModuleFailed"));
-    }
-  };
-
-  const handleCreateTask = async (taskData) => {
-    try {
-      if (!selectedLesson) {
-        showNotification(t("tasks.errors.selectLessonFirst"), "error");
-        return;
+  const handleUpdateModule = useCallback(
+    async (moduleData) => {
+      try {
+        setSubmitting(true);
+        await moduleService.updateModule(moduleData.id, moduleData);
+        await fetchCourseAndLessons();
+        setModuleDialogOpen(false);
+      } catch (error) {
+        console.error("Error updating module:", error);
+        setError("Failed to update module");
+      } finally {
+        setSubmitting(false);
       }
-      const newTask = await createTask(id, selectedLesson.id, taskData);
-      setTasks([...tasks, newTask]);
-      showNotification(t("tasks.createSuccess"));
-      setTaskDialogOpen(false);
-    } catch (error) {
-      showNotification(error.message || t("tasks.createError"), "error");
-    }
-  };
+    },
+    [fetchCourseAndLessons]
+  );
 
-  const handleTaskDialogOpen = (lesson) => {
+  const handleDeleteModule = useCallback(
+    async (moduleId) => {
+      if (window.confirm("Are you sure you want to delete this module?")) {
+        try {
+          setSubmitting(true);
+          await moduleService.deleteModule(moduleId);
+          await fetchCourseAndLessons();
+        } catch (error) {
+          console.error("Error deleting module:", error);
+          setError("Failed to delete module");
+        } finally {
+          setSubmitting(false);
+        }
+      }
+    },
+    [fetchCourseAndLessons]
+  );
+
+  const handleCreateModule = useCallback(
+    async (moduleData) => {
+      try {
+        setSubmitting(true);
+        await moduleService.createModule(id, moduleData);
+        await fetchCourseAndLessons();
+        setCreateModuleOpen(false);
+      } catch (error) {
+        console.error("Error creating module:", error);
+        setError("Failed to create module");
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [id, fetchCourseAndLessons]
+  );
+
+  const handleCreateTask = useCallback(
+    async (taskData) => {
+      try {
+        if (!selectedLesson) {
+          setError("Please select a lesson first");
+          return;
+        }
+        const newTask = await createTask(id, selectedLesson.id, taskData);
+        setTasks([...tasks, newTask]);
+        setTaskDialogOpen(false);
+      } catch (error) {
+        setError(error.message || "Failed to create task");
+      }
+    },
+    [id, selectedLesson, tasks]
+  );
+
+  const handleTaskDialogOpen = useCallback((lesson) => {
     setSelectedLesson(lesson);
     setTaskDialogOpen(true);
-  };
+  }, []);
 
-  const handleUpdateTask = async (taskData) => {
-    try {
-      if (!selectedLesson || !selectedTask) {
-        showNotification(t("tasks.errors.selectTask"), "error");
-        return;
+  const handleUpdateTask = useCallback(
+    async (taskData) => {
+      try {
+        if (!selectedLesson || !selectedTask) {
+          setError("Please select a task");
+          return;
+        }
+        const updatedTask = await updateTask(
+          id,
+          selectedLesson.id,
+          selectedTask.id,
+          taskData
+        );
+        setTasks(
+          tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+        );
+        setTaskDialogOpen(false);
+      } catch (error) {
+        setError(error.message || "Failed to update task");
       }
-      const updatedTask = await updateTask(
-        id,
-        selectedLesson.id,
-        selectedTask.id,
-        taskData
-      );
-      setTasks(
-        tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-      );
-      showNotification(t("tasks.updateSuccess"));
-      setTaskDialogOpen(false);
-    } catch (error) {
-      showNotification(error.message || t("tasks.updateError"), "error");
-    }
-  };
+    },
+    [id, selectedLesson, selectedTask, tasks]
+  );
 
-  const handleDeleteTask = async (taskId) => {
-    try {
-      await deleteTask(id, selectedLesson.id, taskId);
-      setTasks(tasks.filter((task) => task.id !== taskId));
-      showNotification(t("tasks.deleteSuccess"));
-    } catch (error) {
-      showNotification(error.message || t("tasks.deleteError"), "error");
-    }
-  };
-
-  const handleModuleDialogOpen = (module = null) => {
-    if (module) {
-      setSelectedModuleId(module.id);
-    } else {
-      setSelectedModuleId(null);
-    }
-    setModuleDialogOpen(true);
-  };
-
-  const handleModuleDialogClose = () => {
-    setModuleDialogOpen(false);
-    setSelectedModuleId(null);
-  };
-
-  const handleModuleSubmit = async () => {
-    try {
-      if (selectedModuleId) {
-        await handleEditModule(selectedModuleId, {
-          title: selectedModule.title,
-          description: selectedModule.description,
-          order: selectedModule.order,
-        });
-        showNotification(t("courses.modules.updateSuccess"), "success");
-      } else {
-        await handleCreateModule({
-          title: selectedModule.title,
-          description: selectedModule.description,
-          order: selectedModule.order,
-        });
-        showNotification(t("courses.modules.createSuccess"), "success");
+  const handleDeleteTask = useCallback(
+    async (taskId) => {
+      try {
+        await deleteTask(id, selectedLesson.id, taskId);
+        setTasks(tasks.filter((task) => task.id !== taskId));
+      } catch (error) {
+        // no-op
       }
-      handleModuleDialogClose();
-      fetchCourseAndLessons();
-    } catch (error) {
-      console.error("Error saving module:", error);
-      showNotification(t("courses.modules.updateError"), "error");
-    }
-  };
+    },
+    [id, selectedLesson, tasks]
+  );
 
-  const handleLessonDialogOpen = (moduleId, lesson = null) => {
-    if (lesson) {
-      setSelectedLesson(lesson);
-    } else {
-      setSelectedLesson(null);
-    }
-    setLessonDialogOpen(true);
-  };
-
-  const handleLessonDialogClose = () => {
-    setLessonDialogOpen(false);
-    setSelectedLesson(null);
-  };
-
-  const handleLessonSubmit = async () => {
-    try {
-      if (selectedLesson) {
-        await handleUpdateLesson(selectedLesson);
-        showNotification(t("courses.lessons.updateSuccess"), "success");
-      } else {
-        await handleCreateLesson({
-          title: selectedModule.title,
-          description: selectedModule.description,
-          content: "",
-          type: "video",
-          duration: 0,
-          order: (lessons[selectedModuleId]?.length || 0) + 1,
-        });
-        showNotification(t("courses.lessons.createSuccess"), "success");
-      }
-      handleLessonDialogClose();
-      fetchCourseAndLessons();
-    } catch (error) {
-      console.error("Error saving lesson:", error);
-      showNotification(t("courses.lessons.updateError"), "error");
-    }
-  };
-
-  const toggleModuleExpand = (moduleId) => {
+  const toggleModuleExpand = useCallback((moduleId) => {
     setExpandedModules((prev) => ({
       ...prev,
       [moduleId]: !prev[moduleId],
     }));
-  };
+  }, []);
+
+  const handleDeleteLesson = useCallback(
+    async (lessonId) => {
+      try {
+        setSubmitting(true);
+        await deleteLesson(id, selectedModuleId, lessonId);
+        setLessons((lessons) => ({
+          ...lessons,
+          [selectedModuleId]: lessons[selectedModuleId].filter(
+            (l) => l.id !== lessonId
+          ),
+        }));
+      } catch (error) {
+        setError("Failed to delete lesson. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [id, selectedModuleId]
+  );
+
+  const filteredLessons = moduleLessons.filter((lesson) => {
+    const matchesSearch = lesson.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      selectedStatus === "all" || lesson.status === selectedStatus;
+    return matchesSearch && matchesStatus;
+  });
+
+  const sortedLessons = [...filteredLessons].sort((a, b) => {
+    switch (selectedSort) {
+      case "newest":
+        return b.createdAt - a.createdAt;
+      case "oldest":
+        return a.createdAt - b.createdAt;
+      case "title":
+        return a.title.localeCompare(b.title);
+      default:
+        return 0;
+    }
+  });
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-      >
-        <CircularProgress />
-      </Box>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
+          <CircularProgress />
+        </Box>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <Box p={3}>
-        <Alert severity="error">{error}</Alert>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/courses")}
-          sx={{ mt: 2 }}
-        >
-          {t("common.backToCourses")}
-        </Button>
-      </Box>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box p={3}>
+          <Alert severity="error">{error}</Alert>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate("/courses")}
+            sx={{ mt: 2 }}
+          >
+            Back to Courses
+          </Button>
+        </Box>
+      </Container>
     );
   }
 
   if (!course) {
     return (
-      <Box p={3}>
-        <Alert severity="warning">{t("courses.errors.notFound")}</Alert>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/courses")}
-          sx={{ mt: 2 }}
-        >
-          {t("common.backToCourses")}
-        </Button>
-      </Box>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box p={3}>
+          <Alert severity="warning">Course not found</Alert>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate("/courses")}
+            sx={{ mt: 2 }}
+          >
+            Back to Courses
+          </Button>
+        </Box>
+      </Container>
     );
   }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Top Action Bar */}
-      <Box
-        sx={{
-          mb: 4,
-          p: 2,
-          bgcolor: "background.paper",
-          borderRadius: 1,
-          boxShadow: 1,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 2,
-        }}
-      >
-        <Box display="flex" alignItems="center" gap={2}>
-          <IconButton onClick={() => navigate("/courses")} size="large">
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h4">{course.title}</Typography>
-        </Box>
-
-        <Box display="flex" gap={1} flexWrap="wrap">
-          <Button
-            variant="outlined"
-            startIcon={
-              course.isPublished ? <VisibilityIcon /> : <VisibilityOffIcon />
-            }
-            onClick={handlePublishToggle}
-          >
-            {course.isPublished
-              ? t("courses.details.actions.unpublish")
-              : t("courses.details.actions.publish")}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={() => setEditDialogOpen(true)}
-          >
-            {t("courses.details.actions.edit")}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<ImportIcon />}
-            onClick={() => setImportDialogOpen(true)}
-          >
-            {t("courses.details.actions.import")}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<ExportIcon />}
-            onClick={handleExportCourse}
-          >
-            {t("courses.details.actions.export")}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<PreviewIcon />}
-            onClick={() => setPreviewDialogOpen(true)}
-          >
-            {t("courses.details.actions.preview")}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<ShareIcon />}
-            onClick={() => setShareDialogOpen(true)}
-          >
-            {t("courses.details.actions.share")}
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={() => setDeleteDialogOpen(true)}
-          >
-            {t("courses.details.actions.delete")}
-          </Button>
-        </Box>
-      </Box>
-
+      {/* Course Header */}
+      <CourseHeader
+        course={course}
+        onBack={() => navigate("/courses")}
+        onPublishToggle={handlePublishToggle}
+        onEdit={() => setEditDialogOpen(true)}
+        onImport={() => setImportDialogOpen(true)}
+        onExport={handleExportCourse}
+        onPreview={() => setPreviewDialogOpen(true)}
+        onShare={() => setShareDialogOpen(true)}
+        onDelete={() => setDeleteDialogOpen(true)}
+      />
       {/* Course Info and Analytics */}
       <Grid container spacing={3} mb={4}>
         {/* Course Overview */}
         <Grid item xs={12} md={8}>
-          <Card sx={{ height: "100%" }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t("courses.details.overview")}
-              </Typography>
-              <Typography variant="body1" paragraph>
-                {course.description}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <PersonIcon color="primary" />
-                    <Typography variant="body2">
-                      {t("courses.details.instructor")}: {course.instructor}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <AccessTimeIcon color="primary" />
-                    <Typography variant="body2">
-                      {t("courses.details.duration")}: {course.duration}{" "}
-                      {t("courses.hours")}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <LanguageIcon color="primary" />
-                    <Typography variant="body2">
-                      {t("courses.details.language")}:{" "}
-                      {t(`courses.language.${course.language}`)}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <CategoryIcon color="primary" />
-                    <Typography variant="body2">
-                      {t("courses.details.category")}:{" "}
-                      {t(`courses.categories.${course.category}`)}
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+          <CourseOverview course={course} />
         </Grid>
 
         {/* Analytics Summary */}
         <Grid item xs={12} md={4}>
-          <Card sx={{ height: "100%" }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t("courses.analytics.title")}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <AnalyticsCard
-                    title="completionRate"
-                    value={`${analytics.completionRate}%`}
-                    icon={<TimelineIcon color="primary" />}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <AnalyticsCard
-                    title="activeStudents"
-                    value={analytics.activeStudents}
-                    icon={<PeopleIcon color="primary" />}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <AnalyticsCard
-                    title="totalEnrolled"
-                    value={analytics.totalEnrolled}
-                    icon={<GroupIcon color="primary" />}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <AnalyticsCard
-                    title="satisfactionRate"
-                    value={`${analytics.satisfactionRate}%`}
-                    icon={<EmojiEventsIcon color="primary" />}
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+          <CourseAnalytics analytics={analytics} />
         </Grid>
       </Grid>
-
       {/* Tabs */}
-      <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
-        <Tab label={t("courses.tabs.overview")} />
-        <Tab label={t("courses.tabs.modules")} />
-        <Tab label={t("courses.tabs.lessons")} />
-        <Tab label={t("courses.tabs.analytics")} />
+      <Tabs
+        value={activeTab}
+        onChange={handleTabChange}
+        sx={{ mb: 3 }}
+        aria-label="Tabs"
+      >
+        <Tab label="Overview" />
+        <Tab label="Modules" />
+        <Tab label="Lessons" />
+        <Tab label="Analytics" />
       </Tabs>
-
       {/* Tab Content */}
       <Box sx={{ mt: 2 }}>
+        {/* Overview Tab */}
         {activeTab === 0 && (
           <Card>
             <CardContent>
@@ -810,31 +612,30 @@ const CourseDetailsScreen = () => {
                   mb: 2,
                 }}
               >
-                <Typography variant="h5">
-                  {t("courses.modules.title")}
-                </Typography>
+                <Typography variant="h5">Modules</Typography>
                 <Box>
                   <Button
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => setCreateModuleOpen(true)}
                     sx={{ mr: 1 }}
+                    aria-label="Create New Module"
                   >
-                    {t("courses.modules.createModule")}
+                    Create New Module
                   </Button>
                 </Box>
               </Box>
               {modules.length === 0 ? (
                 <Box sx={{ textAlign: "center", py: 4 }}>
                   <Typography variant="h6" color="text.secondary" gutterBottom>
-                    {t("courses.modules.noModules")}
+                    No modules yet
                   </Typography>
                   <Button
                     variant="outlined"
                     startIcon={<AddIcon />}
                     onClick={() => setCreateModuleOpen(true)}
                   >
-                    {t("courses.modules.createFirstModule")}
+                    Create First Module
                   </Button>
                 </Box>
               ) : (
@@ -843,7 +644,6 @@ const CourseDetailsScreen = () => {
                     <ModuleCard
                       key={module.id}
                       module={module}
-                      onEdit={handleEditModule}
                       onDelete={handleDeleteModule}
                     />
                   ))}
@@ -852,111 +652,139 @@ const CourseDetailsScreen = () => {
             </CardContent>
           </Card>
         )}
-
+        {/* Modules Tab */}
         {activeTab === 1 && (
-          <Box>
-            {modules.map((module) => (
-              <ModuleCard
-                key={module.id}
-                module={module}
-                onEdit={handleEditModule}
-                onDelete={handleDeleteModule}
-              />
-            ))}
-            <Fab
-              color="primary"
-              onClick={() => setModuleDialogOpen(true)}
-              sx={{ position: "fixed", bottom: 16, right: 16 }}
-            >
-              <AddIcon />
-            </Fab>
-          </Box>
+          <ModuleSection
+            modules={modules}
+            onDelete={handleDeleteModule}
+            onCreate={() => setCreateModuleOpen(true)}
+            onUpdateModule={handleUpdateModule}
+          />
         )}
-
+        {/* Lessons Tab */}
         {activeTab === 2 && (
-          <Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 3,
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <FormControl sx={{ minWidth: 200 }}>
-                  <InputLabel>{t("courses.lessons.filterByModule")}</InputLabel>
-                  <Select
-                    value={selectedModuleId || ""}
-                    onChange={(e) => setSelectedModuleId(e.target.value)}
-                    label={t("courses.lessons.filterByModule")}
-                  >
-                    <MenuItem value="">
-                      {t("courses.lessons.allModules")}
+          <>
+            {/* Module Filter Dropdown */}
+            <Box mb={2} display="flex" alignItems="center" gap={2}>
+              <Typography variant="subtitle1">Modules</Typography>
+              <FormControl size="small" sx={{ minWidth: 200 }}>
+                <InputLabel id="module-filter-label">Select Module</InputLabel>
+                <Select
+                  labelId="module-filter-label"
+                  value={
+                    selectedModuleId || (modules[0] && modules[0].id) || ""
+                  }
+                  label="Select Module"
+                  onChange={(e) => setSelectedModuleId(e.target.value)}
+                >
+                  {modules.map((module) => (
+                    <MenuItem key={module.id} value={module.id}>
+                      {module.title}
                     </MenuItem>
-                    {modules.map((module) => (
-                      <MenuItem key={module.id} value={module.id}>
-                        {module.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  onClick={() => {
-                    setSelectedLesson(null);
-                    setLessonDialogOpen(true);
-                  }}
-                >
-                  {t("courses.lessons.createLesson")}
-                </Button>
-              </Box>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
-
-            {moduleLessons.length > 0 ? (
-              moduleLessons.map((lesson) => (
-                <LessonCard
-                  key={lesson.id}
-                  lesson={lesson}
-                  onEdit={handleEditLesson}
-                  onDelete={handleDeleteLesson}
-                  onCreateTask={() => handleTaskDialogOpen(lesson)}
-                />
-              ))
-            ) : (
-              <Paper sx={{ p: 3, textAlign: "center" }}>
-                <Typography color="text.secondary">
-                  {t("courses.lessons.noLessons")}
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  onClick={handleAddLesson}
-                  sx={{ mt: 2 }}
-                >
-                  {t("courses.lessons.createFirstLesson")}
-                </Button>
-              </Paper>
+            <LessonSection
+              lessons={sortedLessons}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filterAnchorEl={filterAnchorEl}
+              setFilterAnchorEl={setFilterAnchorEl}
+              sortAnchorEl={sortAnchorEl}
+              setSortAnchorEl={setSortAnchorEl}
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              selectedSort={selectedSort}
+              setSelectedSort={setSelectedSort}
+              menuAnchorEl={menuAnchorEl}
+              setMenuAnchorEl={setMenuAnchorEl}
+              selectedLesson={selectedLesson}
+              onDeleteLesson={handleDeleteLesson}
+              onUpdateLesson={handleUpdateLesson}
+              onCreate={() => setCreateLessonOpen(true)}
+              courseId={id}
+              moduleId={selectedModuleId}
+            />
+            {/* Show tasks for the selected lesson */}
+            {selectedModuleId && moduleLessons.length > 0 && (
+              <Box mt={4}>
+                {/* Lesson Filter Dropdown */}
+                <Box mb={2} display="flex" alignItems="center" gap={2}>
+                  <Typography variant="subtitle1">Lessons</Typography>
+                  <FormControl size="small" sx={{ minWidth: 200 }}>
+                    <InputLabel id="lesson-filter-label">
+                      Select Lesson
+                    </InputLabel>
+                    <Select
+                      labelId="lesson-filter-label"
+                      value={selectedLesson?.id || moduleLessons[0]?.id || ""}
+                      label="Select Lesson"
+                      onChange={(e) => {
+                        const lesson = moduleLessons.find(
+                          (l) => l.id === e.target.value
+                        );
+                        setSelectedLesson(lesson);
+                      }}
+                    >
+                      {moduleLessons.map((lesson) => (
+                        <MenuItem key={lesson.id} value={lesson.id}>
+                          {lesson.title}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+                {selectedLesson && (
+                  <>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      mb={2}
+                    >
+                      <Typography variant="h6">Tasks</Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => {
+                          setSelectedTask(null);
+                          setTaskDialogOpen(true);
+                        }}
+                      >
+                        Create Task
+                      </Button>
+                    </Box>
+                    <TasksTable
+                      tasks={tasks.filter(
+                        (task) => task.lessonId === selectedLesson.id
+                      )}
+                      onEditTask={(task) => {
+                        setSelectedTask(task);
+                        setTaskDialogOpen(true);
+                      }}
+                      onDeleteTask={async (taskId) => {
+                        await handleDeleteTask(taskId);
+                      }}
+                    />
+                  </>
+                )}
+              </Box>
             )}
-          </Box>
+          </>
         )}
-
+        {/* Analytics Tab */}
         {activeTab === 3 && (
           <Card>
             <CardContent>
               <Typography variant="h5" gutterBottom>
-                {t("courses.progress.title")}
+                Progress
               </Typography>
               <StudentProgressList students={studentProgress} />
             </CardContent>
           </Card>
         )}
       </Box>
-
       {/* Dialogs */}
       <CourseDialog
         open={editDialogOpen}
@@ -967,14 +795,22 @@ const CourseDetailsScreen = () => {
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="delete-course-dialog-title"
+        aria-describedby="delete-course-dialog-description"
       >
-        <DialogTitle>{t("courses.lessons.deleteConfirm.title")}</DialogTitle>
-        <DialogContent>
-          <Typography>{t("courses.lessons.deleteConfirm.message")}</Typography>
+        <DialogTitle id="delete-course-dialog-title">Delete Lesson</DialogTitle>
+        <DialogContent id="delete-course-dialog-description">
+          <Typography>
+            Are you sure you want to delete this lesson? This action cannot be
+            undone.
+          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>
-            {t("courses.lessons.deleteConfirm.cancel")}
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={submitting}
+          >
+            Cancel
           </Button>
           <Button
             onClick={() => {
@@ -982,66 +818,17 @@ const CourseDetailsScreen = () => {
               setDeleteDialogOpen(false);
             }}
             color="error"
+            disabled={submitting}
           >
-            {t("courses.lessons.deleteConfirm.confirm")}
+            {submitting ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              "Delete"
+            )}
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog
-        open={lessonEditDialogOpen}
-        onClose={() => {
-          setLessonEditDialogOpen(false);
-          setSelectedLesson(null);
-        }}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          <Box display="flex" alignItems="center" gap={1}>
-            <EditIcon color="primary" />
-            <Typography variant="h6">
-              {t("courses.lessons.editLesson")}
-            </Typography>
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <CreateLessonForm
-            open={lessonEditDialogOpen}
-            initialData={selectedLesson}
-            onSubmit={handleUpdateLesson}
-            onCancel={() => {
-              setLessonEditDialogOpen(false);
-              setSelectedLesson(null);
-            }}
-            courseId={id}
-            moduleId={selectedModuleId}
-          />
-        </DialogContent>
-      </Dialog>
-      <Dialog
-        open={lessonDialogOpen}
-        onClose={() => setLessonDialogOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          <Box display="flex" alignItems="center" gap={1}>
-            <AddIcon color="primary" />
-            <Typography variant="h6">
-              {t("courses.lessons.createLesson")}
-            </Typography>
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <CreateLessonForm
-            open={lessonDialogOpen}
-            onSubmit={handleLessonSubmit}
-            onCancel={() => setLessonDialogOpen(false)}
-            courseId={id}
-            moduleId={selectedModuleId}
-          />
-        </DialogContent>
-      </Dialog>
+
       <ContentValidationDialog
         open={validationDialogOpen}
         onClose={() => setValidationDialogOpen(false)}
@@ -1056,6 +843,13 @@ const CourseDetailsScreen = () => {
         open={shareDialogOpen}
         onClose={() => setShareDialogOpen(false)}
         course={course}
+      />
+      <CreateLessonForm
+        open={createLessonOpen}
+        onClose={() => setCreateLessonOpen(false)}
+        onSubmit={handleCreateLesson}
+        courseId={id}
+        moduleId={selectedModuleId}
       />
       <CreateModuleForm
         open={createModuleOpen}
@@ -1072,43 +866,20 @@ const CourseDetailsScreen = () => {
         }}
         maxWidth="md"
         fullWidth
+        aria-labelledby="task-dialog-title"
       >
-        <DialogTitle>
+        <DialogTitle id="task-dialog-title">
           <Box display="flex" alignItems="center" gap={1}>
             <AssignmentIcon color="primary" />
             <Typography variant="h6">
-              {selectedTask ? t("tasks.editTask") : t("tasks.createTask")}
+              {selectedTask ? "Edit Task" : "Create Task"}
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent>
-          <TaskForm
-            onClose={() => {
-              setTaskDialogOpen(false);
-              setSelectedTask(null);
-              setSelectedLesson(null);
-            }}
-            onSubmit={selectedTask ? handleUpdateTask : handleCreateTask}
-            task={selectedTask}
-            lessonId={selectedLesson?.id}
-          />
+          <TaskFormTabs courseId={id} lessonId={selectedLesson?.id} />
         </DialogContent>
       </Dialog>
-
-      {/* Notification Snackbar */}
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleCloseNotification}
-          severity={notification.severity}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
 
       {/* Loading Overlay */}
       {loading && (

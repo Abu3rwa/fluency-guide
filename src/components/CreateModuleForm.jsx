@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -28,7 +28,15 @@ import {
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 
-const CreateModuleForm = ({ open, onClose, onSubmit, courseId }) => {
+const CreateModuleForm = ({
+  open,
+  onClose,
+  onSubmit,
+  courseId,
+  initialData = {},
+  submitLabel,
+  dialogTitle,
+}) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     title: "",
@@ -39,8 +47,31 @@ const CreateModuleForm = ({ open, onClose, onSubmit, courseId }) => {
     status: "draft",
     difficulty: "beginner",
     estimatedTime: "",
+    ...initialData,
   });
   const [newObjective, setNewObjective] = useState("");
+
+  // Only update formData when dialog opens or initialData actually changes
+  const prevInitialData = useRef();
+  useEffect(() => {
+    if (open) {
+      const prev = JSON.stringify(prevInitialData.current);
+      const next = JSON.stringify(initialData);
+      if (prev !== next) {
+        setFormData({
+          title: initialData.title || "",
+          description: initialData.description || "",
+          objectives: initialData.objectives || [],
+          order: initialData.order || 0,
+          duration: initialData.duration || "",
+          status: initialData.status || "draft",
+          difficulty: initialData.difficulty || "beginner",
+          estimatedTime: initialData.estimatedTime || "",
+        });
+        prevInitialData.current = initialData;
+      }
+    }
+  }, [open, initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +105,7 @@ const CreateModuleForm = ({ open, onClose, onSubmit, courseId }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{t("courses.modules.addModule")}</DialogTitle>
+      <DialogTitle>{dialogTitle || t("courses.modules.addModule")}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <TextField
@@ -217,7 +248,7 @@ const CreateModuleForm = ({ open, onClose, onSubmit, courseId }) => {
         <DialogActions>
           <Button onClick={onClose}>{t("common.cancel")}</Button>
           <Button type="submit" variant="contained" color="primary">
-            {t("common.create")}
+            {submitLabel || t("common.create")}
           </Button>
         </DialogActions>
       </form>

@@ -344,7 +344,11 @@
       "overview": "نظرة عامة",
       "modules": "الوحدات",
       "lessons": "الدروس",
-      "analytics": "التحليلات"
+      "analytics": "التحليلات",
+      "label": "علامات التبويب"
+    },
+    "categories": {
+      "foundation": "الأساسيات"
     }
   },
   "language": {
@@ -851,5 +855,18 @@
     "updateError": "فشل في تحديث المهمة",
     "deleteSuccess": "تم حذف المهمة بنجاح",
     "deleteError": "فشل في حذف المهمة"
+  },
+  "lessonManagement": {
+    "fields": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "status": "الحالة",
+      "duration": "المدة",
+      "lastUpdated": "آخر تحديث",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "more": "المزيد"
+    }
   }
 }

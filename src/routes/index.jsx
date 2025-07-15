@@ -2,12 +2,16 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "./constants";
-import MainLayout from "../components/Layout/MainLayout";
+import AppLayout from "../components/Layout/AppLayout";
+import CustomSpinner from "../components/CustomSpinner";
 
 // Lazy load components
 const Landing = React.lazy(() => import("../screens/Landing"));
 const Auth = React.lazy(() => import("../screens/Auth"));
 const Dashboard = React.lazy(() => import("../screens/Dashboard"));
+const ManagementDashboard = React.lazy(() =>
+  import("../screens/ManagementDashboard")
+);
 const Profile = React.lazy(() => import("../screens/Profile"));
 const Courses = React.lazy(() => import("../screens/Courses"));
 const CourseDetails = React.lazy(() =>
@@ -45,7 +49,14 @@ const AdminRoute = ({ children }) => {
 export const publicRoutes = [
   { path: ROUTES.LANDING, element: <Landing /> },
   { path: ROUTES.AUTH, element: <Auth /> },
-  { path: ROUTES.COURSES, element: <Courses /> },
+  {
+    path: ROUTES.COURSES,
+    element: (
+      <AppLayout>
+        <Courses />
+      </AppLayout>
+    ),
+  },
   { path: ROUTES.PRICING, element: <Pricing /> },
   { path: ROUTES.ABOUT, element: <About /> },
   { path: ROUTES.CONTACT, element: <Contact /> },
@@ -57,7 +68,9 @@ export const protectedRoutes = [
     path: ROUTES.PROFILE,
     element: (
       <ProtectedRoute>
-        <Profile />
+        <AppLayout>
+          <Profile />
+        </AppLayout>
       </ProtectedRoute>
     ),
   },
@@ -69,7 +82,9 @@ export const adminRoutes = [
     path: ROUTES.DASHBOARD,
     element: (
       <AdminRoute>
-        <Dashboard />
+        <AppLayout>
+          <Dashboard />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -77,7 +92,9 @@ export const adminRoutes = [
     path: "/courses",
     element: (
       <AdminRoute>
-        <Courses />
+        <AppLayout>
+          <Courses />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -85,7 +102,9 @@ export const adminRoutes = [
     path: "/courses/create",
     element: (
       <AdminRoute>
-        <CreateCourse />
+        <AppLayout>
+          <CreateCourse />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -93,9 +112,9 @@ export const adminRoutes = [
     path: "/courses/:id",
     element: (
       <AdminRoute>
-        <MainLayout>
+        <AppLayout>
           <CourseDetails />
-        </MainLayout>
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -103,7 +122,9 @@ export const adminRoutes = [
     path: "/courses/edit/:id",
     element: (
       <AdminRoute>
-        <EditCourse />
+        <AppLayout>
+          <EditCourse />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -111,7 +132,9 @@ export const adminRoutes = [
     path: "/students",
     element: (
       <AdminRoute>
-        <Students />
+        <AppLayout>
+          <Students />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -119,7 +142,9 @@ export const adminRoutes = [
     path: "/enrollments",
     element: (
       <AdminRoute>
-        <Enrollments />
+        <AppLayout>
+          <Enrollments />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -127,7 +152,9 @@ export const adminRoutes = [
     path: "/analytics",
     element: (
       <AdminRoute>
-        <Analytics />
+        <AppLayout>
+          <Analytics />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -135,7 +162,19 @@ export const adminRoutes = [
     path: "/settings",
     element: (
       <AdminRoute>
-        <Settings />
+        <AppLayout>
+          <Settings />
+        </AppLayout>
+      </AdminRoute>
+    ),
+  },
+  {
+    path: "/management",
+    element: (
+      <AdminRoute>
+        <AppLayout>
+          <ManagementDashboard />
+        </AppLayout>
       </AdminRoute>
     ),
   },
@@ -150,7 +189,9 @@ export const fallbackRoute = {
 // Main router component
 const AppRoutes = () => {
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
+    <React.Suspense
+      fallback={<CustomSpinner message="Loading application..." />}
+    >
       <Routes>
         {/* Public routes */}
         {publicRoutes.map((route) => (

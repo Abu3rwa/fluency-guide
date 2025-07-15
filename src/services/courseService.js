@@ -36,6 +36,79 @@ const courseService = {
     localStorage.removeItem(COURSE_DRAFT_KEY);
   },
 
+  // Utility to normalize course data to match Flutter CourseModel
+  normalizeCourseData(data) {
+    return {
+      id: data.id || "",
+      title: data.title || "",
+      description: data.description || "",
+      shortDescription: data.shortDescription || "",
+      category: data.category || "",
+      level: data.level || "",
+      thumbnail: data.thumbnail || null,
+      instructor: data.instructor || "",
+      instructorBio: data.instructorBio || "",
+      language: data.language || "english",
+      prerequisites: Array.isArray(data.prerequisites)
+        ? data.prerequisites
+        : [],
+      objectives: Array.isArray(data.objectives) ? data.objectives : [],
+      duration: data.duration || "",
+      totalLessons:
+        typeof data.totalLessons === "number" ? data.totalLessons : 0,
+      totalQuizzes:
+        typeof data.totalQuizzes === "number" ? data.totalQuizzes : 0,
+      totalAssignments:
+        typeof data.totalAssignments === "number" ? data.totalAssignments : 0,
+      maxStudents: data.maxStudents !== undefined ? data.maxStudents : null,
+      startDate: data.startDate || null,
+      endDate: data.endDate || null,
+      schedule: data.schedule || null,
+      format: data.format || "self-paced",
+      price: typeof data.price === "number" ? data.price : 0,
+      discount: data.discount !== undefined ? data.discount : null,
+      pricingModel: data.pricingModel || "one-time",
+      currency: data.currency || "USD",
+      discountEndDate: data.discountEndDate || null,
+      earlyBirdPrice:
+        data.earlyBirdPrice !== undefined ? data.earlyBirdPrice : null,
+      earlyBirdEndDate: data.earlyBirdEndDate || null,
+      status: data.status || "draft",
+      seoTitle: data.seoTitle || null,
+      metaDescription: data.metaDescription || null,
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      featured: typeof data.featured === "boolean" ? data.featured : false,
+      certificateIncluded:
+        typeof data.certificateIncluded === "boolean"
+          ? data.certificateIncluded
+          : false,
+      certificateTemplate: data.certificateTemplate || null,
+      accessDuration: data.accessDuration || null,
+      requirements: Array.isArray(data.requirements) ? data.requirements : [],
+      targetAudience: Array.isArray(data.targetAudience)
+        ? data.targetAudience
+        : [],
+      whatYouWillLearn: Array.isArray(data.whatYouWillLearn)
+        ? data.whatYouWillLearn
+        : [],
+      courseMaterials: Array.isArray(data.courseMaterials)
+        ? data.courseMaterials
+        : [],
+      support:
+        typeof data.support === "object" && data.support !== null
+          ? data.support
+          : {},
+      enrolledStudents:
+        typeof data.enrolledStudents === "number" ? data.enrolledStudents : 0,
+      rating: typeof data.rating === "number" ? data.rating : 0,
+      totalRatings:
+        typeof data.totalRatings === "number" ? data.totalRatings : 0,
+      reviews: Array.isArray(data.reviews) ? data.reviews : [],
+      createdAt: data.createdAt || null, // will be set by Firestore if not present
+      updatedAt: data.updatedAt || null, // will be set by Firestore if not present
+    };
+  },
+
   // Create a new course
   async createCourse(courseData) {
     try {
@@ -49,19 +122,19 @@ const courseService = {
         thumbnailUrl = await getDownloadURL(storageRef);
       }
 
-      const courseToSave = {
+      const normalizedCourse = this.normalizeCourseData({
         ...courseData,
         thumbnail: thumbnailUrl,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
         enrolledStudents: 0,
         rating: 0,
         totalRatings: 0,
         reviews: [],
-      };
+      });
+      normalizedCourse.createdAt = serverTimestamp();
+      normalizedCourse.updatedAt = serverTimestamp();
 
-      const docRef = await addDoc(collection(db, "courses"), courseToSave);
-      return { id: docRef.id, ...courseToSave };
+      const docRef = await addDoc(collection(db, "courses"), normalizedCourse);
+      return { id: docRef.id, ...normalizedCourse };
     } catch (error) {
       throw new Error(`Failed to create course: ${error.message}`);
     }
@@ -71,10 +144,20 @@ const courseService = {
   async getAllCourses() {
     try {
       const querySnapshot = await getDocs(collection(db, "courses"));
-      return querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const courses = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        // Remove any existing 'id' field from the document data to avoid conflicts
+        const { id: _, ...courseData } = data;
+        return {
+          id: doc.id, // Always use the Firestore document ID
+          ...courseData,
+        };
+      });
+      console.log(
+        "Courses with IDs:",
+        courses.map((c) => ({ id: c.id, title: c.title }))
+      );
+      return courses;
     } catch (error) {
       throw new Error(`Failed to fetch courses: ${error.message}`);
     }
@@ -84,11 +167,10 @@ const courseService = {
   async updateCourse(courseId, courseData) {
     try {
       const courseRef = doc(db, "courses", courseId);
-      await updateDoc(courseRef, {
-        ...courseData,
-        updatedAt: serverTimestamp(),
-      });
-      return { id: courseId, ...courseData };
+      const normalizedCourse = this.normalizeCourseData(courseData);
+      normalizedCourse.updatedAt = serverTimestamp();
+      await updateDoc(courseRef, normalizedCourse);
+      return { id: courseId, ...normalizedCourse };
     } catch (error) {
       throw new Error(`Failed to update course: ${error.message}`);
     }
@@ -116,9 +198,11 @@ const courseService = {
         throw new Error("Course not found");
       }
 
-      const courseData = { id: docSnap.id, ...docSnap.data() };
-      console.log("Course data retrieved:", courseData);
-      return courseData;
+      const data = docSnap.data();
+      // Remove any existing 'id' field from the document data to avoid conflicts
+      const { id: _, ...courseData } = data;
+      const result = { id: docSnap.id, ...courseData };
+      return result;
     } catch (error) {
       console.error("Error in getCourseById:", error);
       if (error.message === "Course not found") {

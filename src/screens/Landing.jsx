@@ -80,7 +80,7 @@ const GradientText = styled(Typography)(({ theme }) => ({
 }));
 
 const FeatureCard = styled(motion.div)(({ theme }) => ({
-  padding: theme.spacing(4),
+  padding: theme.spacing(2, 1, 2, 1),
   borderRadius: "16px",
   background: alpha(theme.palette.background.paper, 0.8),
   backdropFilter: "blur(10px)",
@@ -88,7 +88,7 @@ const FeatureCard = styled(motion.div)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: theme.spacing(2),
+  gap: theme.spacing(1.5),
   textAlign: "center",
   transition: "all 0.3s ease-in-out",
   "&:hover": {
@@ -98,14 +98,14 @@ const FeatureCard = styled(motion.div)(({ theme }) => ({
 }));
 
 const TestimonialCard = styled(motion.div)(({ theme }) => ({
-  padding: theme.spacing(3),
+  padding: theme.spacing(2, 1, 2, 1),
   borderRadius: "16px",
   background: alpha(theme.palette.background.paper, 0.8),
   backdropFilter: "blur(10px)",
   border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing(2),
+  gap: theme.spacing(1.5),
   transition: "all 0.3s ease-in-out",
   "&:hover": {
     transform: "translateY(-5px)",
@@ -114,14 +114,14 @@ const TestimonialCard = styled(motion.div)(({ theme }) => ({
 }));
 
 const BenefitCard = styled(motion.div)(({ theme }) => ({
-  padding: theme.spacing(3),
+  padding: theme.spacing(2, 1, 2, 1),
   borderRadius: "16px",
   background: alpha(theme.palette.background.paper, 0.8),
   backdropFilter: "blur(10px)",
   border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
   display: "flex",
   alignItems: "flex-start",
-  gap: theme.spacing(2),
+  gap: theme.spacing(1.5),
   transition: "all 0.3s ease-in-out",
   "&:hover": {
     transform: "translateY(-5px)",
@@ -130,7 +130,7 @@ const BenefitCard = styled(motion.div)(({ theme }) => ({
 }));
 
 const StatBox = styled(motion.div)(({ theme }) => ({
-  padding: theme.spacing(3),
+  padding: theme.spacing(2, 1, 2, 1),
   borderRadius: "16px",
   background: alpha(theme.palette.background.paper, 0.8),
   backdropFilter: "blur(10px)",
@@ -147,7 +147,7 @@ const StatBox = styled(motion.div)(({ theme }) => ({
 }));
 
 const ContactForm = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
+  padding: theme.spacing(2, 1, 2, 1),
   borderRadius: "16px",
   background: alpha(theme.palette.background.paper, 0.8),
   backdropFilter: "blur(10px)",
@@ -158,14 +158,14 @@ const AppFeatureCard = styled(motion.div)(({ theme }) => ({
   position: "relative",
   borderRadius: "24px",
   overflow: "hidden",
-  padding: theme.spacing(4),
+  padding: theme.spacing(2, 1, 2, 1),
   background: alpha(theme.palette.background.paper, 0.8),
   backdropFilter: "blur(10px)",
   border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: theme.spacing(2),
+  gap: theme.spacing(1.5),
   textAlign: "center",
   transition: "all 0.3s ease-in-out",
   "&:hover": {
@@ -191,6 +191,12 @@ const FAQAccordion = styled(Accordion)(({ theme }) => ({
     },
   },
 }));
+
+// Add global style for SVG noise background
+if (typeof document !== "undefined") {
+  document.body.style.backgroundImage =
+    "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E\")";
+}
 
 const Landing = () => {
   const { t, i18n } = useTranslation();
@@ -265,6 +271,8 @@ const Landing = () => {
   return (
     <Box
       sx={{
+        width: "100%",
+        overflowX: "hidden",
         mt: 0,
         minHeight: "100vh",
         background: `linear-gradient(45deg, ${alpha(
@@ -273,64 +281,8 @@ const Landing = () => {
         )} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
       }}
     >
-      <AppBar
-        position="fixed"
-        sx={{
-          backgroundColor: alpha(theme.palette.background.paper, 0.8),
-          backdropFilter: "blur(10px)",
-          boxShadow: "none",
-          borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-        }}
-      >
-        <Toolbar>
-          <Typography
-            variant="h6"
-            component={RouterLink}
-            to="/"
-            sx={{
-              flexGrow: 1,
-              textDecoration: "none",
-              color: theme.palette.text.primary,
-              fontWeight: 700,
-            }}
-          >
-            {t("app.name")}
-          </Typography>
-          <IconButton
-            onClick={toggleTheme}
-            color="inherit"
-            sx={{
-              color: theme.palette.text.primary,
-              "&:hover": {
-                backgroundColor: alpha(theme.palette.primary.main, 0.1),
-              },
-            }}
-          >
-            {theme.palette.mode === "dark" ? (
-              <LightModeIcon />
-            ) : (
-              <DarkModeIcon />
-            )}
-          </IconButton>
-          <IconButton
-            onClick={() =>
-              i18n.changeLanguage(i18n.language === "en" ? "ar" : "en")
-            }
-            color="inherit"
-            sx={{
-              color: theme.palette.text.primary,
-              "&:hover": {
-                backgroundColor: alpha(theme.palette.primary.main, 0.1),
-              },
-            }}
-          >
-            <TranslateIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Toolbar /> {/* Spacer for fixed AppBar */}
       <LandingHeader />
-      <Box sx={{ mt: 8 }}>
+      <Box sx={{ mt: { xs: 7, md: 8 } }}>
         <MessageButton />
 
         {/* Hero Section */}
@@ -546,7 +498,7 @@ const Landing = () => {
         </Box>
 
         {/* Features Section */}
-        <Box sx={{ py: 12, bgcolor: "background.default" }}>
+        <Box sx={{ py: { xs: 4, md: 12 }, bgcolor: "background.default" }}>
           <Container maxWidth="lg">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -557,12 +509,15 @@ const Landing = () => {
               <GradientText
                 variant="h2"
                 align="center"
-                sx={{ mb: 8, fontSize: { xs: "2rem", md: "3rem" } }}
+                sx={{
+                  mb: { xs: 3, md: 8 },
+                  fontSize: { xs: "2rem", md: "3rem" },
+                }}
               >
                 {t("landing.features.title")}
               </GradientText>
             </motion.div>
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 2, md: 4 }}>
               {[
                 {
                   icon: (
@@ -633,7 +588,7 @@ const Landing = () => {
         {/* Testimonials Section */}
         <Box
           sx={{
-            py: 12,
+            py: { xs: 4, md: 12 },
             background: (theme) =>
               `linear-gradient(135deg, ${alpha(
                 theme.palette.primary.main,
@@ -652,7 +607,7 @@ const Landing = () => {
                 variant="h2"
                 align="center"
                 sx={{
-                  mb: 8,
+                  mb: { xs: 3, md: 8 },
                   color: "white",
                   fontSize: { xs: "2rem", md: "3rem" },
                 }}
@@ -660,7 +615,7 @@ const Landing = () => {
                 {t("landing.testimonials.title")}
               </Typography>
             </motion.div>
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 2, md: 4 }}>
               {[
                 {
                   name: "Sarah Johnson",
@@ -724,7 +679,7 @@ const Landing = () => {
         </Box>
 
         {/* Benefits Section */}
-        <Box sx={{ py: 12, bgcolor: "background.default" }}>
+        <Box sx={{ py: { xs: 4, md: 12 }, bgcolor: "background.default" }}>
           <Container maxWidth="lg">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -735,12 +690,15 @@ const Landing = () => {
               <GradientText
                 variant="h2"
                 align="center"
-                sx={{ mb: 8, fontSize: { xs: "2rem", md: "3rem" } }}
+                sx={{
+                  mb: { xs: 3, md: 8 },
+                  fontSize: { xs: "2rem", md: "3rem" },
+                }}
               >
                 {t("landing.benefits.title")}
               </GradientText>
             </motion.div>
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 2, md: 4 }}>
               {[
                 {
                   icon: (
@@ -807,7 +765,7 @@ const Landing = () => {
         </Box>
 
         {/* FAQ Section */}
-        <Box sx={{ bgcolor: "background.paper", py: 8 }}>
+        <Box sx={{ bgcolor: "background.paper", py: { xs: 4, md: 8 } }}>
           <Container>
             <Typography variant="h3" component="h2" align="center" gutterBottom>
               {t("faq.title")}
@@ -836,7 +794,7 @@ const Landing = () => {
         </Box>
 
         {/* App Showcase Section */}
-        <Box sx={{ py: 12, bgcolor: "background.default" }}>
+        <Box sx={{ py: { xs: 4, md: 12 }, bgcolor: "background.default" }}>
           <Container maxWidth="lg">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -847,12 +805,15 @@ const Landing = () => {
               <GradientText
                 variant="h2"
                 align="center"
-                sx={{ mb: 8, fontSize: { xs: "2rem", md: "3rem" } }}
+                sx={{
+                  mb: { xs: 3, md: 8 },
+                  fontSize: { xs: "2rem", md: "3rem" },
+                }}
               >
                 {t("landing.appShowcase.title")}
               </GradientText>
             </motion.div>
-            <Grid container spacing={6} alignItems="center">
+            <Grid container spacing={{ xs: 2, md: 6 }} alignItems="center">
               <Grid item xs={12} md={6}>
                 <motion.div
                   initial={{ opacity: 0, x: -50 }}
@@ -1033,7 +994,7 @@ const Landing = () => {
         </Box>
 
         {/* Final CTA Section */}
-        <Box sx={{ py: 12, bgcolor: "background.default" }}>
+        <Box sx={{ py: { xs: 4, md: 12 }, bgcolor: "background.default" }}>
           <Container maxWidth="lg">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

@@ -1,13 +1,11 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
+// Firebase Storage security rules - Development mode
 service firebase.storage {
   match /b/{bucket}/o {
+    // Allow all access for development (remove this for production)
     match /{allPaths=**} {
-      allow read: if true;  // Allow public read access
-      allow write: if request.auth != null;  // Allow write access for authenticated users
+      allow read, write: if true;
     }
   }
 }

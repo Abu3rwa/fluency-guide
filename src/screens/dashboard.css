@@ -428,3 +428,12 @@ a {
     justify-content: space-between;
   }
 }
+
+.css-bixbc2-MuiInputBase-input-MuiOutlinedInput-input:-webkit-autofill {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  -webkit-text-fill-color: inherit !important;
+  caret-color: inherit !important;
+  border-radius: inherit;
+}

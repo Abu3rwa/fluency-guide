@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Box,
   Grid,
@@ -24,6 +24,24 @@ import {
   CircularProgress,
   AppBar,
   Toolbar,
+  Skeleton,
+  Button,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Snackbar,
+  Menu,
+  MenuItem as MenuItemComponent,
+  TextField,
+  useTheme as useMuiTheme,
+  Stack,
+  Container,
 } from "@mui/material";
 import {
   School as SchoolIcon,
@@ -47,14 +65,39 @@ import {
   Brightness4 as DarkModeIcon,
   Brightness7 as LightModeIcon,
   HowToReg as EnrollmentsIcon,
+  Refresh as RefreshIcon,
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Visibility as ViewIcon,
+  Folder as ModuleIcon,
+  Task as TaskIcon,
+  Search as SearchIcon,
 } from "@mui/icons-material";
 import StudentsTable from "../components/StudentsTable";
-import CoursesTable from "../components/CoursesTable";
+
 import EnrollmentsTable from "../components/EnrollmentsTable";
 import StudentStatsCharts from "../components/StudentStatsCharts";
+import StatCard from "../components/StatCard";
+import ResourceTable from "../components/ResourceTable";
+import ResourceDialog from "../components/ResourceDialog";
 import { useUser } from "../contexts/UserContext";
 import { db } from "../firebase";
 import { enrollmentService } from "../services/enrollmentService";
+import courseService from "../services/courseService";
+import {
+  createLesson,
+  updateLesson,
+  deleteLesson,
+  getAllLessons,
+} from "../services/lessonService";
+import moduleService from "../services/moduleService";
+import {
+  createTask,
+  updateTask,
+  deleteTask,
+  getAllTasks,
+} from "../services/taskService";
 import {
   collection,
   query,
@@ -66,360 +109,340 @@ import {
   limit,
   Timestamp,
 } from "firebase/firestore";
-import { useTheme } from "../theme/ThemeContext";
+import { useCustomTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebase";
-import { signOut } from "firebase/auth";
 import { alpha } from "@mui/material/styles";
-
-const drawerWidth = 240;
-
-const StatCard = ({ title, value, icon, color, subtitle, onClick }) => {
-  const { theme } = useTheme();
-
-  return (
-    <Card
-      sx={{
-        backgroundColor: theme.palette.background.paper,
-        borderRadius: theme.shape.borderRadius,
-        transition: "transform 0.2s ease-in-out",
-        "&:hover": {
-          transform: "translateY(-4px)",
-        },
-      }}
-    >
-      <CardContent>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Avatar
-            sx={{
-              backgroundColor: alpha(color, 0.1),
-              color: color,
-              mr: 2,
-            }}
-          >
-            {icon}
-          </Avatar>
-          <Box>
-            <Typography variant="h6" component="div">
-              {value}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {subtitle}
-            </Typography>
-          </Box>
-        </Box>
-        <Typography variant="h5" component="div" gutterBottom>
-          {title}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-};
-
-const CourseProgress = ({ title, progress, total }) => {
-  const { theme } = useTheme();
-  const percentage = Math.round((progress / total) * 100);
-
-  return (
-    <Card>
-      <CardHeader title={title} />
-      <CardContent>
-        <Box sx={{ mb: 2 }}>
-          <LinearProgress
-            variant="determinate"
-            value={percentage}
-            sx={{
-              height: 10,
-              borderRadius: 5,
-              backgroundColor: alpha(theme.palette.primary.main, 0.1),
-              "& .MuiLinearProgress-bar": {
-                borderRadius: 5,
-              },
-            }}
-          />
-        </Box>
-        <Typography variant="h6" gutterBottom>
-          {percentage}% Complete
-        </Typography>
-        <Typography color="text.secondary">
-          {progress} of {total} lessons completed
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-};
-
-const RecentActivity = ({ activities }) => {
-  const { theme } = useTheme();
-
-  return (
-    <Card>
-      <CardHeader
-        title="Recent Activity"
-        action={
-          <IconButton>
-            <MoreVertIcon />
-          </IconButton>
-        }
-      />
-      <CardContent>
-        <List>
-          {activities.map((activity) => (
-            <ListItem key={activity.id} sx={{ px: 0 }}>
-              <ListItemIcon>
-                <Avatar
-                  sx={{
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                    color: theme.palette.primary.main,
-                  }}
-                >
-                  {activity.type === "course" ? (
-                    <SchoolIcon />
-                  ) : activity.type === "assignment" ? (
-                    <AssignmentIcon />
-                  ) : (
-                    <PersonIcon />
-                  )}
-                </Avatar>
-              </ListItemIcon>
-              <ListItemText
-                primary={activity.title}
-                secondary={
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      {activity.description}
-                    </Typography>
-                    <Chip
-                      label={activity.time}
-                      size="small"
-                      sx={{
-                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                        color: theme.palette.primary.main,
-                      }}
-                    />
-                  </Box>
-                }
-              />
-            </ListItem>
-          ))}
-        </List>
-      </CardContent>
-    </Card>
-  );
-};
-
-const AdminDrawer = () => {
-  const { theme, toggleTheme } = useTheme();
-  const { userData } = useUser();
-  const navigate = useNavigate();
-
-  const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon /> },
-    { text: "User Management", icon: <PeopleIcon /> },
-    { text: "Course Management", icon: <SchoolIcon /> },
-    { text: "Analytics", icon: <AnalyticsIcon /> },
-    { text: "Security", icon: <SecurityIcon /> },
-    { text: "Settings", icon: <SettingsIcon /> },
-  ];
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
-  const drawerContent = (
-    <Box
-      sx={{
-        width: 250,
-        backgroundColor: theme.palette.background.paper,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
-          Dashboard
-        </Typography>
-      </Box>
-      <Divider />
-      <List>
-        {menuItems.map((item) => (
-          <ListItemButton key={item.text}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText
-              primary={
-                <Typography sx={{ color: theme.palette.text.primary }}>
-                  {item.text}
-                </Typography>
-              }
-            />
-          </ListItemButton>
-        ))}
-      </List>
-      <Box sx={{ flexGrow: 1 }} />
-      <Divider />
-      <List>
-        <ListItemButton onClick={handleLogout}>
-          <ListItemIcon>
-            <ExitToAppIcon sx={{ color: theme.palette.error.main }} />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <Typography sx={{ color: theme.palette.error.main }}>
-                Logout
-              </Typography>
-            }
-          />
-        </ListItemButton>
-      </List>
-    </Box>
-  );
-
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: drawerWidth,
-          boxSizing: "border-box",
-          borderRight: `1px solid ${theme.palette.divider}`,
-          backgroundColor: theme.palette.background.default,
-        },
-      }}
-    >
-      <Box sx={{ overflow: "auto", mt: 8 }}>{drawerContent}</Box>
-    </Drawer>
-  );
-};
+import { ErrorBoundary } from "react-error-boundary";
+import {
+  ProgressiveLoading,
+  LoadingOverlay,
+} from "../components/LoadingStates";
+import CustomSpinner from "../components/CustomSpinner";
+import QuickActions from "../components/QuickActions";
+import { useTranslation } from "react-i18next";
+import {
+  courseSchema,
+  moduleSchema,
+  lessonSchema,
+  taskSchema,
+} from "../utils/validation";
+import UnifiedDashboardTabs from "../components/UnifiedDashboardTabs";
+import ResourceManagementPanel from "../components/ResourceManagementPanel";
+import CourseProgress from "../components/course/CourseProgress";
+import RecentActivity from "../components/RecentActivity";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(0);
-  const { theme, toggleTheme } = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { theme } = useCustomTheme();
+  const muiTheme = useMuiTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+  const isSmallMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
   const { user, userData } = useUser();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [error, setError] = useState(null);
   const [stats, setStats] = useState({
     totalStudents: 0,
     activeCourses: 0,
     pendingTasks: 0,
     completionRate: 0,
   });
+
+  // Management Dashboard States
+  const [managementLoading, setManagementLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [lessons, setLessons] = useState([]);
+  const [modules, setModules] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuItem, setMenuItem] = useState(null);
+  const [deleteDialog, setDeleteDialog] = useState({
+    open: false,
+    type: "",
+    item: null,
+  });
+  const [dialogConfig, setDialogConfig] = useState({
+    open: false,
+    mode: "create",
+    type: "course",
+    formData: {},
+  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [recentActivities, setRecentActivities] = useState([]);
   const [courseProgress, setCourseProgress] = useState([]);
   const [pendingEnrollments, setPendingEnrollments] = useState([]);
   const [recentEnrollments, setRecentEnrollments] = useState([]);
   const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [pendingEnrollmentsCount, setPendingEnrollmentsCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon /> },
-    { text: "Profile", icon: <PersonIcon /> },
-    { text: "Settings", icon: <SettingsIcon /> },
+  // Dialog fields for each resource
+  const dialogFields = {
+    course: [
+      { id: "title", label: "Title", required: true },
+      { id: "category", label: "Category", required: true },
+      { id: "level", label: "Level", required: true },
+      { id: "price", label: "Price", type: "number", required: true },
+      {
+        id: "description",
+        label: "Description",
+        multiline: true,
+        rows: 3,
+        required: true,
+      },
+    ],
+    module: [
+      { id: "title", label: "Title", required: true },
+      { id: "order", label: "Order", type: "number", required: true },
+      {
+        id: "description",
+        label: "Description",
+        multiline: true,
+        rows: 3,
+        required: true,
+      },
+    ],
+    lesson: [
+      { id: "title", label: "Title", required: true },
+      { id: "duration", label: "Duration", type: "number", required: true },
+      {
+        id: "description",
+        label: "Description",
+        multiline: true,
+        rows: 3,
+        required: true,
+      },
+      {
+        id: "content",
+        label: "Content",
+        multiline: true,
+        rows: 6,
+        required: true,
+      },
+    ],
+    task: [
+      { id: "title", label: "Title", required: true },
+      { id: "points", label: "Points", type: "number", required: true },
+      {
+        id: "description",
+        label: "Description",
+        multiline: true,
+        rows: 3,
+        required: true,
+      },
+      {
+        id: "instructions",
+        label: "Instructions",
+        multiline: true,
+        rows: 4,
+        required: true,
+      },
+    ],
+  };
+
+  // Validation schemas for each resource
+  const validationSchemas = {
+    course: courseSchema,
+    module: moduleSchema,
+    lesson: lessonSchema,
+    task: taskSchema,
+  };
+
+  // Resource API handlers for each resource
+  const resourceApi = {
+    course: courseService,
+    module: moduleService,
+    lesson: {
+      create: createLesson,
+      update: updateLesson,
+      delete: deleteLesson,
+      getAll: getAllLessons,
+    },
+    task: {
+      create: createTask,
+      update: updateTask,
+      delete: deleteTask,
+      getAll: getAllTasks,
+    },
+  };
+
+  // Resource definitions for all resources
+  const resourceDefs = {
+    course: {
+      singular: "Course",
+      plural: "Courses",
+      data: courses,
+      columns: [
+        { id: "title", label: "Title" },
+        { id: "category", label: "Category" },
+        { id: "level", label: "Level" },
+        { id: "status", label: "Status" },
+      ],
+    },
+    module: {
+      singular: "Module",
+      plural: "Modules",
+      data: modules,
+      columns: [
+        { id: "title", label: "Title" },
+        { id: "order", label: "Order" },
+        { id: "status", label: "Status" },
+      ],
+    },
+    lesson: {
+      singular: "Lesson",
+      plural: "Lessons",
+      data: lessons,
+      columns: [
+        { id: "title", label: "Title" },
+        { id: "duration", label: "Duration" },
+        { id: "status", label: "Status" },
+      ],
+    },
+    task: {
+      singular: "Task",
+      plural: "Tasks",
+      data: tasks,
+      columns: [
+        { id: "title", label: "Title" },
+        { id: "type", label: "Type" },
+        { id: "points", label: "Points" },
+        { id: "status", label: "Status" },
+      ],
+    },
+  };
+
+  const loadingSteps = [
+    "Initializing dashboard...",
+    "Loading user statistics...",
+    "Fetching course data...",
+    "Loading enrollment information...",
+    "Preparing analytics...",
+    "Finalizing dashboard...",
   ];
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
+  const menuItems = [
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
+    { text: "User Management", icon: <PeopleIcon />, path: "/students" },
+    { text: "Course Management", icon: <SchoolIcon />, path: "/courses" },
+    { text: "Analytics", icon: <AnalyticsIcon />, path: "/analytics" },
+    { text: "Security", icon: <SecurityIcon />, path: "/settings" },
+    { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
+  ];
 
-        // Fetch total students
-        const studentsQuery = query(
-          collection(db, "users"),
-          where("isStudent", "==", true)
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setLoadingStep(0);
+
+      // Step 1: Initialize
+      setLoadingStep(1);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      // Step 2: Load user statistics
+      setLoadingStep(2);
+      const studentsQuery = query(
+        collection(db, "users"),
+        where("isStudent", "==", true)
+      );
+      const studentsSnapshot = await getDocs(studentsQuery);
+      const totalStudents = studentsSnapshot.size;
+
+      // Step 3: Fetch course data
+      setLoadingStep(3);
+      const coursesData = await courseService.getAllCourses();
+      setCourses(coursesData);
+      const activeCourses = coursesData.filter(
+        (course) => course.status === "active"
+      ).length;
+
+      // Fetch pending tasks
+      const tasksQuery = query(
+        collection(db, "tasks"),
+        where("status", "==", "pending")
+      );
+      const tasksSnapshot = await getDocs(tasksQuery);
+      const pendingTasks = tasksSnapshot.docs.filter(
+        (doc) => doc.data().dueDate?.toDate() >= new Date()
+      ).length;
+
+      // Calculate completion rate
+      const completedTasksQuery = query(
+        collection(db, "tasks"),
+        where("status", "==", "completed")
+      );
+      const completedTasksSnapshot = await getDocs(completedTasksQuery);
+      const totalTasks = tasksSnapshot.size + completedTasksSnapshot.size;
+      const completionRate =
+        totalTasks > 0
+          ? Math.round((completedTasksSnapshot.size / totalTasks) * 100)
+          : 0;
+
+      // Step 4: Load enrollment information
+      setLoadingStep(4);
+      const activitiesQuery = query(
+        collection(db, "activities"),
+        orderBy("timestamp", "desc"),
+        limit(5)
+      );
+      const activitiesSnapshot = await getDocs(activitiesQuery);
+      const activities = activitiesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        time: formatTimestamp(doc.data().timestamp),
+      }));
+
+      // Fetch course progress for the current user
+      if (user) {
+        const userProgressQuery = query(
+          collection(db, "userProgress"),
+          where("userId", "==", user.uid)
         );
-        const studentsSnapshot = await getDocs(studentsQuery);
-        const totalStudents = studentsSnapshot.size;
-
-        // Fetch active courses
-        const coursesQuery = query(
-          collection(db, "courses"),
-          where("status", "==", "active")
+        const progressSnapshot = await getDocs(userProgressQuery);
+        const progress = await Promise.all(
+          progressSnapshot.docs.map(async (doc) => {
+            const courseDoc = await getDoc(doc.ref.parent.parent);
+            return {
+              name: courseDoc.data().name,
+              progress: doc.data().progress,
+            };
+          })
         );
-        const coursesSnapshot = await getDocs(coursesQuery);
-        const activeCourses = coursesSnapshot.size;
-
-        // Fetch pending tasks
-        const tasksQuery = query(
-          collection(db, "tasks"),
-          where("status", "==", "pending")
-        );
-        const tasksSnapshot = await getDocs(tasksQuery);
-        const pendingTasks = tasksSnapshot.docs.filter(
-          (doc) => doc.data().dueDate?.toDate() >= new Date()
-        ).length;
-
-        // Calculate completion rate
-        const completedTasksQuery = query(
-          collection(db, "tasks"),
-          where("status", "==", "completed")
-        );
-        const completedTasksSnapshot = await getDocs(completedTasksQuery);
-        const totalTasks = tasksSnapshot.size + completedTasksSnapshot.size;
-        const completionRate =
-          totalTasks > 0
-            ? Math.round((completedTasksSnapshot.size / totalTasks) * 100)
-            : 0;
-
-        // Fetch recent activities
-        const activitiesQuery = query(
-          collection(db, "activities"),
-          orderBy("timestamp", "desc"),
-          limit(5)
-        );
-        const activitiesSnapshot = await getDocs(activitiesQuery);
-        const activities = activitiesSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          time: formatTimestamp(doc.data().timestamp),
-        }));
-
-        // Fetch course progress for the current user
-        if (user) {
-          const userProgressQuery = query(
-            collection(db, "userProgress"),
-            where("userId", "==", user.uid)
-          );
-          const progressSnapshot = await getDocs(userProgressQuery);
-          const progress = await Promise.all(
-            progressSnapshot.docs.map(async (doc) => {
-              const courseDoc = await getDoc(doc.ref.parent.parent);
-              return {
-                name: courseDoc.data().name,
-                progress: doc.data().progress,
-              };
-            })
-          );
-          setCourseProgress(progress);
-        }
-
-        setStats({
-          totalStudents,
-          activeCourses,
-          pendingTasks,
-          completionRate,
-        });
-        setRecentActivities(activities);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
+        setCourseProgress(progress);
       }
-    };
 
+      // Step 5: Prepare analytics
+      setLoadingStep(5);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      // Step 6: Finalize
+      setLoadingStep(6);
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      setStats({
+        totalStudents,
+        activeCourses,
+        pendingTasks,
+        completionRate,
+      });
+      setRecentActivities(activities);
+    } catch (error) {
+      console.error("Failed to load data:", error);
+      setError(error.message || "Failed to load data. Please try again.");
+    } finally {
+      setLoading(false);
+      setLoadingStep(0);
+    }
+  };
+
+  useEffect(() => {
     fetchDashboardData();
   }, [user]);
 
@@ -509,215 +532,263 @@ export default function Dashboard() {
     setActiveTab(newValue);
   };
 
+  const handleRetry = () => {
+    setError(null);
+    fetchDashboardData();
+  };
+
   const statsData = [
     {
       title: "Total Students",
-      value: stats.totalStudents.toString(),
+      value: stats.totalStudents,
       icon: <PeopleIcon />,
-      color: theme.palette.primary.main,
-      subtitle: "Active students",
+      color: "#2196F3",
+      subtitle: "Registered students",
     },
     {
       title: "Active Courses",
-      value: stats.activeCourses.toString(),
+      value: stats.activeCourses,
       icon: <SchoolIcon />,
-      color: theme.palette.secondary.main,
+      color: "#4CAF50",
       subtitle: "Currently running",
     },
     {
       title: "Pending Tasks",
-      value: stats.pendingTasks.toString(),
+      value: stats.pendingTasks,
       icon: <AssignmentIcon />,
-      color: theme.palette.warning.main,
-      subtitle: "Requires attention",
+      color: "#FF9800",
+      subtitle: "Awaiting completion",
     },
     {
       title: "Completion Rate",
       value: `${stats.completionRate}%`,
       icon: <TrendingUpIcon />,
-      color: theme.palette.success.main,
-      subtitle: "Task completion",
+      color: "#9C27B0",
+      subtitle: "Overall success rate",
     },
   ];
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setDrawerOpen(open);
-  };
-
-  const drawerContent = (
-    <Box
-      sx={{
-        width: 250,
-        backgroundColor: theme.palette.background.paper,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
-          Dashboard
-        </Typography>
-      </Box>
-      <Divider />
-      <List>
-        {menuItems.map((item) => (
-          <ListItemButton key={item.text}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText
-              primary={
-                <Typography sx={{ color: theme.palette.text.primary }}>
-                  {item.text}
-                </Typography>
-              }
-            />
-          </ListItemButton>
-        ))}
-      </List>
-      <Box sx={{ flexGrow: 1 }} />
-      <Divider />
-      <List>
-        <ListItemButton onClick={handleLogout}>
-          <ListItemIcon>
-            <ExitToAppIcon sx={{ color: theme.palette.error.main }} />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <Typography sx={{ color: theme.palette.error.main }}>
-                Logout
-              </Typography>
-            }
-          />
-        </ListItemButton>
-      </List>
-    </Box>
+  const paginatedData = pendingEnrollments.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
   );
 
-  if (loading) {
+  // Define tab content with responsive considerations
+  const tabs = [
+    {
+      label: "Overview",
+      content: (
+        <Grid container spacing={isMobile ? 2 : 3}>
+          {/* Course Progress */}
+          <Grid item xs={12} lg={6}>
+            <Card
+              sx={{
+                height: "100%",
+                borderRadius: 2,
+                boxShadow: theme.shadows[2],
+              }}
+            >
+              <CardHeader
+                title="Current Course Progress"
+                sx={{ pb: 1 }}
+                titleTypographyProps={{
+                  variant: isMobile ? "h6" : "h5",
+                  fontSize: isMobile ? "1rem" : "1.25rem",
+                }}
+              />
+              <CardContent>
+                <CourseProgress title="" progress={12} total={24} />
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* Recent Activity */}
+          <Grid item xs={12} lg={6}>
+            <Card
+              sx={{
+                height: "100%",
+                borderRadius: 2,
+                boxShadow: theme.shadows[2],
+              }}
+            >
+              <CardHeader
+                title="Recent Activity"
+                sx={{ pb: 1 }}
+                titleTypographyProps={{
+                  variant: isMobile ? "h6" : "h5",
+                  fontSize: isMobile ? "1rem" : "1.25rem",
+                }}
+              />
+              <CardContent sx={{ pt: 0 }}>
+                <RecentActivity activities={recentActivities} />
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* Charts */}
+          <Grid item xs={12}>
+            <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
+              <CardHeader
+                title="Student Performance Analytics"
+                titleTypographyProps={{
+                  variant: isMobile ? "h6" : "h5",
+                  fontSize: isMobile ? "1rem" : "1.25rem",
+                }}
+              />
+              <CardContent>
+                <StudentStatsCharts />
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      ),
+    },
+    {
+      label: "Courses",
+      content: (
+        <ResourceManagementPanel
+          resourceDefs={{ course: resourceDefs.course }}
+          initialResource="course"
+          fetchData={fetchDashboardData}
+          loading={loading}
+        />
+      ),
+    },
+    {
+      label: "Students",
+      content: (
+        <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
+          <CardContent sx={{ p: isMobile ? 1 : 0 }}>
+            <StudentsTable />
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      label: "Enrollments",
+      content: (
+        <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
+          <CardHeader
+            title="Enrollment Management"
+            titleTypographyProps={{
+              variant: isMobile ? "h6" : "h5",
+              fontSize: isMobile ? "1rem" : "1.25rem",
+            }}
+          />
+          <CardContent sx={{ p: isMobile ? 1 : 0 }}>
+            <EnrollmentsTable
+              enrollments={[...pendingEnrollments, ...recentEnrollments]}
+              onApprove={handleApproveEnrollment}
+              onReject={handleRejectEnrollment}
+            />
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      label: "Analytics",
+      content: (
+        <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
+          <CardHeader
+            title="Analytics & Reports"
+            titleTypographyProps={{
+              variant: isMobile ? "h6" : "h5",
+              fontSize: isMobile ? "1rem" : "1.25rem",
+            }}
+          />
+          <CardContent>
+            <StudentStatsCharts />
+          </CardContent>
+        </Card>
+      ),
+    },
+    userData?.isAdmin && {
+      label: "Content Management",
+      content: (
+        <ResourceManagementPanel
+          resourceDefs={resourceDefs}
+          initialResource="course"
+          fetchData={fetchDashboardData}
+          loading={loading}
+          dialogFields={dialogFields}
+          validationSchemas={validationSchemas}
+          resourceApi={resourceApi}
+        />
+      ),
+    },
+  ].filter(Boolean);
+
+  // Show progressive loading during initial load
+  if (loading && loadingStep > 0) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
+      <Box sx={{ p: isMobile ? 2 : 3 }}>
+        <ProgressiveLoading steps={loadingSteps} currentStep={loadingStep} />
+      </Box>
+    );
+  }
+
+  // Show custom spinner for initial loading
+  if (loading && loadingStep === 0) {
+    return <CustomSpinner />;
+  }
+
+  // Show error state with retry option
+  if (error) {
+    return (
+      <Box sx={{ p: isMobile ? 2 : 3 }}>
+        <Alert
+          severity="error"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={handleRetry}
+              startIcon={<RefreshIcon />}
+            >
+              Retry
+            </Button>
+          }
+          sx={{ mb: 3 }}
+        >
+          {error}
+        </Alert>
+        <Button
+          variant="contained"
+          onClick={handleRetry}
+          startIcon={<RefreshIcon />}
+        >
+          Reload Dashboard
+        </Button>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
-      {userData?.isAdmin && <AdminDrawer />}
+    <Box
+      sx={{
+        position: "relative",
+        minHeight: "100vh",
+        backgroundColor: "background.default",
+      }}
+    >
+      {loading && <CustomSpinner message="Refreshing data..." />}
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
-          width: {
-            sm: `calc(100% - ${userData?.isAdmin ? drawerWidth : 0}px)`,
-          },
-          ml: { sm: userData?.isAdmin ? `${drawerWidth}px` : 0 },
+          opacity: loading ? 0.6 : 1,
+          pointerEvents: loading ? "none" : "auto",
         }}
       >
-        <AppBar
-          position="fixed"
-          sx={{
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: 1,
-          }}
-        >
-          <Toolbar>
-            {userData?.isAdmin && (
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={() => setDrawerOpen(!drawerOpen)}
-                sx={{ mr: 2, display: { sm: "none" } }}
-              >
-                <MenuIcon />
-              </IconButton>
-            )}
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{
-                flexGrow: 1,
-                color: theme.palette.text.primary,
-              }}
-            >
-              Dashboard
-            </Typography>
-            <IconButton
-              onClick={toggleTheme}
-              color="inherit"
-              sx={{
-                color: theme.palette.text.primary,
-                "&:hover": {
-                  backgroundColor: theme.palette.action.hover,
-                },
-              }}
-            >
-              {theme.palette.mode === "dark" ? (
-                <LightModeIcon />
-              ) : (
-                <DarkModeIcon />
-              )}
-            </IconButton>
-            <IconButton
-              color="inherit"
-              sx={{
-                color: theme.palette.text.primary,
-                "&:hover": {
-                  backgroundColor: theme.palette.action.hover,
-                },
-              }}
-            >
-              <NotificationsIcon />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              sx={{
-                color: theme.palette.text.primary,
-                "&:hover": {
-                  backgroundColor: theme.palette.action.hover,
-                },
-              }}
-            >
-              <PersonIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Toolbar /> {/* This creates space for the fixed AppBar */}
-        <Box sx={{ p: 3 }}>
-          <Grid container spacing={3}>
-            {/* Stats Cards */}
-            {statsData.map((stat, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <StatCard {...stat} />
-              </Grid>
-            ))}
+        <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 4 }, pb: 4 }}>
+          {/* Stats Cards with Enhanced Design */}
+          <Grid
+            container
+            spacing={isMobile ? 2 : 3}
+            sx={{ mb: { xs: 3, md: 4 } }}
+          >
+            {/* Quick Actions */}
+            <Grid item xs={12}>
+              <QuickActions stats={stats} />
+            </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
+            {/* <Grid item xs={12} sm={6} md={3}>
               <StatCard
                 title="Pending Enrollments"
                 value={pendingEnrollmentsCount}
@@ -725,136 +796,25 @@ export default function Dashboard() {
                 color="#FF9800"
                 subtitle="Awaiting approval"
                 onClick={() => navigate("/enrollments")}
+                sx={{
+                  transition: "all 0.3s ease",
+                  cursor: "pointer",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: theme.shadows[8],
+                  },
+                }}
               />
-            </Grid>
-
-            {/* Main Content Tabs */}
-            <Grid item xs={12}>
-              <Paper sx={{ width: "100%", mb: 2 }}>
-                <Tabs
-                  value={activeTab}
-                  onChange={handleTabChange}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  variant={isMobile ? "fullWidth" : "standard"}
-                >
-                  <Tab label="Overview" />
-                  <Tab label="Courses" />
-                  <Tab label="Enrollments" />
-                  <Tab label="Students" />
-                  <Tab label="Reports" />
-                </Tabs>
-              </Paper>
-            </Grid>
-
-            {/* Tab Content */}
-            <Grid item xs={12}>
-              {activeTab === 0 && (
-                <Grid container spacing={3}>
-                  {/* Course Progress */}
-                  <Grid item xs={12} md={6}>
-                    <CourseProgress
-                      title="Current Course Progress"
-                      progress={12}
-                      total={24}
-                    />
-                  </Grid>
-
-                  {/* Recent Activity */}
-                  <Grid item xs={12} md={6}>
-                    <RecentActivity activities={recentActivities} />
-                  </Grid>
-
-                  {/* Charts */}
-                  <Grid item xs={12}>
-                    <Card>
-                      <CardHeader title="Student Performance" />
-                      <CardContent>
-                        <StudentStatsCharts />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
-              )}
-
-              {activeTab === 1 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Card>
-                      <CardHeader
-                        title="Courses"
-                        action={
-                          <IconButton color="primary" aria-label="add course">
-                            <SchoolIcon />
-                          </IconButton>
-                        }
-                      />
-                      <CardContent>
-                        <CoursesTable />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
-              )}
-
-              {activeTab === 2 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Card>
-                      <CardHeader
-                        title="Enrollments"
-                        action={
-                          <IconButton
-                            color="primary"
-                            aria-label="view all enrollments"
-                          >
-                            <EnrollmentsIcon />
-                          </IconButton>
-                        }
-                      />
-                      <CardContent>
-                        <EnrollmentsTable
-                          enrollments={[
-                            ...pendingEnrollments,
-                            ...recentEnrollments,
-                          ]}
-                          onApprove={handleApproveEnrollment}
-                          onReject={handleRejectEnrollment}
-                        />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
-              )}
-
-              {activeTab === 3 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Card>
-                      <CardHeader title="Students" />
-                      <CardContent>
-                        <StudentsTable />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
-              )}
-
-              {activeTab === 4 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Card>
-                      <CardHeader title="Performance Reports" />
-                      <CardContent>
-                        <StudentStatsCharts />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
-              )}
-            </Grid>
+            </Grid> */}
           </Grid>
-        </Box>
+
+          {/* Enhanced Tabs Design */}
+
+          {/* Tab Content with Better Spacing */}
+          <Box sx={{ minHeight: "60vh" }}>
+            <UnifiedDashboardTabs tabs={tabs} />
+          </Box>
+        </Container>
       </Box>
     </Box>
   );

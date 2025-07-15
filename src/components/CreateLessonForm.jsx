@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   TextField,
@@ -41,7 +41,7 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { createLesson } from "../services/lessonService";
-import storageService from "../services/storageService";
+import { useHybridStorage } from "../services/hybridStorageService";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 
@@ -59,47 +59,91 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+// Refactor: add new props and update logic
 const CreateLessonForm = ({
+  open,
+  onClose,
+  onSubmit,
+  initialData = {},
+  submitLabel,
+  dialogTitle,
   courseId,
   moduleId,
-  onSuccess,
-  onCancel,
-  open,
 }) => {
   const { t } = useTranslation();
+  const {
+    uploadFile,
+    uploadMultipleFiles,
+    uploadFromURL,
+    getProvider,
+    isGoogleDriveAuthenticated,
+    signInToGoogleDrive,
+  } = useHybridStorage();
+
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [previewMode, setPreviewMode] = useState(false);
-  const [formData, setFormData] = useState(() => {
-    const savedData = localStorage.getItem("lessonDraft");
-    return savedData
-      ? JSON.parse(savedData)
-      : {
-          courseId: courseId,
-          moduleId: moduleId,
-          title: "",
-          description: "",
-          content: "",
-          duration: "",
-          objectives: [],
-          resources: [],
-          order: 0,
-          video: null,
-          audio: null,
-          image: null,
-          materials: [],
-          type: "lesson",
-          status: "draft",
-          vocabulary: [],
-          grammarFocus: [],
-          skills: [],
-          assessment: "",
-          keyActivities: [],
-          createdAt: new Date().toISOString(),
+  const [formData, setFormData] = useState(() => ({
+    courseId: courseId || initialData.courseId || "",
+    moduleId: moduleId || initialData.moduleId || "",
+    title: initialData.title || "",
+    description: initialData.description || "",
+    content: initialData.content || "",
+    duration: initialData.duration || "",
+    objectives: initialData.objectives || [],
+    resources: initialData.resources || [],
+    order: initialData.order || 0,
+    video: initialData.video || null,
+    audio: initialData.audio || null,
+    image: initialData.image || null,
+    materials: initialData.materials || [],
+    type: initialData.type || "lesson",
+    status: initialData.status || "draft",
+    vocabulary: initialData.vocabulary || [],
+    grammarFocus: initialData.grammarFocus || [],
+    skills: initialData.skills || [],
+    assessment: initialData.assessment || "",
+    keyActivities: initialData.keyActivities || [],
+    createdAt: initialData.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }));
+
+  // Only update formData when dialog opens or initialData actually changes
+  const prevInitialData = useRef();
+  useEffect(() => {
+    if (open) {
+      const prev = JSON.stringify(prevInitialData.current);
+      const next = JSON.stringify(initialData);
+      if (prev !== next) {
+        setFormData({
+          courseId: courseId || initialData.courseId || "",
+          moduleId: moduleId || initialData.moduleId || "",
+          title: initialData.title || "",
+          description: initialData.description || "",
+          content: initialData.content || "",
+          duration: initialData.duration || "",
+          objectives: initialData.objectives || [],
+          resources: initialData.resources || [],
+          order: initialData.order || 0,
+          video: initialData.video || null,
+          audio: initialData.audio || null,
+          image: initialData.image || null,
+          materials: initialData.materials || [],
+          type: initialData.type || "lesson",
+          status: initialData.status || "draft",
+          vocabulary: initialData.vocabulary || [],
+          grammarFocus: initialData.grammarFocus || [],
+          skills: initialData.skills || [],
+          assessment: initialData.assessment || "",
+          keyActivities: initialData.keyActivities || [],
+          createdAt: initialData.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-        };
-  });
+        });
+        prevInitialData.current = initialData;
+      }
+    }
+  }, [open, initialData, courseId, moduleId]);
 
   // Ensure arrays are initialized
   useEffect(() => {
@@ -124,11 +168,6 @@ const CreateLessonForm = ({
   });
 
   const [newAttachment, setNewAttachment] = useState({ name: "", url: "" });
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
 
   const [newVocabulary, setNewVocabulary] = useState("");
   const [newGrammarFocus, setNewGrammarFocus] = useState("");
@@ -152,67 +191,52 @@ const CreateLessonForm = ({
     }
   };
 
-  const handleFileChange = (field) => (event) => {
+  const handleFileChange = (field) => async (event) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
+    // Check if using Google Drive and user is not authenticated
+    if (getProvider() === "google-drive" && !isGoogleDriveAuthenticated) {
+      return;
+    }
+
     setLoading(true);
-    if (field === "materials") {
-      storageService
-        .uploadMultipleFiles(
+    try {
+      if (field === "materials") {
+        const uploadedFiles = await uploadMultipleFiles(
           Array.from(files),
           `courses/${courseId}/modules/${moduleId}/materials`
-        )
-        .then((uploadedFiles) => {
-          setFormData((prev) => ({
-            ...prev,
-            materials: [...prev.materials, ...uploadedFiles],
-          }));
-          setLoading(false);
-        })
-        .catch((error) => {
-          setNotification({
-            open: true,
-            message: `Failed to upload ${field}: ${error.message}`,
-            severity: "error",
-          });
-          setLoading(false);
-        });
-    } else {
-      const file = files[0];
-      storageService
-        .uploadFile(file, `courses/${courseId}/modules/${moduleId}/${field}`)
-        .then((uploadedFile) => {
-          setFormData((prev) => ({
-            ...prev,
-            [field]: uploadedFile,
-          }));
-          setLoading(false);
-        })
-        .catch((error) => {
-          setNotification({
-            open: true,
-            message: `Failed to upload ${field}: ${error.message}`,
-            severity: "error",
-          });
-          setLoading(false);
-        });
+        );
+        setFormData((prev) => ({
+          ...prev,
+          materials: [...prev.materials, ...uploadedFiles],
+        }));
+      } else {
+        const uploadedFile = await uploadFile(
+          files[0],
+          `courses/${courseId}/modules/${moduleId}/${field}`
+        );
+        setFormData((prev) => ({
+          ...prev,
+          [field]: uploadedFile,
+        }));
+      }
+    } catch (error) {
+      // no-op
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUrlUpload = async (field, url) => {
-    if (!storageService.isValidUrl(url)) {
-      setNotification({
-        open: true,
-        message: "Invalid URL provided",
-        severity: "error",
-      });
+    // Check if using Google Drive and user is not authenticated
+    if (getProvider() === "google-drive" && !isGoogleDriveAuthenticated) {
       return;
     }
 
     try {
       setLoading(true);
-      const uploadedFile = await storageService.uploadFromURL(
+      const uploadedFile = await uploadFromURL(
         url,
         `courses/${courseId}/modules/${moduleId}/${field}`
       );
@@ -221,11 +245,7 @@ const CreateLessonForm = ({
         [field]: uploadedFile,
       }));
     } catch (error) {
-      setNotification({
-        open: true,
-        message: `Failed to upload from URL: ${error.message}`,
-        severity: "error",
-      });
+      // no-op
     } finally {
       setLoading(false);
     }
@@ -399,20 +419,13 @@ const CreateLessonForm = ({
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
-
     try {
       setLoading(true);
-      // Validate required props
-      if (!courseId || !moduleId) {
+      if (!formData.courseId || !formData.moduleId) {
         throw new Error("Course ID and Module ID are required");
       }
-
       const lessonData = {
-        courseId: courseId,
-        moduleId: moduleId,
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        content: formData.content.trim(),
+        ...formData,
         duration: parseInt(formData.duration) || 0,
         order: parseInt(formData.order) || 0,
         objectives: formData.objectives.filter((obj) => obj.trim() !== ""),
@@ -420,35 +433,17 @@ const CreateLessonForm = ({
         videoUrl: formData.video?.url || "",
         audioUrl: formData.audio?.url || "",
         coverImageUrl: formData.image?.url || "",
-        materials: formData.materials.map((material) => ({
+        materials: (formData.materials || []).map((material) => ({
           name: material.name,
           url: material.url,
           type: material.type,
         })),
-        type: "lesson",
-        status: "draft",
-        createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-
-      console.log("Submitting lesson data:", lessonData);
-      const result = await createLesson(lessonData);
-      console.log("Lesson creation result:", result);
-
+      await onSubmit(lessonData);
       localStorage.removeItem("lessonDraft");
-      setNotification({
-        open: true,
-        message: "Lesson created successfully",
-        severity: "success",
-      });
-      onSuccess?.();
     } catch (err) {
-      console.error("Error creating lesson:", err);
-      setNotification({
-        open: true,
-        message: err.message || "Failed to create lesson",
-        severity: "error",
-      });
+      setError(err.message || "Error saving lesson");
     } finally {
       setLoading(false);
     }
@@ -464,7 +459,7 @@ const CreateLessonForm = ({
         localStorage.setItem("lessonDraft", JSON.stringify(formData));
       }
     }
-    onCancel();
+    onClose();
   };
 
   const renderStepContent = (step) => {
@@ -1025,7 +1020,7 @@ const CreateLessonForm = ({
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       maxWidth="md"
       fullWidth
       PaperProps={{
@@ -1043,9 +1038,14 @@ const CreateLessonForm = ({
             alignItems: "center",
           }}
         >
-          <Typography variant="h5">{t("lessons.addLesson")}</Typography>
+          <Typography variant="h5">
+            {dialogTitle ||
+              (initialData && initialData.id
+                ? t("courses.lessons.editLesson")
+                : t("courses.lessons.createLesson"))}
+          </Typography>
           <Box>
-            <IconButton onClick={handleClose} sx={{ mr: 1 }}>
+            <IconButton onClick={onClose} sx={{ mr: 1 }}>
               <CloseIcon />
             </IconButton>
             <Button
@@ -1062,8 +1062,8 @@ const CreateLessonForm = ({
               onClick={() => {
                 localStorage.removeItem("lessonDraft");
                 setFormData({
-                  courseId: courseId,
-                  moduleId: moduleId,
+                  courseId: courseId || "",
+                  moduleId: moduleId || "",
                   title: "",
                   description: "",
                   content: "",
@@ -1105,12 +1105,10 @@ const CreateLessonForm = ({
                 </Step>
               ))}
             </Stepper>
-
             <Box sx={{ mt: 2 }}>{renderStepContent(activeStep)}</Box>
           </>
         )}
       </DialogContent>
-
       {!previewMode && (
         <DialogActions sx={{ p: 3 }}>
           <Button
@@ -1128,7 +1126,12 @@ const CreateLessonForm = ({
               color="primary"
               disabled={loading}
             >
-              {loading ? "Saving..." : "Create Lesson"}
+              {loading
+                ? t("common.saving")
+                : submitLabel ||
+                  (initialData && initialData.id
+                    ? t("common.save")
+                    : t("courses.lessons.add"))}
             </Button>
           ) : (
             <Button variant="contained" onClick={handleNext} color="primary">
@@ -1137,22 +1140,6 @@ const CreateLessonForm = ({
           )}
         </DialogActions>
       )}
-
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={() => setNotification({ ...notification, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setNotification({ ...notification, open: false })}
-          severity={notification.severity}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Dialog>
   );
 };

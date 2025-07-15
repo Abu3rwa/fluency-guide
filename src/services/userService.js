@@ -10,6 +10,14 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { auth } from "../firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 
 const userService = {
   async createOrUpdateUser(user) {
@@ -147,6 +155,23 @@ const userService = {
     const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
     return userDoc.exists() ? { id: userDoc.id, ...userDoc.data() } : null;
+  },
+
+  async signUpWithEmail(email, password) {
+    return createUserWithEmailAndPassword(auth, email, password);
+  },
+
+  async signInWithEmail(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+  },
+
+  async signOutUser() {
+    return signOut(auth);
+  },
+
+  async signInWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider);
   },
 };
 

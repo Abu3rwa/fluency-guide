@@ -18,7 +18,8 @@
   /* accent-color: magenta; */
   margin: 0;
   padding: 0;
-  width: 100vw !important;
+  width: 100% !important;
+  overflowx: "hidden";
 }
 .hero-section,
 .features-section,

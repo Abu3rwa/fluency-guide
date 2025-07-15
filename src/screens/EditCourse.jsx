@@ -61,11 +61,6 @@ const EditCourse = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -107,11 +102,6 @@ const EditCourse = () => {
       }
     } catch (error) {
       setError("Failed to load course data");
-      setNotification({
-        open: true,
-        message: "Failed to load course data",
-        severity: "error",
-      });
     } finally {
       setLoading(false);
     }
@@ -249,18 +239,9 @@ const EditCourse = () => {
     try {
       setSaving(true);
       await courseService.updateCourse(courseId, formData);
-      setNotification({
-        open: true,
-        message: "Course updated successfully",
-        severity: "success",
-      });
       navigate("/courses");
     } catch (error) {
-      setNotification({
-        open: true,
-        message: error.message || "Failed to update course",
-        severity: "error",
-      });
+      //
     } finally {
       setSaving(false);
     }
@@ -666,20 +647,6 @@ const EditCourse = () => {
           </Box>
         </Box>
       </Paper>
-
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={() => setNotification({ ...notification, open: false })}
-      >
-        <Alert
-          onClose={() => setNotification({ ...notification, open: false })}
-          severity={notification.severity}
-          sx={{ width: "100%" }}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Container>
   );
 };

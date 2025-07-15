@@ -219,6 +219,25 @@ export const getLessonsByCourse = async (courseId) => {
   }
 };
 
+export const getAllLessons = async () => {
+  try {
+    const lessonsQuery = query(
+      collection(db, "lessons"),
+      where("type", "==", "lesson")
+    );
+    const snapshot = await getDocs(lessonsQuery);
+    const lessons = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    // Sort lessons by createdAt in memory
+    return lessons.sort((a, b) => {
+      const dateA = a.createdAt?.toDate?.() || new Date(0);
+      const dateB = b.createdAt?.toDate?.() || new Date(0);
+      return dateA - dateB;
+    });
+  } catch (error) {
+    throw new Error("Failed to get all lessons: " + error.message);
+  }
+};
+
 // Quiz operations
 export const createQuiz = async (quizData) => {
   try {

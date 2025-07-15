@@ -129,7 +129,8 @@
       "lessonOrder": "Ordre",
       "markComplete": "Marquer comme terminé",
       "nextLesson": "Leçon suivante",
-      "previousLesson": "Leçon précédente"
+      "previousLesson": "Leçon précédente",
+      "selectLesson": "Sélectionner la leçon"
     },
     "categories": {
       "grammar": "Grammaire",
@@ -139,7 +140,8 @@
       "reading": "Lecture",
       "writing": "Écriture",
       "business": "Anglais des affaires",
-      "exam": "Préparation aux examens"
+      "exam": "Préparation aux examens",
+      "foundation": "Fondation"
     },
     "errors": {
       "notFound": "Cours non trouvé",
@@ -210,6 +212,9 @@
       "addLesson": "Ajouter une leçon",
       "lessonsCount": "{{count}} leçons",
       "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce module ?"
+    },
+    "tabs": {
+      "label": "Onglets"
     }
   },
   "language": {
@@ -410,6 +415,19 @@
         "cancel": "Annuler",
         "confirm": "Supprimer"
       }
+    }
+  },
+  "lessonManagement": {
+    "fields": {
+      "title": "Titre",
+      "description": "Description",
+      "status": "Statut",
+      "duration": "Durée",
+      "lastUpdated": "Dernière mise à jour",
+      "actions": "Actions"
+    },
+    "actions": {
+      "more": "Plus"
     }
   }
 }

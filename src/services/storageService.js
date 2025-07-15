@@ -9,7 +9,7 @@ const BASE_URL =
 const storage = getStorage();
 
 const storageService = {
-  // Upload a single file
+  // Upload a single file (simplified without auth)
   async uploadFile(file, path) {
     try {
       const fileExtension = file.name.split(".").pop();
@@ -17,11 +17,15 @@ const storageService = {
       const fullPath = `${path}/${fileName}`;
       const storageRef = ref(storage, fullPath);
 
+      console.log("Uploading file to path:", fullPath);
+
       // Upload file
       const snapshot = await uploadBytes(storageRef, file);
 
       // Get download URL
       const downloadURL = await getDownloadURL(snapshot.ref);
+
+      console.log("File uploaded successfully:", downloadURL);
 
       return {
         name: file.name,
@@ -32,7 +36,21 @@ const storageService = {
       };
     } catch (error) {
       console.error("Error uploading file:", error);
-      throw new Error("Failed to upload file");
+
+      // Provide more specific error messages
+      if (error.code === "storage/unauthorized") {
+        throw new Error(
+          "Permission denied. Please check Firebase Storage rules."
+        );
+      } else if (error.code === "storage/quota-exceeded") {
+        throw new Error("Storage quota exceeded. Please try a smaller file.");
+      } else if (error.code === "storage/unauthenticated") {
+        throw new Error(
+          "Authentication required. Please check Firebase configuration."
+        );
+      } else {
+        throw new Error(`Upload failed: ${error.message}`);
+      }
     }
   },
 

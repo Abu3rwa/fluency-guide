@@ -13,21 +13,66 @@ import {
 
 const COLLECTION_NAME = "tasks";
 
+// Utility to normalize task data to match Flutter Task model
+function normalizeTaskData(data) {
+  return {
+    id: data.id || "",
+    title: data.title || "",
+    instructions: data.instructions || "",
+    type: data.type || "multipleChoice",
+    timeLimit: typeof data.timeLimit === "number" ? data.timeLimit : 0,
+    passingScore:
+      typeof data.passingScore === "number" ? data.passingScore : 70,
+    attemptsAllowed:
+      typeof data.attemptsAllowed === "number" ? data.attemptsAllowed : 1,
+    difficulty: data.difficulty || "medium",
+    tags: Array.isArray(data.tags) ? data.tags : [],
+    isPublished:
+      typeof data.isPublished === "boolean" ? data.isPublished : false,
+    showFeedback:
+      typeof data.showFeedback === "boolean" ? data.showFeedback : true,
+    randomizeQuestions:
+      typeof data.randomizeQuestions === "boolean"
+        ? data.randomizeQuestions
+        : false,
+    showCorrectAnswers:
+      typeof data.showCorrectAnswers === "boolean"
+        ? data.showCorrectAnswers
+        : true,
+    allowReview:
+      typeof data.allowReview === "boolean" ? data.allowReview : true,
+    pointsPerQuestion:
+      typeof data.pointsPerQuestion === "number" ? data.pointsPerQuestion : 1,
+    totalPoints: typeof data.totalPoints === "number" ? data.totalPoints : 0,
+    questions: Array.isArray(data.questions) ? data.questions : [],
+    lessonId: data.lessonId || "",
+    courseId: data.courseId || "",
+    createdAt: data.createdAt || new Date(),
+    updatedAt: data.updatedAt || new Date(),
+    status: data.status || "draft",
+    metadata:
+      typeof data.metadata === "object" && data.metadata !== null
+        ? data.metadata
+        : {},
+  };
+}
+
 export const createTask = async (courseId, lessonId, taskData) => {
   try {
-    const taskRef = await addDoc(collection(db, COLLECTION_NAME), {
+    const normalizedTask = normalizeTaskData({
       ...taskData,
       courseId,
       lessonId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-
+    const taskRef = await addDoc(
+      collection(db, COLLECTION_NAME),
+      normalizedTask
+    );
     return {
       id: taskRef.id,
-      ...taskData,
-      courseId,
-      lessonId,
+      ...normalizedTask,
     };
   } catch (error) {
     console.error("Error creating task:", error);
@@ -37,17 +82,17 @@ export const createTask = async (courseId, lessonId, taskData) => {
 
 export const updateTask = async (courseId, lessonId, taskId, taskData) => {
   try {
-    const taskRef = doc(db, COLLECTION_NAME, taskId);
-    await updateDoc(taskRef, {
-      ...taskData,
-      updatedAt: new Date(),
-    });
-
-    return {
-      id: taskId,
+    const normalizedTask = normalizeTaskData({
       ...taskData,
       courseId,
       lessonId,
+      updatedAt: new Date(),
+    });
+    const taskRef = doc(db, COLLECTION_NAME, taskId);
+    await updateDoc(taskRef, normalizedTask);
+    return {
+      id: taskId,
+      ...normalizedTask,
     };
   } catch (error) {
     console.error("Error updating task:", error);
@@ -99,6 +144,20 @@ export const getTasksByLesson = async (courseId, lessonId) => {
     }));
   } catch (error) {
     console.error("Error getting tasks:", error);
+    throw error;
+  }
+};
+
+export const getAllTasks = async () => {
+  try {
+    const tasksQuery = query(collection(db, COLLECTION_NAME));
+    const querySnapshot = await getDocs(tasksQuery);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("Error getting all tasks:", error);
     throw error;
   }
 };

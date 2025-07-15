@@ -1,5 +1,8 @@
+import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppRoutes from "./routes";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const router = createBrowserRouter(
   [
@@ -17,7 +20,13 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ErrorBoundary>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
 }
 
 export default App;

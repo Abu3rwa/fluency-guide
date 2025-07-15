@@ -1,54 +1,26 @@
 import React, { useState } from "react";
 import {
   Box,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
   Drawer,
   List,
   ListItem,
-  ListItemIcon,
-  ListItemText,
   useTheme,
   useMediaQuery,
-  Avatar,
-  Badge,
-  Menu,
-  MenuItem,
-  Divider,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import MenuIcon from "@mui/icons-material/Menu";
-import SchoolIcon from "@mui/icons-material/School";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import PeopleIcon from "@mui/icons-material/People";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import MessageIcon from "@mui/icons-material/Message";
-import SettingsIcon from "@mui/icons-material/Settings";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PersonIcon from "@mui/icons-material/Person";
+
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useUser } from "../../contexts/UserContext";
-import { auth } from "../../firebase";
-import { signOut } from "firebase/auth";
-import ThemeToggle from "../ThemeToggle";
-import { alpha } from "@mui/material/styles";
+
 import {
-  Menu as MenuIconMui,
   Dashboard as DashboardIconMui,
   School as SchoolIconMui,
   People as PeopleIconMui,
   Settings as SettingsIconMui,
-  Notifications as NotificationsIconMui,
-  AccountCircle,
-  Logout as LogoutIconMui,
   Assignment as AssignmentIconMui,
   Analytics as AnalyticsIcon,
 } from "@mui/icons-material";
-import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 

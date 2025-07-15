@@ -75,6 +75,16 @@ const Settings = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
+                Storage Settings
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
                 Notifications
               </Typography>
               <FormControlLabel

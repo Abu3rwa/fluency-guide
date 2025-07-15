@@ -109,14 +109,14 @@ const LandingHeader = () => {
           }}
           onClick={() => navigate(ROUTES.LANDING)}
         >
-          <SchoolIcon
+          {/* <SchoolIcon
             sx={{
               color: "primary.main",
               fontSize: { xs: "1.25rem", sm: "2rem" },
             }}
-          />
+          /> */}
           <Typography
-            variant="h6"
+            variant="h2"
             sx={{
               fontWeight: 700,
               fontSize: { xs: "0.875rem", sm: "1.25rem" },
@@ -139,6 +139,7 @@ const LandingHeader = () => {
         <Box
           sx={{
             display: "flex",
+            margin: "10px",
             gap: { xs: 0.25, sm: 1 },
             alignItems: "center",
             mr: { xs: 0.25, sm: 1 },
