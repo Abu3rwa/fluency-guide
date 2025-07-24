@@ -1,0 +1,6 @@
+.hero-subtitle {
+  background: linear-gradient(45deg, #009688, transparent);
+  padding: 5px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.668);
+}

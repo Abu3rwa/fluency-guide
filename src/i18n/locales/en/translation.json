@@ -731,6 +731,18 @@
       "emailPlaceholder": "Your email address",
       "subscribe": "Subscribe",
       "copyright": "© {{year}} ReapEnglish. All rights reserved."
+    },
+    "tabs": {
+      "title": "Platform Overview",
+      "overview": "Overview",
+      "benefits": "Benefits",
+      "howItWorks": "How It Works",
+      "overviewText": "Discover how our platform empowers your English learning journey.",
+      "howItWorksText": "Sign up, choose a course, and start learning with interactive lessons and real-time feedback.",
+      "flexible": "Flexible",
+      "accessible": "Accessible",
+      "engaging": "Engaging",
+      "personalized": "Personalized"
     }
   },
   "messages": {

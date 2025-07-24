@@ -301,7 +301,10 @@ export default function CoursesTable() {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{ bgcolor: theme.palette.background.paper }}
+      >
         <Table sx={{ minWidth: 750 }} aria-labelledby="courses table">
           <TableHead>
             <TableRow>

@@ -3,6 +3,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppRoutes from "./routes";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { UserProvider } from "./contexts/UserContext";
+import "./index.css";
 
 const router = createBrowserRouter(
   [
@@ -22,9 +25,13 @@ const router = createBrowserRouter(
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <RouterProvider router={router} />
-      </ThemeProvider>
+      <AuthProvider>
+        <UserProvider>
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </UserProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "./constants";
 import AppLayout from "../components/Layout/AppLayout";
 import CustomSpinner from "../components/CustomSpinner";
+import StudentDashboardPage from "../student-ui/students-pages/student-dashboard-page/StudentDashboardPage";
 
 // Lazy load components
 const Landing = React.lazy(() => import("../screens/Landing"));
@@ -17,8 +18,6 @@ const Courses = React.lazy(() => import("../screens/Courses"));
 const CourseDetails = React.lazy(() =>
   import("../screens/CourseDetailsScreen")
 );
-const CreateCourse = React.lazy(() => import("../screens/CourseCreate"));
-const EditCourse = React.lazy(() => import("../screens/EditCourse"));
 const Students = React.lazy(() => import("../screens/Students"));
 const Enrollments = React.lazy(() => import("../screens/Enrollments"));
 const Analytics = React.lazy(() => import("../screens/Analytics"));
@@ -47,8 +46,23 @@ const AdminRoute = ({ children }) => {
 
 // Public routes
 export const publicRoutes = [
-  { path: ROUTES.LANDING, element: <Landing /> },
-  { path: ROUTES.AUTH, element: <Auth /> },
+  // { path: ROUTES.LANDING, element: <Landing /> },
+  {
+    path: ROUTES.AUTH,
+    element: (
+      <AppLayout>
+        <Auth />
+      </AppLayout>
+    ),
+  },
+  {
+    path: ROUTES.LANDING,
+    element: (
+      <AppLayout>
+        <Landing />
+      </AppLayout>
+    ),
+  },
   {
     path: ROUTES.COURSES,
     element: (
@@ -60,6 +74,16 @@ export const publicRoutes = [
   { path: ROUTES.PRICING, element: <Pricing /> },
   { path: ROUTES.ABOUT, element: <About /> },
   { path: ROUTES.CONTACT, element: <Contact /> },
+
+  // Student Profile Page
+  {
+    path: ROUTES.STUDENT_DASHBOARD,
+    element: (
+      <AppLayout>
+        <StudentDashboardPage />
+      </AppLayout>
+    ),
+  },
 ];
 
 // Protected routes
@@ -98,16 +122,7 @@ export const adminRoutes = [
       </AdminRoute>
     ),
   },
-  {
-    path: "/courses/create",
-    element: (
-      <AdminRoute>
-        <AppLayout>
-          <CreateCourse />
-        </AppLayout>
-      </AdminRoute>
-    ),
-  },
+
   {
     path: "/courses/:id",
     element: (
@@ -118,16 +133,7 @@ export const adminRoutes = [
       </AdminRoute>
     ),
   },
-  {
-    path: "/courses/edit/:id",
-    element: (
-      <AdminRoute>
-        <AppLayout>
-          <EditCourse />
-        </AppLayout>
-      </AdminRoute>
-    ),
-  },
+
   {
     path: "/students",
     element: (

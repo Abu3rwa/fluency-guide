@@ -20,10 +20,10 @@ import {
   EmojiEvents as EmojiEventsIcon,
   AttachMoney as AttachMoneyIcon,
 } from "@mui/icons-material";
-import { useTheme } from "../theme/ThemeContext";
+import { useTheme } from "@mui/material/styles";
 
 const KpiCard = ({ title, value, change, icon }) => {
-  const { theme } = useTheme();
+  const theme = useTheme();
   const isPositive = change >= 0;
 
   return (
@@ -88,7 +88,7 @@ const KpiCard = ({ title, value, change, icon }) => {
 };
 
 const ProgressCard = ({ title, data }) => {
-  const { theme } = useTheme();
+  const theme = useTheme();
 
   return (
     <Card
@@ -157,7 +157,7 @@ const ProgressCard = ({ title, data }) => {
 };
 
 const Analytics = () => {
-  const { theme } = useTheme();
+  const theme = useTheme();
 
   const enrollmentData = [
     { name: "Beginner Level", value: 75 },

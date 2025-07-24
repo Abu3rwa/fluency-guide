@@ -1,15 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, db } from "../firebase";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import userService from "../services/userService";
-import { doc, getDoc } from "firebase/firestore";
 
 const UserContext = createContext();
 
@@ -31,18 +23,11 @@ export const UserProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       try {
         if (authUser) {
-          // Get additional user data from Firestore
-          const userDoc = await getDoc(doc(db, "users", authUser.uid));
-          if (userDoc.exists()) {
-            setUser({
-              ...authUser,
-              ...userDoc.data(),
-            });
-          } else {
-            setUser(authUser);
-          }
+          setUser(authUser);
+          await fetchUserData(authUser.uid);
         } else {
           setUser(null);
+          setUserData(null);
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -51,52 +36,13 @@ export const UserProvider = ({ children }) => {
         setLoading(false);
       }
     });
-
     return () => unsubscribe();
   }, []);
-
-  // Sign in with email and password
-  const login = async (email, password) => {
-    try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      return result.user;
-    } catch (error) {
-      console.error("Error signing in:", error);
-      throw error;
-    }
-  };
-
-  // Sign in with Google
-  const loginWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      return result.user;
-    } catch (error) {
-      console.error("Error signing in with Google:", error);
-      throw error;
-    }
-  };
-
-  // Sign up with email and password
-  const signup = async (email, password) => {
-    try {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      return result.user;
-    } catch (error) {
-      console.error("Error signing up:", error);
-      throw error;
-    }
-  };
 
   // Sign out
   const logout = async () => {
     try {
-      await signOut(auth);
+      await userService.signOutUser();
     } catch (error) {
       console.error("Error signing out:", error);
       throw error;
@@ -134,10 +80,9 @@ export const UserProvider = ({ children }) => {
 
   const fetchUserData = async (uid) => {
     try {
-      const userDoc = await getDoc(doc(db, "users", uid));
-      if (userDoc.exists()) {
-        setUserData({ id: userDoc.id, ...userDoc.data() });
-      }
+      const user = await userService.getUserById(uid);
+      setUserData(user);
+      return user;
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -151,13 +96,11 @@ export const UserProvider = ({ children }) => {
     isAuthenticated: !!user,
     isAdmin: userData?.isAdmin || false,
     isStudent: userData?.isStudent || false,
-    login,
-    loginWithGoogle,
-    signup,
     logout,
     updateProfile,
     updateUserRole,
     setUser,
+    fetchUserData,
   };
 
   return (

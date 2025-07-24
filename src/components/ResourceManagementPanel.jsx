@@ -147,6 +147,17 @@ const ResourceManagementPanel = ({
     sortOrder,
   ]);
 
+  const getStatusColor = (status) => {
+    return (
+      {
+        active: "success",
+        published: "success",
+        draft: "warning",
+        archived: "error",
+      }[status] || "default"
+    );
+  };
+
   return (
     <>
       {/* Tabs for resources */}
@@ -183,6 +194,7 @@ const ResourceManagementPanel = ({
             additionalData={additionalData}
             loading={loading}
             emptyMessage={t("No data available.")}
+            getStatusColor={getStatusColor}
           />
         </CardContent>
       </Card>

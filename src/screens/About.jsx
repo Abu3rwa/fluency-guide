@@ -15,10 +15,10 @@ import {
   EmojiEvents as EmojiEventsIcon,
   Security as SecurityIcon,
 } from "@mui/icons-material";
-import { useTheme } from "../theme/ThemeContext";
+import { useTheme } from "@mui/material/styles";
 
 const FeatureCard = ({ icon, title, description }) => {
-  const { theme } = useTheme();
+  const theme = useTheme();
 
   return (
     <Card
@@ -63,7 +63,7 @@ const FeatureCard = ({ icon, title, description }) => {
 };
 
 const TeamMember = ({ name, role, image }) => {
-  const { theme } = useTheme();
+  const theme = useTheme();
 
   return (
     <Card
@@ -107,7 +107,7 @@ const TeamMember = ({ name, role, image }) => {
 };
 
 const About = () => {
-  const { theme } = useTheme();
+  const theme = useTheme();
 
   const features = [
     {

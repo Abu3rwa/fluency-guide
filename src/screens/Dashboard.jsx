@@ -109,9 +109,8 @@ import {
   limit,
   Timestamp,
 } from "firebase/firestore";
-import { useCustomTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
-import { alpha } from "@mui/material/styles";
+import { alpha, useTheme } from "@mui/material/styles";
 import { ErrorBoundary } from "react-error-boundary";
 import {
   ProgressiveLoading,
@@ -133,10 +132,9 @@ import RecentActivity from "../components/RecentActivity";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(0);
-  const { theme } = useCustomTheme();
-  const muiTheme = useMuiTheme();
-  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
-  const isSmallMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { user, userData } = useUser();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
@@ -542,28 +540,28 @@ export default function Dashboard() {
       title: "Total Students",
       value: stats.totalStudents,
       icon: <PeopleIcon />,
-      color: "#2196F3",
+      color: "primary",
       subtitle: "Registered students",
     },
     {
       title: "Active Courses",
       value: stats.activeCourses,
       icon: <SchoolIcon />,
-      color: "#4CAF50",
+      color: "success",
       subtitle: "Currently running",
     },
     {
       title: "Pending Tasks",
       value: stats.pendingTasks,
       icon: <AssignmentIcon />,
-      color: "#FF9800",
+      color: "warning",
       subtitle: "Awaiting completion",
     },
     {
       title: "Completion Rate",
       value: `${stats.completionRate}%`,
       icon: <TrendingUpIcon />,
-      color: "#9C27B0",
+      color: "secondary",
       subtitle: "Overall success rate",
     },
   ];
@@ -766,7 +764,7 @@ export default function Dashboard() {
       sx={{
         position: "relative",
         minHeight: "100vh",
-        backgroundColor: "background.default",
+        backgroundColor: theme.palette.background.default,
       }}
     >
       {loading && <CustomSpinner message="Refreshing data..." />}

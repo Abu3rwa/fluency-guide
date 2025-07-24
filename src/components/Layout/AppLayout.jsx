@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Drawer,
   List,
   ListItem,
   ListItemButton,
@@ -22,10 +21,12 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { useTheme as useAppTheme } from "../../theme/ThemeContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
+import LandingHeader from "../LandingHeader/LandingHeader";
+import { useTheme } from "@mui/material/styles";
 
 const drawerWidth = 320;
 
@@ -33,6 +34,10 @@ const AppLayout = ({ children }) => {
   const { user, userData } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  // Hide sidebar for student routes
+  const isStudentRoute = location.pathname.startsWith("/student/");
+  const isDashboardRoute = location.pathname === "/dashboard";
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const menuItems = userData?.isAdmin
@@ -122,7 +127,7 @@ const AppLayout = ({ children }) => {
 
   const handleNavigation = (path) => {
     navigate(path);
-    if (window.innerWidth < 600) {
+    if (window.innerWidth <= 600) {
       // Mobile breakpoint
       setMobileOpen(false);
     }
@@ -136,14 +141,14 @@ const AppLayout = ({ children }) => {
     <Box
       sx={{
         width: drawerWidth,
-        backgroundColor: "background.paper",
+        backgroundColor: theme.palette.background.paper,
         height: "100%",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ color: "text.primary" }}>
+      <Box sx={{ p: theme.spacing(2) }}>
+        <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
           {userData?.isAdmin
             ? "Admin Dashboard"
             : user
@@ -151,7 +156,10 @@ const AppLayout = ({ children }) => {
             : "Online Teaching"}
         </Typography>
         {userData && (
-          <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{ color: theme.palette.text.secondary, mt: 1 }}
+          >
             {userData.email}
             {userData.isAdmin && (
               <Chip label="Admin" size="small" color="primary" sx={{ ml: 1 }} />
@@ -168,10 +176,10 @@ const AppLayout = ({ children }) => {
               selected={isActiveRoute(item.path)}
               sx={{
                 "&.Mui-selected": {
-                  backgroundColor: "primary.light",
-                  color: "primary.contrastText",
+                  backgroundColor: theme.palette.primary.light,
+                  color: theme.palette.primary.contrastText,
                   "&:hover": {
-                    backgroundColor: "primary.main",
+                    backgroundColor: theme.palette.primary.main,
                   },
                 },
               }}
@@ -179,7 +187,7 @@ const AppLayout = ({ children }) => {
               <ListItemIcon
                 sx={{
                   color: isActiveRoute(item.path)
-                    ? "primary.contrastText"
+                    ? theme.palette.primary.contrastText
                     : "inherit",
                 }}
               >
@@ -190,8 +198,8 @@ const AppLayout = ({ children }) => {
                   <Typography
                     sx={{
                       color: isActiveRoute(item.path)
-                        ? "primary.contrastText"
-                        : "text.primary",
+                        ? theme.palette.primary.contrastText
+                        : theme.palette.text.primary,
                     }}
                   >
                     {item.text}
@@ -209,11 +217,13 @@ const AppLayout = ({ children }) => {
           <ListItem disablePadding>
             <ListItemButton onClick={() => signOut(auth)}>
               <ListItemIcon>
-                <ExitToAppIcon sx={{ color: "error.main" }} />
+                <ExitToAppIcon sx={{ color: theme.palette.error.main }} />
               </ListItemIcon>
               <ListItemText
                 primary={
-                  <Typography sx={{ color: "error.main" }}>Logout</Typography>
+                  <Typography sx={{ color: theme.palette.error.main }}>
+                    Logout
+                  </Typography>
                 }
               />
             </ListItemButton>
@@ -224,11 +234,11 @@ const AppLayout = ({ children }) => {
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/auth")}>
               <ListItemIcon>
-                <PersonIcon sx={{ color: "primary.main" }} />
+                <PersonIcon sx={{ color: theme.palette.primary.main }} />
               </ListItemIcon>
               <ListItemText
                 primary={
-                  <Typography sx={{ color: "primary.main" }}>
+                  <Typography sx={{ color: theme.palette.primary.main }}>
                     Sign In
                   </Typography>
                 }
@@ -241,66 +251,29 @@ const AppLayout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
-      {/* Unified Header - Full Width */}
-      <Header drawerWidth={drawerWidth} onDrawerToggle={handleDrawerToggle} />
-
-      {/* Content Area with Sidebar and Main Content */}
-      <Box sx={{ display: "flex", mt: { xs: 7, sm: 8 } }}>
-        {/* Mobile Drawer */}
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-              borderRight: `1px solid`,
-              borderColor: "divider",
-              backgroundColor: "background.default",
-              top: { xs: 56, sm: 64 }, // Position below header
-              height: { xs: "calc(100% - 56px)", sm: "calc(100% - 64px)" },
-            },
-          }}
-        >
-          {drawerContent}
-        </Drawer>
-
-        {/* Desktop Drawer */}
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-              borderRight: `1px solid`,
-              borderColor: "divider",
-              backgroundColor: "background.default",
-              top: { xs: 56, sm: 64 }, // Position below header
-              height: { xs: "calc(100% - 56px)", sm: "calc(100% - 64px)" },
-            },
-          }}
-          open
-        >
-          {drawerContent}
-        </Drawer>
-
-        {/* Main Content */}
+    <Box
+      sx={{ display: "flex", flexDirection: "column" }}
+      pt={6}
+      className="app-layout"
+    >
+      <LandingHeader />
+      <Box
+        sx={{
+          minHeight: "100vh",
+          backgroundColor: theme.palette.background.default,
+          display: "flex", // Make sidebar and main content side by side
+          flexDirection: "row",
+        }}
+      >
+        {!isStudentRoute && isDashboardRoute && <Sidebar />}
         <Box
           component="main"
           sx={{
             flexGrow: 1,
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
-            minHeight: "calc(100vh - 64px)", // Subtract header height
-            backgroundColor: "background.default",
+            minHeight: "calc(100vh - 64px)",
+            backgroundColor: theme.palette.background.default,
+            // pt: { xs: 1, sm: 3 },
+            ml: !isStudentRoute && isDashboardRoute ? "240px" : 0, // Add margin-left if sidebar is shown
           }}
         >
           {children}

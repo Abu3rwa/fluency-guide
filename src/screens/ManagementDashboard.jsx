@@ -24,12 +24,11 @@ import {
   Tabs,
   Tab,
   Menu,
-  MenuItem as MenuItemComponent,
   Divider,
-  useTheme,
   TextField,
   Skeleton,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -76,7 +75,6 @@ import ManagementTable from "../components/content-management/ManagementTable";
 import ManagementStats from "../components/content-management/ManagementStats";
 import ManagementMenu from "../components/content-management/ManagementMenu";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
-
 import LessonAnalytics from "../components/course/LessonAnalytics";
 
 const ManagementDashboard = () => {

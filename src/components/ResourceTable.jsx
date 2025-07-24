@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
 
 const ResourceTable = ({
   data,
@@ -28,6 +29,7 @@ const ResourceTable = ({
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const theme = useTheme();
 
   const paginatedData = useMemo(() => {
     const startIndex = page * rowsPerPage;
@@ -46,7 +48,10 @@ const ResourceTable = ({
 
   if (loading) {
     return (
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{ bgcolor: theme.palette.background.paper }}
+      >
         <Table>
           <TableHead>
             <TableRow>
@@ -81,7 +86,13 @@ const ResourceTable = ({
 
   if (data.length === 0) {
     return (
-      <Paper sx={{ p: 3, textAlign: "center" }}>
+      <Paper
+        sx={{
+          p: 3,
+          textAlign: "center",
+          bgcolor: theme.palette.background.paper,
+        }}
+      >
         <Typography variant="body1" color="text.secondary">
           {emptyMessage}
         </Typography>
@@ -90,17 +101,26 @@ const ResourceTable = ({
   }
 
   return (
-    <Paper>
+    <Paper sx={{ bgcolor: theme.palette.background.paper }}>
       <TableContainer>
         <Table aria-label="Resource table">
           <TableHead>
             <TableRow>
               {columns.map((col) => (
-                <TableCell key={col.id} aria-label={`Column ${col.label}`}>
+                <TableCell
+                  key={col.id}
+                  aria-label={`Column ${col.label}`}
+                  sx={{ bgcolor: theme.palette.background.paper }}
+                >
                   {col.label}
                 </TableCell>
               ))}
-              <TableCell aria-label="Actions">Actions</TableCell>
+              <TableCell
+                aria-label="Actions"
+                sx={{ bgcolor: theme.palette.background.paper }}
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -118,6 +138,7 @@ const ResourceTable = ({
                         color={getStatusColor(item.status)}
                         size="small"
                         aria-label={`Status: ${item.status}`}
+                        sx={{ fontWeight: 500 }}
                       />
                     ) : col.render ? (
                       col.render(item, additionalData)

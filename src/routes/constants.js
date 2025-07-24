@@ -21,6 +21,9 @@ export const ROUTES = {
   ENROLLMENTS: "/enrollments",
   ANALYTICS: "/analytics",
   SETTINGS: "/settings",
+
+  // Student UI routes
+  STUDENT_DASHBOARD: "/student/dashboard/:id",
 };
 
 // Helper function to generate course details URL

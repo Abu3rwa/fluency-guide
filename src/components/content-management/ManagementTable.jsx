@@ -1,13 +1,20 @@
 import React from "react";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  Button,
-} from "@mui/material";
+import { Card, CardHeader, CardContent, Button } from "@mui/material";
 import ResourceTable from "../ResourceTable";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
+
+const getStatusColor = (status) => {
+  return (
+    {
+      active: "success",
+      published: "success",
+      draft: "warning",
+      archived: "error",
+    }[status] || "default"
+  );
+};
 
 const ManagementTable = ({
   resourceDefs,
@@ -22,11 +29,12 @@ const ManagementTable = ({
   loading,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Card
       sx={{
-        borderRadius: 2,
+        borderRadius: theme.shape.borderRadius,
         overflow: "hidden",
       }}
     >
@@ -43,7 +51,7 @@ const ManagementTable = ({
               resourceDefs[activeResource].singular
             }`}
             sx={{
-              borderRadius: 2,
+              borderRadius: theme.shape.borderRadius,
               textTransform: "none",
               fontWeight: 500,
               px: 3,
@@ -55,8 +63,8 @@ const ManagementTable = ({
           </Button>
         }
         sx={{
-          borderBottom: `1px solid divider`,
-          backgroundColor: "background.paper",
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          backgroundColor: theme.palette.background.paper,
         }}
       />
       <CardContent sx={{ p: 0 }}>

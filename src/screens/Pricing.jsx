@@ -14,11 +14,11 @@ import {
   Divider,
 } from "@mui/material";
 import { Check as CheckIcon, Close as CloseIcon } from "@mui/icons-material";
-import { useTheme } from "../theme/ThemeContext";
+import { useCustomTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
 const PricingTier = ({ title, price, features, isPopular, onSelect }) => {
-  const { theme } = useTheme();
+  const { theme } = useCustomTheme();
   const navigate = useNavigate();
 
   const handleSelect = () => {
@@ -143,7 +143,7 @@ const PricingTier = ({ title, price, features, isPopular, onSelect }) => {
 };
 
 const Pricing = () => {
-  const { theme } = useTheme();
+  const { theme } = useCustomTheme();
 
   const tiers = [
     {

@@ -11,11 +11,11 @@ import {
   Alert,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "../theme/ThemeContext";
+import { useCustomTheme } from "../contexts/ThemeContext";
 
 function Contact() {
   const { t } = useTranslation();
-  const { theme } = useTheme();
+  const { theme } = useCustomTheme();
   const [formData, setFormData] = useState({
     name: "",
     email: "",

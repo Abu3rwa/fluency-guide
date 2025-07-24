@@ -1,30 +1,15 @@
 import React from "react";
-import { IconButton, Tooltip } from "@mui/material";
-import {
-  Brightness4 as DarkModeIcon,
-  Brightness7 as LightModeIcon,
-} from "@mui/icons-material";
-import { useTheme } from "../theme/ThemeContext";
+import { IconButton } from "@mui/material";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import { useCustomTheme } from "../contexts/ThemeContext";
 
-const ThemeToggle = () => {
-  const { mode, toggleTheme } = useTheme();
-
+const ThemeToggle = (props) => {
+  const { mode, toggleTheme } = useCustomTheme();
   return (
-    <Tooltip title={`Switch to ${mode === "light" ? "dark" : "light"} mode`}>
-      <IconButton
-        onClick={toggleTheme}
-        color="inherit"
-        sx={{
-          ml: 1,
-          transition: "transform 0.3s ease-in-out",
-          "&:hover": {
-            transform: "rotate(180deg)",
-          },
-        }}
-      >
-        {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-      </IconButton>
-    </Tooltip>
+    <IconButton onClick={toggleTheme} color="primary" {...props}>
+      {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+    </IconButton>
   );
 };
 

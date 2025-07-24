@@ -26,7 +26,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { useTheme as useAppTheme } from "../../theme/ThemeContext";
+import { useCustomTheme } from "../../contexts/ThemeContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 
@@ -40,7 +40,7 @@ const Header = ({
   customActions = null,
 }) => {
   const theme = useTheme();
-  const { toggleTheme } = useAppTheme();
+  const { mode, toggleTheme } = useCustomTheme();
   const { user, userData } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -164,9 +164,7 @@ const Header = ({
         {/* Theme Toggle */}
         {showThemeToggle && (
           <Tooltip
-            title={`Switch to ${
-              theme.palette.mode === "dark" ? "light" : "dark"
-            } mode`}
+            title={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
           >
             <IconButton
               onClick={toggleTheme}
@@ -178,11 +176,7 @@ const Header = ({
                 },
               }}
             >
-              {theme.palette.mode === "dark" ? (
-                <LightModeIcon />
-              ) : (
-                <DarkModeIcon />
-              )}
+              {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
           </Tooltip>
         )}

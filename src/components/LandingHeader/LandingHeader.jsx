@@ -1,72 +1,39 @@
 import React, { useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Button,
-  IconButton,
-  Box,
-  Menu,
-  MenuItem,
-  Typography,
-  useTheme,
-  useMediaQuery,
-  Avatar,
-  Divider,
-  alpha,
-  Container,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
-import {
-  Translate as TranslateIcon,
-  Brightness4 as DarkModeIcon,
-  Brightness7 as LightModeIcon,
-  AccountCircle as AccountIcon,
-  School as SchoolIcon,
-  Dashboard as DashboardIcon,
-  Logout as LogoutIcon,
-  Language as LanguageIcon,
-} from "@mui/icons-material";
+import logo from "../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import { ROUTES } from "../../routes/constants";
-import { Link as RouterLink } from "react-router-dom";
-import { useTheme as useAppTheme } from "../../theme/ThemeContext";
+import { useCustomTheme } from "../../contexts/ThemeContext";
+import ThemeToggle from "./ThemeToggle";
+import LanguageMenu from "./LanguageMenu";
+import UserMenu from "./UserMenu";
+import { Box, Button, useTheme, useMediaQuery, Stack } from "@mui/material";
 
 const LandingHeader = () => {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
-  const { currentUser, userData, logout } = useAuth();
-  const { toggleTheme } = useAppTheme();
+  const { currentUser, logout, isAdmin } = useAuth();
+  const { mode, toggleTheme } = useCustomTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isRTL = i18n.language === "ar";
 
+  // State for menus
   const [languageAnchor, setLanguageAnchor] = useState(null);
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
 
-  const handleLanguageClick = (event) => {
-    setLanguageAnchor(event.currentTarget);
-  };
-
-  const handleLanguageClose = () => {
-    setLanguageAnchor(null);
-  };
-
-  const handleUserMenuClick = (event) => {
-    setUserMenuAnchor(event.currentTarget);
-  };
-
-  const handleUserMenuClose = () => {
-    setUserMenuAnchor(null);
-  };
-
+  // Handlers for language menu
+  const handleLanguageClick = (event) => setLanguageAnchor(event.currentTarget);
+  const handleLanguageClose = () => setLanguageAnchor(null);
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     handleLanguageClose();
   };
 
+  // Handlers for user menu
+  const handleUserMenuClick = (event) => setUserMenuAnchor(event.currentTarget);
+  const handleUserMenuClose = () => setUserMenuAnchor(null);
   const handleLogout = async () => {
     try {
       await logout();
@@ -77,215 +44,172 @@ const LandingHeader = () => {
     handleUserMenuClose();
   };
 
+  const languageIconColor =
+    theme.palette.mode === "dark" ? "white" : theme.palette.grey[900];
+
   return (
-    <AppBar
-      position="fixed"
+    <Box
+      component="header"
       sx={{
-        background: (theme) => alpha(theme.palette.background.paper, 0.8),
-        backdropFilter: "blur(10px)",
-        boxShadow: (theme) =>
-          `0 4px 20px ${alpha(theme.palette.primary.main, 0.1)}`,
-        width: "100%",
+        position: "fixed",
+        top: 0,
         left: 0,
-        right: 0,
+        width: "100%",
+        zIndex: 1000,
+        bgcolor: theme.palette.background.paper,
+        backdropFilter: "blur(10px)",
+        boxShadow: theme.shadows[1],
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: { xs: 56, sm: 64 },
+        px: { xs: 0, sm: 0 },
       }}
     >
-      <Toolbar
+      <Box
         sx={{
-          px: { xs: 1, sm: 2 },
-          minHeight: { xs: "56px", sm: "64px" },
           width: "100%",
-          maxWidth: "100vw",
-          overflow: "hidden",
+          maxWidth: 1200,
+          mx: "auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: { xs: 56, sm: 64 },
+          px: { xs: 1, sm: 3 },
         }}
       >
+        {/* Logo and App Name */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 0.5,
             cursor: "pointer",
-            minWidth: 0,
+            textDecoration: "none",
           }}
           onClick={() => navigate(ROUTES.LANDING)}
         >
-          {/* <SchoolIcon
-            sx={{
-              color: "primary.main",
-              fontSize: { xs: "1.25rem", sm: "2rem" },
+          <img
+            src={logo}
+            alt="Logo"
+            style={{
+              height: isMobile ? 32 : 40,
+              width: isMobile ? 32 : 40,
+              marginRight: 8,
             }}
-          /> */}
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 700,
-              fontSize: { xs: "0.875rem", sm: "1.25rem" },
-              background: (theme) =>
-                `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {t("common.appName")}
-          </Typography>
+          />
         </Box>
-
-        <Box sx={{ flexGrow: 1 }} />
-
-        {/* Theme Toggle */}
+        {/* Navigation */}
         <Box
+          component="nav"
           sx={{
-            display: "flex",
-            margin: "10px",
-            gap: { xs: 0.25, sm: 1 },
-            alignItems: "center",
-            mr: { xs: 0.25, sm: 1 },
-          }}
-        >
-          <IconButton
-            size="small"
-            onClick={toggleTheme}
-            sx={{
-              color: (theme) =>
-                theme.palette.mode === "dark"
-                  ? "white"
-                  : theme.palette.grey[900],
-              p: { xs: 0.25, sm: 1 },
-              "&:hover": {
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "dark"
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "rgba(0, 0, 0, 0.04)",
-              },
-            }}
-          >
-            {theme.palette.mode === "dark" ? (
-              <LightModeIcon
-                sx={{ fontSize: { xs: "1.1rem", sm: "1.5rem" } }}
-              />
-            ) : (
-              <DarkModeIcon sx={{ fontSize: { xs: "1.1rem", sm: "1.5rem" } }} />
-            )}
-          </IconButton>
-        </Box>
-
-        {/* Language Selector */}
-        <Box
-          sx={{
-            display: "flex",
-            gap: { xs: 0.25, sm: 1 },
+            flex: 1,
+            display: { xs: "none", sm: "flex" },
+            justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <IconButton
-            size="small"
-            onClick={handleLanguageClick}
-            sx={{
-              color: (theme) =>
-                theme.palette.mode === "dark"
-                  ? "white"
-                  : theme.palette.grey[900],
-              p: { xs: 0.25, sm: 1 },
-              "&:hover": {
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "dark"
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "rgba(0, 0, 0, 0.04)",
-              },
-            }}
+          <Stack
+            direction="row"
+            spacing={{ xs: 1, sm: 3 }}
+            component="ul"
+            sx={{ listStyle: "none", m: 0, p: 0 }}
           >
-            <TranslateIcon sx={{ fontSize: { xs: "1.1rem", sm: "1.5rem" } }} />
-          </IconButton>
-          <Menu
-            anchorEl={languageAnchor}
-            open={Boolean(languageAnchor)}
-            onClose={handleLanguageClose}
-          >
-            <MenuItem onClick={() => handleLanguageChange("en")}>
-              {t("language.en")}
-            </MenuItem>
-            <MenuItem onClick={() => handleLanguageChange("ar")}>
-              {t("language.ar")}
-            </MenuItem>
-          </Menu>
-        </Box>
-
-        {/* User Menu */}
-        {currentUser ? (
-          <>
-            <Box
-              sx={{
-                display: "flex",
-                gap: { xs: 0.5, sm: 1 },
-                alignItems: "center",
-              }}
-            >
-              <IconButton
-                size="small"
-                onClick={handleUserMenuClick}
+            <Box component="li">
+              <Button
+                variant="text"
+                color="inherit"
                 sx={{
-                  color: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? "white"
-                      : theme.palette.grey[900],
-                  p: { xs: 0.5, sm: 1 },
-                  "&:hover": {
-                    backgroundColor: (theme) =>
-                      theme.palette.mode === "dark"
-                        ? "rgba(255, 255, 255, 0.08)"
-                        : "rgba(0, 0, 0, 0.04)",
-                  },
+                  fontWeight: 500,
+                  fontSize: "1rem",
+                  color: theme.palette.text.primary,
                 }}
+                onClick={() => navigate(ROUTES.LANDING)}
               >
-                <Avatar
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    bgcolor: "primary.main",
-                  }}
-                >
-                  {currentUser.email?.[0]?.toUpperCase()}
-                </Avatar>
-              </IconButton>
+                {t("navigation.home")}
+              </Button>
             </Box>
-            <Menu
-              anchorEl={userMenuAnchor}
-              open={Boolean(userMenuAnchor)}
-              onClose={handleUserMenuClose}
-            >
-              <MenuItem
-                component={RouterLink}
-                to={ROUTES.DASHBOARD}
-                onClick={handleUserMenuClose}
+            <Box component="li">
+              <Button
+                variant="text"
+                color="inherit"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: "1rem",
+                  color: theme.palette.text.primary,
+                }}
+                onClick={() => navigate(ROUTES.COURSES)}
               >
-                <ListItemIcon>
-                  <DashboardIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>{t("navigation.dashboard")}</ListItemText>
-              </MenuItem>
-              <Divider />
-              <MenuItem onClick={handleLogout}>
-                <ListItemIcon>
-                  <LogoutIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>{t("auth.logout")}</ListItemText>
-              </MenuItem>
-            </Menu>
-          </>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigate(ROUTES.AUTH)}
-          >
-            {t("auth.login")}
-          </Button>
-        )}
-      </Toolbar>
-    </AppBar>
+                {t("navigation.courses")}
+              </Button>
+            </Box>
+            <Box component="li">
+              <Button
+                variant="text"
+                color="inherit"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: "1rem",
+                  color: theme.palette.text.primary,
+                }}
+                onClick={() => navigate(ROUTES.PRICING)}
+              >
+                {t("navigation.pricing")}
+              </Button>
+            </Box>
+            <Box component="li">
+              <Button
+                variant="text"
+                color="inherit"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: "1rem",
+                  color: theme.palette.text.primary,
+                }}
+                onClick={() => navigate(ROUTES.CONTACT)}
+              >
+                {t("navigation.contact")}
+              </Button>
+            </Box>
+          </Stack>
+        </Box>
+        {/* Actions */}
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}
+        >
+          <ThemeToggle mode={mode} toggleTheme={toggleTheme} />
+          <LanguageMenu
+            languageAnchor={languageAnchor}
+            handleLanguageClick={handleLanguageClick}
+            handleLanguageClose={handleLanguageClose}
+            handleLanguageChange={handleLanguageChange}
+            languageIconColor={languageIconColor}
+            t={t}
+          />
+          {currentUser ? (
+            <UserMenu
+              userMenuAnchor={userMenuAnchor}
+              handleUserMenuClick={handleUserMenuClick}
+              handleUserMenuClose={handleUserMenuClose}
+              handleLogout={handleLogout}
+              isAdmin={isAdmin}
+              currentUser={currentUser}
+              languageIconColor={languageIconColor}
+              t={t}
+              navigate={navigate}
+            />
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate(ROUTES.AUTH)}
+            >
+              {t("auth.login")}
+            </Button>
+          )}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

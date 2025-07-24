@@ -18,10 +18,10 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import { alpha } from "@mui/material/styles";
-import { useTheme } from "../theme/ThemeContext";
+import { useCustomTheme } from "../contexts/ThemeContext";
 
 const RecentActivity = ({ activities = [] }) => {
-  const { theme } = useTheme();
+  const { theme } = useCustomTheme();
 
   return (
     <Card>

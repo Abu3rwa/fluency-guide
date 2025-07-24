@@ -6,7 +6,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
-import { ThemeProvider } from "./theme/ThemeContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

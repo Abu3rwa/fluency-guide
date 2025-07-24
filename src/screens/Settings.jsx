@@ -11,10 +11,10 @@ import {
   Button,
   Divider,
 } from "@mui/material";
-import { useTheme } from "../theme/ThemeContext";
+import { useCustomTheme } from "../contexts/ThemeContext";
 
 const Settings = () => {
-  const { mode, toggleTheme } = useTheme();
+  const { mode, toggleTheme } = useCustomTheme();
 
   return (
     <Box>

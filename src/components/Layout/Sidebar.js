@@ -23,12 +23,14 @@ import {
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "@mui/material/styles";
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, userData } = useAuth();
   const isAdmin = userData?.isAdmin;
+  const theme = useTheme();
 
   // Define menu items based on user role
   const menuItems = isAdmin
@@ -125,20 +127,33 @@ const Sidebar = () => {
   return (
     <Box
       sx={{
-        height: "100%",
-        background: (theme) =>
+        position: "fixed",
+        left: 0,
+        top: 70,
+        width: 240, // Fixed width for sidebar
+        minWidth: 200,
+        maxWidth: 300,
+        height: "100vh", // Full viewport height
+        background:
           theme.palette.mode === "dark"
-            ? "linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%)"
-            : "linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.8) 100%)",
+            ? `linear-gradient(180deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 100%)`
+            : `linear-gradient(180deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 100%)`,
         backdropFilter: "blur(10px)",
-        borderRight: (theme) =>
-          `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+        borderRight: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
         display: "flex",
         flexDirection: "column",
+        zIndex: 1200,
       }}
     >
       {/* Header */}
-      <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
+      <Box
+        sx={{
+          p: theme.spacing(2),
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
         <img src="/logo.png" alt="Logo" style={{ height: 40 }} />
         <Box>
           <Typography
@@ -153,7 +168,7 @@ const Sidebar = () => {
             <Typography
               variant="caption"
               sx={{
-                color: "text.secondary",
+                color: theme.palette.text.secondary,
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
@@ -173,7 +188,7 @@ const Sidebar = () => {
         </Box>
       </Box>
 
-      <Divider sx={{ mx: 2, mb: 1 }} />
+      <Divider sx={{ mx: theme.spacing(2), mb: 1 }} />
 
       {/* Navigation Menu */}
       <List sx={{ flexGrow: 1, px: 1 }}>
@@ -191,10 +206,9 @@ const Sidebar = () => {
               alignItems: "flex-start",
               py: 1.5,
               "&.Mui-selected": {
-                background: (theme) => alpha(theme.palette.primary.main, 0.1),
+                background: alpha(theme.palette.primary.main, 0.1),
                 "&:hover": {
-                  background: (theme) =>
-                    alpha(theme.palette.primary.main, 0.15),
+                  background: alpha(theme.palette.primary.main, 0.15),
                 },
               },
             }}
@@ -202,7 +216,7 @@ const Sidebar = () => {
             <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
               <ListItemIcon
                 sx={{
-                  color: (theme) =>
+                  color:
                     location.pathname === item.path
                       ? theme.palette.primary.main
                       : theme.palette.text.secondary,
@@ -215,7 +229,7 @@ const Sidebar = () => {
                 primary={item.text}
                 primaryTypographyProps={{
                   fontWeight: location.pathname === item.path ? 600 : 400,
-                  color: (theme) =>
+                  color:
                     location.pathname === item.path
                       ? theme.palette.primary.main
                       : theme.palette.text.primary,
@@ -226,7 +240,7 @@ const Sidebar = () => {
             <Typography
               variant="caption"
               sx={{
-                color: "text.secondary",
+                color: theme.palette.text.secondary,
                 ml: 5,
                 fontSize: "0.75rem",
                 lineHeight: 1.2,
@@ -239,11 +253,11 @@ const Sidebar = () => {
       </List>
 
       {/* Footer */}
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: theme.spacing(2) }}>
         <Typography
           variant="caption"
           sx={{
-            color: "text.secondary",
+            color: theme.palette.text.secondary,
             textAlign: "center",
             display: "block",
           }}

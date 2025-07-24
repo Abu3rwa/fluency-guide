@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 // All text is now hardcoded in English; i18n removed.
 import CourseHeader from "../components/course/CourseHeader";
 import CourseOverview from "../components/course/CourseOverview";
-import CourseAnalytics from "../components/course/CourseAnalytics";
 import TaskFormTabs from "../components/tasks/TaskFormTabs";
 import TaskDialog from "../components/tasks/TaskDialog";
 
@@ -579,11 +578,6 @@ const CourseDetailsScreen = () => {
         {/* Course Overview */}
         <Grid item xs={12} md={8}>
           <CourseOverview course={course} />
-        </Grid>
-
-        {/* Analytics Summary */}
-        <Grid item xs={12} md={4}>
-          <CourseAnalytics analytics={analytics} />
         </Grid>
       </Grid>
       {/* Tabs */}

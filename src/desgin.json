@@ -1,0 +1,142 @@
+{
+  "project": "Kawtheron Design System",
+  "version": "1.0.0",
+  "source": "https://www.kawtheron.com/ar",
+  "colors": {
+    "primary": {
+      "main": "#141414",
+      "contrastText": "#FFFFFF"
+    },
+    "secondary": {
+      "main": "#8c8c8c",
+      "contrastText": "#FFFFFF"
+    },
+    "accent": {
+      "main": "#D6A83C",
+      "contrastText": "#141414"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#8c8c8c",
+      "disabled": "#5a5a5a"
+    },
+    "background": {
+      "default": "#141414",
+      "paper": "#1F1F1F"
+    },
+    "common": {
+      "black": "#000000",
+      "white": "#FFFFFF"
+    }
+  },
+  "typography": {
+    "fontFamily": "'Noto Sans Arabic', 'Helvetica Neue', 'Arial', sans-serif",
+    "headings": {
+      "fontFamily": "'Noto Sans Arabic', sans-serif",
+      "fontWeight": "700",
+      "lineHeight": 1.2
+    },
+    "body": {
+      "fontFamily": "'Noto Sans Arabic', sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": 1.6
+    },
+    "h1": {
+      "fontSize": "clamp(2.5rem, 5vw, 4rem)",
+      "fontWeight": "700"
+    },
+    "h2": {
+      "fontSize": "clamp(2rem, 4vw, 3rem)",
+      "fontWeight": "700"
+    },
+    "h3": {
+      "fontSize": "clamp(1.5rem, 3vw, 2rem)",
+      "fontWeight": "600"
+    },
+    "paragraph": {
+      "fontSize": "1rem",
+      "lineHeight": 1.7
+    },
+    "link": {
+      "color": "#FFFFFF",
+      "hoverColor": "#D6A83C",
+      "textDecoration": "none"
+    }
+  },
+  "layout": {
+    "breakpoints": {
+      "xs": "0px",
+      "sm": "576px",
+      "md": "768px",
+      "lg": "992px",
+      "xl": "1200px"
+    },
+    "container": {
+      "maxWidth": "1200px",
+      "padding": "0 15px"
+    },
+    "spacing": {
+      "base": 8,
+      "unit": "px",
+      "values": {
+        "1": 8,
+        "2": 16,
+        "3": 24,
+        "4": 32,
+        "5": 40,
+        "6": 48,
+        "8": 64,
+        "10": 80
+      }
+    }
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "backgroundColor": "#D6A83C",
+        "color": "#141414",
+        "borderRadius": "5px",
+        "padding": "12px 24px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "border": "2px solid #D6A83C",
+        "hover": {
+          "backgroundColor": "transparent",
+          "color": "#D6A83C"
+        }
+      },
+      "secondary": {
+        "backgroundColor": "transparent",
+        "color": "#FFFFFF",
+        "borderRadius": "5px",
+        "padding": "10px 22px",
+        "fontSize": "16px",
+        "fontWeight": "500",
+        "border": "2px solid #FFFFFF",
+        "hover": {
+          "backgroundColor": "#FFFFFF",
+          "color": "#141414"
+        }
+      }
+    },
+    "card": {
+      "backgroundColor": "#1F1F1F",
+      "borderRadius": "8px",
+      "padding": "24px",
+      "boxShadow": "none",
+      "textAlign": "center"
+    },
+    "input": {
+      "backgroundColor": "#1F1F1F",
+      "border": "1px solid #5a5a5a",
+      "borderRadius": "5px",
+      "padding": "12px",
+      "color": "#FFFFFF",
+      "focus": {
+        "borderColor": "#D6A83C",
+        "boxShadow": "0 0 5px rgba(214, 168, 60, 0.5)"
+      }
+    }
+  }
+}
