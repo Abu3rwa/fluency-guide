@@ -58,12 +58,12 @@ const LandingHeader = () => {
         zIndex: 1000,
         bgcolor: theme.palette.background.paper,
         backdropFilter: "blur(10px)",
-        boxShadow: theme.shadows[1],
-        borderBottom: `1px solid ${theme.palette.divider}`,
+        // boxShadow: theme.shadows[1],
+        // borderBottom: `1px solid ${theme.palette.divider}`,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: { xs: 56, sm: 64 },
+        height: { xs: theme.spacing(7), sm: theme.spacing(8) },
         px: { xs: 0, sm: 0 },
       }}
     >
@@ -75,8 +75,8 @@ const LandingHeader = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          height: { xs: 56, sm: 64 },
-          px: { xs: 1, sm: 3 },
+          height: { xs: theme.spacing(7), sm: theme.spacing(8) },
+          px: { xs: theme.spacing(1), sm: theme.spacing(3) },
         }}
       >
         {/* Logo and App Name */}
@@ -93,9 +93,9 @@ const LandingHeader = () => {
             src={logo}
             alt="Logo"
             style={{
-              height: isMobile ? 32 : 40,
-              width: isMobile ? 32 : 40,
-              marginRight: 8,
+              height: isMobile ? theme.spacing(4) : theme.spacing(5),
+              width: isMobile ? theme.spacing(4) : theme.spacing(5),
+              marginRight: theme.spacing(1),
             }}
           />
         </Box>
@@ -120,9 +120,10 @@ const LandingHeader = () => {
                 variant="text"
                 color="inherit"
                 sx={{
-                  fontWeight: 500,
-                  fontSize: "1rem",
+                  fontWeight: theme.typography.fontWeightMedium,
+                  fontSize: theme.typography.body1.fontSize,
                   color: theme.palette.text.primary,
+                  fontFamily: theme.typography.body1.fontFamily,
                 }}
                 onClick={() => navigate(ROUTES.LANDING)}
               >
@@ -134,9 +135,10 @@ const LandingHeader = () => {
                 variant="text"
                 color="inherit"
                 sx={{
-                  fontWeight: 500,
-                  fontSize: "1rem",
+                  fontWeight: theme.typography.fontWeightMedium,
+                  fontSize: theme.typography.body1.fontSize,
                   color: theme.palette.text.primary,
+                  fontFamily: theme.typography.body1.fontFamily,
                 }}
                 onClick={() => navigate(ROUTES.COURSES)}
               >
@@ -148,9 +150,10 @@ const LandingHeader = () => {
                 variant="text"
                 color="inherit"
                 sx={{
-                  fontWeight: 500,
-                  fontSize: "1rem",
+                  fontWeight: theme.typography.fontWeightMedium,
+                  fontSize: theme.typography.body1.fontSize,
                   color: theme.palette.text.primary,
+                  fontFamily: theme.typography.body1.fontFamily,
                 }}
                 onClick={() => navigate(ROUTES.PRICING)}
               >
@@ -162,9 +165,10 @@ const LandingHeader = () => {
                 variant="text"
                 color="inherit"
                 sx={{
-                  fontWeight: 500,
-                  fontSize: "1rem",
+                  fontWeight: theme.typography.fontWeightMedium,
+                  fontSize: theme.typography.body1.fontSize,
                   color: theme.palette.text.primary,
+                  fontFamily: theme.typography.body1.fontFamily,
                 }}
                 onClick={() => navigate(ROUTES.CONTACT)}
               >
@@ -175,7 +179,11 @@ const LandingHeader = () => {
         </Box>
         {/* Actions */}
         <Box
-          sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: theme.spacing(1), sm: theme.spacing(2) },
+          }}
         >
           <ThemeToggle mode={mode} toggleTheme={toggleTheme} />
           <LanguageMenu
@@ -203,6 +211,11 @@ const LandingHeader = () => {
               variant="contained"
               color="primary"
               onClick={() => navigate(ROUTES.AUTH)}
+              sx={{
+                fontFamily: theme.typography.button.fontFamily,
+                fontWeight: theme.typography.button.fontWeight,
+                fontSize: theme.typography.button.fontSize,
+              }}
             >
               {t("auth.login")}
             </Button>

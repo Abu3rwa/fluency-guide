@@ -189,14 +189,25 @@ export default function StudentsTable() {
   const renderMobileView = () => (
     <Box sx={{ width: "100%" }}>
       {paginatedStudents.map((student) => (
-        <Card key={student.id} sx={{ mb: 2, mx: 1 }}>
+        <Card
+          key={student.id}
+          sx={{ mb: theme.spacing(2), mx: theme.spacing(1) }}
+        >
           <CardContent>
             <Stack spacing={2}>
               <Box>
-                <Typography variant="h6" component="div">
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ fontFamily: theme.typography.h6.fontFamily }}
+                >
                   {student.displayName || "N/A"}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontFamily: theme.typography.body2.fontFamily }}
+                >
                   {student.email || "N/A"}
                 </Typography>
               </Box>
@@ -211,12 +222,19 @@ export default function StudentsTable() {
 
               <Divider />
 
-              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: theme.spacing(1),
+                  flexWrap: "wrap",
+                }}
+              >
                 <Button
                   size="small"
                   variant="outlined"
                   fullWidth={isMobile}
                   onClick={() => handleEditStudent(student)}
+                  sx={{ fontFamily: theme.typography.button.fontFamily }}
                 >
                   Edit
                 </Button>
@@ -226,6 +244,7 @@ export default function StudentsTable() {
                   color="error"
                   fullWidth={isMobile}
                   onClick={() => handleDeleteClick(student)}
+                  sx={{ fontFamily: theme.typography.button.fontFamily }}
                 >
                   Delete
                 </Button>
@@ -234,6 +253,7 @@ export default function StudentsTable() {
                   variant="outlined"
                   fullWidth={isMobile}
                   onClick={() => handleToggleSuspend(student)}
+                  sx={{ fontFamily: theme.typography.button.fontFamily }}
                 >
                   {student.suspended ? "Unsuspend" : "Suspend"}
                 </Button>
@@ -251,10 +271,38 @@ export default function StudentsTable() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell sx={{ minWidth: 150 }}>Name</TableCell>
-            <TableCell sx={{ minWidth: 200 }}>Email</TableCell>
-            <TableCell sx={{ minWidth: 100 }}>Status</TableCell>
-            <TableCell sx={{ minWidth: 200 }}>Actions</TableCell>
+            <TableCell
+              sx={{
+                minWidth: 150,
+                fontFamily: theme.typography.body1.fontFamily,
+              }}
+            >
+              Name
+            </TableCell>
+            <TableCell
+              sx={{
+                minWidth: 200,
+                fontFamily: theme.typography.body1.fontFamily,
+              }}
+            >
+              Email
+            </TableCell>
+            <TableCell
+              sx={{
+                minWidth: 100,
+                fontFamily: theme.typography.body1.fontFamily,
+              }}
+            >
+              Status
+            </TableCell>
+            <TableCell
+              sx={{
+                minWidth: 200,
+                fontFamily: theme.typography.body1.fontFamily,
+              }}
+            >
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -270,11 +318,18 @@ export default function StudentsTable() {
                 />
               </TableCell>
               <TableCell>
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: theme.spacing(1),
+                    flexWrap: "wrap",
+                  }}
+                >
                   <Button
                     size="small"
                     variant="outlined"
                     onClick={() => handleEditStudent(student)}
+                    sx={{ fontFamily: theme.typography.button.fontFamily }}
                   >
                     Edit
                   </Button>
@@ -283,6 +338,7 @@ export default function StudentsTable() {
                     variant="outlined"
                     color="error"
                     onClick={() => handleDeleteClick(student)}
+                    sx={{ fontFamily: theme.typography.button.fontFamily }}
                   >
                     Delete
                   </Button>
@@ -290,6 +346,7 @@ export default function StudentsTable() {
                     size="small"
                     variant="outlined"
                     onClick={() => handleToggleSuspend(student)}
+                    sx={{ fontFamily: theme.typography.button.fontFamily }}
                   >
                     {student.suspended ? "Unsuspend" : "Suspend"}
                   </Button>
@@ -311,17 +368,20 @@ export default function StudentsTable() {
           flexDirection: isMobile ? "column" : "row",
           justifyContent: "space-between",
           alignItems: isMobile ? "stretch" : "center",
-          mb: 3,
-          gap: isMobile ? 2 : 0,
+          mb: theme.spacing(3),
+          gap: isMobile ? theme.spacing(2) : 0,
         }}
       >
         <Box>
           <Typography
             variant="h6"
             sx={{
-              fontSize: isMobile ? "1.1rem" : "1.25rem",
+              fontSize: isMobile
+                ? theme.typography.body1.fontSize
+                : theme.typography.h6.fontSize,
               fontWeight: 600,
-              mb: isMobile ? 0.5 : 0,
+              mb: isMobile ? theme.spacing(0.5) : 0,
+              fontFamily: theme.typography.h6.fontFamily,
             }}
           >
             Students ({filteredStudents.length})
@@ -330,7 +390,10 @@ export default function StudentsTable() {
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: "0.875rem" }}
+              sx={{
+                fontSize: theme.typography.body2.fontSize,
+                fontFamily: theme.typography.body2.fontFamily,
+              }}
             >
               Manage your student accounts
             </Typography>
@@ -341,14 +404,15 @@ export default function StudentsTable() {
           onClick={() => setCreateDialogOpen(true)}
           fullWidth={isMobile}
           sx={{
-            minHeight: isMobile ? "44px" : "40px",
-            fontSize: isMobile ? "0.875rem" : "0.875rem",
+            minHeight: isMobile ? theme.spacing(5.5) : theme.spacing(5),
+            fontSize: theme.typography.button.fontSize,
             textTransform: "none",
-            fontWeight: 600,
-            borderRadius: 2,
-            px: isMobile ? 3 : 4,
-            py: isMobile ? 1.5 : 2,
+            fontWeight: theme.typography.button.fontWeight,
+            borderRadius: theme.shape.borderRadius,
+            px: isMobile ? theme.spacing(3) : theme.spacing(4),
+            py: isMobile ? theme.spacing(1.5) : theme.spacing(2),
             boxShadow: 2,
+            fontFamily: theme.typography.button.fontFamily,
             "&:hover": {
               boxShadow: 4,
               transform: "translateY(-1px)",

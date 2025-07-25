@@ -23,7 +23,8 @@ const COURSES_COLLECTION = "courses";
 export async function getAllCourses() {
   try {
     const snapshot = await getDocs(collection(db, COURSES_COLLECTION));
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    // console.log(snapshot.docs.map((doc) => ({ id: doc.id })));
+    return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
   } catch (e) {
     console.error("Error getting courses:", e);
     return [];

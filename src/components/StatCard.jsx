@@ -29,12 +29,24 @@ const StatCard = ({ icon, value, label, color }) => {
           justifyContent: "center",
         }}
       >
-        {React.cloneElement(icon, { sx: { color: iconColor, fontSize: 28 } })}
+        {React.cloneElement(icon, {
+          sx: { color: iconColor, fontSize: theme.typography.h4.fontSize },
+        })}
       </Box>
-      <Typography variant="h6" fontWeight={700} color="text.primary">
+      <Typography
+        variant="h6"
+        fontWeight={700}
+        color="text.primary"
+        sx={{ fontFamily: theme.typography.h6.fontFamily }}
+      >
         {value}
       </Typography>
-      <Typography variant="body2" color="text.secondary" align="center">
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        align="center"
+        sx={{ fontFamily: theme.typography.body2.fontFamily }}
+      >
         {label}
       </Typography>
     </Card>

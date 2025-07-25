@@ -1,5 +1,18 @@
-body {
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+.MuiTypography-root {
+  font-family: "Zain", "Roboto", Arial, sans-serif;
+}
+.main-icon {
+  background: #7c3aed7a !important;
+  padding: 4px !important;
+  border-radius: 14px !important;
 }

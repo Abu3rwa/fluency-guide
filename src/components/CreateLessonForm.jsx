@@ -80,34 +80,69 @@ const CreateLessonForm = ({
     signInToGoogleDrive,
   } = useHybridStorage();
 
-  const [activeStep, setActiveStep] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [previewMode, setPreviewMode] = useState(false);
-  const [formData, setFormData] = useState(() => ({
-    courseId: courseId || initialData.courseId || "",
-    moduleId: moduleId || initialData.moduleId || "",
-    title: initialData.title || "",
-    description: initialData.description || "",
-    content: initialData.content || "",
-    duration: initialData.duration || "",
-    objectives: initialData.objectives || [],
-    resources: initialData.resources || [],
-    order: initialData.order || 0,
+  // Example English lesson default values
+  const defaultLesson = {
+    courseId: courseId || initialData.courseId || "eng101",
+    moduleId: moduleId || initialData.moduleId || "mod1",
+    title: initialData.title || "Greetings and Introductions",
+    description:
+      initialData.description ||
+      "Learn how to greet people and introduce yourself in English.",
+    content:
+      initialData.content ||
+      "<p>In this lesson, you will learn common greetings, how to introduce yourself, and ask for someone's name.</p>",
+    duration: initialData.duration || "1",
+    objectives: initialData.objectives || [
+      "Use basic greetings in English",
+      "Introduce yourself and others",
+      "Ask and answer questions about names",
+    ],
+    resources: initialData.resources || [
+      {
+        type: "link",
+        label: "Greetings Video",
+        url: "https://www.youtube.com/watch?v=english_greetings",
+      },
+      {
+        type: "link",
+        label: "Printable Worksheet",
+        url: "https://example.com/greetings-worksheet.pdf",
+      },
+    ],
+    order: initialData.order || 1,
     video: initialData.video || null,
     audio: initialData.audio || null,
     image: initialData.image || null,
     materials: initialData.materials || [],
     type: initialData.type || "lesson",
     status: initialData.status || "draft",
-    vocabulary: initialData.vocabulary || [],
-    grammarFocus: initialData.grammarFocus || [],
-    skills: initialData.skills || [],
-    assessment: initialData.assessment || "",
-    keyActivities: initialData.keyActivities || [],
+    vocabulary: initialData.vocabulary || [
+      "hello",
+      "good morning",
+      "my name is",
+      "nice to meet you",
+    ],
+    grammarFocus: initialData.grammarFocus || [
+      "Present Simple",
+      "Subject Pronouns",
+    ],
+    skills: initialData.skills || ["Speaking", "Listening"],
+    assessment:
+      initialData.assessment ||
+      "Complete the dialogue and introduce yourself to a partner.",
+    keyActivities: initialData.keyActivities || [
+      "Role-play greetings",
+      "Listening to dialogues",
+      "Worksheet completion",
+    ],
     createdAt: initialData.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  }));
+  };
+  const [formData, setFormData] = useState(() => defaultLesson);
+  const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [previewMode, setPreviewMode] = useState(false);
 
   // Only update formData when dialog opens or initialData actually changes
   const prevInitialData = useRef();
@@ -159,6 +194,27 @@ const CreateLessonForm = ({
     }));
   }, []);
 
+  // Load draft from localStorage if available and no initialData is provided
+  useEffect(() => {
+    if (open && !initialData.id) {
+      const draft = localStorage.getItem("lessonDraft");
+      if (draft) {
+        try {
+          setFormData(JSON.parse(draft));
+        } catch (e) {
+          // Ignore JSON parse errors for corrupted drafts
+        }
+      }
+    }
+  }, [open, initialData.id]);
+
+  // Persist formData to localStorage on every change
+  useEffect(() => {
+    if (open && !initialData.id) {
+      localStorage.setItem("lessonDraft", JSON.stringify(formData));
+    }
+  }, [formData, open, initialData.id]);
+
   const [errors, setErrors] = useState({});
   const [newObjective, setNewObjective] = useState("");
   const [newResource, setNewResource] = useState({
@@ -173,10 +229,6 @@ const CreateLessonForm = ({
   const [newGrammarFocus, setNewGrammarFocus] = useState("");
   const [newSkill, setNewSkill] = useState("");
   const [newActivity, setNewActivity] = useState("");
-
-  useEffect(() => {
-    localStorage.setItem("lessonDraft", JSON.stringify(formData));
-  }, [formData]);
 
   const handleChange = (field) => (event) => {
     setFormData((prev) => ({
@@ -384,17 +436,24 @@ const CreateLessonForm = ({
     const newErrors = {};
     switch (activeStep) {
       case 0:
-        if (!formData.title) newErrors.title = "Title is required";
+        if (!formData.title)
+          newErrors.title = t("createLessonForm.titleRequired");
         if (!formData.description)
-          newErrors.description = "Description is required";
-        if (!formData.duration) newErrors.duration = "Duration is required";
+          newErrors.description = t("createLessonForm.descriptionRequired");
+        if (!formData.duration)
+          newErrors.duration = t("createLessonForm.durationRequired");
         break;
       case 1:
-        if (!formData.content) newErrors.content = "Content is required";
+        if (!formData.content)
+          newErrors.content = t("createLessonForm.contentRequired");
         if (formData.objectives.length === 0) {
-          newErrors.objectives = "At least one objective is required";
+          newErrors.objectives = t(
+            "createLessonForm.atLeastOneObjectiveRequired"
+          );
         } else if (formData.objectives.some((o) => o.trim() === "")) {
-          newErrors.objectives = "Empty objectives are not allowed";
+          newErrors.objectives = t(
+            "createLessonForm.emptyObjectivesNotAllowed"
+          );
         }
         break;
       case 2:
@@ -422,7 +481,7 @@ const CreateLessonForm = ({
     try {
       setLoading(true);
       if (!formData.courseId || !formData.moduleId) {
-        throw new Error("Course ID and Module ID are required");
+        throw new Error(t("createLessonForm.courseIdRequired"));
       }
       const lessonData = {
         ...formData,
@@ -441,9 +500,9 @@ const CreateLessonForm = ({
         updatedAt: new Date().toISOString(),
       };
       await onSubmit(lessonData);
-      localStorage.removeItem("lessonDraft");
+      localStorage.removeItem("lessonDraft"); // Clear draft only after success
     } catch (err) {
-      setError(err.message || "Error saving lesson");
+      setError(err.message || t("createLessonForm.errorSaving"));
     } finally {
       setLoading(false);
     }
@@ -470,7 +529,7 @@ const CreateLessonForm = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Lesson Title"
+                label={t("createLessonForm.lessonTitleLabel")}
                 value={formData.title}
                 onChange={handleChange("title")}
                 error={!!errors.title}
@@ -481,7 +540,7 @@ const CreateLessonForm = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Description"
+                label={t("createLessonForm.descriptionLabel")}
                 value={formData.description}
                 onChange={handleChange("description")}
                 multiline
@@ -494,7 +553,7 @@ const CreateLessonForm = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Duration (hours)"
+                label={t("createLessonForm.durationLabel")}
                 type="number"
                 value={formData.duration}
                 onChange={handleChange("duration")}
@@ -506,22 +565,24 @@ const CreateLessonForm = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Order"
+                label={t("createLessonForm.orderLabel")}
                 type="number"
                 value={formData.order}
                 onChange={handleChange("order")}
-                helperText="Lesson sequence in the course"
+                helperText={t("createLessonForm.lessonSequenceInCourse")}
               />
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Vocabulary
+                {t("createLessonForm.vocabularyLabel")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add vocabulary word"
+                  placeholder={t(
+                    "createLessonForm.addVocabularyWordPlaceholder"
+                  )}
                   value={newVocabulary}
                   onChange={(e) => setNewVocabulary(e.target.value)}
                 />
@@ -530,7 +591,7 @@ const CreateLessonForm = ({
                   onClick={handleAddVocabulary}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("createLessonForm.addButton")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -545,13 +606,13 @@ const CreateLessonForm = ({
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Grammar Focus
+                {t("createLessonForm.grammarFocusLabel")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add grammar point"
+                  placeholder={t("createLessonForm.addGrammarPointPlaceholder")}
                   value={newGrammarFocus}
                   onChange={(e) => setNewGrammarFocus(e.target.value)}
                 />
@@ -560,7 +621,7 @@ const CreateLessonForm = ({
                   onClick={handleAddGrammarFocus}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("createLessonForm.addButton")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -575,13 +636,13 @@ const CreateLessonForm = ({
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Skills
+                {t("createLessonForm.skillsLabel")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add skill"
+                  placeholder={t("createLessonForm.addSkillPlaceholder")}
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                 />
@@ -590,7 +651,7 @@ const CreateLessonForm = ({
                   onClick={handleAddSkill}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("createLessonForm.addButton")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -606,7 +667,7 @@ const CreateLessonForm = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Assessment"
+                label={t("createLessonForm.assessmentLabel")}
                 value={formData.assessment || ""}
                 onChange={handleChange("assessment")}
                 multiline
@@ -615,13 +676,13 @@ const CreateLessonForm = ({
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Key Activities
+                {t("createLessonForm.keyActivitiesLabel")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add activity"
+                  placeholder={t("createLessonForm.addActivityPlaceholder")}
                   value={newActivity}
                   onChange={(e) => setNewActivity(e.target.value)}
                 />
@@ -630,7 +691,7 @@ const CreateLessonForm = ({
                   onClick={handleAddActivity}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("createLessonForm.addButton")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -652,7 +713,7 @@ const CreateLessonForm = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Content"
+                label={t("createLessonForm.contentLabel")}
                 value={formData.content}
                 onChange={handleChange("content")}
                 multiline
@@ -664,13 +725,15 @@ const CreateLessonForm = ({
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Learning Objectives
+                {t("createLessonForm.learningObjectivesLabel")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add a learning objective"
+                  placeholder={t(
+                    "createLessonForm.addLearningObjectivePlaceholder"
+                  )}
                   value={newObjective}
                   onChange={(e) => setNewObjective(e.target.value)}
                   error={!!errors.objectives}
@@ -681,7 +744,7 @@ const CreateLessonForm = ({
                   onClick={handleAddObjective}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("createLessonForm.addButton")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -696,13 +759,13 @@ const CreateLessonForm = ({
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Resources
+                {t("createLessonForm.resourcesLabel")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add a resource"
+                  placeholder={t("createLessonForm.addResourcePlaceholder")}
                   value={newResource.label}
                   onChange={(e) =>
                     setNewResource({ ...newResource, label: e.target.value })
@@ -711,7 +774,7 @@ const CreateLessonForm = ({
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add a resource URL"
+                  placeholder={t("createLessonForm.addResourceUrlPlaceholder")}
                   value={newResource.url}
                   onChange={(e) =>
                     setNewResource({ ...newResource, url: e.target.value })
@@ -722,7 +785,7 @@ const CreateLessonForm = ({
                   onClick={handleAddResource}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("createLessonForm.addButton")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -745,7 +808,7 @@ const CreateLessonForm = ({
               <Card>
                 <CardContent>
                   <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                    Video
+                    {t("createLessonForm.videoLabel")}
                   </Typography>
                   <Button
                     component="label"
@@ -755,7 +818,7 @@ const CreateLessonForm = ({
                     sx={{ mb: 1 }}
                     disabled={loading}
                   >
-                    Upload Video
+                    {t("createLessonForm.uploadVideoButton")}
                     <VisuallyHiddenInput
                       type="file"
                       accept="video/*"
@@ -782,7 +845,7 @@ const CreateLessonForm = ({
               <Card>
                 <CardContent>
                   <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                    Audio
+                    {t("createLessonForm.audioLabel")}
                   </Typography>
                   <Button
                     component="label"
@@ -792,7 +855,7 @@ const CreateLessonForm = ({
                     sx={{ mb: 1 }}
                     disabled={loading}
                   >
-                    Upload Audio
+                    {t("createLessonForm.uploadAudioButton")}
                     <VisuallyHiddenInput
                       type="file"
                       accept="audio/*"
@@ -819,7 +882,7 @@ const CreateLessonForm = ({
               <Card>
                 <CardContent>
                   <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                    Image
+                    {t("createLessonForm.imageLabel")}
                   </Typography>
                   <Button
                     component="label"
@@ -829,7 +892,7 @@ const CreateLessonForm = ({
                     sx={{ mb: 1 }}
                     disabled={loading}
                   >
-                    Upload Image
+                    {t("createLessonForm.uploadImageButton")}
                     <VisuallyHiddenInput
                       type="file"
                       accept="image/*"
@@ -860,7 +923,7 @@ const CreateLessonForm = ({
               <Card>
                 <CardContent>
                   <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                    Course Materials (PDF)
+                    {t("createLessonForm.courseMaterialsLabel")}
                   </Typography>
                   <Button
                     component="label"
@@ -870,7 +933,7 @@ const CreateLessonForm = ({
                     sx={{ mb: 1 }}
                     disabled={loading}
                   >
-                    Upload PDF Materials
+                    {t("createLessonForm.uploadPdfMaterialsButton")}
                     <VisuallyHiddenInput
                       type="file"
                       accept=".pdf"
@@ -881,7 +944,7 @@ const CreateLessonForm = ({
                   {formData.materials.length > 0 && (
                     <Box sx={{ mt: 2 }}>
                       <Typography variant="subtitle2" gutterBottom>
-                        Uploaded Materials:
+                        {t("createLessonForm.uploadedMaterialsLabel")}:
                       </Typography>
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                         {formData.materials.map((material, index) => (
@@ -913,20 +976,21 @@ const CreateLessonForm = ({
                 {formData.description}
               </Typography>
               <Typography variant="body2" color="text.secondary" paragraph>
-                Duration: {formData.duration} minutes
+                {t("createLessonForm.durationLabel")}: {formData.duration}{" "}
+                {t("createLessonForm.minutes")}
               </Typography>
 
               <Divider sx={{ my: 2 }} />
 
               <Typography variant="h6" gutterBottom>
-                Content
+                {t("createLessonForm.contentLabel")}
               </Typography>
               <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
                 {formData.content}
               </Typography>
 
               <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-                Learning Objectives
+                {t("createLessonForm.learningObjectivesLabel")}
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
                 {formData.objectives.map((objective, index) => (
@@ -935,7 +999,7 @@ const CreateLessonForm = ({
               </Box>
 
               <Typography variant="h6" gutterBottom>
-                Resources
+                {t("createLessonForm.resourcesLabel")}
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {formData.resources.map((resource, index) => (
@@ -948,7 +1012,7 @@ const CreateLessonForm = ({
               </Box>
 
               <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-                Course Materials
+                {t("createLessonForm.courseMaterialsLabel")}
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
                 {formData.materials.map((material, index) => (
@@ -973,7 +1037,9 @@ const CreateLessonForm = ({
                         sx={{ height: 200 }}
                       />
                       <CardContent>
-                        <Typography variant="subtitle2">Video</Typography>
+                        <Typography variant="subtitle2">
+                          {t("createLessonForm.videoLabel")}
+                        </Typography>
                       </CardContent>
                     </Card>
                   </Grid>
@@ -988,7 +1054,9 @@ const CreateLessonForm = ({
                         sx={{ height: 100 }}
                       />
                       <CardContent>
-                        <Typography variant="subtitle2">Audio</Typography>
+                        <Typography variant="subtitle2">
+                          {t("createLessonForm.audioLabel")}
+                        </Typography>
                       </CardContent>
                     </Card>
                   </Grid>
@@ -1002,7 +1070,9 @@ const CreateLessonForm = ({
                         sx={{ height: 200, objectFit: "cover" }}
                       />
                       <CardContent>
-                        <Typography variant="subtitle2">Image</Typography>
+                        <Typography variant="subtitle2">
+                          {t("createLessonForm.imageLabel")}
+                        </Typography>
                       </CardContent>
                     </Card>
                   </Grid>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, Button, Modal, Fade } from "@mui/material";
 import GradientText from "./GradientText";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
-import heroImage from "../../assests/heroImage.png";
+import heroImage from "../../assets/heroImage.png";
 
 const HeroSection = ({ isRTL, t, navigate, theme }) => {
   const [open, setOpen] = useState(false);

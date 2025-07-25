@@ -1,4 +1,4 @@
-# Landing Page Courses Section Ideas
+create a Landing Page Courses Section Ideas
 
 ## 1. Layout & Structure
 

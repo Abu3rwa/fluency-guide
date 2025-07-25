@@ -8,7 +8,7 @@ export const ROUTES = {
   PRICING: "/pricing",
   ABOUT: "/about",
   CONTACT: "/contact",
-
+  STUDENT_COURSE_DETAILS: "/student/courses/:id",
   // Protected routes
   PROFILE: "/profile",
 
@@ -24,6 +24,7 @@ export const ROUTES = {
 
   // Student UI routes
   STUDENT_DASHBOARD: "/student/dashboard/:id",
+  STUDENT_LESSON_DETAILS: "/student/lessons/:lessonId",
 };
 
 // Helper function to generate course details URL

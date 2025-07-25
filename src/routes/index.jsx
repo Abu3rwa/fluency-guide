@@ -5,6 +5,8 @@ import { ROUTES } from "./constants";
 import AppLayout from "../components/Layout/AppLayout";
 import CustomSpinner from "../components/CustomSpinner";
 import StudentDashboardPage from "../student-ui/students-pages/student-dashboard-page/StudentDashboardPage";
+import StudentCourseDetailsPage from "../student-ui/students-pages/student-course-details-page/StudentCourseDetailsPage";
+import StudentLessonDetailsPage from "../student-ui/students-pages/student-lesson-details-page/StudentLessonDetailsPage";
 
 // Lazy load components
 const Landing = React.lazy(() => import("../screens/Landing"));
@@ -14,7 +16,6 @@ const ManagementDashboard = React.lazy(() =>
   import("../screens/ManagementDashboard")
 );
 const Profile = React.lazy(() => import("../screens/Profile"));
-const Courses = React.lazy(() => import("../screens/Courses"));
 const CourseDetails = React.lazy(() =>
   import("../screens/CourseDetailsScreen")
 );
@@ -64,13 +65,14 @@ export const publicRoutes = [
     ),
   },
   {
-    path: ROUTES.COURSES,
+    path: ROUTES.STUDENT_COURSE_DETAILS,
     element: (
       <AppLayout>
-        <Courses />
+        <StudentCourseDetailsPage />
       </AppLayout>
     ),
   },
+
   { path: ROUTES.PRICING, element: <Pricing /> },
   { path: ROUTES.ABOUT, element: <About /> },
   { path: ROUTES.CONTACT, element: <Contact /> },
@@ -81,6 +83,14 @@ export const publicRoutes = [
     element: (
       <AppLayout>
         <StudentDashboardPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: ROUTES.STUDENT_LESSON_DETAILS,
+    element: (
+      <AppLayout>
+        <StudentLessonDetailsPage />
       </AppLayout>
     ),
   },
@@ -108,16 +118,6 @@ export const adminRoutes = [
       <AdminRoute>
         <AppLayout>
           <Dashboard />
-        </AppLayout>
-      </AdminRoute>
-    ),
-  },
-  {
-    path: "/courses",
-    element: (
-      <AdminRoute>
-        <AppLayout>
-          <Courses />
         </AppLayout>
       </AdminRoute>
     ),

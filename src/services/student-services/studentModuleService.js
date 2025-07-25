@@ -21,14 +21,20 @@ const MODULES_COLLECTION = "modules";
 
 // Get all modules for a course
 export async function getModulesByCourse(courseId) {
+  console.log("getModulesByCourse", courseId);
   try {
     const q = query(
       collection(db, MODULES_COLLECTION),
-      where("courseId", "==", courseId),
-      orderBy("order")
+      where("courseId", "==", courseId)
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const modules = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    // Debug log: show all courseIds in the result and the input courseId
+    console.log("[getModulesByCourse] input courseId:", courseId);
+    modules.forEach((m) =>
+      console.log("[getModulesByCourse] module:", m.id, "courseId:", m.courseId)
+    );
+    return modules;
   } catch (e) {
     console.error("Error getting modules by course:", e);
     return [];

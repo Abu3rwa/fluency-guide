@@ -16,6 +16,11 @@ firebase.json
 firebase.rules
 firebase.settings.json
 firebase.settings.rules
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
 
 # testing
 /coverage

@@ -1,105 +1,116 @@
-# StudentDashboardPage Enhancement Prompt
+You are an AI coding assistant. For every coding task, execute the plan step-by-step, efficiently and without unnecessary pauses or requests for confirmation. Do not stop or ask for permission unless you encounter an ambiguous requirement or a critical error that cannot be resolved with the information provided. Always:
 
-Enhance the `StudentDashboardPage` to deliver a modern, responsive, and accessible student dashboard, combining the best practices from the Home Screen and Profile Screen UI migration plans.
+- Proactively break down the task into actionable steps.
+- Implement each step immediately, using best practices and clear, maintainable code.
+- Only ask for clarification if absolutely necessary.
+- Avoid repeating questions or waiting for user approval between steps.
+- Continue until the task is fully completed, tested, and ready for review.
+- Summarize what was done at the end, and suggest next steps if relevant: polish and finish the lesson detials functionality and real backend data: # Responsiveness & Theming Plan for Student Lesson Details Page
 
----
+## 1. **Overall Goals**
 
-## Layout & Components
-
-- Use a responsive grid or flex layout.
-- **Header**: Greeting section with user avatar, name, email, and role (side-by-side on desktop, stacked on mobile).
-- **Main Sections**:
-  - **ProgressSummary**: Visual summary of learning progress, streaks, and goals (progress bars, stats, charts).
-  - **AchievementsList**: Responsive grid/list of earned achievements/badges, each clickable for more details.
-  - **LearningPathSection**: (Optional) Show current learning path or enrolled courses.
-  - **QuickActionsSection**: Shortcuts to profile editing, settings, logout, etc.
-- **Side/Bottom**: Quick actions or additional navigation links.
+- Ensure the Lesson Details Page is fully responsive (mobile-first, works on all screen sizes).
+- Use the app's theme (from ThemeContext.js) for all colors, typography, spacing, and component overrides.
+- Maintain accessibility and a modern, visually appealing UI.
 
 ---
 
-## State Management
+## 2. **Layout & Structure**
 
-- Use React Context (or Redux if already in use) for user profile, progress, and achievements data.
-- Use local state for UI (e.g., modal open/close).
-- Memoize derived data for performance.
-
----
-
-## Data Fetching
-
-- Fetch user profile, progress, and achievements on mount (or subscribe to context).
-- Show loading skeletons/placeholders while fetching.
-- Handle errors gracefully with user-friendly messages.
+- Use MUI's `Box`, `Grid`, and `Stack` components for layout.
+- Main container: `maxWidth="md"` or `lg`, with responsive horizontal padding (`px: { xs: 1, sm: 2, md: 4 }`).
+- Sections stack vertically on mobile (`xs`), side-by-side or grouped on `md+` screens where appropriate.
+- Use `sx` prop for responsive spacing, e.g. `py: { xs: 2, md: 4 }`.
+- Sticky/fixed header: Use `position: 'sticky'`, `top: 0`, and theme background/shadow.
 
 ---
 
-## Interactivity
+## 3. **Theming**
 
-- **Edit Profile**: Modal/dialog with form validation, avatar upload, and save/cancel actions.
-- **Achievements**: Clickable for details (modal or tooltip).
-- **Settings**: Navigates to settings page.
-- **Logout**: Signs out and redirects to login.
-- **Cards/Sections**: Clickable for navigation to Profile, Progress, Courses, Lessons, Vocabulary, Achievements, Settings.
-
----
-
-## Accessibility
-
-- All buttons and links must be keyboard accessible (tab order, aria-labels).
-- Alt text for avatar.
-- Sufficient color contrast.
-- Use semantic HTML (`<section>`, `<header>`, `<main>`, `<button>`, `<nav>`, etc.).
-- Announce updates (e.g., profile saved) with ARIA live regions.
+- Use `useTheme()` from MUI to access the app theme in every component.
+- All colors, backgrounds, and borders should use `theme.palette` values.
+- All font sizes, weights, and families should use `theme.typography` values.
+- Use `theme.spacing()` for all margins and paddings.
+- Use `theme.shape.borderRadius` for all cards, buttons, and containers.
+- Use `theme.shadows` for elevation where needed.
+- Support both light and dark modes (no hardcoded colors).
 
 ---
 
-## Mobile
+## 4. **Component-Specific Recommendations**
 
-- Stacked layout for small screens.
-- Responsive grid/list for achievements.
-- Floating action button (FAB) for edit on mobile.
-- Touch-friendly targets.
-- Collapsible sections for mobile.
+### **Header Section**
 
----
+- Responsive padding and font size.
+- Truncate long titles with ellipsis on small screens.
+- Use theme colors for background and text.
 
-## Extensibility & Theming
+### **Media Player**
 
-- Allow for additional profile fields (bio, location, social links).
-- Support for dark mode.
-- Easy to add new achievement types or progress metrics.
+- Media (video/audio) should be 100% width, with max height on mobile.
+- Use `borderRadius` and `boxShadow` from theme.
+- Stack multiple media vertically with spacing.
 
----
+### **Objectives, Vocabulary, Grammar, Skills**
 
-## Implementation Steps
+- Use `List` with responsive padding.
+- Typography should use theme variants.
+- On mobile, lists are full width; on desktop, can be in a side panel or grid.
 
-1. Scaffold/refactor the `StudentDashboardPage` and subcomponents.
-2. Integrate with user context for data.
-3. Implement data fetching and loading states.
-4. Build Edit Profile modal/dialog.
-5. Add interactivity and accessibility features.
-6. Test on desktop and mobile.
-7. Polish UI and handle edge cases.
+### **Content Section**
 
----
+- Use `Typography` with theme font and color.
+- Responsive font size for readability.
+- Images in content should be max-width 100% and responsive.
 
-## Example Wireframe
+### **Resources Panel**
 
-```
-+------------------------------------------------------+
-| [Avatar]  Name (Role)         [Edit] [Settings]      |
-|           Email                                      |
-+------------------------------------------------------+
-| Progress: [Progress Bars/Stats/Charts]               |
-+------------------------------------------------------+
-| Achievements: [Badge1] [Badge2] [Badge3] ...         |
-+------------------------------------------------------+
-| [Logout]                                             |
-+------------------------------------------------------+
-```
+- Use `List` or `Grid` for files/links.
+- Responsive layout: stack on mobile, grid on desktop.
+- Use theme for icons, links, and backgrounds.
+
+### **Actions Bar**
+
+- Buttons should be full width on mobile, inline on desktop.
+- Use theme colors, border radius, and spacing.
+
+### **Instructor & Support**
+
+- Card layout with theme background, border radius, and shadow.
+- Responsive: stack vertically on mobile, side-by-side on desktop.
 
 ---
 
-## Goal
+## 5. **Accessibility & RTL**
 
-Deliver a beautiful, modern, and user-friendly student dashboard that is accessible, responsive, and extensible, following the best practices outlined above.
+- All interactive elements must be keyboard accessible.
+- Use semantic HTML and ARIA labels.
+- Support RTL layout for Arabic (MUI's direction and theme).
+- Ensure color contrast meets accessibility standards.
+
+---
+
+## 6. **Actionable Steps**
+
+1. Audit all components for hardcoded styles; replace with theme values and responsive `sx` props.
+2. Use MUI's `useMediaQuery` for any custom breakpoint logic.
+3. Test all breakpoints (`xs`, `sm`, `md`, `lg`, `xl`) and RTL mode.
+4. Add/adjust `sx` props for spacing, font size, and layout in each component.
+5. Use `theme.palette.background.default` and `theme.palette.background.paper` for backgrounds.
+6. Use `theme.typography` for all text.
+7. Use `theme.spacing()` and `theme.shape.borderRadius` for all spacing and corners.
+8. Add visual polish: hover/focus states, shadows, transitions using theme.
+9. Test with real data and in both light/dark modes.
+
+---
+
+## 7. **Testing & Review**
+
+- Test on all device sizes (mobile, tablet, desktop).
+- Test in both LTR and RTL modes.
+- Test with both light and dark themes.
+- Use browser dev tools to simulate devices and check for overflow, wrapping, and touch targets.
+
+---
+
+**By following this plan, the Student Lesson Details Page will be fully responsive, visually consistent, and accessible, providing a modern and delightful user experience.**

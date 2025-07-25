@@ -89,7 +89,8 @@
     "contact": "Contact",
     "dashboard": "Dashboard",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "pricing": "Pricing"
   },
   "dashboard": {
     "welcome": "Welcome",
@@ -671,16 +672,48 @@
     "faq": {
       "title": "Frequently Asked Questions",
       "subtitle": "Find answers to common questions about our platform and services",
-      "question1": "How does the learning process work?",
-      "answer1": "Our learning process is designed to be interactive and engaging. You'll have access to video lessons, practice exercises, and real-time feedback from instructors. The curriculum is structured to help you progress from basic to advanced levels at your own pace.",
-      "question2": "What devices can I use to access the platform?",
-      "answer2": "You can access our platform from any device with an internet connection, including desktop computers, laptops, tablets, and smartphones. Our responsive design ensures a seamless learning experience across all devices.",
-      "question3": "How long does it take to become fluent?",
-      "answer3": "The time to achieve fluency varies depending on your starting level, learning goals, and dedication. With regular practice and our structured curriculum, most students see significant improvement within 3-6 months.",
-      "question4": "Is there a free trial available?",
-      "answer4": "Yes, we offer a 7-day free trial that gives you full access to our platform and courses. This allows you to experience our teaching methods and decide if our platform is right for you.",
-      "question5": "What support is available if I need help?",
-      "answer5": "We provide comprehensive support through multiple channels. You can reach our support team via email, live chat, or schedule a one-on-one session with an instructor. We also have a community forum where you can connect with other learners."
+      "items": [
+        {
+          "question": "How does the learning process work?",
+          "answer": "Our learning process is designed to be interactive and engaging. You'll have access to video lessons, practice exercises, and real-time feedback from instructors. The curriculum is structured to help you progress from basic to advanced levels at your own pace."
+        },
+        {
+          "question": "What devices can I use to access the platform?",
+          "answer": "You can access our platform from any device with an internet connection, including desktop computers, laptops, tablets, and smartphones. Our responsive design ensures a seamless learning experience across all devices."
+        },
+        {
+          "question": "How long does it take to become fluent?",
+          "answer": "The time to achieve fluency varies depending on your starting level, learning goals, and dedication. With regular practice and our structured curriculum, most students see significant improvement within 3-6 months."
+        },
+        {
+          "question": "Is there a free trial available?",
+          "answer": "Yes, we offer a 7-day free trial that gives you full access to our platform and courses. This allows you to experience our teaching methods and decide if our platform is right for you."
+        },
+        {
+          "question": "What support is available if I need help?",
+          "answer": "We provide comprehensive support through multiple channels. You can reach our support team via email, live chat, or schedule a one-on-one session with an instructor. We also have a community forum where you can connect with other learners."
+        },
+        {
+          "question": "Can I access the courses offline?",
+          "answer": "Currently, our courses require an internet connection. We are working on adding offline access in the future."
+        },
+        {
+          "question": "Are there group discounts available?",
+          "answer": "Yes, we offer special pricing for groups and organizations. Please contact us for more details."
+        },
+        {
+          "question": "How do I reset my password?",
+          "answer": "You can reset your password by clicking on the 'Forgot Password' link on the login page and following the instructions."
+        },
+        {
+          "question": "What payment methods are accepted?",
+          "answer": "We accept major credit cards, PayPal, and other secure payment methods."
+        },
+        {
+          "question": "Can I get a certificate after completing a course?",
+          "answer": "Yes, you will receive a certificate of completion for each course you finish."
+        }
+      ]
     },
     "appShowcase": {
       "title": "Learn English On The Go",
@@ -743,6 +776,14 @@
       "accessible": "Accessible",
       "engaging": "Engaging",
       "personalized": "Personalized"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "messageTooltip": "Let us know how we can help!",
+      "send": "Send Message"
     }
   },
   "messages": {
@@ -1132,7 +1173,6 @@
   },
   "lessonAnalytics": {
     "title": "Lesson Analytics",
-    "timeRange": "Time Range",
     "timeRange": {
       "week": "Last 7 days",
       "month": "Last 30 days",
@@ -1199,5 +1239,198 @@
     "phone": "Phone",
     "bio": "Bio",
     "update": "Update Profile"
+  },
+  "studentCourseDetails": {
+    "header": {
+      "startLearning": "Start Learning",
+      "instructor": "Instructor",
+      "role": "Instructor"
+    },
+    "contentOutline": {
+      "title": "Course Content",
+      "ariaLabel": "Course content outline section",
+      "markAsCompleted": "Mark {{lesson}} as completed",
+      "lessonCompleted": "Lesson marked as completed!{{title}}",
+      "undo": "Undo"
+    },
+    "materialsDialog": {
+      "title": "Course Materials",
+      "noMaterials": "No materials available.",
+      "download": "Download",
+      "close": "Close"
+    },
+    "reviews": {
+      "title": "Reviews & Ratings",
+      "summary": "{{avg}} ({{count}} reviews)",
+      "noReviews": "No reviews yet.",
+      "student": "Student",
+      "addEdit": "Add/Edit Your Review",
+      "loginToReview": "Login to Review",
+      "submitTitle": "Submit Your Review",
+      "yourReview": "Your Review",
+      "cancel": "Cancel",
+      "submitting": "Submitting...",
+      "submit": "Submit"
+    },
+    "moduleList": {
+      "title": "Modules & Lessons",
+      "showLess": "Show Less",
+      "showAll": "Show All Modules"
+    },
+    "overview": {
+      "title": "Course Overview",
+      "objectives": "Objectives",
+      "whatYouWillLearn": "What You Will Learn",
+      "viewLess": "View Less",
+      "viewMore": "View More"
+    },
+    "supportDialog": {
+      "title": "Support & FAQ",
+      "contactSupport": "Contact Support",
+      "email": "Email",
+      "hours": "Hours",
+      "responseTime": "Response Time",
+      "faq": "Frequently Asked Questions",
+      "close": "Close"
+    },
+    "instructorInfo": {
+      "title": "Instructor",
+      "support": "Support",
+      "email": "Email",
+      "hours": "Hours",
+      "responseTime": "Response Time"
+    },
+    "progressStats": {
+      "title": "Progress",
+      "lessons": "{{completed}} / {{total}} lessons",
+      "achievement": "Achievement"
+    },
+    "page": {
+      "fetchReviewsError": "Failed to fetch reviews.",
+      "loadDetailsError": "Failed to load course details. Please try again.",
+      "enrollError": "Failed to enroll. Please try again.",
+      "progressError": "Failed to update progress.",
+      "undoError": "Failed to undo lesson completion.",
+      "reviewError": "Failed to submit review.",
+      "lessonUndone": "Lesson completion undone.",
+      "viewMaterials": "View Materials",
+      "supportFaq": "Support & FAQ"
+    }
+  },
+  "lessonDetails": {
+    "loading": "Loading lesson details...",
+    "error": "Failed to load lesson details.",
+    "notFound": "Lesson not found.",
+    "empty": "No lesson data available.",
+    "markComplete": "Mark Complete",
+    "noMedia": "No media available for this lesson.",
+    "videoPlayer": "Lesson Video Player",
+    "audioPlayer": "Lesson Audio Player",
+    "noContent": "No content available for this lesson.",
+    "contentSection": "Lesson Content Section",
+    "noObjectives": "No objectives available for this lesson.",
+    "noResources": "No resources available for this lesson.",
+    "resources": "Resources",
+    "resource": "Resource",
+    "noProgress": "No progress data available.",
+    "progress": "Progress",
+    "progressBar": "Lesson Progress Bar",
+    "completed": "Completed",
+    "startQuiz": "Start Quiz",
+    "noInstructor": "No instructor information available.",
+    "instructor": "Instructor",
+    "noSupport": "No support information available.",
+    "supportFaq": "Support & FAQ",
+    "email": "Email",
+    "hours": "Hours",
+    "responseTime": "Response Time",
+    "objectives": "Objectives",
+    "vocabulary": "Vocabulary",
+    "grammarFocus": "Grammar Focus",
+    "skills": "Skills"
+  },
+  "createLessonForm": {
+    "steps": ["Basic Info", "Content", "Media", "Review"],
+    "lessonTitle": "Lesson Title",
+    "description": "Description",
+    "duration": "Duration (hours)",
+    "order": "Order",
+    "lessonSequence": "Lesson sequence in the course",
+    "vocabulary": "Vocabulary",
+    "addVocabulary": "Add vocabulary word",
+    "grammarFocus": "Grammar Focus",
+    "addGrammar": "Add grammar point",
+    "skills": "Skills",
+    "addSkill": "Add skill",
+    "assessment": "Assessment",
+    "keyActivities": "Key Activities",
+    "addActivity": "Add activity",
+    "content": "Content",
+    "learningObjectives": "Learning Objectives",
+    "addObjective": "Add a learning objective",
+    "resources": "Resources",
+    "addResource": "Add a resource",
+    "addResourceUrl": "Add a resource URL",
+    "materials": "Course Materials (PDF)",
+    "uploadPdf": "Upload PDF Materials",
+    "uploadedMaterials": "Uploaded Materials:",
+    "video": "Video",
+    "uploadVideo": "Upload Video",
+    "audio": "Audio",
+    "uploadAudio": "Upload Audio",
+    "image": "Image",
+    "uploadImage": "Upload Image",
+    "review": "Review",
+    "edit": "Edit",
+    "preview": "Preview",
+    "clearDraft": "Clear Draft",
+    "back": "Back",
+    "next": "Next",
+    "add": "Add",
+    "remove": "Remove",
+    "submit": "Submit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "errorSaving": "Error saving lesson",
+    "unsavedChanges": "You have unsaved changes. Do you want to save them as a draft?",
+    "required": "is required",
+    "atLeastOneObjective": "At least one objective is required",
+    "emptyObjectives": "Empty objectives are not allowed",
+    "contentRequired": "Content is required",
+    "titleRequired": "Title is required",
+    "descriptionRequired": "Description is required",
+    "durationRequired": "Duration is required",
+    "courseIdRequired": "Course ID and Module ID are required",
+    "lessonTitleLabel": "Lesson Title",
+    "descriptionLabel": "Description",
+    "durationLabel": "Duration (hours)",
+    "orderLabel": "Order",
+    "lessonSequenceInCourse": "Lesson sequence in the course",
+    "vocabularyLabel": "Vocabulary",
+    "addVocabularyWordPlaceholder": "Add vocabulary word",
+    "addButton": "Add",
+    "grammarFocusLabel": "Grammar Focus",
+    "addGrammarPointPlaceholder": "Add grammar point",
+    "skillsLabel": "Skills",
+    "addSkillPlaceholder": "Add skill",
+    "assessmentLabel": "Assessment",
+    "keyActivitiesLabel": "Key Activities",
+    "addActivityPlaceholder": "Add activity",
+    "contentLabel": "Content",
+    "learningObjectivesLabel": "Learning Objectives",
+    "addLearningObjectivePlaceholder": "Add a learning objective",
+    "resourcesLabel": "Resources",
+    "addResourcePlaceholder": "Add a resource",
+    "addResourceUrlPlaceholder": "Add a resource URL",
+    "videoLabel": "Video",
+    "uploadVideoButton": "Upload Video",
+    "audioLabel": "Audio",
+    "uploadAudioButton": "Upload Audio",
+    "imageLabel": "Image",
+    "uploadImageButton": "Upload Image",
+    "courseMaterialsLabel": "Course Materials (PDF)",
+    "uploadPdfMaterialsButton": "Upload PDF Materials",
+    "uploadedMaterialsLabel": "Uploaded Materials",
+    "minutes": "minutes"
   }
 }

@@ -12,6 +12,7 @@ import TestimonialsSection from "./landing/TestimonialsSection";
 import FAQSection from "./landing/FAQSection";
 import ContactSection from "./landing/ContactSection";
 import LandingFooter from "./landing/LandingFooter";
+import CoursesSection from "./landing/components/CoursesSection";
 // css styles imports
 import "./landing/styles/heroSection.css";
 
@@ -42,6 +43,8 @@ const Landing = () => {
     >
       <HeroSection t={t} />
       <FeaturesSection t={t} />
+      <CoursesSection />
+
       <ShowcaseTabsSection t={t} />
       <TestimonialsSection t={t} />
       <FAQSection t={t} />

@@ -1,15 +1,16 @@
- import React, { useState } from "react";
-import { Tabs, Tab, Box, Paper } from "@mui/material";
+import React, { useState } from "react";
+import { Tabs, Tab, Box, Paper, useTheme } from "@mui/material";
 
 const UnifiedDashboardTabs = ({ tabs = [], initialTab = 0, sx = {} }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
+  const theme = useTheme();
 
   return (
     <Paper
       sx={{
         width: "100%",
-        mb: 3,
-        borderRadius: 2,
+        mb: theme.spacing(3),
+        borderRadius: theme.shape.borderRadius,
         overflow: "hidden",
         boxShadow: 2,
         ...sx,
@@ -25,11 +26,12 @@ const UnifiedDashboardTabs = ({ tabs = [], initialTab = 0, sx = {} }) => {
         sx={{
           "& .MuiTab-root": {
             textTransform: "none",
-            fontWeight: 500,
-            fontSize: "1rem",
-            py: 2,
-            px: 3,
-            minHeight: 64,
+            fontWeight: theme.typography.fontWeightMedium,
+            fontSize: theme.typography.body1.fontSize,
+            py: theme.spacing(2),
+            px: theme.spacing(3),
+            minHeight: theme.spacing(8),
+            fontFamily: theme.typography.body1.fontFamily,
           },
           "& .MuiTabs-indicator": {
             height: 3,
