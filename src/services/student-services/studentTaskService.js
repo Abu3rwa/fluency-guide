@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import { getAuth } from "firebase/auth";
+import vocabularyReviewIntegrationService from "./vocabularyReviewIntegrationService";
 
 const TASKS_COLLECTION = "tasks";
 const TASK_ATTEMPTS_COLLECTION = "taskAttempts";
@@ -75,51 +76,74 @@ export async function getTaskById(taskId) {
 
 // Calculate score for fill-in-blanks task
 function calculateFillInBlanksScore(task, userAnswers) {
-  let totalPoints = 0;
   let earnedPoints = 0;
+  const totalPoints = task.questions.length;
+  const questionResults = {};
 
   task.questions.forEach((question) => {
-    const answers = userAnswers[question.id] || [];
-    question.blanks.forEach((blank, index) => {
-      totalPoints += question.points || 1;
-      if (
-        answers[index] &&
-        answers[index].trim().toLowerCase() ===
-          blank.answer.trim().toLowerCase()
-      ) {
-        earnedPoints += question.points || 1;
-      }
-    });
+    const userAnswer = userAnswers[question.id];
+    const correctAnswer = question.correctAnswer;
+    const isCorrect =
+      userAnswer?.toLowerCase()?.trim() ===
+      correctAnswer?.toLowerCase()?.trim();
+    const pointsEarned = isCorrect ? 1 : 0;
+    const timeSpent = 0; // This would need to be tracked per question
+
+    questionResults[question.id] = {
+      isCorrect,
+      pointsEarned,
+      timeSpent,
+    };
+
+    if (isCorrect) {
+      earnedPoints++;
+    }
   });
 
+  const score = Math.round((earnedPoints / totalPoints) * 100);
+  const isPassed = score >= (task.passingScore || 70);
+
   return {
-    score: totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0,
+    score,
     earnedPoints,
     totalPoints,
-    isPassed: earnedPoints / totalPoints >= (task.passingScore || 0.7),
+    isPassed,
+    questionResults,
   };
 }
 
 function calculateMultipleChoiceScore(task, userAnswers) {
-  let totalPoints = 0;
   let earnedPoints = 0;
+  const totalPoints = task.questions.length;
+  const questionResults = {};
 
   task.questions.forEach((question) => {
     const userAnswer = userAnswers[question.id];
-    const questionPoints = question.points || 1;
-    totalPoints += questionPoints;
+    const correctAnswer = question.correctAnswer;
+    const isCorrect = userAnswer === correctAnswer;
+    const pointsEarned = isCorrect ? 1 : 0;
+    const timeSpent = 0; // This would need to be tracked per question
 
-    // Check if user's answer matches the correct answer
-    if (userAnswer && question.correctAnswer === userAnswer) {
-      earnedPoints += questionPoints;
+    questionResults[question.id] = {
+      isCorrect,
+      pointsEarned,
+      timeSpent,
+    };
+
+    if (isCorrect) {
+      earnedPoints++;
     }
   });
 
+  const score = Math.round((earnedPoints / totalPoints) * 100);
+  const isPassed = score >= (task.passingScore || 70);
+
   return {
-    score: totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0,
+    score,
     earnedPoints,
     totalPoints,
-    isPassed: earnedPoints / totalPoints >= (task.passingScore || 0.7),
+    isPassed,
+    questionResults,
   };
 }
 
@@ -148,19 +172,37 @@ export async function submitTaskAttempt(
     }
     const isPassed = scoreData.isPassed;
 
-    // Create task attempt
+    // Create detailed responses with individual question data
+    const responses = Object.entries(userAnswers).map(
+      ([questionId, answers]) => {
+        const question = task.questions.find((q) => q.id === questionId);
+        const isCorrect =
+          scoreData.questionResults?.[questionId]?.isCorrect || false;
+        const pointsEarned =
+          scoreData.questionResults?.[questionId]?.pointsEarned || 0;
+        const questionTimeSpent =
+          scoreData.questionResults?.[questionId]?.timeSpent || 0;
+
+        return {
+          questionId,
+          selectedAnswer: answers,
+          isCorrect,
+          pointsEarned,
+          timeSpent: questionTimeSpent,
+        };
+      }
+    );
+
+    // Create task attempt with all required fields
     const attempt = {
       taskId,
       userId,
-      responses: Object.entries(userAnswers).map(([questionId, answers]) => ({
-        questionId,
-        selectedAnswer: answers,
-      })),
+      responses,
       score: scoreData.score,
       status: isPassed ? "passed" : "failed",
       submittedAt: serverTimestamp(),
       isPassed,
-      correctAnswers: scoreData.earnedPoints,
+      correctAnswers: scoreData.earnedPoints, // Add correctAnswers field
       totalQuestions: task.questions.length,
       timeSpent,
     };
@@ -261,6 +303,25 @@ export async function submitTaskAttempt(
         task.questions.length,
         isPassed
       );
+
+      // INTEGRATION: Create review items from vocabulary tasks
+      if (task.isVocabularyReview || task.tags?.includes("vocabulary")) {
+        try {
+          await vocabularyReviewIntegrationService.createReviewItemsFromVocabularyTask(
+            userId,
+            taskId,
+            {
+              isPassed,
+              score: scoreData.score,
+              timeSpent,
+              totalQuestions: task.questions.length,
+            }
+          );
+        } catch (error) {
+          console.error("Error creating vocabulary review items:", error);
+          // Don't throw error here as it shouldn't break the task completion
+        }
+      }
     }
 
     return {

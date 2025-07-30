@@ -1,11 +1,9 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useUser } from "../../../contexts/UserContext";
 import { useCustomTheme } from "../../../contexts/ThemeContext";
-import UserAvatar from "./components/UserAvatar";
-import UserInfo from "./components/UserInfo";
-import ProgressSummary from "./components/ProgressSummary";
 import QuickActionsSection from "./components/QuickActionsSection";
-import EditProfileModal from "../../../components/EditProfileModal";
+import EditProfileModal from "./components/EditProfileModal";
+import AchievementsList from "./components/AchievementsList";
 import {
   Button,
   Box,
@@ -26,7 +24,18 @@ import Confetti from "react-confetti"; // Placeholder, install react-confetti if
 import studentAchievementService from "../../../services/student-services/studentAchievementService";
 import "./StudentDashboardPage.css";
 import StudentDashboardHeader from "./components/StudentDashboardHeader";
-import StudentEnrolledCourses from "./components/StudentEnrolledCourses";
+
+// Import new components
+import useStudentDashboard from "./hooks/useStudentDashboard";
+import ProgressOverviewSection from "./components/ProgressOverviewSection";
+import GoalsProgressSection from "./components/GoalsProgressSection";
+import GoalAnalyticsSection from "./components/GoalAnalyticsSection";
+import RecentActivitiesSection from "./components/RecentActivitiesSection";
+import ProgressAnalyticsSection from "./components/ProgressAnalyticsSection";
+import ReviewQueueWidget from "./components/ReviewQueueWidget";
+import VocabularyReviewIntegration from "../../../shared/components/VocabularyReviewIntegration";
+import studentGoalsService from "../../../services/student-services/studentGoalsService";
+import studentReviewService from "../../../services/student-services/studentReviewService";
 
 const LearningPathSection = lazy(() =>
   import("./components/LearningPathSection")
@@ -48,10 +57,29 @@ const StudentDashboardPage = () => {
       return [];
     }
   });
+
+  // Use the enhanced dashboard hook
+  const {
+    todayStats,
+    progressData,
+    courseProgress,
+    achievements,
+    goals,
+    recentActivities,
+    trendData,
+    vocabularyStats,
+    pronunciationStats,
+    loading: dashboardLoading,
+    error: dashboardError,
+    refetch,
+    refetchSection,
+  } = useStudentDashboard(user?.uid);
+
   useEffect(() => {
     console.log(user);
     localStorage.setItem("pinnedActions", JSON.stringify(pinnedActions));
   }, [pinnedActions]);
+
   const handlePinAction = (key) => {
     setPinnedActions((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
@@ -67,36 +95,61 @@ const StudentDashboardPage = () => {
     setTimeout(() => setProfileUpdateMsg(""), 4000);
   };
 
-  const [userAchievements, setUserAchievements] = useState(null);
-  const [achievementsLoading, setAchievementsLoading] = useState(true);
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchAchievements() {
-      setAchievementsLoading(true);
-      try {
-        const [userAch, allAch] = await Promise.all([
-          studentAchievementService.getUserAchievements(user?.uid),
-          studentAchievementService.getAllAchievements(),
-        ]);
-        const userAchievementsData =
-          await studentAchievementService.getUserAchievements(user?.uid);
-        console.log(userAchievementsData);
-        setUserAchievements(userAchievementsData);
-        const userAchMap = {};
-        userAch.forEach((ua) => {
-          userAchMap[ua.achievementId] = ua;
-        });
-      } catch (e) {
-        if (isMounted) setUserAchievements(null);
-      } finally {
-        if (isMounted) setAchievementsLoading(false);
-      }
+  // Event handlers for new components
+  const handleCourseClick = (course) => {
+    navigate(`/courses/${course.id}`);
+  };
+
+  const handleGoalClick = (goal) => {
+    // TODO: Navigate to goal details or edit goal
+    console.log("Goal clicked:", goal);
+  };
+
+  const handleCreateGoal = async (newGoal) => {
+    try {
+      await studentGoalsService.createGoal(user?.uid, newGoal);
+      refetchSection("goals");
+    } catch (error) {
+      console.error("Error creating goal:", error);
     }
-    if (user && user.uid) fetchAchievements();
-    return () => {
-      isMounted = false;
-    };
-  }, [user && user.uid]);
+  };
+
+  const handleUpdateGoal = async (updatedGoal) => {
+    try {
+      await studentGoalsService.updateGoal(updatedGoal.id, updatedGoal);
+      refetchSection("goals");
+    } catch (error) {
+      console.error("Error updating goal:", error);
+    }
+  };
+
+  const handleDeleteGoal = async (deletedGoal) => {
+    try {
+      await studentGoalsService.deleteGoal(deletedGoal.id);
+      refetchSection("goals");
+    } catch (error) {
+      console.error("Error deleting goal:", error);
+    }
+  };
+
+  const handleActivityClick = (activity) => {
+    // TODO: Navigate to activity details
+    console.log("Activity clicked:", activity);
+  };
+
+  const handleViewAllActivities = () => {
+    // TODO: Navigate to activities page
+    navigate("/activities");
+  };
+
+  const handleAchievementClick = (achievement) => {
+    setSelectedAchievement(achievement);
+  };
+
+  const handleTimeRangeChange = (range) => {
+    // TODO: Update analytics time range
+    console.log("Time range changed:", range);
+  };
   if (loading) {
     return (
       <Box sx={{ p: 4 }}>
@@ -112,11 +165,12 @@ const StudentDashboardPage = () => {
 
   const displayName = user.displayName || user.name || user.email;
   const avatar = user.profileImage || user.photoURL || user.avatarUrl;
-  const enrolledCourses = user.enrolledCourses || [];
+  // Note: enrolledCourses are now fetched via studentCourseService.getUserEnrolledCourses()
+  // and passed through the useStudentDashboard hook
   const completedLessons = user.completedLessons || [];
   const preferences = user.preferences || {};
   const progress = user.progress || {};
-  const achievements = user.achievements || [];
+  // const achievements = user.achievements || [];
 
   const handleLogout = async () => {
     await logout();
@@ -165,7 +219,10 @@ const StudentDashboardPage = () => {
         {showConfetti && <Confetti numberOfPieces={200} recycle={false} />}
         <div className="student-dashboard-grid">
           <StudentDashboardHeader
-            user={user}
+            user={{
+              ...user,
+              enrolledCoursesCount: courseProgress?.length || 0,
+            }}
             displayName={displayName}
             avatar={avatar}
             preferences={preferences}
@@ -185,16 +242,109 @@ const StudentDashboardPage = () => {
                 </Box>
               }
             >
+              {/* Progress Overview Section */}
               <Fade in timeout={1000}>
                 <Box>
-                  <LearningPathSection
-                    enrolledCourses={enrolledCourses}
-                    completedLessons={completedLessons}
-                    // TODO: Add timeline/cards, progress bars, quick navigation
+                  <ProgressOverviewSection
+                    todayStats={todayStats}
+                    goals={goals}
+                    loading={dashboardLoading}
+                    error={dashboardError}
                   />
                 </Box>
               </Fade>
+
+              {/* Review Queue Widget */}
               <Fade in timeout={1200}>
+                <Box>
+                  <ReviewQueueWidget userId={user?.uid} />
+                </Box>
+              </Fade>
+
+              {/* Vocabulary Review Integration */}
+              <Fade in timeout={1250}>
+                <Box>
+                  <VocabularyReviewIntegration />
+                </Box>
+              </Fade>
+
+              {/* Learning Path & Course Progress Section */}
+              <Fade in timeout={1300}>
+                <Box>
+                  <LearningPathSection
+                    enrolledCourses={courseProgress}
+                    courseProgress={courseProgress}
+                    onCourseClick={handleCourseClick}
+                  />
+                </Box>
+              </Fade>
+
+              {/* Goals Progress Section */}
+              <Fade in timeout={1500}>
+                <Box>
+                  <GoalsProgressSection
+                    goals={goals}
+                    onGoalClick={handleGoalClick}
+                    onCreateGoal={handleCreateGoal}
+                    onGoalUpdated={handleUpdateGoal}
+                    onGoalDeleted={handleDeleteGoal}
+                    loading={dashboardLoading}
+                    error={dashboardError}
+                    userId={user?.uid}
+                  />
+                </Box>
+              </Fade>
+
+              <Fade in timeout={1700}>
+                <Box>
+                  <GoalAnalyticsSection
+                    userId={user?.uid}
+                    loading={dashboardLoading}
+                    error={dashboardError}
+                  />
+                </Box>
+              </Fade>
+
+              {/* Achievements Section */}
+              <Fade in timeout={1800}>
+                <Box>
+                  <AchievementsList
+                    achievements={achievements}
+                    horizontalScroll={true}
+                    onAchievementClick={handleAchievementClick}
+                  />
+                </Box>
+              </Fade>
+
+              {/* Progress Analytics Section */}
+              <Fade in timeout={1900}>
+                <Box>
+                  <ProgressAnalyticsSection
+                    trendData={trendData}
+                    vocabularyStats={vocabularyStats}
+                    pronunciationStats={pronunciationStats}
+                    onTimeRangeChange={handleTimeRangeChange}
+                    loading={dashboardLoading}
+                    error={dashboardError}
+                  />
+                </Box>
+              </Fade>
+
+              {/* Recent Activities Section */}
+              <Fade in timeout={2100}>
+                <Box>
+                  <RecentActivitiesSection
+                    activities={recentActivities}
+                    onActivityClick={handleActivityClick}
+                    onViewAll={handleViewAllActivities}
+                    loading={dashboardLoading}
+                    error={dashboardError}
+                  />
+                </Box>
+              </Fade>
+
+              {/* Quick Actions Section */}
+              <Fade in timeout={2300}>
                 <Box>
                   <QuickActionsSection
                     onEditProfile={() => setIsEditModalOpen(true)}

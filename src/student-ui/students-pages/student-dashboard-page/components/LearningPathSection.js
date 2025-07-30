@@ -55,9 +55,17 @@ const staticCards = [
   },
 ];
 
-const LearningPathSection = () => {
+const LearningPathSection = ({
+  enrolledCourses = [],
+  courseProgress = [],
+  onCourseClick,
+}) => {
   const navigate = useNavigate();
   const theme = useTheme();
+
+  // Combine static learning path cards with real course progress
+  const learningPathCards = staticCards;
+  const hasCourseProgress = courseProgress && courseProgress.length > 0;
 
   return (
     <Box sx={{ mb: 3 }}>
@@ -71,7 +79,7 @@ const LearningPathSection = () => {
         }}
       >
         <Typography variant="h6" fontWeight={700}>
-          Learning Path
+          Learning Path & Courses
         </Typography>
         <Button
           variant="text"
@@ -82,10 +90,11 @@ const LearningPathSection = () => {
           See All
         </Button>
       </Box>
-      {/* Grid of Cards */}
-      <Box>
+
+      {/* Learning Path Cards */}
+      <Box sx={{ mb: hasCourseProgress ? 3 : 0 }}>
         <Grid container spacing={2}>
-          {staticCards.map((course, idx) => (
+          {learningPathCards.map((course, idx) => (
             <Grid
               item
               xs={6}
@@ -173,6 +182,117 @@ const LearningPathSection = () => {
           ))}
         </Grid>
       </Box>
+
+      {/* Course Progress Bars */}
+      {hasCourseProgress && (
+        <Box>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 600,
+              color: theme.palette.text.primary,
+              mb: 2,
+            }}
+          >
+            Course Progress
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {courseProgress.map((course, index) => (
+              <Paper
+                key={course.id || index}
+                elevation={1}
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  cursor: "pointer",
+                  transition: "all 0.2s ease-in-out",
+                  "&:hover": {
+                    boxShadow: 3,
+                    transform: "translateY(-1px)",
+                  },
+                }}
+                onClick={() => onCourseClick?.(course)}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  {/* Course Thumbnail */}
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 2,
+                      overflow: "hidden",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img
+                      src={course.thumbnail || "/images/course-default.png"}
+                      alt={course.title}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
+
+                  {/* Course Info */}
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        mb: 0.5,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {course.title}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: theme.palette.text.secondary,
+                        display: "block",
+                        mb: 1,
+                      }}
+                    >
+                      {course.completedLessons} of {course.totalLessons} lessons
+                      completed
+                    </Typography>
+                    <LinearProgress
+                      variant="determinate"
+                      value={course.progress}
+                      sx={{
+                        height: 6,
+                        borderRadius: 3,
+                        backgroundColor: theme.palette.divider,
+                        "& .MuiLinearProgress-bar": {
+                          backgroundColor: theme.palette.primary.main,
+                          borderRadius: 3,
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  {/* Progress Percentage */}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 700,
+                      color: theme.palette.primary.main,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {course.progress}%
+                  </Typography>
+                </Box>
+              </Paper>
+            ))}
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

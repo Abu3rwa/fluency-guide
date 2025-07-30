@@ -75,14 +75,11 @@ const VocabularyErrorFallback = ({ onRetry, error }) => {
           <ErrorIcon sx={{ fontSize: 64, color: "error.main", mb: 2 }} />
 
           <Typography variant="h5" component="h2" gutterBottom>
-            {t("vocabulary.error.title", "Something went wrong")}
+            {t("vocabulary.error.title")}
           </Typography>
 
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            {t(
-              "vocabulary.error.message",
-              "We encountered an error while loading the vocabulary page. Please try again."
-            )}
+            {t("vocabulary.error.message")}
           </Typography>
 
           {error && (
@@ -108,7 +105,7 @@ const VocabularyErrorFallback = ({ onRetry, error }) => {
               onClick={onRetry}
               size="large"
             >
-              {t("common.retry", "Try Again")}
+              {t("common.retry")}
             </Button>
 
             <Button
@@ -116,7 +113,7 @@ const VocabularyErrorFallback = ({ onRetry, error }) => {
               onClick={() => window.location.reload()}
               size="large"
             >
-              {t("common.reload", "Reload Page")}
+              {t("common.reload")}
             </Button>
           </Box>
 
@@ -125,10 +122,7 @@ const VocabularyErrorFallback = ({ onRetry, error }) => {
             color="text.secondary"
             sx={{ mt: 2, display: "block" }}
           >
-            {t(
-              "vocabulary.error.help",
-              "If the problem persists, please contact support."
-            )}
+            {t("vocabulary.error.help")}
           </Typography>
         </CardContent>
       </Card>

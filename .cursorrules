@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "prop-forwarding",
+      "selector": "Component",
+      "message": "Props are being forwarded to the DOM. Ensure you are not passing non-standard props down to DOM elements.",
+      "suggestion": "Destructure the props you need and pass only valid HTML attributes to the underlying DOM element, or use a transient prop (prefixed with $) if you are using a library like styled-components."
+    }
+  ]
+}

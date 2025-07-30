@@ -10,7 +10,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import CourseCard from "./CourseCard";
+import LandingCourseCard from "./LandingCourseCard";
 import { useStudentCourse } from "../../../contexts/studentCourseContext";
 import { useUser } from "../../../contexts/UserContext";
 import { enrollmentService } from "../../../services/enrollmentService";
@@ -329,7 +329,7 @@ const CoursesSection = () => {
                   mx: { xs: 0.5, md: 1 },
                 }}
               >
-                <CourseCard
+                <LandingCourseCard
                   course={course}
                   enrollment={enrollments.find((e) => e.courseId === course.id)}
                   onSignUp={() => navigate("/auth")}

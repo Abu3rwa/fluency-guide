@@ -47,21 +47,18 @@ const StudentGoalCompletedDialog = ({ open, onClose, goal }) => {
           <CelebrationIcon sx={{ fontSize: 60, color: "#FFD700" }} />
         </Box>
         <Typography variant="h4" component="div" sx={{ fontWeight: "bold" }}>
-          {t("vocabulary.goalCompletedTitle", "Goal Completed! 🎉")}
+          {t("vocabulary.goalCompletedTitle")}
         </Typography>
       </DialogTitle>
 
       <DialogContent sx={{ textAlign: "center" }}>
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            {t("vocabulary.congratulations", "Congratulations!")}
+            {t("vocabulary.congratulations")}
           </Typography>
 
           <Typography variant="body1" sx={{ mb: 2 }}>
-            {t(
-              "vocabulary.goalCompletedMessage",
-              "You've successfully completed your daily vocabulary goal!"
-            )}
+            {t("vocabulary.goalCompletedMessage")}
           </Typography>
 
           {goal && (
@@ -87,25 +84,17 @@ const StudentGoalCompletedDialog = ({ open, onClose, goal }) => {
                   sx={{ fontSize: 24, color: "#4CAF50", mr: 1 }}
                 />
                 <Typography variant="h6">
-                  {t(
-                    "vocabulary.goalAchievement",
-                    "{{current}}/{{target}} words learned",
-                    {
-                      current: goal.currentProgress,
-                      target: goal.dailyTarget,
-                    }
-                  )}
+                  {t("vocabulary.goalAchievement", {
+                    current: goal.currentProgress,
+                    target: goal.dailyTarget,
+                  })}
                 </Typography>
               </Box>
 
               <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                {t(
-                  "vocabulary.goalAchievementDescription",
-                  "You've learned {{count}} new vocabulary words today!",
-                  {
-                    count: goal.currentProgress,
-                  }
-                )}
+                {t("vocabulary.goalAchievementDescription", {
+                  count: goal.currentProgress,
+                })}
               </Typography>
             </Paper>
           )}
@@ -119,10 +108,7 @@ const StudentGoalCompletedDialog = ({ open, onClose, goal }) => {
           </Box>
 
           <Typography variant="body1" sx={{ fontStyle: "italic" }}>
-            {t(
-              "vocabulary.keepGoing",
-              "Keep up the great work! Consistency is the key to language mastery."
-            )}
+            {t("vocabulary.keepGoing")}
           </Typography>
         </Box>
       </DialogContent>
@@ -140,7 +126,7 @@ const StudentGoalCompletedDialog = ({ open, onClose, goal }) => {
             mr: 2,
           }}
         >
-          {t("vocabulary.continueLearning", "Continue Learning")}
+          {t("vocabulary.continueLearning")}
         </Button>
 
         <Button
@@ -155,7 +141,7 @@ const StudentGoalCompletedDialog = ({ open, onClose, goal }) => {
             },
           }}
         >
-          {t("vocabulary.setNewGoal", "Set New Goal")}
+          {t("vocabulary.setNewGoal")}
         </Button>
       </DialogActions>
     </Dialog>

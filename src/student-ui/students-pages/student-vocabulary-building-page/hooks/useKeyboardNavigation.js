@@ -35,6 +35,12 @@ const useKeyboardNavigation = ({
         "S",
         "r",
         "R",
+        "l",
+        "L",
+        "d",
+        "D",
+        "v",
+        "V",
       ];
 
       if (navigationKeys.includes(event.key)) {
@@ -97,6 +103,30 @@ const useKeyboardNavigation = ({
           }
           break;
 
+        case "l":
+        case "L":
+          if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+            onMarkAsLearned?.();
+          }
+          break;
+
+        case "d":
+        case "D":
+          if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+            onMarkAsDifficult?.();
+          }
+          break;
+
+        case "v":
+        case "V":
+          if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+            onToggleFavorite?.();
+          }
+          break;
+
         default:
           break;
       }
@@ -134,6 +164,9 @@ const useKeyboardNavigation = ({
       pronunciation: "Space or Enter",
       search: "Ctrl/Cmd + F or Ctrl/Cmd + S",
       random: "Ctrl/Cmd + R",
+      markAsLearned: "Ctrl/Cmd + L",
+      markAsDifficult: "Ctrl/Cmd + D",
+      toggleFavorite: "Ctrl/Cmd + V",
     }),
     []
   );

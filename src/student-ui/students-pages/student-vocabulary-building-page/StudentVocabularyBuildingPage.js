@@ -5,6 +5,7 @@ import {
   CircularProgress,
   Typography,
   Alert,
+  Button,
 } from "@mui/material";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useVocabularyWords } from "../../../contexts/vocabularyWordsContext";
@@ -18,12 +19,14 @@ import StudentVocabularyNavigationControls from "./components/StudentVocabularyN
 import StudentGoalCompletedDialog from "./components/dialogs/StudentGoalCompletedDialog";
 import StudentMotivationDialog from "./components/dialogs/StudentMotivationDialog";
 import StudentPronunciationDialog from "./components/dialogs/StudentPronunciationDialog";
-import VocabularyErrorBoundary from "./components/VocabularyErrorBoundary";
+import VocabularyErrorBoundary from "../../../shared/components/VocabularyErrorBoundary";
+import VocabularyReviewIntegration from "../../../shared/components/VocabularyReviewIntegration";
 import useKeyboardNavigation from "./hooks/useKeyboardNavigation";
+import { useTranslation } from "react-i18next";
 
 const StudentVocabularyBuildingPage = React.memo(() => {
   const { currentUser } = useAuth();
-
+  const { t } = useTranslation();
   // Use split contexts
   const {
     vocabularyWords,
@@ -74,6 +77,9 @@ const StudentVocabularyBuildingPage = React.memo(() => {
       words: wordsLoading.words,
       progress: progressLoading.progress,
       goals: goalsLoading.goals,
+      vocabulary:
+        wordsLoading.words || progressLoading.progress || goalsLoading.goals,
+      review: false, // Will be handled by VocabularyReviewIntegration
     }),
     [wordsLoading, progressLoading, goalsLoading]
   );
@@ -107,6 +113,8 @@ const StudentVocabularyBuildingPage = React.memo(() => {
         }
       } catch (error) {
         console.error("Error marking word as learned:", error);
+        // Show user-friendly error message
+        // You could add a toast notification here
       }
     },
     [markWordAsLearned, activeGoal, updateGoalProgress]
@@ -118,6 +126,8 @@ const StudentVocabularyBuildingPage = React.memo(() => {
         await markWordAsDifficult(wordId);
       } catch (error) {
         console.error("Error marking word as difficult:", error);
+        // Show user-friendly error message
+        // You could add a toast notification here
       }
     },
     [markWordAsDifficult]
@@ -129,6 +139,8 @@ const StudentVocabularyBuildingPage = React.memo(() => {
         await toggleFavorite(wordId);
       } catch (error) {
         console.error("Error toggling favorite:", error);
+        // Show user-friendly error message
+        // You could add a toast notification here
       }
     },
     [toggleFavorite]
@@ -182,6 +194,10 @@ const StudentVocabularyBuildingPage = React.memo(() => {
     onLast: goToLastWord,
     onPronunciation: () => currentWord && handlePronunciationClick(currentWord),
     onToggleSearch: () => setIsSearchExpanded(!isSearchExpanded),
+    onMarkAsLearned: () => currentWord && handleMarkAsLearned(currentWord.id),
+    onMarkAsDifficult: () =>
+      currentWord && handleMarkAsDifficult(currentWord.id),
+    onToggleFavorite: () => currentWord && handleToggleFavorite(currentWord.id),
     canGoNext: navigationState.canGoNext,
     canGoPrevious: navigationState.canGoPrevious,
     enabled: true,
@@ -193,6 +209,17 @@ const StudentVocabularyBuildingPage = React.memo(() => {
       fetchVocabularyWords();
     }
   }, [currentUser?.uid, fetchVocabularyWords]);
+
+  // Sync vocabulary progress with review system
+  useEffect(() => {
+    if (vocabularyWords.length > 0 && currentUser?.uid) {
+      // This ensures that vocabulary progress is synced with the review system
+      // The VocabularyReviewIntegration component will handle the review queue updates
+      console.log(
+        "📚 Vocabulary words loaded, review system will sync automatically"
+      );
+    }
+  }, [vocabularyWords.length, currentUser?.uid]);
 
   // Show loading state
   if (loading.words && vocabularyWords.length === 0) {
@@ -212,8 +239,19 @@ const StudentVocabularyBuildingPage = React.memo(() => {
   if (error.words && vocabularyWords.length === 0) {
     return (
       <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Alert severity="error">
-          <Typography variant="h6">Error Loading Vocabulary</Typography>
+        <Alert
+          severity="error"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() => fetchVocabularyWords()}
+            >
+              Retry
+            </Button>
+          }
+        >
+          <Typography variant="h6">{t("vocabulary.error.title")}</Typography>
           <Typography>{error.words}</Typography>
         </Alert>
       </Container>
@@ -222,7 +260,9 @@ const StudentVocabularyBuildingPage = React.memo(() => {
 
   return (
     <VocabularyErrorBoundary>
-      <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+      <Box
+        sx={{ minHeight: "100vh", bgcolor: "background.default", marginTop: 3 }}
+      >
         <StudentVocabularyAppBar
           onSearch={handleSearch}
           onToggleFavorites={handleToggleFavorites}
@@ -234,15 +274,14 @@ const StudentVocabularyBuildingPage = React.memo(() => {
         />
 
         <Container maxWidth="lg" sx={{ py: 3 }}>
-          {/* Goal Section */}
-          <StudentVocabularyGoalSection />
-
-          {/* Progress Section */}
-          <StudentVocabularyProgressSection />
-
-          {/* Main Content */}
           {currentWord ? (
-            <Box sx={{ mt: 4 }}>
+            <Box
+              sx={{
+                mt: 4,
+                transition: "all 0.3s ease-in-out",
+                opacity: loading.vocabulary ? 0.6 : 1,
+              }}
+            >
               <StudentVocabularyWordCard
                 word={currentWord}
                 onMarkAsLearned={() => handleMarkAsLearned(currentWord.id)}
@@ -273,10 +312,20 @@ const StudentVocabularyBuildingPage = React.memo(() => {
               minHeight="40vh"
             >
               <Typography variant="h6" color="text.secondary">
-                No vocabulary words available
+                {t("vocabulary.noWords")}
               </Typography>
             </Box>
           )}
+          {/* Goal Section */}
+          <StudentVocabularyGoalSection />
+
+          {/* Progress Section */}
+          <StudentVocabularyProgressSection />
+
+          {/* Personalized Review Integration */}
+          <VocabularyReviewIntegration />
+
+          {/* Main Content */}
         </Container>
 
         {/* Dialogs */}

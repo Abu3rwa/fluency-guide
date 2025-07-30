@@ -46,7 +46,7 @@ const StudentVocabularyProgressSection = () => {
     <Card sx={{ mb: 3 }}>
       <CardContent>
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-          {t("vocabulary.learningProgress", "Learning Progress")}
+          {t("vocabulary.learningProgress")}
         </Typography>
 
         <Grid container spacing={3}>
@@ -58,7 +58,7 @@ const StudentVocabularyProgressSection = () => {
                 {learnedCount}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t("vocabulary.wordsLearned", "Words Learned")}
+                {t("vocabulary.wordsLearned")}
               </Typography>
             </Box>
           </Grid>
@@ -73,7 +73,7 @@ const StudentVocabularyProgressSection = () => {
                 {totalWords}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t("vocabulary.totalWords", "Total Words")}
+                {t("vocabulary.totalWords")}
               </Typography>
             </Box>
           </Grid>
@@ -88,7 +88,7 @@ const StudentVocabularyProgressSection = () => {
                 {difficultCount}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t("vocabulary.difficultWords", "Difficult Words")}
+                {t("vocabulary.difficultWords")}
               </Typography>
             </Box>
           </Grid>
@@ -101,7 +101,7 @@ const StudentVocabularyProgressSection = () => {
                 {Math.round(learningRate)}%
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t("vocabulary.learningRate", "Learning Rate")}
+                {t("vocabulary.learningRate")}
               </Typography>
             </Box>
           </Grid>
@@ -141,7 +141,7 @@ const StudentVocabularyProgressSection = () => {
         {difficultCount > 0 && (
           <Box sx={{ mt: 3 }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              {t("vocabulary.recentDifficultWords", "Recent Difficult Words")}
+              {t("vocabulary.recentDifficultWords")}
             </Typography>
             <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
               {difficultWords.slice(0, 5).map((item) => (
@@ -170,10 +170,7 @@ const StudentVocabularyProgressSection = () => {
           <Box sx={{ textAlign: "center", py: 3 }}>
             <SchoolIcon sx={{ fontSize: 48, color: "text.secondary", mb: 1 }} />
             <Typography variant="body2" color="text.secondary">
-              {t(
-                "vocabulary.noProgressYet",
-                "Start learning vocabulary to see your progress here"
-              )}
+              {t("vocabulary.noProgressYet")}
             </Typography>
           </Box>
         )}

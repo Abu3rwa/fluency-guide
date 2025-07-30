@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,27 +11,30 @@ import {
   Avatar,
   IconButton,
   Typography,
-} from '@mui/material';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import { useUser } from '../contexts/UserContext';
-import { storage } from '../firebase'; // Assuming firebase is configured for storage
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+} from "@mui/material";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import { useUser } from "../../../../contexts/UserContext";
+// import { storage } from "../../../../firebase"; // Assuming firebase is configured for storage
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../../../firebase";
 
 const EditProfileModal = ({ open, onClose }) => {
   const { userData, updateProfile, loading, error } = useUser();
-  const [displayName, setDisplayName] = useState('');
-  const [email, setEmail] = useState('');
-  const [bio, setBio] = useState('');
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState('');
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (userData) {
-      setDisplayName(userData.displayName || userData.name || '');
-      setEmail(userData.email || '');
-      setBio(userData.bio || '');
-      setAvatarPreview(userData.profileImage || userData.photoURL || userData.avatarUrl || '');
+      setDisplayName(userData.displayName || userData.name || "");
+      setEmail(userData.email || "");
+      setBio(userData.bio || "");
+      setAvatarPreview(
+        userData.profileImage || userData.photoURL || userData.avatarUrl || ""
+      );
     }
   }, [userData]);
 
@@ -49,11 +52,14 @@ const EditProfileModal = ({ open, onClose }) => {
     if (avatarFile) {
       setUploading(true);
       try {
-        const avatarRef = ref(storage, `avatars/${userData.uid}/${avatarFile.name}`);
+        const avatarRef = ref(
+          storage,
+          `avatars/${userData.uid}/${avatarFile.name}`
+        );
         await uploadBytes(avatarRef, avatarFile);
         newPhotoURL = await getDownloadURL(avatarRef);
       } catch (uploadError) {
-        console.error('Error uploading avatar:', uploadError);
+        console.error("Error uploading avatar:", uploadError);
         // Handle upload error, maybe show a message to the user
       } finally {
         setUploading(false);
@@ -79,11 +85,15 @@ const EditProfileModal = ({ open, onClose }) => {
             accept="image/*"
             id="icon-button-file"
             type="file"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={handleAvatarChange}
           />
           <label htmlFor="icon-button-file">
-            <IconButton color="primary" aria-label="upload picture" component="span">
+            <IconButton
+              color="primary"
+              aria-label="upload picture"
+              component="span"
+            >
               <PhotoCamera />
             </IconButton>
           </label>
@@ -130,8 +140,16 @@ const EditProfileModal = ({ open, onClose }) => {
         <Button onClick={onClose} color="secondary">
           Cancel
         </Button>
-        <Button onClick={handleSave} color="primary" disabled={loading || uploading}>
-          {(loading || uploading) ? <CircularProgress size={24} /> : 'Save Changes'}
+        <Button
+          onClick={handleSave}
+          color="primary"
+          disabled={loading || uploading}
+        >
+          {loading || uploading ? (
+            <CircularProgress size={24} />
+          ) : (
+            "Save Changes"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

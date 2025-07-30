@@ -194,13 +194,9 @@ export const enrollmentService = {
         enrolledStudents: increment(1),
       });
 
-      // Update user's enrolled courses
-      const userRef = doc(db, "users", enrollment.studentId);
-      await updateDoc(userRef, {
-        enrolledCourses: arrayUnion(enrollment.courseId),
-        lastActiveCourse: enrollment.courseId,
-        lastStudyDate: new Date().toISOString(),
-      });
+      // Note: We no longer update user's enrolledCourses field
+      // Enrollments are now managed through the enrollments collection
+      // The user's enrolled courses are fetched via studentCourseService.getUserEnrolledCourses()
 
       return enrollmentId;
     } catch (error) {

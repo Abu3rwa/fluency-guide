@@ -98,7 +98,7 @@ const StudentVocabularyGoalSection = () => {
           }}
         >
           <Typography variant="h6" component="h2">
-            {t("vocabulary.dailyGoal", "Daily Learning Goal")}
+            {t("vocabulary.dailyGoal")}
           </Typography>
 
           {activeGoal ? (
@@ -116,7 +116,7 @@ const StudentVocabularyGoalSection = () => {
               onClick={() => setShowGoalDialog(true)}
               size="small"
             >
-              {t("vocabulary.createGoal", "Create Goal")}
+              {t("vocabulary.createGoal")}
             </Button>
           )}
         </Box>
@@ -138,7 +138,7 @@ const StudentVocabularyGoalSection = () => {
               {goalCompleted && (
                 <Chip
                   icon={<CheckCircleIcon />}
-                  label={t("vocabulary.completed", "Completed")}
+                  label={t("vocabulary.completed")}
                   color="success"
                   size="small"
                 />
@@ -160,17 +160,13 @@ const StudentVocabularyGoalSection = () => {
               }}
             >
               <Typography variant="caption" color="text.secondary">
-                {t(
-                  "vocabulary.progressPercentage",
-                  "{{percentage}}% complete",
-                  {
-                    percentage: Math.round(progressPercentage * 100),
-                  }
-                )}
+                {t("vocabulary.progressPercentage", {
+                  percentage: Math.round(progressPercentage * 100),
+                })}
               </Typography>
 
               <Typography variant="caption" color="text.secondary">
-                {t("vocabulary.remaining", "{{remaining}} words remaining", {
+                {t("vocabulary.remaining", {
                   remaining: Math.max(
                     0,
                     activeGoal.dailyTarget - activeGoal.currentProgress
@@ -183,10 +179,7 @@ const StudentVocabularyGoalSection = () => {
           <Box sx={{ textAlign: "center", py: 2 }}>
             <FlagIcon sx={{ fontSize: 48, color: "text.secondary", mb: 1 }} />
             <Typography variant="body2" color="text.secondary">
-              {t(
-                "vocabulary.noGoalDescription",
-                "Set a daily vocabulary learning goal to track your progress"
-              )}
+              {t("vocabulary.noGoalDescription")}
             </Typography>
           </Box>
         )}
@@ -200,23 +193,19 @@ const StudentVocabularyGoalSection = () => {
         fullWidth
       >
         <DialogTitle>
-          {activeGoal
-            ? t("vocabulary.editGoal", "Edit Daily Goal")
-            : t("vocabulary.createGoal", "Create Daily Goal")}
+          {activeGoal ? t("vocabulary.editGoal") : t("vocabulary.createGoal")}
         </DialogTitle>
 
         <DialogContent>
           <Box sx={{ pt: 1 }}>
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>
-                {t("vocabulary.dailyTarget", "Daily Target")}
-              </InputLabel>
+              <InputLabel>{t("vocabulary.dailyTarget")}</InputLabel>
               <Select
                 value={goalData.dailyTarget}
                 onChange={(e) =>
                   handleGoalChange("dailyTarget", e.target.value)
                 }
-                label={t("vocabulary.dailyTarget", "Daily Target")}
+                label={t("vocabulary.dailyTarget")}
               >
                 <MenuItem value={5}>5 words</MenuItem>
                 <MenuItem value={10}>10 words</MenuItem>
@@ -228,26 +217,21 @@ const StudentVocabularyGoalSection = () => {
             </FormControl>
 
             <Typography variant="body2" color="text.secondary">
-              {t(
-                "vocabulary.goalDescription",
-                "Choose how many vocabulary words you want to learn each day. This will help you stay motivated and track your progress."
-              )}
+              {t("vocabulary.goalDescription")}
             </Typography>
           </Box>
         </DialogContent>
 
         <DialogActions>
           <Button onClick={() => setShowGoalDialog(false)}>
-            {t("common.cancel", "Cancel")}
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleCreateGoal}
             variant="contained"
             disabled={loading.goals}
           >
-            {activeGoal
-              ? t("common.update", "Update")
-              : t("common.create", "Create")}
+            {activeGoal ? t("common.update") : t("common.create")}
           </Button>
         </DialogActions>
       </Dialog>

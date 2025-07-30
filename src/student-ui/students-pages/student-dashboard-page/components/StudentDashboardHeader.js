@@ -14,8 +14,7 @@ import {
 } from "@mui/material";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import UserAvatar from "./UserAvatar";
-import UserInfo from "./UserInfo";
+
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -125,7 +124,7 @@ const StudentDashboardHeader = ({
         >
           <Chip
             icon={<CourseIcon />}
-            label={`${user?.enrolledCourses?.length ?? 0} Courses`}
+            label={`${user?.enrolledCoursesCount ?? 0} Courses`}
             sx={{ fontWeight: 500 }}
           />
 

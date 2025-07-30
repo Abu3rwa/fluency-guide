@@ -194,11 +194,18 @@ export const StudentVocabularyProvider = ({ children }) => {
 
   // Toggle favorite status
   const toggleFavorite = async (wordId) => {
-    if (!userId || !wordId) return;
+    if (!userId || !wordId) {
+      console.error("❌ Missing required data for toggleFavorite:", { userId, wordId });
+      throw new Error("Missing user ID or word ID");
+    }
 
     try {
+      console.log("🔄 Context toggleFavorite called with:", { userId, wordId });
+      
       const currentProgress = userProgress[wordId];
       const isFavorite = currentProgress?.isFavorite || false;
+      
+      console.log("📊 Current progress data:", { currentProgress, isFavorite });
 
       await studentVocabularyProgressService.toggleFavorite(
         userId,
@@ -206,10 +213,15 @@ export const StudentVocabularyProvider = ({ children }) => {
         !isFavorite
       );
 
+      console.log("✅ Service call successful, updating progress...");
+
       // Update progress in state
       await fetchUserProgress();
+      
+      console.log("✅ Progress updated successfully");
     } catch (err) {
-      console.error("Error toggling favorite status:", err);
+      console.error("❌ Error toggling favorite status:", err);
+      console.error("🔍 Error context:", { userId, wordId, userProgress: !!userProgress });
       throw err;
     }
   };

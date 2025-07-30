@@ -135,14 +135,11 @@ const LanguageSwitcher = ({ ariaLabel }) => {
           },
         }}
         ModalProps={{
-          BackdropProps: {
-            invisible: false,
-            style: {
-              background: "rgba(202, 28, 28, 0.99)",
-
-              // width: "200px",
-              // height: "150px",
-              borderRadius: "8px",
+          slotProps: {
+            backdrop: {
+              style: {
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+              },
             },
           },
         }}

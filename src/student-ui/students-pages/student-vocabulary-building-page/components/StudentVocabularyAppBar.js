@@ -83,7 +83,7 @@ const StudentVocabularyAppBar = ({
     <AppBar position="sticky" elevation={1}>
       <Toolbar>
         <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
-          {t("vocabulary.title", "Vocabulary Building")}
+          {t("vocabulary.title")}
         </Typography>
 
         {/* Search and Filter Controls */}
@@ -93,7 +93,7 @@ const StudentVocabularyAppBar = ({
             onClick={handleToggleFavorites}
             color={showFavoritesOnly ? "secondary" : "inherit"}
             size="small"
-            title={t("vocabulary.showFavorites", "Show Favorites Only")}
+            title={t("vocabulary.showFavorites")}
           >
             {showFavoritesOnly ? <FavoriteIcon /> : <FavoriteBorderIcon />}
           </IconButton>
@@ -103,7 +103,7 @@ const StudentVocabularyAppBar = ({
             onClick={handleToggleSearch}
             color="inherit"
             size="small"
-            title={t("common.search", "Search")}
+            title={t("common.search")}
           >
             {isSearchExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </IconButton>
@@ -125,10 +125,7 @@ const StudentVocabularyAppBar = ({
           >
             <SearchIcon sx={{ color: "text.secondary", mr: 1 }} />
             <InputBase
-              placeholder={t(
-                "vocabulary.searchPlaceholder",
-                "Search vocabulary words..."
-              )}
+              placeholder={t("vocabulary.searchPlaceholder")}
               value={localSearchTerm}
               onChange={handleSearchChange}
               sx={{ flexGrow: 1 }}
@@ -150,7 +147,7 @@ const StudentVocabularyAppBar = ({
             <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
               {showFavoritesOnly && (
                 <Chip
-                  label={t("vocabulary.favoritesOnly", "Favorites Only")}
+                  label={t("vocabulary.favoritesOnly")}
                   size="small"
                   color="secondary"
                   onDelete={handleToggleFavorites}

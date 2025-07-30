@@ -119,6 +119,66 @@ export async function deleteCourse(courseId) {
   }
 }
 
+// Get user's enrolled courses
+export async function getUserEnrolledCourses(userId) {
+  try {
+    // Query enrollments collection for user's enrollments
+    const enrollmentsRef = collection(db, "enrollments");
+    const q = query(
+      enrollmentsRef,
+      where("userId", "==", userId),
+      where("status", "==", "active")
+    );
+
+    const enrollmentsSnapshot = await getDocs(q);
+
+    if (enrollmentsSnapshot.empty) {
+      console.log("No active enrollments found for user:", userId);
+      return [];
+    }
+
+    // Extract course IDs from enrollments
+    const enrolledCourseIds = enrollmentsSnapshot.docs.map(
+      (doc) => doc.data().courseId
+    );
+
+    if (enrolledCourseIds.length === 0) {
+      return [];
+    }
+
+    // Fetch the actual course data for enrolled courses
+    const enrolledCourses = [];
+    for (const courseId of enrolledCourseIds) {
+      try {
+        const course = await getCourseById(courseId);
+        if (course) {
+          // Add enrollment data to course object
+          const enrollmentDoc = enrollmentsSnapshot.docs.find(
+            (doc) => doc.data().courseId === courseId
+          );
+          const enrollmentData = enrollmentDoc?.data();
+
+          enrolledCourses.push({
+            ...course,
+            enrollmentId: enrollmentDoc?.id,
+            enrollmentDate: enrollmentData?.enrollmentDate,
+            progress: enrollmentData?.progress || 0,
+            status: enrollmentData?.status || "active",
+            lastAccessed: enrollmentData?.lastAccessed,
+          });
+        }
+      } catch (error) {
+        console.error(`Error fetching course ${courseId}:`, error);
+      }
+    }
+
+    return enrolledCourses;
+  } catch (error) {
+    console.error("Error getting user enrolled courses:", error);
+    return [];
+  }
+}
+
 const studentCourseService = {
   getAllCourses,
   getCourseById,
@@ -127,6 +187,7 @@ const studentCourseService = {
   createCourse,
   updateCourse,
   deleteCourse,
+  getUserEnrolledCourses,
 };
 
 export default studentCourseService;

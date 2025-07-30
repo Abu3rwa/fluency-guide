@@ -56,7 +56,7 @@ const StudentVocabularyNavigationControls = ({
       {/* Navigation Info */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Typography variant="body2" color="text.secondary">
-          {t("vocabulary.wordProgress", "Word {{current}} of {{total}}", {
+          {t("vocabulary.wordProgress", {
             current: currentIndex + 1,
             total: totalWords,
           })}
@@ -66,7 +66,7 @@ const StudentVocabularyNavigationControls = ({
       {/* Navigation Controls */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         {/* First Button */}
-        <Tooltip title={t("vocabulary.firstWord", "First Word")}>
+        <Tooltip title={t("vocabulary.firstWord")}>
           <IconButton
             onClick={handleFirst}
             disabled={!canGoPrevious}
@@ -77,7 +77,7 @@ const StudentVocabularyNavigationControls = ({
         </Tooltip>
 
         {/* Previous Button */}
-        <Tooltip title={t("vocabulary.previousWord", "Previous Word")}>
+        <Tooltip title={t("vocabulary.previousWord")}>
           <IconButton
             onClick={onPrevious}
             disabled={!canGoPrevious}
@@ -88,21 +88,21 @@ const StudentVocabularyNavigationControls = ({
         </Tooltip>
 
         {/* Random Button */}
-        <Tooltip title={t("vocabulary.randomWord", "Random Word")}>
+        <Tooltip title={t("vocabulary.randomWord")}>
           <IconButton onClick={onRandom} color="primary" size="small">
             <ShuffleIcon />
           </IconButton>
         </Tooltip>
 
         {/* Next Button */}
-        <Tooltip title={t("vocabulary.nextWord", "Next Word")}>
+        <Tooltip title={t("vocabulary.nextWord")}>
           <IconButton onClick={onNext} disabled={!canGoNext} size="small">
             <NavigateNextIcon />
           </IconButton>
         </Tooltip>
 
         {/* Last Button */}
-        <Tooltip title={t("vocabulary.lastWord", "Last Word")}>
+        <Tooltip title={t("vocabulary.lastWord")}>
           <IconButton onClick={handleLast} disabled={!canGoNext} size="small">
             <LastPageIcon />
           </IconButton>

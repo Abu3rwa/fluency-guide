@@ -219,7 +219,7 @@ const Auth = () => {
                 // mt: 2,
               }}
             >
-              {isLogin ? "Welcome Back" : "Join Us"}
+              {isLogin ? t("auth.welcomeBack") : t("auth.joinUs")}
             </Typography>
             <Typography
               variant="body1"
@@ -229,8 +229,8 @@ const Auth = () => {
               }}
             >
               {isLogin
-                ? "Sign in to continue your learning journey"
-                : "Create your account and start learning"}
+                ? t("auth.signInSubtitle")
+                : t("auth.createAccountSubtitle")}
             </Typography>
           </Box>
 
@@ -249,7 +249,7 @@ const Auth = () => {
             {!isLogin && (
               <TextField
                 fullWidth
-                label="Full Name"
+                label={t("auth.fullName")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoComplete="name"
@@ -271,7 +271,7 @@ const Auth = () => {
             )}
             <TextField
               fullWidth
-              label="Email Address"
+              label={t("auth.emailAddress")}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -294,7 +294,7 @@ const Auth = () => {
             />
             <TextField
               fullWidth
-              label="Password"
+              label={t("auth.password")}
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -326,7 +326,7 @@ const Auth = () => {
             {!isLogin && (
               <TextField
                 fullWidth
-                label="Confirm Password"
+                label={t("auth.confirmPassword")}
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -377,9 +377,9 @@ const Auth = () => {
               {loading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : isLogin ? (
-                "Sign In"
+                t("auth.signIn")
               ) : (
-                "Create Account"
+                t("auth.createAccount")
               )}
             </Button>
 
@@ -388,12 +388,10 @@ const Auth = () => {
                 <Button
                   type="button"
                   variant="text"
-                  onClick={() =>
-                    setError("Forgot password functionality coming soon!")
-                  }
+                  onClick={() => setError(t("auth.forgotPasswordComingSoon"))}
                   sx={{ color: theme.palette.primary.main }}
                 >
-                  Forgot Password?
+                  {t("auth.forgotPassword")}
                 </Button>
               </Box>
             )}
@@ -404,7 +402,7 @@ const Auth = () => {
               variant="body2"
               sx={{ color: theme.palette.text.secondary }}
             >
-              or
+              {t("auth.or")}
             </Typography>
           </Box>
 
@@ -443,7 +441,7 @@ const Auth = () => {
               </svg>
             }
           >
-            Continue with Google
+            {t("auth.continueWithGoogle")}
           </Button>
 
           <Box sx={{ textAlign: "center" }}>
@@ -451,7 +449,7 @@ const Auth = () => {
               variant="body2"
               sx={{ color: theme.palette.text.secondary }}
             >
-              {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+              {isLogin ? t("auth.noAccount") : t("auth.haveAccount")}{" "}
               <Button
                 type="button"
                 variant="text"
@@ -464,7 +462,7 @@ const Auth = () => {
                   fontSize: "inherit",
                 }}
               >
-                {isLogin ? "Sign Up" : "Sign In"}
+                {isLogin ? t("auth.signUp") : t("auth.signIn")}
               </Button>
             </Typography>
           </Box>

@@ -47,7 +47,7 @@ const StudentMotivationDialog = ({ open, onClose }) => {
           component="div"
           sx={{ fontWeight: "bold", color: "#2C3E50" }}
         >
-          {t("vocabulary.keepGoing", "Keep Going! 💪")}
+          {t("vocabulary.keepGoing")}
         </Typography>
       </DialogTitle>
 
@@ -67,7 +67,7 @@ const StudentMotivationDialog = ({ open, onClose }) => {
             </Box>
 
             <Typography variant="h6" sx={{ mb: 2, color: "#2C3E50" }}>
-              {t("vocabulary.motivationalTitle", "You're Doing Great!")}
+              {t("vocabulary.motivationalTitle")}
             </Typography>
 
             <Typography
@@ -83,18 +83,12 @@ const StudentMotivationDialog = ({ open, onClose }) => {
           >
             <TrendingUpIcon sx={{ fontSize: 24, color: "#27AE60" }} />
             <Typography variant="body2" color="text.secondary">
-              {t(
-                "vocabulary.learningTip",
-                "Every word you learn brings you closer to fluency"
-              )}
+              {t("vocabulary.learningTip")}
             </Typography>
           </Box>
 
           <Typography variant="body2" sx={{ color: "#7F8C8D" }}>
-            {t(
-              "vocabulary.consistencyMessage",
-              "Remember: Consistency beats perfection. Keep learning a little bit every day!"
-            )}
+            {t("vocabulary.consistencyMessage")}
           </Typography>
         </Box>
       </DialogContent>
@@ -114,7 +108,7 @@ const StudentMotivationDialog = ({ open, onClose }) => {
             borderRadius: 2,
           }}
         >
-          {t("vocabulary.continueLearning", "Continue Learning")}
+          {t("vocabulary.continueLearning")}
         </Button>
       </DialogActions>
     </Dialog>

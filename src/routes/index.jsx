@@ -11,7 +11,9 @@ import StudentFillInBlanksTaskPage from "../student-ui/students-pages/student-ta
 import StudentMultipleChoiceTaskPage from "../student-ui/students-pages/student-tasks-pages/student-mutiple-choice-task-page/StudentMultipleChoiceTaskPage";
 import StudentTrueFalseTaskPage from "../student-ui/students-pages/student-tasks-pages/student-true-false-task-page/StudentTrueFalseTaskPage";
 import StudentVocabularyBuildingPage from "../student-ui/students-pages/student-vocabulary-building-page/StudentVocabularyBuildingPage";
+import ReviewPage from "../student-ui/students-pages/student-dashboard-page/components/ReviewPage";
 import TesseractOCR from "../components/TesseractOCR";
+import DictionaryApiTest from "../components/test/DictionaryApiTest";
 // import StudentProgressPage from "../student-ui/students-pages/student-progress-page/StudentProgressPage";
 // Lazy load components
 const StudentStatisticsPage = React.lazy(() =>
@@ -98,64 +100,97 @@ export const publicRoutes = [
   { path: ROUTES.PRICING, element: <Pricing /> },
   { path: ROUTES.ABOUT, element: <About /> },
   { path: ROUTES.CONTACT, element: <Contact /> },
+  {
+    path: "/test/dictionary-api",
+    element: (
+      <AppLayout>
+        <DictionaryApiTest />
+      </AppLayout>
+    ),
+  },
+];
 
-  // Student Profile Page
+// Student routes (for logged-in students)
+export const studentRoutes = [
   {
     path: ROUTES.STUDENT_DASHBOARD,
     element: (
-      <AppLayout>
-        <StudentDashboardPage />
-      </AppLayout>
+      <StudentRoute>
+        <AppLayout>
+          <StudentDashboardPage />
+        </AppLayout>
+      </StudentRoute>
     ),
   },
   {
     path: ROUTES.STUDENT_LESSON_DETAILS,
     element: (
-      <AppLayout>
-        <StudentLessonDetailsPage />
-      </AppLayout>
+      <StudentRoute>
+        <AppLayout>
+          <StudentLessonDetailsPage />
+        </AppLayout>
+      </StudentRoute>
     ),
   },
   {
     path: ROUTES.STUDENT_FILL_IN_BLANKS_TASK,
     element: (
-      <AppLayout>
-        <StudentFillInBlanksTaskPage />
-      </AppLayout>
+      <StudentRoute>
+        <AppLayout>
+          <StudentFillInBlanksTaskPage />
+        </AppLayout>
+      </StudentRoute>
     ),
   },
   {
     path: ROUTES.STUDENT_MULTIPLE_CHOICE_TASK,
     element: (
-      <AppLayout>
-        <StudentMultipleChoiceTaskPage />
-      </AppLayout>
+      <StudentRoute>
+        <AppLayout>
+          <StudentMultipleChoiceTaskPage />
+        </AppLayout>
+      </StudentRoute>
     ),
   },
   {
     path: ROUTES.STUDENT_TRUE_FALSE_TASK,
     element: (
-      <AppLayout>
-        <StudentTrueFalseTaskPage />
-      </AppLayout>
+      <StudentRoute>
+        <AppLayout>
+          <StudentTrueFalseTaskPage />
+        </AppLayout>
+      </StudentRoute>
     ),
   },
   // Generic task route for any task type
   {
     path: "/student/tasks/:taskId",
     element: (
-      <AppLayout>
-        <StudentFillInBlanksTaskPage />
-      </AppLayout>
+      <StudentRoute>
+        <AppLayout>
+          <StudentFillInBlanksTaskPage />
+        </AppLayout>
+      </StudentRoute>
     ),
   },
-  // Student Vocabulary Building Page (protected for logged-in students)
+  // Student Vocabulary Building Page
   {
     path: ROUTES.STUDENT_VOCABULARY_BUILDING,
     element: (
       <StudentRoute>
         <AppLayout>
           <StudentVocabularyBuildingPage />
+        </AppLayout>
+      </StudentRoute>
+    ),
+  },
+  // Review Page
+  {
+    path: "/review",
+    element: (
+      <StudentRoute>
+        <AppLayout>
+          <ReviewPage />
         </AppLayout>
       </StudentRoute>
     ),
@@ -286,6 +321,11 @@ const AppRoutes = () => {
 
         {/* Admin routes */}
         {adminRoutes.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
+
+        {/* Student routes */}
+        {studentRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
 
