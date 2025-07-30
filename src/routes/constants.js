@@ -25,6 +25,16 @@ export const ROUTES = {
   // Student UI routes
   STUDENT_DASHBOARD: "/student/dashboard/:id",
   STUDENT_LESSON_DETAILS: "/student/lessons/:lessonId",
+  STUDENT_FILL_IN_BLANKS_TASK: "/student/tasks/fill-in-blanks/:taskId",
+  STUDENT_MULTIPLE_CHOICE_TASK: "/student/tasks/multiple-choice/:taskId",
+  STUDENT_TRUE_FALSE_TASK: "/student/tasks/true-false/:taskId",
+  STUDENT_GENERIC_TASK: "/student/tasks/:taskId",
+  STUDENT_VOCABULARY_BUILDING: "/student/vocabulary",
+  STUDENT_PROGRESS: "/student/progress",
+  STUDENT_STATISTICS: "/student/statistics",
+
+  // Test routes
+  OCR_TEST: "/ocr-test",
 };
 
 // Helper function to generate course details URL

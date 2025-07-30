@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Trash2, Save, Eye, EyeOff } from "lucide-react";
 import { createTask } from "../../../services/taskService";
+import { useFormPersistence } from "../../../hooks/useFormPersistence";
+import {
+  DraftRecoveryNotification,
+  AutoSaveStatus,
+  StorageErrorNotification,
+  DraftStatusSummary,
+} from "../components/DraftNotifications";
 import {
   Box,
   Paper,
@@ -25,36 +32,75 @@ import {
 } from "@mui/material";
 
 const TrueFalseForm = ({ courseId, lessonId }) => {
-  const [formData, setFormData] = useState({
-    id: "",
-    title: "",
-    instructions: "",
-    type: "trueFalse",
-    timeLimit: 30,
-    passingScore: 70,
-    attemptsAllowed: 3,
-    difficulty: "medium",
-    tags: [],
-    isPublished: false,
-    showFeedback: true,
-    randomizeQuestions: false,
-    showCorrectAnswers: true,
-    allowReview: true,
-    pointsPerQuestion: 10,
-    totalPoints: 0,
-    questions: [
-      {
-        id: Date.now().toString(),
-        text: "",
-        correctAnswer: true,
-        explanation: "",
-        points: 10,
-      },
-    ],
-    lessonId: lessonId,
-    courseId: courseId,
-    status: "draft",
-    metadata: {},
+  // Initial form data structure - memoized to prevent re-creation
+  const initialFormData = useMemo(
+    () => ({
+      title: "",
+      instructions: "",
+      type: "trueFalse",
+      timeLimit: 30,
+      passingScore: 70,
+      attemptsAllowed: 3,
+      difficulty: "medium",
+      tags: [],
+      isPublished: false,
+      showFeedback: true,
+      randomizeQuestions: false,
+      showCorrectAnswers: true,
+      allowReview: true,
+      pointsPerQuestion: 10,
+      totalPoints: 0,
+      questions: [
+        {
+          id: Date.now().toString(),
+          text: "",
+          correctAnswer: true,
+          explanation: "",
+          points: 10,
+        },
+      ],
+      lessonId: lessonId,
+      courseId: courseId,
+      status: "draft",
+      metadata: {},
+    }),
+    [courseId, lessonId]
+  );
+
+  // Use persistence hook
+  const {
+    formData,
+    updateFormData,
+    isInitialized,
+    draftLoaded,
+    autoSaveStatus,
+    hasUnsavedChanges,
+    validationStatus,
+    saveManually,
+    clearDraft,
+    cleanupAfterSubmission,
+    dismissRecoveryNotification,
+    recoveryNotification,
+    storageError,
+  } = useFormPersistence("trueFalse", courseId, lessonId, initialFormData, {
+    onDraftLoaded: (data, timestamp) => {
+      console.log("True/False draft loaded:", {
+        timestamp,
+        questionCount: data.questions?.length,
+      });
+    },
+    onAutoSave: (data, timestamp) => {
+      console.log("True/False auto-saved:", {
+        timestamp,
+        questionCount: data.questions?.length,
+      });
+    },
+    onError: (error, context) => {
+      console.error("True/False persistence error:", {
+        error: error.message,
+        context,
+      });
+    },
   });
 
   const [loading, setLoading] = useState(false);
@@ -64,7 +110,7 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       [field]: value,
       ...(field === "pointsPerQuestion" && {
@@ -79,7 +125,7 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
       ...updatedQuestions[questionIndex],
       [field]: value,
     };
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: updatedQuestions,
       totalPoints: prev.pointsPerQuestion * updatedQuestions.length,
@@ -87,14 +133,15 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
   };
 
   const addQuestion = () => {
+    const questionId = Date.now().toString();
     const newQuestion = {
-      id: Date.now().toString(),
+      id: questionId,
       text: "",
       correctAnswer: true,
       explanation: "",
       points: formData.pointsPerQuestion,
     };
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion],
       totalPoints: prev.pointsPerQuestion * (prev.questions.length + 1),
@@ -104,7 +151,7 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
   const removeQuestion = (index) => {
     if (formData.questions.length > 1) {
       const updatedQuestions = formData.questions.filter((_, i) => i !== index);
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         questions: updatedQuestions,
         totalPoints: prev.pointsPerQuestion * updatedQuestions.length,
@@ -114,7 +161,7 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, newTag.trim()],
       }));
@@ -123,7 +170,7 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
   };
 
   const removeTag = (tagToRemove) => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
@@ -138,7 +185,6 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
     try {
       const submitData = {
         ...formData,
-        id: formData.id || Date.now().toString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -148,8 +194,9 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
 
       console.log("Task created successfully:", createdTask);
       setSuccess("Task created successfully!");
-      // Optionally reset form here
-      // setFormData(initialFormData);
+
+      // Clean up drafts after successful submission
+      cleanupAfterSubmission();
     } catch (err) {
       setError("Failed to create task. Please try again.");
       console.error("Error:", err);
@@ -166,6 +213,39 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
       <Typography variant="body1" color="text.secondary" mb={4}>
         Design interactive true or false questions for your students
       </Typography>
+
+      {/* Draft Recovery Notification */}
+      <DraftRecoveryNotification
+        notification={recoveryNotification}
+        onRestore={() => {
+          // Data is already loaded by the hook
+          dismissRecoveryNotification();
+        }}
+        onDismiss={() => {
+          clearDraft();
+          dismissRecoveryNotification();
+        }}
+        onClose={dismissRecoveryNotification}
+      />
+
+      {/* Storage Error Notification */}
+      <StorageErrorNotification
+        error={storageError}
+        onClose={() => {
+          // Clear storage error - this would need to be implemented in the context
+        }}
+      />
+
+      {/* Draft Status Summary */}
+      {isInitialized && (draftLoaded || hasUnsavedChanges) && (
+        <DraftStatusSummary
+          autoSaveStatus={autoSaveStatus}
+          hasUnsavedChanges={hasUnsavedChanges}
+          validationStatus={validationStatus}
+          onManualSave={saveManually}
+          onClearDraft={clearDraft}
+        />
+      )}
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -336,7 +416,10 @@ const TrueFalseForm = ({ courseId, lessonId }) => {
           alignItems="center"
           mb={2}
         >
-          <Typography variant="h6">Questions</Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Typography variant="h6">Questions</Typography>
+            <AutoSaveStatus status={autoSaveStatus} />
+          </Box>
           <Box display="flex" gap={1}>
             <Button
               variant="outlined"

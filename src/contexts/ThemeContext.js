@@ -203,7 +203,10 @@ const baseTheme = {
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [mode, setMode] = useState("light");
+  const [mode, setMode] = useState(() => {
+    const savedMode = localStorage.getItem("themeMode");
+    return savedMode || "dark";
+  });
   const theme = useMemo(
     () =>
       createTheme({
@@ -213,7 +216,11 @@ export function ThemeProvider({ children }) {
     [mode]
   );
   const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+    setMode((prevMode) => {
+      const newMode = prevMode === "light" ? "dark" : "light";
+      localStorage.setItem("themeMode", newMode);
+      return newMode;
+    });
   };
   const value = {
     theme,

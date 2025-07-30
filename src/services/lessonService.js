@@ -124,6 +124,41 @@ export const updateLesson = async (lessonId, lessonData) => {
   }
 };
 
+export const updateLessonStatus = async (lessonId, status) => {
+  try {
+    const lessonRef = doc(db, "lessons", lessonId);
+
+    // First check if lesson exists
+    const lessonDoc = await getDoc(lessonRef);
+    if (!lessonDoc.exists()) {
+      throw new Error("Lesson not found");
+    }
+
+    await updateDoc(lessonRef, {
+      status,
+      updatedAt: serverTimestamp(),
+    });
+
+    console.log("Lesson status updated successfully:", lessonId, status);
+    return { id: lessonId, status };
+  } catch (error) {
+    console.error("Error in updateLessonStatus:", error);
+    throw new Error(`Failed to update lesson status: ${error.message}`);
+  }
+};
+
+export const publishLesson = async (lessonId) => {
+  return updateLessonStatus(lessonId, "published");
+};
+
+export const archiveLesson = async (lessonId) => {
+  return updateLessonStatus(lessonId, "archived");
+};
+
+export const draftLesson = async (lessonId) => {
+  return updateLessonStatus(lessonId, "draft");
+};
+
 export const deleteLesson = async (lessonId) => {
   try {
     const lessonRef = doc(db, "lessons", lessonId);

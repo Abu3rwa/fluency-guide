@@ -14,7 +14,7 @@ const StudentLessonSkillsSection = ({ skills }) => {
     return null;
   }
   return (
-    <Box sx={{ p: { xs: 1, sm: 2, md: 4 } }}>
+    <Box>
       <Typography
         variant="h6"
         sx={{

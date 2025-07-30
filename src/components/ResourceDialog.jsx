@@ -103,9 +103,9 @@ const ResourceDialog = ({
       onSubmit();
     }
   };
-
+  console.log("ResourceDialog formData:", formData);
   const hasErrors = Object.keys(errors).length > 0;
-
+  console.log("ResourceDialog errors:", errors);
   return (
     <Dialog
       open={open}

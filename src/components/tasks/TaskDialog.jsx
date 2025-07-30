@@ -26,15 +26,15 @@ const TaskDialog = ({
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      aria-labelledby="task-dialog-title"
+      PaperProps={{
+        sx: {
+          minHeight: "80vh",
+          maxHeight: "90vh",
+        },
+      }}
     >
-      <DialogTitle id="task-dialog-title">
-        <Box display="flex" alignItems="center" gap={1}>
-          <AssignmentIcon color="primary" />
-          <Typography variant="h6">
-            {selectedTask ? t("tasks.editTask") : t("tasks.createTask")}
-          </Typography>
-        </Box>
+      <DialogTitle>
+        {selectedTask ? "Edit Task" : "Create New Task"}
       </DialogTitle>
       <DialogContent>
         <TaskFormTabs

@@ -14,9 +14,8 @@ import {
 const COLLECTION_NAME = "tasks";
 
 // Utility to normalize task data to match Flutter Task model
-function normalizeTaskData(data) {
-  return {
-    id: data.id || "",
+function normalizeTaskData(data, includeId = false) {
+  const normalizedData = {
     title: data.title || "",
     instructions: data.instructions || "",
     type: data.type || "multipleChoice",
@@ -55,17 +54,28 @@ function normalizeTaskData(data) {
         ? data.metadata
         : {},
   };
+
+  // Only include ID if explicitly requested (for updates)
+  if (includeId && data.id) {
+    normalizedData.id = data.id;
+  }
+
+  return normalizedData;
 }
 
 export const createTask = async (courseId, lessonId, taskData) => {
   try {
-    const normalizedTask = normalizeTaskData({
-      ...taskData,
-      courseId,
-      lessonId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    const normalizedTask = normalizeTaskData(
+      {
+        ...taskData,
+        courseId,
+        lessonId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      false
+    ); // Don't include ID for new tasks
+
     const taskRef = await addDoc(
       collection(db, COLLECTION_NAME),
       normalizedTask
@@ -82,12 +92,17 @@ export const createTask = async (courseId, lessonId, taskData) => {
 
 export const updateTask = async (courseId, lessonId, taskId, taskData) => {
   try {
-    const normalizedTask = normalizeTaskData({
-      ...taskData,
-      courseId,
-      lessonId,
-      updatedAt: new Date(),
-    });
+    const normalizedTask = normalizeTaskData(
+      {
+        ...taskData,
+        id: taskId, // Include the task ID for updates
+        courseId,
+        lessonId,
+        updatedAt: new Date(),
+      },
+      true
+    ); // Include ID for updates
+
     const taskRef = doc(db, COLLECTION_NAME, taskId);
     await updateDoc(taskRef, normalizedTask);
     return {
@@ -119,9 +134,11 @@ export const getTask = async (taskId) => {
       throw new Error("Task not found");
     }
 
+    const taskData = taskDoc.data();
     return {
+      ...taskData,
+      // Always use Firebase document ID as the task ID
       id: taskDoc.id,
-      ...taskDoc.data(),
     };
   } catch (error) {
     console.error("Error getting task:", error);
@@ -138,10 +155,14 @@ export const getTasksByLesson = async (courseId, lessonId) => {
     );
 
     const querySnapshot = await getDocs(tasksQuery);
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    return querySnapshot.docs.map((doc) => {
+      const taskData = doc.data();
+      return {
+        ...taskData,
+        // Always use Firebase document ID as the task ID
+        id: doc.id,
+      };
+    });
   } catch (error) {
     console.error("Error getting tasks:", error);
     throw error;
@@ -152,24 +173,70 @@ export const getAllTasks = async () => {
   try {
     const tasksQuery = query(collection(db, COLLECTION_NAME));
     const querySnapshot = await getDocs(tasksQuery);
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    return querySnapshot.docs.map((doc) => {
+      const taskData = doc.data();
+      return {
+        ...taskData,
+        // Always use Firebase document ID as the task ID
+        id: doc.id,
+      };
+    });
   } catch (error) {
     console.error("Error getting all tasks:", error);
     throw error;
   }
 };
 
+// Helper function to identify tasks with empty IDs in their original data
+export const getTasksWithEmptyIds = async () => {
+  try {
+    const tasksQuery = query(collection(db, COLLECTION_NAME));
+    const querySnapshot = await getDocs(tasksQuery);
+    return querySnapshot.docs
+      .map((doc) => {
+        const taskData = doc.data();
+        return {
+          ...taskData,
+          // Always use Firebase document ID as the task ID
+          id: doc.id,
+          // Store original data for comparison
+          _originalData: taskData,
+        };
+      })
+      .filter((task) => {
+        // Check if the original data had an empty ID field
+        const originalData = task._originalData || {};
+        return !originalData.id || originalData.id.trim() === "";
+      });
+  } catch (error) {
+    console.error("Error getting tasks with empty IDs:", error);
+    throw error;
+  }
+};
+
 export const publishTask = async (courseId, lessonId, taskId) => {
   try {
+    console.log("Publishing task:", { courseId, lessonId, taskId });
+
+    // Validate taskId
+    if (!taskId || taskId.trim() === "") {
+      throw new Error("Invalid task ID");
+    }
+
     const taskRef = doc(db, COLLECTION_NAME, taskId);
+
+    // First check if task exists
+    const taskDoc = await getDoc(taskRef);
+    if (!taskDoc.exists()) {
+      throw new Error("Task not found");
+    }
+
     await updateDoc(taskRef, {
       status: "published",
       updatedAt: new Date(),
     });
 
+    console.log("Task published successfully:", taskId);
     return {
       id: taskId,
       status: "published",
@@ -182,18 +249,66 @@ export const publishTask = async (courseId, lessonId, taskId) => {
 
 export const archiveTask = async (courseId, lessonId, taskId) => {
   try {
+    console.log("Archiving task:", { courseId, lessonId, taskId });
+
+    // Validate taskId
+    if (!taskId || taskId.trim() === "") {
+      throw new Error("Invalid task ID");
+    }
+
     const taskRef = doc(db, COLLECTION_NAME, taskId);
+
+    // First check if task exists
+    const taskDoc = await getDoc(taskRef);
+    if (!taskDoc.exists()) {
+      throw new Error("Task not found");
+    }
+
     await updateDoc(taskRef, {
       status: "archived",
       updatedAt: new Date(),
     });
 
+    console.log("Task archived successfully:", taskId);
     return {
       id: taskId,
       status: "archived",
     };
   } catch (error) {
     console.error("Error archiving task:", error);
+    throw error;
+  }
+};
+
+export const draftTask = async (courseId, lessonId, taskId) => {
+  try {
+    console.log("Setting task to draft:", { courseId, lessonId, taskId });
+
+    // Validate taskId
+    if (!taskId || taskId.trim() === "") {
+      throw new Error("Invalid task ID");
+    }
+
+    const taskRef = doc(db, COLLECTION_NAME, taskId);
+
+    // First check if task exists
+    const taskDoc = await getDoc(taskRef);
+    if (!taskDoc.exists()) {
+      throw new Error("Task not found");
+    }
+
+    await updateDoc(taskRef, {
+      status: "draft",
+      updatedAt: new Date(),
+    });
+
+    console.log("Task set to draft successfully:", taskId);
+    return {
+      id: taskId,
+      status: "draft",
+    };
+  } catch (error) {
+    console.error("Error setting task to draft:", error);
     throw error;
   }
 };

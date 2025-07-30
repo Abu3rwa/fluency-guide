@@ -34,11 +34,33 @@ const userService = {
         uid: user.uid,
         email: user.email || "",
         displayName: user.displayName || user.email?.split("@")[0] || "User",
+        name:
+          user.name || user.displayName || user.email?.split("@")[0] || "User",
         photoURL: user.photoURL || "",
+        profileImage: user.photoURL || "",
         isAdmin: false,
         isStudent: true,
+        emailVerified: user.emailVerified || false,
+        bio: "",
+        phoneNumber: "",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+        lastStudyDate: serverTimestamp(),
+        lastActiveCourse: "",
+        enrolledCourses: [],
+        completedLessons: [],
+        pendingEnrollments: [],
+        achievements: [],
+        preferences: {
+          preferredLanguage: "en",
+        },
+        progress: {
+          currentStreak: 0,
+          totalPoints: 0,
+          completedCourses: 0,
+          totalStudyTime: 0,
+        },
       };
 
       await setDoc(userRef, newUser);
@@ -55,7 +77,19 @@ const userService = {
         userData.displayName ||
         user.email?.split("@")[0] ||
         "User",
+      name:
+        user.name ||
+        user.displayName ||
+        userData.name ||
+        user.email?.split("@")[0] ||
+        "User",
       photoURL: user.photoURL || userData.photoURL || "",
+      profileImage: user.photoURL || userData.profileImage || "",
+      emailVerified:
+        user.emailVerified !== undefined
+          ? user.emailVerified
+          : userData.emailVerified,
+      lastLogin: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
 

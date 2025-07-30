@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useCustomTheme } from "../contexts/ThemeContext";
 import CustomSpinner from "../components/CustomSpinner";
-import LandingHeader from "../components/LandingHeader/LandingHeader.jsx";
+
 import HeroSection from "./landing/HeroSection";
 import FeaturesSection from "./landing/FeaturesSection";
 import ShowcaseTabsSection from "./landing/ShowcaseTabsSection";
@@ -41,12 +41,13 @@ const Landing = () => {
         overflowX: "hidden",
       }}
     >
-      <HeroSection t={t} />
-      <FeaturesSection t={t} />
+      <HeroSection t={t} theme={theme} />
       <CoursesSection />
 
+      <FeaturesSection t={t} />
+
       <ShowcaseTabsSection t={t} />
-      <TestimonialsSection t={t} />
+      {/* <TestimonialsSection t={t} /> */}
       <FAQSection t={t} />
       <ContactSection t={t} />
       <LandingFooter t={t} />

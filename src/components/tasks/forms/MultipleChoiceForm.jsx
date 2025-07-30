@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Trash2, Save, Eye, EyeOff, Check } from "lucide-react";
 import {
   Box,
@@ -21,46 +21,98 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { createTask } from "../../../services/taskService";
+import { useFormPersistence } from "../../../hooks/useFormPersistence";
+import {
+  DraftRecoveryNotification,
+  AutoSaveStatus,
+  StorageErrorNotification,
+  DraftStatusSummary,
+} from "../components/DraftNotifications";
 
 const MultipleChoiceForm = ({ courseId, lessonId }) => {
-  const [formData, setFormData] = useState({
-    id: "",
-    title: "",
-    instructions: "",
-    type: "multipleChoice",
-    timeLimit: 30,
-    passingScore: 70,
-    attemptsAllowed: 3,
-    difficulty: "medium",
-    tags: [],
-    isPublished: false,
-    showFeedback: true,
-    randomizeQuestions: false,
-    showCorrectAnswers: true,
-    allowReview: true,
-    pointsPerQuestion: 10,
-    totalPoints: 0,
-    questions: [
-      {
-        id: "1",
-        text: "",
-        options: [
-          { id: "1", text: "", isCorrect: false },
-          { id: "2", text: "", isCorrect: false },
-          { id: "3", text: "", isCorrect: false },
-          { id: "4", text: "", isCorrect: false },
-        ],
-        explanation: "",
-        points: 10,
-        multipleCorrect: false,
+  const { t } = useTranslation();
+
+  // Initial form data structure - memoized to prevent re-creation
+  const initialFormData = useMemo(
+    () => ({
+      title: "",
+      instructions: "",
+      type: "multipleChoice",
+      timeLimit: 30,
+      passingScore: 70,
+      attemptsAllowed: 3,
+      difficulty: "medium",
+      tags: [],
+      isPublished: false,
+      showFeedback: true,
+      randomizeQuestions: false,
+      showCorrectAnswers: true,
+      allowReview: true,
+      pointsPerQuestion: 10,
+      totalPoints: 0,
+      questions: [
+        {
+          id: Date.now().toString(),
+          text: "",
+          options: [
+            { id: `${Date.now()}-1`, text: "", isCorrect: false },
+            { id: `${Date.now()}-2`, text: "", isCorrect: false },
+            { id: `${Date.now()}-3`, text: "", isCorrect: false },
+            { id: `${Date.now()}-4`, text: "", isCorrect: false },
+          ],
+          explanation: "",
+          points: 10,
+          multipleCorrect: false,
+        },
+      ],
+      lessonId: lessonId,
+      courseId: courseId,
+      status: "draft",
+      metadata: {},
+    }),
+    [courseId, lessonId]
+  );
+
+  // Use persistence hook
+  const {
+    formData,
+    updateFormData,
+    isInitialized,
+    draftLoaded,
+    autoSaveStatus,
+    hasUnsavedChanges,
+    validationStatus,
+    saveManually,
+    clearDraft,
+    cleanupAfterSubmission,
+    dismissRecoveryNotification,
+    recoveryNotification,
+    storageError,
+  } = useFormPersistence(
+    "multipleChoice",
+    courseId,
+    lessonId,
+    initialFormData,
+    {
+      onDraftLoaded: (data, timestamp) => {
+        console.log("Draft loaded:", {
+          timestamp,
+          questionCount: data.questions?.length,
+        });
       },
-    ],
-    lessonId: lessonId,
-    courseId: courseId,
-    status: "draft",
-    metadata: {},
-  });
+      onAutoSave: (data, timestamp) => {
+        console.log("Auto-saved:", {
+          timestamp,
+          questionCount: data.questions?.length,
+        });
+      },
+      onError: (error, context) => {
+        console.error("Persistence error:", { error: error.message, context });
+      },
+    }
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -69,7 +121,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       [field]: value,
       ...(field === "pointsPerQuestion" && {
@@ -98,7 +150,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
       }));
     }
 
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: updatedQuestions,
       totalPoints: prev.pointsPerQuestion * updatedQuestions.length,
@@ -124,26 +176,27 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
       question.options[optionIndex][field] = value;
     }
 
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: updatedQuestions,
     }));
   };
 
   const addQuestion = () => {
+    const questionId = Date.now().toString();
     const newQuestion = {
-      id: Date.now().toString(),
+      id: questionId,
       text: "",
       options: [
-        { id: Date.now().toString() + "-1", text: "", isCorrect: false },
-        { id: Date.now().toString() + "-2", text: "", isCorrect: false },
-        { id: Date.now().toString() + "-3", text: "", isCorrect: false },
+        { id: `${questionId}-1`, text: "", isCorrect: false },
+        { id: `${questionId}-2`, text: "", isCorrect: false },
+        { id: `${questionId}-3`, text: "", isCorrect: false },
       ],
       explanation: "",
       points: formData.pointsPerQuestion,
       multipleCorrect: false,
     };
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion],
       totalPoints: prev.pointsPerQuestion * (prev.questions.length + 1),
@@ -153,7 +206,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
   const removeQuestion = (index) => {
     if (formData.questions.length > 1) {
       const updatedQuestions = formData.questions.filter((_, i) => i !== index);
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         questions: updatedQuestions,
         totalPoints: prev.pointsPerQuestion * updatedQuestions.length,
@@ -163,13 +216,14 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
 
   const addOption = (questionIndex) => {
     const updatedQuestions = [...formData.questions];
+    const questionId = updatedQuestions[questionIndex].id;
     const newOption = {
-      id: Date.now().toString(),
+      id: `${questionId}-${Date.now()}`,
       text: "",
       isCorrect: false,
     };
     updatedQuestions[questionIndex].options.push(newOption);
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: updatedQuestions,
     }));
@@ -181,7 +235,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
       updatedQuestions[questionIndex].options = updatedQuestions[
         questionIndex
       ].options.filter((_, i) => i !== optionIndex);
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         questions: updatedQuestions,
       }));
@@ -190,7 +244,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, newTag.trim()],
       }));
@@ -199,7 +253,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
   };
 
   const removeTag = (tagToRemove) => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
@@ -210,7 +264,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
     setError("");
     setSuccess("");
 
-    // Validation
+    // Validation - allow publishing even with incomplete questions if isPublished is true
     const hasInvalidQuestions = formData.questions.some(
       (q) =>
         !q.text.trim() ||
@@ -218,10 +272,8 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
         !q.options.some((opt) => opt.isCorrect)
     );
 
-    if (hasInvalidQuestions) {
-      setError(
-        "Please fill in all questions, options, and mark at least one correct answer for each question."
-      );
+    if (hasInvalidQuestions && !formData.isPublished) {
+      setError(t("tasks.form.validationError"));
       setLoading(false);
       return;
     }
@@ -229,7 +281,6 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
     try {
       const submitData = {
         ...formData,
-        id: formData.id || Date.now().toString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -238,12 +289,12 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
       const createdTask = await createTask(courseId, lessonId, submitData);
 
       console.log("Task created successfully:", createdTask);
-      setSuccess("Multiple choice quiz created successfully!");
+      setSuccess(t("tasks.form.createSuccess"));
 
-      // Optionally reset form or redirect
-      // setFormData(initialFormData);
+      // Clean up drafts after successful submission
+      cleanupAfterSubmission();
     } catch (err) {
-      setError("Failed to create quiz. Please try again.");
+      setError(t("tasks.form.createError"));
       console.error("Error creating task:", err);
     } finally {
       setLoading(false);
@@ -253,12 +304,44 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
   return (
     <Box maxWidth="md" mx="auto" p={3}>
       <Typography variant="h4" fontWeight={700} mb={2} color="primary">
-        Create Multiple Choice Quiz
+        {t("tasks.form.createMultipleChoiceQuiz")}
       </Typography>
       <Typography variant="body1" color="text.secondary" mb={4}>
-        Design interactive multiple choice quizzes with single or multiple
-        correct answers
+        {t("tasks.form.description")}
       </Typography>
+
+      {/* Draft Recovery Notification */}
+      <DraftRecoveryNotification
+        notification={recoveryNotification}
+        onRestore={() => {
+          // Data is already loaded by the hook
+          dismissRecoveryNotification();
+        }}
+        onDismiss={() => {
+          clearDraft();
+          dismissRecoveryNotification();
+        }}
+        onClose={dismissRecoveryNotification}
+      />
+
+      {/* Storage Error Notification */}
+      <StorageErrorNotification
+        error={storageError}
+        onClose={() => {
+          // Clear storage error - this would need to be implemented in the context
+        }}
+      />
+
+      {/* Draft Status Summary */}
+      {isInitialized && (draftLoaded || hasUnsavedChanges) && (
+        <DraftStatusSummary
+          autoSaveStatus={autoSaveStatus}
+          hasUnsavedChanges={hasUnsavedChanges}
+          validationStatus={validationStatus}
+          onManualSave={saveManually}
+          onClearDraft={clearDraft}
+        />
+      )}
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -273,12 +356,12 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
 
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" mb={2}>
-          Basic Information
+          {t("tasks.form.basicInformation")}
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <TextField
-              label="Title *"
+              label={t("tasks.form.title")}
               value={formData.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
               fullWidth
@@ -287,23 +370,23 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
           </Grid>
           <Grid item xs={12} md={6}>
             <FormControl fullWidth>
-              <InputLabel>Difficulty</InputLabel>
+              <InputLabel>{t("tasks.form.difficulty")}</InputLabel>
               <Select
-                label="Difficulty"
+                label={t("tasks.form.difficulty")}
                 value={formData.difficulty}
                 onChange={(e) =>
                   handleInputChange("difficulty", e.target.value)
                 }
               >
-                <MenuItem value="easy">Easy</MenuItem>
-                <MenuItem value="medium">Medium</MenuItem>
-                <MenuItem value="hard">Hard</MenuItem>
+                <MenuItem value="easy">{t("tasks.form.easy")}</MenuItem>
+                <MenuItem value="medium">{t("tasks.form.medium")}</MenuItem>
+                <MenuItem value="hard">{t("tasks.form.hard")}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label="Instructions"
+              label={t("tasks.form.instructions")}
               value={formData.instructions}
               onChange={(e) =>
                 handleInputChange("instructions", e.target.value)
@@ -311,7 +394,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
               fullWidth
               multiline
               minRows={2}
-              placeholder="Choose the best answer for each question..."
+              placeholder={t("tasks.form.instructionsPlaceholder")}
             />
           </Grid>
         </Grid>
@@ -319,12 +402,12 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
 
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" mb={2}>
-          Quiz Settings
+          {t("tasks.form.quizSettings")}
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Time Limit (minutes)"
+              label={t("tasks.form.timeLimit")}
               type="number"
               value={formData.timeLimit}
               onChange={(e) =>
@@ -336,7 +419,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Passing Score (%)"
+              label={t("tasks.form.passingScore")}
               type="number"
               value={formData.passingScore}
               onChange={(e) =>
@@ -348,7 +431,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Attempts Allowed"
+              label={t("tasks.form.attemptsAllowed")}
               type="number"
               value={formData.attemptsAllowed}
               onChange={(e) =>
@@ -378,12 +461,12 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
                 }
                 label={
                   key === "showFeedback"
-                    ? "Show Feedback"
+                    ? t("tasks.form.showFeedback")
                     : key === "randomizeQuestions"
-                    ? "Randomize Questions"
+                    ? t("tasks.form.randomizeQuestions")
                     : key === "showCorrectAnswers"
-                    ? "Show Correct Answers"
-                    : "Allow Review"
+                    ? t("tasks.form.showCorrectAnswers")
+                    : t("tasks.form.allowReview")
                 }
               />
             ))}
@@ -393,7 +476,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
 
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" mb={2}>
-          Tags
+          {t("tasks.form.tags")}
         </Typography>
         <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
           {formData.tags.map((tag, idx) => (
@@ -408,7 +491,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
         </Box>
         <Box display="flex" gap={2}>
           <TextField
-            label="Add a tag"
+            label={t("tasks.form.addTag")}
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
             onKeyPress={(e) =>
@@ -417,7 +500,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
             fullWidth
           />
           <Button variant="contained" color="primary" onClick={addTag}>
-            Add
+            {t("tasks.form.add")}
           </Button>
         </Box>
       </Paper>
@@ -429,7 +512,10 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
           alignItems="center"
           mb={2}
         >
-          <Typography variant="h6">Questions</Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Typography variant="h6">{t("tasks.form.questions")}</Typography>
+            <AutoSaveStatus status={autoSaveStatus} />
+          </Box>
           <Box display="flex" gap={1}>
             <Button
               variant="outlined"
@@ -437,7 +523,9 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
               startIcon={showPreview ? <EyeOff size={16} /> : <Eye size={16} />}
               onClick={() => setShowPreview(!showPreview)}
             >
-              {showPreview ? "Hide Answers" : "Show Answers"}
+              {showPreview
+                ? t("tasks.form.hideAnswers")
+                : t("tasks.form.showAnswers")}
             </Button>
             <Button
               variant="contained"
@@ -445,184 +533,238 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
               startIcon={<Plus size={16} />}
               onClick={addQuestion}
             >
-              Add Question
+              {t("tasks.form.addQuestion")}
             </Button>
           </Box>
         </Box>
         <Divider sx={{ mb: 2 }} />
         <Box display="flex" flexDirection="column" gap={3}>
-          {formData.questions.map((question, questionIndex) => (
-            <Paper
-              key={question.id}
-              variant="outlined"
-              sx={{ p: 2, bgcolor: "background.paper" }}
-            >
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mb={2}
+          {formData.questions.map((question, questionIndex) => {
+            // Check if question is complete
+            const isQuestionComplete =
+              question.text.trim() &&
+              question.options.every((opt) => opt.text.trim()) &&
+              question.options.some((opt) => opt.isCorrect);
+
+            return (
+              <Paper
+                key={questionIndex}
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  bgcolor: isQuestionComplete
+                    ? "success.50"
+                    : "background.paper",
+                  borderColor: isQuestionComplete ? "success.main" : "divider",
+                  borderWidth: isQuestionComplete ? 2 : 1,
+                  position: "relative",
+                  "&::before": isQuestionComplete
+                    ? {
+                        content: '""',
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 4,
+                        bgcolor: "success.main",
+                        borderRadius: "4px 4px 0 0",
+                      }
+                    : {},
+                }}
               >
-                <Typography variant="subtitle1">
-                  Question {questionIndex + 1}
-                </Typography>
-                {formData.questions.length > 1 && (
-                  <IconButton
-                    color="error"
-                    onClick={() => removeQuestion(questionIndex)}
-                  >
-                    <Trash2 size={18} />
-                  </IconButton>
-                )}
-              </Box>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Question Text *"
-                    value={question.text}
-                    onChange={(e) =>
-                      handleQuestionChange(
-                        questionIndex,
-                        "text",
-                        e.target.value
-                      )
-                    }
-                    fullWidth
-                    multiline
-                    minRows={2}
-                    placeholder="Enter your question here..."
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={question.multipleCorrect}
-                        onChange={(e) =>
-                          handleQuestionChange(
-                            questionIndex,
-                            "multipleCorrect",
-                            e.target.checked
-                          )
-                        }
-                        color="primary"
-                      />
-                    }
-                    label="Allow multiple correct answers"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={1}
-                  >
-                    <Typography variant="body2" fontWeight={500}>
-                      Answer Options *
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mb={2}
+                >
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Typography variant="subtitle1">
+                      {t("tasks.form.question")} {questionIndex + 1}
                     </Typography>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => addOption(questionIndex)}
-                    >
-                      + Add Option
-                    </Button>
+                    {isQuestionComplete && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.5,
+                          px: 1,
+                          py: 0.5,
+                          bgcolor: "success.main",
+                          color: "white",
+                          borderRadius: 1,
+                          fontSize: "0.75rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        <Check size={12} />
+                        Complete
+                      </Box>
+                    )}
                   </Box>
-                  <Grid container spacing={1}>
-                    {question.options.map((option, optionIndex) => (
-                      <Grid item xs={12} md={6} key={option.id}>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          {question.multipleCorrect ? (
-                            <Checkbox
-                              checked={option.isCorrect}
-                              onChange={(e) =>
-                                handleOptionChange(
-                                  questionIndex,
-                                  optionIndex,
-                                  "isCorrect",
-                                  e.target.checked
-                                )
-                              }
-                              color="success"
-                            />
-                          ) : (
-                            <Radio
-                              checked={option.isCorrect}
-                              onChange={(e) =>
-                                handleOptionChange(
-                                  questionIndex,
-                                  optionIndex,
-                                  "isCorrect",
-                                  e.target.checked
-                                )
-                              }
-                              color="success"
-                              name={`question-${questionIndex}`}
-                            />
-                          )}
-                          <TextField
-                            value={option.text}
-                            onChange={(e) =>
-                              handleOptionChange(
-                                questionIndex,
-                                optionIndex,
-                                "text",
-                                e.target.value
-                              )
-                            }
-                            placeholder={`Option ${String.fromCharCode(
-                              65 + optionIndex
-                            )}`}
-                            size="small"
-                            fullWidth
-                          />
-                          {question.options.length > 2 && (
-                            <IconButton
-                              color="error"
-                              onClick={() =>
-                                removeOption(questionIndex, optionIndex)
-                              }
-                            >
-                              <Trash2 size={16} />
-                            </IconButton>
-                          )}
-                        </Box>
-                      </Grid>
-                    ))}
+                  {formData.questions.length > 1 && (
+                    <IconButton
+                      color="error"
+                      onClick={() => removeQuestion(questionIndex)}
+                    >
+                      <Trash2 size={18} />
+                    </IconButton>
+                  )}
+                </Box>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      label={t("tasks.form.questionText")}
+                      value={question.text}
+                      onChange={(e) =>
+                        handleQuestionChange(
+                          questionIndex,
+                          "text",
+                          e.target.value
+                        )
+                      }
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      placeholder={t("tasks.form.questionPlaceholder")}
+                      inputProps={{ dir: "auto" }}
+                    />
                   </Grid>
-                  <Typography variant="caption" color="text.secondary" mt={1}>
-                    {question.multipleCorrect
-                      ? "Check all correct answers"
-                      : "Select the one correct answer"}
-                  </Typography>
+                  <Grid item xs={12}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={question.multipleCorrect}
+                          onChange={(e) =>
+                            handleQuestionChange(
+                              questionIndex,
+                              "multipleCorrect",
+                              e.target.checked
+                            )
+                          }
+                          color="primary"
+                        />
+                      }
+                      label={t("tasks.form.allowMultipleCorrect")}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      mb={1}
+                    >
+                      <Typography variant="body2" fontWeight={500}>
+                        {t("tasks.form.answerOptions")}
+                      </Typography>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => addOption(questionIndex)}
+                      >
+                        + {t("tasks.form.addOption")}
+                      </Button>
+                    </Box>
+                    <Grid container spacing={1}>
+                      {question.options.map((option, optionIndex) => (
+                        <Grid item xs={12} md={6} key={option.id}>
+                          <Box display="flex" alignItems="center" gap={1}>
+                            {question.multipleCorrect ? (
+                              <Checkbox
+                                checked={option.isCorrect}
+                                onChange={(e) =>
+                                  handleOptionChange(
+                                    questionIndex,
+                                    optionIndex,
+                                    "isCorrect",
+                                    e.target.checked
+                                  )
+                                }
+                                color="success"
+                              />
+                            ) : (
+                              <Radio
+                                checked={option.isCorrect}
+                                onChange={(e) =>
+                                  handleOptionChange(
+                                    questionIndex,
+                                    optionIndex,
+                                    "isCorrect",
+                                    e.target.checked
+                                  )
+                                }
+                                color="success"
+                                name={`question-${questionIndex}`}
+                              />
+                            )}
+                            <TextField
+                              value={option.text}
+                              onChange={(e) =>
+                                handleOptionChange(
+                                  questionIndex,
+                                  optionIndex,
+                                  "text",
+                                  e.target.value
+                                )
+                              }
+                              placeholder={`${t(
+                                "tasks.form.option"
+                              )} ${String.fromCharCode(65 + optionIndex)}`}
+                              size="small"
+                              fullWidth
+                              inputProps={{ dir: "auto" }}
+                            />
+                            {question.options.length > 2 && (
+                              <IconButton
+                                color="error"
+                                onClick={() =>
+                                  removeOption(questionIndex, optionIndex)
+                                }
+                              >
+                                <Trash2 size={16} />
+                              </IconButton>
+                            )}
+                          </Box>
+                        </Grid>
+                      ))}
+                    </Grid>
+                    <Typography variant="caption" color="text.secondary" mt={1}>
+                      {question.multipleCorrect
+                        ? t("tasks.form.checkAllCorrect")
+                        : t("tasks.form.selectOneCorrect")}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider sx={{ my: 2 }} />
+                    <TextField
+                      label={`${t("tasks.form.explanation")} (Question ${
+                        questionIndex + 1
+                      })`}
+                      value={question.explanation}
+                      onChange={(e) =>
+                        handleQuestionChange(
+                          questionIndex,
+                          "explanation",
+                          e.target.value
+                        )
+                      }
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      placeholder={t("tasks.form.explanationPlaceholder")}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Explanation (Optional)"
-                    value={question.explanation}
-                    onChange={(e) =>
-                      handleQuestionChange(
-                        questionIndex,
-                        "explanation",
-                        e.target.value
-                      )
-                    }
-                    fullWidth
-                    multiline
-                    minRows={2}
-                    placeholder="Explain why this is the correct answer..."
-                  />
-                </Grid>
-              </Grid>
-            </Paper>
-          ))}
+              </Paper>
+            );
+          })}
         </Box>
         {/* Preview */}
         {formData.questions.some((q) => q.text) && (
           <Box mt={4} p={2} bgcolor="blue.50" borderRadius={2}>
             <Typography variant="subtitle1" mb={2}>
-              Preview
+              {t("tasks.form.preview")}
             </Typography>
             <Box display="flex" flexDirection="column" gap={2}>
               {formData.questions
@@ -634,7 +776,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
                     sx={{ p: 2, bgcolor: "background.default" }}
                   >
                     <Typography variant="subtitle2" mb={1}>
-                      Question {index + 1}
+                      {t("tasks.form.question")} {index + 1}
                     </Typography>
                     <Typography variant="body1" mb={1}>
                       {question.text}
@@ -674,7 +816,8 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
                     </Box>
                     {question.explanation && (
                       <Typography variant="caption" color="info.main" mt={1}>
-                        <strong>Explanation:</strong> {question.explanation}
+                        <strong>{t("tasks.form.explanation")}:</strong>{" "}
+                        {question.explanation}
                       </Typography>
                     )}
                   </Paper>
@@ -686,12 +829,12 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
 
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" mb={2}>
-          Scoring & Metadata
+          {t("tasks.form.scoringAndMetadata")}
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Points per Question"
+              label={t("tasks.form.pointsPerQuestion")}
               type="number"
               value={formData.pointsPerQuestion}
               onChange={(e) =>
@@ -703,7 +846,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Total Points"
+              label={t("tasks.form.totalPoints")}
               type="number"
               value={formData.totalPoints}
               fullWidth
@@ -712,11 +855,11 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Course ID"
+              label={t("tasks.form.courseId")}
               value={formData.courseId}
               onChange={(e) => handleInputChange("courseId", e.target.value)}
               fullWidth
-              placeholder="Optional"
+              placeholder={t("tasks.form.optional")}
             />
           </Grid>
         </Grid>
@@ -738,7 +881,7 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
               color="primary"
             />
           }
-          label="Publish immediately"
+          label={t("tasks.form.publishImmediately")}
         />
         <Button
           variant="contained"
@@ -748,13 +891,14 @@ const MultipleChoiceForm = ({ courseId, lessonId }) => {
           disabled={
             loading ||
             !formData.title ||
-            formData.questions.some(
-              (q) => !q.text || !q.options.some((opt) => opt.isCorrect)
-            )
+            (!formData.isPublished &&
+              formData.questions.some(
+                (q) => !q.text || !q.options.some((opt) => opt.isCorrect)
+              ))
           }
           size="large"
         >
-          {loading ? "Creating..." : "Create Quiz"}
+          {loading ? t("tasks.form.creating") : t("tasks.form.createQuiz")}
         </Button>
       </Box>
     </Box>

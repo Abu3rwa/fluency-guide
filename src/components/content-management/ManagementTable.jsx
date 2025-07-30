@@ -24,8 +24,6 @@ const ManagementTable = ({
   handleMenuOpen,
   getStatusColor,
   courses,
-  modules,
-  lessons,
   loading,
 }) => {
   const { t } = useTranslation();
@@ -39,17 +37,13 @@ const ManagementTable = ({
       }}
     >
       <CardHeader
-        title={`${resourceDefs[activeResource].plural} ${t(
-          "management.header.management"
-        )}`}
+        title={`${resourceDefs[activeResource].plural} Management`}
         action={
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => openDialog(activeResource)}
-            aria-label={`${t("management.actions.add")} ${
-              resourceDefs[activeResource].singular
-            }`}
+            aria-label={`Add ${resourceDefs[activeResource].singular}`}
             sx={{
               borderRadius: theme.shape.borderRadius,
               textTransform: "none",
@@ -58,8 +52,7 @@ const ManagementTable = ({
               py: 1.5,
             }}
           >
-            {t("management.actions.add")}{" "}
-            {resourceDefs[activeResource].singular}
+            Add {resourceDefs[activeResource].singular}
           </Button>
         }
         sx={{
@@ -73,7 +66,7 @@ const ManagementTable = ({
           columns={resourceDefs[activeResource].columns}
           onAction={handleMenuOpen}
           getStatusColor={getStatusColor}
-          additionalData={{ courses, modules, lessons }}
+          additionalData={{ courses }}
           loading={loading}
           emptyMessage={t("management.table.empty")}
         />

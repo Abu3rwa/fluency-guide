@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Trash2, Save, Eye, EyeOff } from "lucide-react";
 import { createTask } from "../../../services/taskService";
+import { useFormPersistence } from "../../../hooks/useFormPersistence";
+import {
+  DraftRecoveryNotification,
+  AutoSaveStatus,
+  StorageErrorNotification,
+  DraftStatusSummary,
+} from "../components/DraftNotifications";
 import {
   Box,
   Paper,
@@ -23,36 +30,75 @@ import {
 } from "@mui/material";
 
 const FillInBlanksForm = ({ courseId, lessonId }) => {
-  const [formData, setFormData] = useState({
-    id: "",
-    title: "",
-    instructions: "",
-    type: "fillInBlanks",
-    timeLimit: 30,
-    passingScore: 70,
-    attemptsAllowed: 3,
-    difficulty: "medium",
-    tags: [],
-    isPublished: false,
-    showFeedback: true,
-    randomizeQuestions: false,
-    showCorrectAnswers: true,
-    allowReview: true,
-    pointsPerQuestion: 10,
-    totalPoints: 0,
-    questions: [
-      {
-        id: "1",
-        text: "",
-        blanks: [{ id: "1", answer: "", position: 0 }],
-        explanation: "",
-        points: 10,
-      },
-    ],
-    lessonId: lessonId,
-    courseId: courseId,
-    status: "draft",
-    metadata: {},
+  // Initial form data structure - memoized to prevent re-creation
+  const initialFormData = useMemo(
+    () => ({
+      title: "",
+      instructions: "",
+      type: "fillInBlanks",
+      timeLimit: 30,
+      passingScore: 70,
+      attemptsAllowed: 3,
+      difficulty: "medium",
+      tags: [],
+      isPublished: false,
+      showFeedback: true,
+      randomizeQuestions: false,
+      showCorrectAnswers: true,
+      allowReview: true,
+      pointsPerQuestion: 10,
+      totalPoints: 0,
+      questions: [
+        {
+          id: Date.now().toString(),
+          text: "",
+          blanks: [{ id: `${Date.now()}-1`, answer: "", position: 0 }],
+          explanation: "",
+          points: 10,
+        },
+      ],
+      lessonId: lessonId,
+      courseId: courseId,
+      status: "draft",
+      metadata: {},
+    }),
+    [courseId, lessonId]
+  );
+
+  // Use persistence hook
+  const {
+    formData,
+    updateFormData,
+    isInitialized,
+    draftLoaded,
+    autoSaveStatus,
+    hasUnsavedChanges,
+    validationStatus,
+    saveManually,
+    clearDraft,
+    cleanupAfterSubmission,
+    dismissRecoveryNotification,
+    recoveryNotification,
+    storageError,
+  } = useFormPersistence("fillInBlanks", courseId, lessonId, initialFormData, {
+    onDraftLoaded: (data, timestamp) => {
+      console.log("Fill-in-blanks draft loaded:", {
+        timestamp,
+        questionCount: data.questions?.length,
+      });
+    },
+    onAutoSave: (data, timestamp) => {
+      console.log("Fill-in-blanks auto-saved:", {
+        timestamp,
+        questionCount: data.questions?.length,
+      });
+    },
+    onError: (error, context) => {
+      console.error("Fill-in-blanks persistence error:", {
+        error: error.message,
+        context,
+      });
+    },
   });
 
   const [loading, setLoading] = useState(false);
@@ -62,7 +108,7 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       [field]: value,
       ...(field === "pointsPerQuestion" && {
@@ -77,7 +123,7 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
       ...updatedQuestions[questionIndex],
       [field]: value,
     };
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: updatedQuestions,
       totalPoints: prev.pointsPerQuestion * updatedQuestions.length,
@@ -90,21 +136,22 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
       ...updatedQuestions[questionIndex].blanks[blankIndex],
       [field]: value,
     };
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: updatedQuestions,
     }));
   };
 
   const addQuestion = () => {
+    const questionId = Date.now().toString();
     const newQuestion = {
-      id: Date.now().toString(),
+      id: questionId,
       text: "",
-      blanks: [{ id: Date.now().toString(), answer: "", position: 0 }],
+      blanks: [{ id: `${questionId}-1`, answer: "", position: 0 }],
       explanation: "",
       points: formData.pointsPerQuestion,
     };
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion],
       totalPoints: prev.pointsPerQuestion * (prev.questions.length + 1),
@@ -114,7 +161,7 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
   const removeQuestion = (index) => {
     if (formData.questions.length > 1) {
       const updatedQuestions = formData.questions.filter((_, i) => i !== index);
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         questions: updatedQuestions,
         totalPoints: prev.pointsPerQuestion * updatedQuestions.length,
@@ -124,13 +171,14 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
 
   const addBlank = (questionIndex) => {
     const updatedQuestions = [...formData.questions];
+    const questionId = updatedQuestions[questionIndex].id;
     const newBlank = {
-      id: Date.now().toString(),
+      id: `${questionId}-${Date.now()}`,
       answer: "",
       position: updatedQuestions[questionIndex].blanks.length,
     };
     updatedQuestions[questionIndex].blanks.push(newBlank);
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       questions: updatedQuestions,
     }));
@@ -142,7 +190,7 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
       updatedQuestions[questionIndex].blanks = updatedQuestions[
         questionIndex
       ].blanks.filter((_, i) => i !== blankIndex);
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         questions: updatedQuestions,
       }));
@@ -151,7 +199,7 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData((prev) => ({
+      updateFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, newTag.trim()],
       }));
@@ -160,7 +208,7 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
   };
 
   const removeTag = (tagToRemove) => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
@@ -175,7 +223,6 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
     try {
       const submitData = {
         ...formData,
-        id: formData.id || Date.now().toString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -186,7 +233,6 @@ const FillInBlanksForm = ({ courseId, lessonId }) => {
       console.log("Task created successfully:", createdTask);
       setSuccess("Task created successfully!");
       // Optionally reset form here
-      // setFormData(initialFormData);
     } catch (err) {
       setError("Failed to create task. Please try again.");
       console.error("Error:", err);

@@ -1,1114 +1,712 @@
 {
-  "common": {
-    "appName": "ريب إنجليش",
-    "loading": "جاري التحميل...",
-    "error": "خطأ",
-    "success": "نجاح",
-    "save": "حفظ",
-    "cancel": "إلغاء",
-    "delete": "حذف",
-    "edit": "تعديل",
-    "search": "بحث",
-    "filter": "تصفية",
-    "sort": "ترتيب",
-    "more": "المزيد",
-    "less": "أقل",
-    "or": "أو",
-    "close": "إغلاق",
-    "create": "إنشاء",
-    "submit": "إرسال",
-    "back": "رجوع",
-    "next": "التالي",
-    "previous": "السابق",
-    "view": "عرض",
-    "hide": "إخفاء",
-    "show": "إظهار",
-    "all": "الكل",
-    "none": "لا شيء",
-    "required": "مطلوب",
-    "optional": "اختياري",
-    "status": "الحالة",
-    "actions": "الإجراءات",
-    "details": "التفاصيل",
-    "settings": "الإعدادات",
-    "profile": "الملف الشخصي",
-    "logout": "تسجيل الخروج",
-    "login": "تسجيل الدخول",
-    "signup": "إنشاء حساب",
-    "clearDraft": "مسح المسودة",
-    "backToCourses": "العودة إلى الدورات"
-  },
-  "auth": {
-    "login": "تسجيل الدخول",
-    "signup": {
-      "title": "إنشاء حساب",
-      "email": "البريد الإلكتروني",
-      "password": "كلمة المرور",
-      "confirmPassword": "تأكيد كلمة المرور",
-      "submit": "تسجيل",
-      "haveAccount": "لديك حساب بالفعل؟ تسجيل الدخول"
+  "management": {
+    "actions": {
+      "edit": "تعديل",
+      "view": "عرض",
+      "unpublish": "إلغاء النشر",
+      "publish": "نشر",
+      "delete": "حذف"
     },
-    "logout": "تسجيل الخروج",
-    "email": "البريد الإلكتروني",
-    "password": "كلمة المرور",
-    "confirmPassword": "تأكيد كلمة المرور",
-    "forgotPassword": "نسيت كلمة المرور؟",
-    "resetPassword": "إعادة تعيين كلمة المرور",
-    "continueWithGoogle": "المتابعة باستخدام جوجل",
-    "dontHaveAccount": "ليس لديك حساب؟ سجل الآن",
-    "alreadyHaveAccount": "لديك حساب بالفعل؟ سجل دخولك",
-    "passwordResetSent": "تم إرسال رابط إعادة تعيين كلمة المرور! يرجى التحقق من بريدك الإلكتروني",
-    "passwordResetError": "فشل في إرسال رابط إعادة تعيين كلمة المرور"
+    "resources": {
+      "course": "دورة",
+      "courses": "دورات"
+    },
+    "columns": {
+      "title": "العنوان",
+      "category": "الفئة",
+      "level": "المستوى",
+      "status": "الحالة",
+      "students": "الطلاب"
+    },
+    "delete": {
+      "confirmTitle": "تأكيد الحذف",
+      "confirmMessage": "هل أنت متأكد أنك تريد حذف هذا {{type}}: {{name}}؟"
+    }
   },
+
+  "cancel": "إلغاء",
   "navigation": {
     "home": "الرئيسية",
     "courses": "الدورات",
-    "about": "من نحن",
+    "pricing": "الأسعار",
     "contact": "اتصل بنا",
     "dashboard": "لوحة التحكم",
-    "profile": "الملف الشخصي",
-    "settings": "الإعدادات"
+    "profile": "الملف الشخصي"
   },
-  "dashboard": {
-    "welcome": "مرحباً بك في لوحة التحكم",
-    "totalStudents": "إجمالي الطلاب",
-    "activeCourses": "الدورات النشطة",
-    "pendingTasks": "المهام المعلقة",
-    "completionRate": "معدل الإكمال",
-    "recentActivity": "النشاط الأخير",
-    "courseProgress": "تقدم الدورة",
-    "studentPerformance": "أداء الطلاب",
-    "viewAll": "عرض الكل",
-    "quickActions": "إجراءات سريعة",
-    "createCourse": "إنشاء دورة",
-    "createTask": "إنشاء مهمة",
-    "performanceDescription": "تتبع تقدم الطلاب وأدائهم في جميع الدورات. عرض التحليلات التفصيلية وإنشاء التقارير.",
-    "viewReports": "عرض التقارير",
-    "overview": "نظرة عامة",
-    "reports": "التقارير",
-    "analytics": "التحليلات",
-    "progress": "التقدم",
-    "statistics": "الإحصائيات",
-    "lastAccessed": "آخر وصول",
-    "nextLesson": "الدرس التالي",
-    "upcomingTasks": "المهام القادمة",
-    "recentCourses": "الدورات الأخيرة",
-    "courseStatus": {
-      "active": "نشط",
-      "completed": "مكتمل",
-      "pending": "معلق",
-      "archived": "مؤرشف"
+  "header": {
+    "toggleTheme": "تغيير المظهر",
+    "openDrawer": "افتح القائمة"
+  },
+  "language": {
+    "changeLanguage": "تغيير اللغة",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج"
+  },
+  "landing": {
+    "hero": {
+      "title": "أتقن الإنجليزية مع",
+      "titleHighlight": "التعلم التفاعلي",
+      "subtitle": "اختبر تعلم الإنجليزية الشخصي مع المحادثات المدعومة بالذكاء الاصطناعي وممارسة النطق والدروس التكيفية المصممة لنجاحك.",
+      "startLearning": "ابدأ التعلم",
+      "watchDemo": "شاهد العرض التوضيحي"
+    },
+    "features": {
+      "title": "لماذا تختار منصتنا؟",
+      "items": {
+        "interactiveLearning": {
+          "title": "التعلم التفاعلي",
+          "description": "تفاعل مع المحادثات المدعومة بالذكاء الاصطناعي والتمارين التفاعلية التي تتكيف مع أسلوب تعلمك."
+        },
+        "speakingPractice": {
+          "title": "ممارسة التحدث",
+          "description": "حسن نطقك مع التغذية الراجعة الفورية وتقنية التعرف على الصوت."
+        },
+        "fastProgress": {
+          "title": "تقدم سريع",
+          "description": "تتبع تحسنك مع التحليلات التفصيلية ومسارات التعلم الشخصية."
+        },
+        "smartLearning": {
+          "title": "التعلم الذكي",
+          "description": "محتوى مدفوع بالذكاء الاصطناعي يتكيف مع وتيرتك ويركز على المجالات التي تحتاج إلى تحسين."
+        }
+      }
+    },
+    "tabs": {
+      "title": "اكتشف نهج التعلم لدينا",
+      "overview": "نظرة عامة",
+      "benefits": "الفوائد",
+      "howItWorks": "كيف يعمل",
+      "overviewText": "تجمع منصة تعلم الإنجليزية الشاملة لدينا بين التكنولوجيا الحديثة وطرق التدريس المثبتة لتقديم تجربة تعلم استثنائية."
+    },
+    "testimonials": {
+      "title": "ماذا يقول طلابنا",
+      "items": {
+        "sarah": {
+          "name": "سارة جونسون",
+          "role": "محترفة أعمال",
+          "quote": "هذه المنصة غيرت مهاراتي في الإنجليزية في 3 أشهر فقط. الدروس التفاعلية والتغذية الراجعة من الذكاء الاصطناعي جعلت التعلم ممتعاً وفعالاً."
+        },
+        "miguel": {
+          "name": "ميغيل رودريغيز",
+          "role": "طالب جامعي",
+          "quote": "ميزة ممارسة النطق ساعدتني في اكتساب الثقة في التحدث بالإنجليزية. يمكنني الآن المشاركة بنشاط في مناقشات الفصل."
+        },
+        "aisha": {
+          "name": "عائشة باتيل",
+          "role": "مديرة تسويق",
+          "quote": "مسار التعلم الشخصي أبقاني متحفزة. أحب كيف يتكيف النظام مع جدولي وتفضيلات التعلم الخاصة بي."
+        }
+      }
+    },
+    "faq": {
+      "title": "الأسئلة الشائعة",
+      "items": "عناصر الأسئلة الشائعة",
+      "answer1": "منصتنا مناسبة للمتعلمين من جميع المستويات، من المبتدئين الكاملين إلى المتحدثين المتقدمين الذين يسعون لتحسين مهاراتهم.",
+      "answer2": "يمكنك البدء في رؤية تحسينات في ثقتك بالتحدث خلال الأسابيع القليلة الأولى، مع تقدم كبير مرئي عادة بعد 2-3 أشهر من الممارسة المستمرة.",
+      "answer3": "نعم، تطبيقنا المحمول يسمح لك بالتعلم أثناء التنقل مع مزامنة كاملة عبر جميع أجهزتك.",
+      "answer4": "نقدم خطط اشتراك متنوعة تشمل خيارات شهرية وربع سنوية وسنوية. يمكنك أيضاً تجربة نسختنا التجريبية المجانية لاستكشاف المنصة.",
+      "answer5": "بالتأكيد! مدرسنا الذكي يوفر تغذية راجعة شخصية حول النطق والقواعد واستخدام المفردات في الوقت الفعلي.",
+      "answer6": "منهجنا يغطي الإنجليزية التجارية والإنجليزية الأكاديمية ومهارات المحادثة والتحضير للاختبارات (IELTS، TOEFL، إلخ).",
+      "answer7": "نعم، يمكنك إيقاف اشتراكك مؤقتاً في أي وقت واستئنافه عندما تكون مستعداً لمواصلة التعلم.",
+      "answer8": "نوفر دعم العملاء على مدار الساعة طوال أيام الأسبوع من خلال الدردشة والبريد الإلكتروني والمكالمات المرئية مع متخصصي التعلم لدينا.",
+      "answer9": "نعم، ستحصل على شهادة إتمام لكل دورة ومستوى تنهيه بنجاح.",
+      "answer10": "تستخدم منصتنا تقنيات متقدمة للتعرف على الكلام ومعالجة اللغة الطبيعية لتوفير تغذية راجعة دقيقة وشخصية حول تقدمك."
+    },
+    "contact": {
+      "title": "تواصل معنا",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "message": "الرسالة",
+      "messageTooltip": "أخبرنا كيف يمكننا مساعدتك",
+      "send": "إرسال الرسالة"
+    },
+    "footer": {
+      "copyright": "© 2024 منصة تعلم الإنجليزية. جميع الحقوق محفوظة."
     }
   },
   "courses": {
-    "title": "الدورات",
-    "description": "وصف الدورة",
-    "previewButton": "معاينة",
-    "share": "مشاركة",
-    "validate": "التحقق",
-    "preview": "معاينة",
-    "searchPlaceholder": "البحث عن الدورات...",
-    "noCoursesFound": "لم يتم العثور على دورات تطابق معاييرك",
-    "enroll": "سجل الآن",
-    "continue": "واصل التعلم",
-    "hours": "ساعات",
-    "level": {
-      "beginner": "مبتدئ",
-      "intermediate": "متوسط",
-      "advanced": "متقدم"
+    "title": "استكشف دوراتنا"
+  },
+  "faq": {
+    "question1": "ما مستوى الإنجليزية المطلوب للبدء؟",
+    "question2": "كم سرعة رؤية النتائج؟",
+    "question3": "هل يمكنني التعلم على جهازي المحمول؟",
+    "question4": "ما هي خيارات التسعير؟",
+    "question5": "هل تقدمون تغذية راجعة شخصية؟",
+    "question6": "ما المواضيع التي تغطونها؟",
+    "question7": "هل يمكنني إيقاف اشتراكي مؤقتاً؟",
+    "question8": "ما الدعم الذي تقدمونه؟",
+    "question9": "هل أحصل على شهادات؟",
+    "question10": "كيف تعمل التغذية الراجعة من الذكاء الاصطناعي؟"
+  },
+  "coursePayment": "دفع الدورة",
+  "course": "الدورة",
+  "price": "السعر",
+  "bankTransferDetails": "تفاصيل التحويل البنكي",
+  "bankName": "اسم البنك",
+  "accountName": "اسم الحساب",
+  "accountNumber": "رقم الحساب",
+  "branch": "الفرع",
+  "important": "مهم",
+  "includeNameAndCourse": "يرجى تضمين اسمك وعنوان الدورة في مرجع التحويل",
+  "referenceNumber": "رقم المرجع",
+  "enterReferenceNumber": "أدخل رقم مرجع التحويل",
+  "uploadPaymentReceipt": "رفع إيصال الدفع",
+  "chooseReceiptFile": "اختر ملف الإيصال",
+  "acceptedFormats": "الصيغ المقبولة: JPG، PNG، PDF (حد أقصى 5 ميجابايت)",
+  "submitPayment": "إرسال الدفع",
+  "submitting": "جارٍ الإرسال...",
+  "paymentSubmittedSuccessfully": "تم إرسال الدفع بنجاح!",
+  "enrollmentReviewed": "ستتم مراجعة تسجيلك قريباً.",
+  "thisReceiptHasAlreadyBeenUploaded": "تم رفع هذا الإيصال مسبقاً.",
+  "duplicateWarningTitle": "تم اكتشاف تكرار محتمل",
+  "duplicateWarningMessage": "رقم المرجع هذا تم إرساله مسبقاً.",
+  "viewExistingPayment": "عرض الدفع الحالي",
+  "analyzingReceipt": "جارٍ تحليل الإيصال...",
+  "receiptAnalysis": "تحليل الإيصال",
+  "quality": "الجودة",
+  "confidence": "الثقة",
+  "extractedInformation": "المعلومات المستخرجة",
+  "transactionId": "معرف المعاملة",
+  "amount": "المبلغ",
+  "date": "التاريخ",
+  "studentCourseDetails": {
+    "page": {
+      "viewMaterials": "عرض المواد",
+      "supportFaq": "الدعم والأسئلة الشائعة",
+      "fetchReviewsError": "خطأ في تحميل التقييمات",
+      "loadDetailsError": "خطأ في تحميل تفاصيل الدورة",
+      "lessonUndone": "تم التراجع عن إكمال الدرس",
+      "progressError": "خطأ في تحديث التقدم",
+      "undoError": "خطأ في التراجع عن إكمال الدرس",
+      "reviewError": "خطأ في إرسال التقييم"
     },
-    "language": {
-      "english": "الإنجليزية",
-      "arabic": "العربية",
-      "french": "الفرنسية",
-      "spanish": "الإسبانية",
-      "german": "الألمانية",
-      "italian": "الإيطالية",
-      "portuguese": "البرتغالية",
-      "russian": "الروسية",
-      "chinese": "الصينية",
-      "japanese": "اليابانية",
-      "korean": "الكورية",
-      "hindi": "الهندية",
-      "turkish": "التركية",
-      "dutch": "الهولندية",
-      "swedish": "السويدية",
-      "polish": "البولندية",
-      "greek": "اليونانية",
-      "hebrew": "العبرية",
-      "thai": "التايلاندية",
-      "vietnamese": "الفيتنامية"
+    "header": {
+      "introAriaLabel": "فيديو تعريفي للدورة",
+      "role": "الدور",
+      "enrollNow": "سجل الآن",
+      "startLearning": "ابدأ التعلم",
+      "enrollmentPending": "تسجيلك قيد المراجعة",
+      "enrollmentRejected": "تم رفض تسجيلك"
     },
-    "filters": {
-      "level": "المستوى",
-      "language": "اللغة",
-      "category": "الفئة",
-      "all": "الكل",
-      "apply": "تطبيق الفلاتر",
-      "clear": "مسح الفلاتر"
+    "moduleList": {
+      "title": "وحدات الدورة",
+      "showAll": "عرض جميع الوحدات",
+      "showLess": "عرض أقل",
+      "lessons": "دروس",
+      "progressBar": "شريط تقدم الوحدة",
+      "markAllComplete": "وضع علامة الكل كمكتمل",
+      "markAllIncomplete": "إلغاء علامة الكل كمكتمل",
+      "markComplete": "وضع علامة كمكتمل",
+      "markIncomplete": "إلغاء علامة كمكتمل",
+      "noModules": "لا توجد وحدات متاحة.",
+      "noLessons": "لا توجد دروس في هذه الوحدة.",
+      "complete": "مكتمل"
     },
-    "details": {
-      "overview": "نظرة عامة على الدورة",
-      "description": "الوصف",
-      "instructor": "المدرب",
-      "level": "المستوى",
-      "duration": "المدة",
-      "format": "التنسيق",
-      "schedule": "الجدول",
-      "language": "اللغة",
-      "category": "الفئة",
-      "support": "الدعم",
-      "supportHours": "ساعات الدعم",
-      "responseTime": "وقت الاستجابة",
-      "certificate": "الشهادة",
-      "included": "مشمولة",
-      "notIncluded": "غير مشمولة",
-      "certificateTemplate": "نموذج الشهادة",
-      "courseInfo": "معلومات الدورة",
-      "whatYouWillLearn": "ما سوف تتعلمه",
-      "courseMaterials": "مواد الدورة",
-      "maxStudents": "الحد الأقصى للطلاب",
-      "totalLessons": "إجمالي الدروس",
-      "totalAssignments": "إجمالي المهام",
-      "totalQuizzes": "إجمالي الاختبارات",
-      "rating": "التقييم",
-      "reviews": "المراجعات",
-      "actions": {
-        "edit": "تعديل الدورة",
-        "delete": "حذف الدورة"
-      },
-      "deleteConfirm": {
-        "title": "حذف الدورة",
-        "message": "هل أنت متأكد من حذف هذه الدورة؟ لا يمكن التراجع عن هذا الإجراء.",
-        "cancel": "إلغاء",
-        "confirm": "حذف"
-      }
+    "overview": {
+      "title": "نظرة عامة على الدورة",
+      "objectives": "أهداف التعلم",
+      "whatYouWillLearn": "ما ستتعلمه",
+      "viewMore": "عرض المزيد"
     },
-    "lessons": {
-      "title": "الدروس",
-      "noLessons": "لا توجد دروس حتى الآن",
-      "createFirstLesson": "إنشاء أول درس",
-      "addLesson": "إضافة درس جديد",
-      "duration": "المدة",
-      "minutes": "دقائق",
-      "order": "الترتيب",
-      "createLesson": "إنشاء درس جديد",
-      "editLesson": "تعديل الدرس",
-      "deleteLesson": "حذف الدرس",
-      "status": "الحالة",
-      "statusdraft": "مسودة",
-      "statuspublished": "منشور",
-      "statusarchived": "مؤرشف",
-      "deleteConfirm": {
-        "title": "حذف الدرس",
-        "message": "هل أنت متأكد من حذف هذا الدرس؟ لا يمكن التراجع عن هذا الإجراء.",
-        "cancel": "إلغاء",
-        "confirm": "حذف"
-      },
-      "deleteSuccess": "تم حذف الدرس بنجاح",
-      "deleteFailed": "فشل في حذف الدرس. يرجى المحاولة مرة أخرى.",
-      "updateSuccess": "تم تحديث الدرس بنجاح",
-      "updateFailed": "فشل في تحديث الدرس. يرجى المحاولة مرة أخرى.",
-      "createSuccess": "تم إنشاء الدرس بنجاح",
-      "createFailed": "فشل في إنشاء الدرس. يرجى المحاولة مرة أخرى.",
-      "filterByModule": "تصفية حسب الوحدة",
-      "allModules": "جميع الوحدات"
+    "progressStats": {
+      "title": "تقدمك",
+      "lessons": "الدروس المكتملة"
     },
-    "categories": {
-      "grammar": "القواعد",
-      "vocabulary": "المفردات",
-      "speaking": "التحدث",
-      "listening": "الاستماع",
-      "reading": "القراءة",
-      "writing": "الكتابة",
-      "business": "الإنجليزية للأعمال",
-      "exam": "التحضير للامتحانات",
-      "conversation": "المحادثة"
-    },
-    "errors": {
-      "notFound": "لم يتم العثور على الدورة",
-      "enrollmentFailed": "فشل التسجيل في الدورة",
-      "alreadyEnrolled": "أنت مسجل بالفعل في هذه الدورة",
-      "accessDenied": "ليس لديك صلاحية الوصول إلى هذه الدورة",
-      "lessonNotFound": "لم يتم العثور على الدرس",
-      "invalidProgress": "بيانات التقدم غير صالحة",
-      "deleteFailed": "فشل في حذف الدورة",
-      "updateFailed": "فشل في تحديث الدورة",
-      "addLessonFailed": "فشل في إضافة الدرس",
-      "addModuleFailed": "فشل في إضافة الوحدة",
-      "updateModuleOrderFailed": "فشل في تحديث ترتيب الوحدات",
-      "publishToggleFailed": "فشل في تحديث حالة الدورة",
-      "fetchFailed": "فشل في جلب بيانات الدورة"
-    },
-    "backToCourses": "العودة إلى الدورات",
-    "enrollment": {
-      "title": "التسجيل في الدورة",
-      "success": "تم التسجيل في الدورة بنجاح",
-      "confirm": "هل أنت متأكد أنك تريد التسجيل في هذه الدورة؟",
-      "processing": "جاري معالجة التسجيل...",
-      "error": "فشل التسجيل في الدورة"
-    },
-    "progress": {
-      "title": "تقدم الطلاب"
+    "contentOutline": {
+      "ariaLabel": "مخطط محتوى الدورة",
+      "title": "محتوى الدورة",
+      "markAsCompleted": "تحديد كمكتمل",
+      "lessonCompleted": "تم إكمال الدرس بنجاح",
+      "undo": "تراجع",
+      "noContent": "لا يوجد محتوى للدورة في الوقت الحالي."
     },
     "reviews": {
       "title": "تقييمات الدورة",
-      "writeReview": "كتابة تقييم",
-      "rating": "التقييم",
-      "comment": "التعليق",
-      "submit": "إرسال التقييم",
-      "noReviews": "لا توجد تقييمات بعد",
-      "helpful": "مفيد",
-      "report": "الإبلاغ عن التقييم"
+      "summary": "{{avg}} من 5 نجوم ({{count}} تقييم)",
+      "noReviews": "لا توجد تقييمات بعد. كن أول من يقيم هذه الدورة!",
+      "student": "طالب",
+      "addEdit": "إضافة/تعديل التقييم",
+      "loginToReview": "تسجيل الدخول للمراجعة",
+      "submitTitle": "أرسل تقييمك",
+      "yourReview": "تقييمك",
+      "cancel": "إلغاء",
+      "submitting": "جارٍ الإرسال...",
+      "submit": "إرسال التقييم"
     },
-    "screen": {
-      "title": "الدورات المتاحة",
-      "subtitle": "انضم إلى دوراتنا المتخصصة المصممة لمساعدتك في تحقيق الطلاقة من خلال التعلم الشخصي والخبرة العملية.",
-      "loading": "جاري تحميل الدورات...",
-      "error": "فشل تحميل الدورات. يرجى المحاولة مرة أخرى لاحقاً.",
-      "apply": {
-        "button": "تقدم الآن",
-        "title": "التقدم للدورة",
-        "note": "ملاحظة التقديم",
-        "notePlaceholder": "أخبرنا لماذا أنت مهتم بهذه الدورة...",
-        "submit": "إرسال الطلب",
-        "cancel": "إلغاء",
-        "success": "تم تقديم الطلب بنجاح!",
-        "error": "فشل تقديم الطلب. يرجى المحاولة مرة أخرى.",
-        "loginRequired": "يرجى تسجيل الدخول للتقدم للدورات"
-      },
-      "course": {
-        "duration": "المدة",
-        "students": "الطلاب",
-        "level": "المستوى",
-        "lessons": "الدروس",
-        "viewDetails": "عرض التفاصيل"
+    "materialsDialog": {
+      "title": "مواد الدورة",
+      "download": "تحميل",
+      "close": "إغلاق"
+    },
+    "instructorInfo": {
+      "title": "معلومات المدرس",
+      "support": "دعم المدرس",
+      "email": "البريد الإلكتروني",
+      "hours": "ساعات الدعم",
+      "responseTime": "وقت الاستجابة"
+    },
+    "supportDialog": {
+      "title": "دعم الدورة",
+      "contactSupport": "اتصل بالدعم",
+      "email": "بريد الدعم الإلكتروني",
+      "hours": "ساعات الدعم",
+      "responseTime": "متوسط وقت الاستجابة",
+      "faq": "الأسئلة الشائعة",
+      "close": "إغلاق"
+    }
+  },
+  "common": {
+    "back": "رجوع",
+    "close": "إغلاق",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "confirm": "تأكيد",
+    "next": "التالي",
+    "previous": "السابق",
+    "finish": "إنهاء",
+    "submit": "إرسال",
+    "loading": "جارٍ التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "warning": "تحذير",
+    "info": "معلومات",
+    "preview": "معاينة",
+    "create": "إنشاء",
+    "clearDraft": "مسح المسودة"
+  },
+  "tasks": {
+    "infoTitle": "معلومات المهمة",
+    "infoContent": "ستساعدك هذه المهمة في التدرب وتحسين مهاراتك. اقرأ التعليمات بعناية وخذ وقتك للإجابة على كل سؤال.",
+    "settingsTitle": "إعدادات المهمة",
+    "settingsContent": "قم بتكوين تفضيلات وإعدادات مهمتك هنا.",
+    "previous": "السابق",
+    "next": "التالي",
+    "finish": "إنهاء المهمة",
+    "submit": "إرسال الإجابة",
+    "timeRemaining": "الوقت المتبقي",
+    "question": "سؤال",
+    "questions": "أسئلة",
+    "of": "من",
+    "progress": "التقدم",
+    "score": "النتيجة",
+    "correct": "صحيح",
+    "incorrect": "خطأ",
+    "attempts": "المحاولات",
+    "remaining": "متبقي",
+    "completed": "مكتمل",
+    "incomplete": "غير مكتمل",
+    "resumeQuizTitle": "استئناف الاختبار؟",
+    "resumeQuizContent": "لديك اختبار بدأته سابقاً. هل تريد الاستمرار من حيث توقفت أم البدء من جديد؟",
+    "startOver": "ابدأ من جديد",
+    "resume": "استئناف",
+    "quizPaused": "تم إيقاف الاختبار مؤقتاً",
+    "pauseMessage": "تم إيقاف الاختبار مؤقتاً. انقر على زر الاستئناف للعودة.",
+    "taskNotFound": "لم يتم العثور على المهمة",
+    "noQuestions": "لا توجد أسئلة متاحة",
+    "thirtySecondsWarning": "تبقى 30 ثانية فقط!",
+    "connectionRestored": "تم استعادة الاتصال",
+    "connectionLost": "فقد الاتصال. تم حفظ تقدمك محلياً.",
+    "noInternetConnection": "لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+    "failedToLoadTask": "فشل في تحميل المهمة. يرجى المحاولة مرة أخرى.",
+    "failedToSaveProgress": "فشل في حفظ التقدم محلياً",
+    "quizSubmittedSuccessfully": "تم إرسال الاختبار بنجاح!",
+    "submissionFailed": "فشل في إرسال الاختبار. تم حفظ نتائجك محلياً.",
+    "noInternetSubmission": "لا يوجد اتصال بالإنترنت. تم حفظ نتائجك محلياً وسيتم إرسالها عند استعادة الاتصال.",
+    "invalidQuestionFormat": "تنسيق السؤال غير صحيح. يرجى الاتصال بالدعم.",
+    "keyboardShortcuts": "اختصارات لوحة المفاتيح:",
+    "navigateQuestions": "← → التنقل بين الأسئلة",
+    "selectBlanks": "1-9 تحديد الفراغات",
+    "pauseResume": "المسافة إيقاف/استئناف",
+    "clearSelection": "Esc إلغاء التحديد",
+    "questionOf": "السؤال {{current}} من {{total}}",
+    "blankSelected": "تم تحديد الفراغ {{index}}",
+    "tapBlankSpace": "انقر على فراغ، ثم انقر على خيار لملئه",
+    "clickBlankSpace": "انقر على فراغ، ثم انقر على خيار لملئه. استخدم Tab للتنقل.",
+    "gotIt": "فهمت",
+    "availableOptions": "الخيارات المتاحة",
+    "selectAnOption": "اختر خياراً",
+    "allOptionsUsed": "تم استخدام جميع الخيارات!",
+    "clickFilledBlanks": "انقر على الفراغات المملوءة لإزالتها وإعادة استخدام الخيارات",
+    "clickOptionToFill": "انقر على خيار لملء الفراغ المحدد",
+    "tapBlankFirst": "انقر على فراغ أولاً، ثم انقر على خيار",
+    "clickBlankFirst": "انقر على فراغ أولاً، ثم انقر على خيار",
+    "selectCorrectAnswer": "اختر الإجابة الصحيحة:",
+    "selectOption": "اختر خيار",
+    "correctAnswer": "صحيح!",
+    "correctAnswerMessage": "عمل رائع! لقد اخترت الإجابة الصحيحة.",
+    "incorrectAnswer": "خطأ",
+    "incorrectAnswerMessage": "هذا ليس صحيحاً تماماً. استمر في المحاولة!",
+    "explanation": "شرح",
+    "autoAdvancing": "الانتقال التلقائي للسؤال التالي...",
+    "form": {
+      "createMultipleChoiceQuiz": "إنشاء اختبار متعدد الخيارات",
+      "description": "صمم اختبارات تفاعلية متعددة الخيارات بإجابة واحدة أو عدة إجابات صحيحة",
+      "basicInformation": "المعلومات الأساسية",
+      "title": "العنوان *",
+      "difficulty": "الصعوبة",
+      "easy": "سهل",
+      "medium": "متوسط",
+      "hard": "صعب",
+      "instructions": "التعليمات",
+      "instructionsPlaceholder": "اختر أفضل إجابة لكل سؤال...",
+      "quizSettings": "إعدادات الاختبار",
+      "timeLimit": "الوقت المحدد (دقائق)",
+      "passingScore": "الدرجة المطلوبة للنجاح (%)",
+      "attemptsAllowed": "عدد المحاولات المسموحة",
+      "showFeedback": "إظهار التعليقات",
+      "randomizeQuestions": "ترتيب الأسئلة عشوائياً",
+      "showCorrectAnswers": "إظهار الإجابات الصحيحة",
+      "allowReview": "السماح بالمراجعة",
+      "tags": "العلامات",
+      "addTag": "إضافة علامة",
+      "add": "إضافة",
+      "questions": "الأسئلة",
+      "hideAnswers": "إخفاء الإجابات",
+      "showAnswers": "إظهار الإجابات",
+      "addQuestion": "إضافة سؤال",
+      "question": "السؤال",
+      "questionText": "نص السؤال *",
+      "questionPlaceholder": "اكتب سؤالك هنا...",
+      "allowMultipleCorrect": "السماح بعدة إجابات صحيحة",
+      "answerOptions": "خيارات الإجابة *",
+      "addOption": "إضافة خيار",
+      "option": "الخيار",
+      "checkAllCorrect": "حدد جميع الإجابات الصحيحة",
+      "selectOneCorrect": "حدد الإجابة الصحيحة الواحدة",
+      "explanation": "التوضيح (اختياري)",
+      "explanationPlaceholder": "وضح لماذا هذه هي الإجابة الصحيحة...",
+      "preview": "معاينة",
+      "scoringAndMetadata": "النقاط والبيانات الوصفية",
+      "pointsPerQuestion": "النقاط لكل سؤال",
+      "totalPoints": "إجمالي النقاط",
+      "courseId": "معرف الدورة",
+      "optional": "اختياري",
+      "publishImmediately": "النشر فوراً",
+      "creating": "جاري الإنشاء...",
+      "createQuiz": "إنشاء الاختبار",
+      "validationError": "يرجى ملء جميع الأسئلة والخيارات وتحديد إجابة صحيحة واحدة على الأقل لكل سؤال.",
+      "createSuccess": "تم إنشاء اختبار متعدد الخيارات بنجاح!",
+      "createError": "فشل في إنشاء الاختبار. يرجى المحاولة مرة أخرى."
+    },
+    "submissionError": "خطأ في إرسال المهمة",
+    "difficulty": {
+      "easy": "سهل",
+      "medium": "متوسط",
+      "hard": "صعب"
+    }
+  },
+
+  "lessonDetails": {
+    "markedComplete": "تم وضع علامة الدرس كمكتمل!",
+    "markedIncomplete": "تم وضع علامة الدرس كغير مكتمل",
+    "errorUpdating": "خطأ في تحديث حالة الدرس",
+    "bookmarked": "تم إضافة الدرس للمفضلة!",
+    "bookmarkRemoved": "تم إزالة من المفضلة",
+    "errorBookmarking": "خطأ في تحديث المفضلة",
+    "share": "مشاركة الدرس",
+    "shareTitle": "تحقق من هذا الدرس",
+    "shareText": "تحقق من هذا الدرس:",
+    "linkCopied": "تم نسخ الرابط!",
+    "errorSharing": "خطأ في مشاركة الدرس",
+    "addBookmark": "إضافة للمفضلة",
+    "removeBookmark": "إزالة من المفضلة",
+    "notFound": "الدرس غير موجود",
+    "error": "خطأ في تحميل الدرس",
+    "errorHelp": "يرجى تحديث الصفحة أو الاتصال بالدعم إذا استمرت المشكلة.",
+    "empty": "لا توجد بيانات متاحة للدرس",
+    "emptyHelp": "قد لا يكون هذا الدرس متاحاً أو تم إزالته.",
+    "noMedia": "لا توجد وسائط متاحة لهذا الدرس",
+    "videoPlayer": "مشغل الفيديو",
+    "audioPlayer": "مشغل الصوت",
+    "video": "فيديو",
+    "audio": "صوت",
+    "noContent": "لا يوجد محتوى متاح لهذا الدرس",
+    "contentSection": "محتوى الدرس",
+    "objectives": "أهداف التعلم",
+    "noObjectives": "لا توجد أهداف تعلم متاحة",
+    "progress": "تقدمك",
+    "progressBar": "شريط التقدم",
+    "noProgress": "لا توجد بيانات تقدم متاحة",
+    "markComplete": "وضع علامة كمكتمل",
+    "completed": "مكتمل",
+    "vocabulary": "المفردات",
+    "grammarFocus": "التركيز على القواعد",
+    "grammar": "التركيز على القواعد",
+    "skills": "المهارات المغطاة",
+    "resources": "الموارد",
+    "noResources": "لا توجد موارد متاحة",
+    "resource": "مورد",
+    "minutes": "دقائق",
+    "back": "رجوع",
+    "loading": "جاري تحميل الدرس...",
+    "tasks": "المهام والتمارين",
+    "noTasks": "لا توجد مهام متاحة لهذا الدرس",
+    "tasksError": "خطأ في تحميل المهام",
+    "fillInBlanks": "املأ الفراغات",
+    "multipleChoice": "اختيار متعدد",
+    "trueFalse": "صح أو خطأ",
+    "shortAnswer": "إجابة قصيرة",
+    "matching": "مطابقة",
+    "ordering": "ترتيب",
+    "dragAndDrop": "سحب وإفلات",
+    "taskType": "نوع المهمة",
+    "startQuiz": "ابدأ الاختبار",
+    "retake": "إعادة الاختبار",
+    "continue": "متابعة",
+    "needMorePractice": "تحتاج إلى مزيد من التدريب",
+    "yourScore": "نتيجتك",
+    "statistics": "الإحصائيات",
+    "questionsAnswered": "الأسئلة المجاب عنها",
+    "timeSpent": "الوقت المستغرق",
+    "difficulty": "الصعوبة",
+    "passingScore": "النتيجة المطلوبة للنجاح",
+    "status": "الحالة",
+    "failed": "فشل",
+    "tryAgain": "حاول مرة أخرى",
+    "finish": "إنهاء",
+    "save": "حفظ التقدم",
+    "reset": "إعادة تعيين التقدم",
+    "attempts": "المحاولات",
+    "score": "النتيجة",
+    "lastAttempt": "آخر محاولة",
+    "easy": "سهل",
+    "medium": "متوسط",
+    "hard": "صعب",
+    "infoTitle": "معلومات المهمة",
+    "infoContent": "ستساعدك هذه المهمة على التدرب وتحسين مهاراتك. اقرأ التعليمات بعناية وخذ وقتك للإجابة على كل سؤال.",
+    "settingsTitle": "إعدادات المهمة",
+    "settingsContent": "قم بتكوين تفضيلات وإعدادات مهمتك هنا.",
+    "previous": "السابق",
+    "next": "التالي",
+    "finishTask": "إنهاء المهمة",
+    "submitAnswer": "إرسال الإجابة",
+    "timeRemaining": "الوقت المتبقي",
+    "question": "سؤال",
+    "questions": "أسئلة",
+    "of": "من",
+    "remaining": "متبقي",
+    "incomplete": "غير مكتمل",
+    "correct": "صحيح",
+    "incorrect": "خطأ"
+  },
+  "results": {
+    "needMorePractice": "تحتاج إلى مزيد من التدريب",
+    "yourScore": "نتيجتك",
+    "statistics": "الإحصائيات",
+    "questionsAnswered": "الأسئلة المجاب عنها",
+    "timeSpent": "الوقت المستغرق",
+    "difficulty": "الصعوبة",
+    "passingScore": "النتيجة المطلوبة للنجاح",
+    "status": "الحالة",
+    "failed": "فشل",
+    "tryAgain": "حاول مرة أخرى",
+    "finish": "إنهاء"
+  },
+  "courseDetails": {
+    "courseNotFound": "الدورة غير موجودة",
+    "fetchError": "فشل في جلب بيانات الدورة",
+    "fetchTasksError": "فشل في جلب المهام",
+    "deleteError": "فشل في حذف الدورة",
+    "updateError": "فشل في تحديث الدورة",
+    "createLessonError": "فشل في إنشاء الدرس",
+    "publishToggleError": "فشل في تحديث حالة الدورة",
+    "exportError": "فشل في تصدير بيانات الدورة",
+    "importError": "فشل في استيراد بيانات الدورة",
+    "updateModuleError": "فشل في تحديث الوحدة",
+    "confirmDeleteModule": "هل أنت متأكد من حذف هذه الوحدة؟",
+    "deleteModuleError": "فشل في حذف الوحدة",
+    "createModuleError": "فشل في إنشاء الوحدة",
+    "selectLessonFirst": "يرجى اختيار درس أولاً",
+    "createTaskError": "فشل في إنشاء المهمة",
+    "selectTaskFirst": "يرجى اختيار مهمة",
+    "updateTaskError": "فشل في تحديث المهمة",
+    "deleteLessonError": "فشل في حذف الدرس. يرجى المحاولة مرة أخرى.",
+    "backToCourses": "العودة إلى الدورات",
+    "overview": "نظرة عامة",
+    "modules": "الوحدات",
+    "lessons": "الدروس",
+    "analytics": "التحليلات",
+    "createNewModule": "إنشاء وحدة جديدة",
+    "noModulesYet": "لا توجد وحدات بعد",
+    "createFirstModule": "إنشاء الوحدة الأولى",
+    "selectModule": "اختر الوحدة",
+    "selectLesson": "اختر الدرس",
+    "tasksForLesson": "المهام ({{count}} لهذا الدرس)",
+    "createTask": "إنشاء مهمة",
+    "progress": "التقدم",
+    "deleteLesson": "حذف الدرس",
+    "deleteLessonConfirmation": "هل أنت متأكد من حذف هذا الدرس؟ لا يمكن التراجع عن هذا الإجراء.",
+    "editTask": "تعديل المهمة"
+  },
+  "courses": {
+    "details": {
+      "actions": {
+        "publish": "نشر",
+        "edit": "تعديل",
+        "import": "استيراد",
+        "export": "تصدير",
+        "preview": "معاينة",
+        "share": "مشاركة",
+        "delete": "حذف"
       }
     },
     "modules": {
-      "title": "الوحدات",
-      "description": "تنظيم محتوى الدورة في وحدات",
-      "createModule": "إنشاء وحدة جديدة",
-      "createFirstModule": "إنشاء أول وحدة",
-      "noModules": "لا توجد وحدات حتى الآن",
-      "addLesson": "إضافة درس",
-      "addDummyModules": "إضافة وحدات تجريبية",
-      "selectModule": "اختر الوحدة",
-      "selectModuleFirst": "الرجاء اختيار وحدة أولاً",
-      "duration": "المدة",
-      "hours": "ساعات",
-      "lessons": "الدروس",
-      "objectives": "الأهداف",
       "addModule": "إضافة وحدة",
+      "title": "العنوان",
+      "description": "الوصف",
+      "objectives": "الأهداف",
+      "addObjective": "إضافة هدف",
+      "duration": "المدة",
+      "durationHelp": "الوقت المقدر لإكمال هذه الوحدة",
       "estimatedTime": "الوقت المقدر",
-      "difficulty": "المستوى",
+      "estimatedTimeHelp": "الوقت بالدقائق",
+      "difficulty": "الصعوبة",
       "difficultybeginner": "مبتدئ",
       "difficultyintermediate": "متوسط",
       "difficultyadvanced": "متقدم",
       "status": "الحالة",
       "statusdraft": "مسودة",
       "statuspublished": "منشور",
-      "statusarchived": "مؤرشف"
+      "statusarchived": "مؤرشف",
+      "order": "الترتيب",
+      "editModule": "تعديل الوحدة",
+      "deleteModule": "حذف الوحدة"
+    },
+    "lessons": {
+      "createLesson": "إنشاء درس"
+    },
+    "validation": {
+      "title": "التحقق من المحتوى",
+      "noResults": "لم يتم العثور على نتائج التحقق"
     },
     "preview": {
       "title": "معاينة الدورة",
       "overview": "نظرة عامة",
       "modules": "الوحدات",
-      "requirements": "المتطلبات",
-      "description": "وصف الدورة",
-      "instructor": "المدرب",
-      "level": "المستوى",
-      "duration": "المدة",
-      "format": "التنسيق",
-      "schedule": "الجدول",
-      "language": "اللغة",
-      "category": "الفئة",
-      "support": "الدعم",
-      "supportHours": "ساعات الدعم",
-      "responseTime": "وقت الاستجابة",
-      "certificate": "الشهادة",
-      "included": "مشمولة",
-      "notIncluded": "غير مشمولة",
-      "certificateTemplate": "نموذج الشهادة",
-      "courseInfo": "معلومات الدورة",
-      "whatYouWillLearn": "ما سوف تتعلمه",
-      "courseMaterials": "مواد الدورة",
-      "maxStudents": "الحد الأقصى للطلاب",
-      "totalLessons": "إجمالي الدروس",
-      "totalAssignments": "إجمالي المهام",
-      "totalQuizzes": "إجمالي الاختبارات",
-      "rating": "التقييم",
-      "reviews": "المراجعات"
+      "requirements": "المتطلبات"
     },
-    "tabs": {
-      "overview": "نظرة عامة",
-      "modules": "الوحدات",
-      "lessons": "الدروس",
-      "analytics": "التحليلات",
-      "label": "علامات التبويب"
-    },
-    "categories": {
-      "foundation": "الأساسيات"
+    "share": {
+      "title": "مشاركة الدورة",
+      "description": "شارك هذه الدورة مع الآخرين عبر البريد الإلكتروني",
+      "emailLabel": "عنوان البريد الإلكتروني",
+      "button": "إرسال دعوة"
     }
   },
-  "language": {
-    "en": "English",
-    "ar": "العربية",
-    "fr": "Français",
-    "changeLanguage": "تغيير اللغة",
-    "currentLanguage": "اللغة الحالية"
-  },
-  "errors": {
-    "required": "{{field}} مطلوب",
-    "invalidEmail": "عنوان البريد الإلكتروني غير صالح",
-    "passwordMismatch": "كلمات المرور غير متطابقة",
-    "minLength": "يجب أن يكون {{field}} {{min}} أحرف على الأقل",
-    "maxLength": "يجب ألا يتجاوز {{field}} {{max}} أحرف",
-    "general": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
-  },
-  "validation": {
-    "emailRequired": "البريد الإلكتروني مطلوب",
-    "passwordRequired": "كلمة المرور مطلوبة",
-    "nameRequired": "الاسم مطلوب",
-    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-    "emailInUse": "البريد الإلكتروني مستخدم بالفعل",
-    "weakPassword": "كلمة المرور ضعيفة جداً"
-  },
-  "landing": {
-    "hero": {
-      "title": "أتقن اللغة الإنجليزية",
-      "titleHighlight": "بثقة",
-      "subtitle": "انضم إلى آلاف الطلاب الناجحين الذين طوروا مهاراتهم في اللغة الإنجليزية من خلال دوراتنا بقيادة الخبراء",
-      "exploreCourses": "استكشف الدورات",
-      "watchDemo": "شاهد العرض",
-      "startLearning": "ابدأ التعلم الآن",
-      "stats": {
-        "activeLearners": "المتعلمين النشطين",
-        "successRate": "معدل النجاح",
-        "supportAvailable": "الدعم متاح",
-        "interactiveLessons": "الدروس التفاعلية"
-      }
-    },
-    "features": {
-      "title": "لماذا تختار منصتنا؟",
-      "items": {
-        "interactiveLearning": {
-          "title": "تعلم تفاعلي",
-          "description": "تفاعل مع الدروس الديناميكية التي تتكيف مع أسلوب تعلمك ووتيرتك"
-        },
-        "speakingPractice": {
-          "title": "ممارسة التحدث",
-          "description": "تدرب على النطق باستخدام تقنية التعرف على الكلام المدعومة بالذكاء الاصطناعي"
-        },
-        "fastProgress": {
-          "title": "تقدم سريع",
-          "description": "شاهد تحسناً ملحوظاً في مهاراتك في اللغة الإنجليزية مع منهجيتنا المثبتة"
-        },
-        "smartLearning": {
-          "title": "تعلم ذكي",
-          "description": "منصة مدعومة بالذكاء الاصطناعي تخصص رحلة تعلمك"
-        }
-      }
-    },
-    "contact": {
-      "title": "تواصل معنا",
-      "subtitle": "ابدأ رحلة تعلم اللغة الإنجليزية اليوم",
-      "description": "هل لديك أسئلة حول دوراتنا أو تحتاج إلى مساعدة في اختيار البرنامج المناسب؟ فريقنا هنا لمساعدتك في تحقيق أهدافك اللغوية",
-      "callUs": "اتصل بنا",
-      "emailUs": "راسلنا",
-      "form": {
-        "name": "اسمك",
-        "email": "البريد الإلكتروني",
-        "message": "الرسالة",
-        "sendMessage": "إرسال الرسالة"
-      }
-    },
-    "footer": {
-      "description": "حسّن مهاراتك في اللغة الإنجليزية مع منصة التعلم المبتكرة لدينا.",
-      "links": {
-        "courses": "الدورات",
-        "pricing": "الأسعار",
-        "about": "من نحن",
-        "contact": "اتصل بنا"
-      },
-      "brand": {
-        "description": "تمكين الطلاب في جميع أنحاء العالم لتحقيق أهدافهم اللغوية من خلال برامج تعلم اللغة الإنجليزية المبتكرة والفعالة"
-      },
-      "quickLinks": "روابط سريعة",
-      "contactUs": "اتصل بنا",
-      "contact": "معلومات الاتصال",
-      "contactEmail": "3bdulhafeez@gmail.com",
-      "contactPhone": "+1 (555) 123-4567",
-      "newsletter": "النشرة البريدية",
-      "newsletterDescription": "اشترك في نشرتنا البريدية للحصول على التحديثات والنصائح.",
-      "emailPlaceholder": "بريدك الإلكتروني",
-      "subscribe": "اشترك",
-      "copyright": "© {{year}} ريب إنجليش. جميع الحقوق محفوظة."
-    },
-    "testimonials": {
-      "title": "قصص النجاح"
-    },
-    "faq": {
-      "title": "الأسئلة الشائعة",
-      "subtitle": "اعثر على إجابات للأسئلة الشائعة حول منصتنا وخدماتنا",
-      "question1": "كيف تعمل عملية التعلم؟",
-      "answer1": "تم تصميم عملية التعلم لدينا لتكون تفاعلية وجذابة. سيكون لديك إمكانية الوصول إلى دروس الفيديو وتمارين التدريب وتغذية راجعة فورية من المدربين. المنهج منظم لمساعدتك على التقدم من المستويات الأساسية إلى المتقدمة بوتيرتك الخاصة.",
-      "question2": "ما هي الأجهزة التي يمكنني استخدامها للوصول إلى المنصة؟",
-      "answer2": "يمكنك الوصول إلى منصتنا من أي جهاز متصل بالإنترنت، بما في ذلك أجهزة الكمبيوتر المكتبية وأجهزة الكمبيوتر المحمولة والأجهزة اللوحية والهواتف الذكية. يضمن تصميمنا المتجاوب تجربة تعليمية سلسة عبر جميع الأجهزة.",
-      "question3": "كم من الوقت يستغرق تحقيق الطلاقة؟",
-      "answer3": "يختلف الوقت اللازم لتحقيق الطلاقة اعتمادًا على مستواك الأولي وأهداف التعلم وتفانيك. مع الممارسة المنتظمة ومنهجنا المنظم، يرى معظم الطلاب تحسنًا كبيرًا خلال 3-6 أشهر.",
-      "question4": "هل هناك نسخة تجريبية مجانية متاحة؟",
-      "answer4": "نعم، نقدم نسخة تجريبية مجانية لمدة 7 أيام تمنحك وصولاً كاملاً إلى منصتنا ودوراتنا. هذا يسمح لك بتجربة طرق التدريس لدينا واتخاذ قرار بشأن ما إذا كانت منصتنا مناسبة لك.",
-      "question5": "ما هي أنواع الدعم المتاحة إذا احتجت إلى المساعدة؟",
-      "answer5": "نقدم دعمًا شاملاً من خلال قنوات متعددة. يمكنك التواصل مع فريق الدعم لدينا عبر البريد الإلكتروني أو الدردشة المباشرة أو جدولة جلسة فردية مع مدرب. لدينا أيضًا منتدى مجتمعي حيث يمكنك التواصل مع المتعلمين الآخرين."
-    },
-    "benefits": {
-      "title": "فوائد إتقان اللغة الإنجليزية",
-      "items": {
-        "careerGrowth": {
-          "title": "تطور مهني",
-          "description": "افتح أبواب الفرص الوظيفية العالمية والرواتب الأعلى."
-        },
-        "globalConnections": {
-          "title": "تواصل عالمي",
-          "description": "تواصل مع أشخاص من ثقافات وخلفيات مختلفة."
-        },
-        "digitalAccess": {
-          "title": "وصول رقمي",
-          "description": "الوصول إلى عالم من المعرفة والترفيه باللغة الإنجليزية."
-        },
-        "confidence": {
-          "title": "ثقة بالنفس",
-          "description": "بناء الثقة بالنفس في البيئات المهنية والاجتماعية."
-        }
-      }
-    },
-    "appShowcase": {
-      "title": "تعلم اللغة الإنجليزية أثناء التنقل",
-      "androidTitle": "حمل تطبيقنا للأندرويد",
-      "androidDescription": "خذ رحلة تعلم اللغة الإنجليزية معك في أي مكان من خلال تطبيقنا الغني بالميزات. تدرب على التحدث، أكمل الدروس، وتتبع تقدمك أثناء التنقل.",
-      "downloadAndroid": "حمل للأندرويد",
-      "viewPlayStore": "عرض على متجر جوجل بلاي",
-      "rating": "تقييم 4.8/5 على متجر جوجل بلاي",
-      "features": {
-        "lessonScreen": {
-          "title": "شاشة الدروس",
-          "description": "دروس تفاعلية مع تغذية راجعة فورية"
-        },
-        "speakingPractice": {
-          "title": "تدريب النطق",
-          "description": "تدريب النطق مدعوم بالذكاء الاصطناعي"
-        },
-        "progressTracking": {
-          "title": "تتبع التقدم",
-          "description": "راقب رحلة تعلمك"
-        },
-        "vocabularyPractice": {
-          "title": "تدريب المفردات",
-          "description": "بناء قاموسك اللغوي بفعالية"
-        }
-      }
-    },
-    "cta": {
-      "title": "هل أنت مستعد لتحسين مهاراتك في اللغة الإنجليزية؟",
-      "description": "انضم إلى آلاف المتعلمين الناجحين اليوم وابدأ رحلتك نحو الطلاقة في اللغة الإنجليزية.",
-      "button": "ابدأ رحلتك الآن"
-    },
-    "tabs": {
-      "title": "نظرة عامة على المنصة",
-      "overview": "نظرة عامة",
-      "benefits": "الفوائد",
-      "howItWorks": "كيف يعمل",
-      "overviewText": "اكتشف كيف تعزز منصتنا رحلتك في تعلم اللغة الإنجليزية.",
-      "howItWorksText": "سجل، اختر دورة، وابدأ التعلم من خلال دروس تفاعلية وتغذية راجعة فورية.",
-      "flexible": "مرن",
-      "accessible": "متاح للجميع",
-      "engaging": "تفاعلي",
-      "personalized": "شخصي"
-    }
-  },
-  "messages": {
-    "chats": "المحادثات",
-    "newChat": "محادثة جديدة",
-    "searchChats": "البحث في المحادثات",
-    "noChats": "لا توجد محادثات بعد",
-    "noChatsFound": "لم يتم العثور على محادثات",
-    "selectChat": "اختر محادثة لبدء المراسلة",
-    "noMessages": "لا توجد رسائل بعد",
-    "typeMessage": "اكتب رسالة",
-    "send": "إرسال",
-    "startConversation": "بدء محادثة",
-    "cancel": "إلغاء",
-    "users": "المستخدمون",
-    "searchUsers": "البحث عن المستخدمين",
-    "message": "رسالة",
-    "role": {
-      "student": "طالب",
-      "teacher": "معلم",
-      "admin": "مدير"
-    }
-  },
-  "forms": {
-    "createTask": {
-      "title": "إنشاء مهمة",
-      "taskTitle": "عنوان المهمة",
-      "taskInstructions": "تعليمات المهمة",
-      "taskType": "نوع المهمة",
-      "selectTaskType": "اختر نوع المهمة",
-      "taskTypes": {
-        "true_false": "صح/خطأ",
-        "fill_in_the_blank": "املأ الفراغ",
-        "matching": "توصيل",
-        "short_answer": "إجابة قصيرة",
-        "choose_the_best_answer": "اختر الإجابة الصحيحة"
-      },
-      "lesson": "الدرس",
-      "selectLesson": "اختر الدرس",
-      "addQuestion": "إضافة سؤال",
-      "questionText": "نص السؤال",
-      "answers": "الإجابات",
-      "correctAnswer": "الإجابة الصحيحة",
-      "addAnswer": "إضافة إجابة",
-      "removeAnswer": "حذف إجابة",
-      "create": "إنشاء المهمة",
-      "reset": "إعادة تعيين",
-      "success": "تم إنشاء المهمة بنجاح!",
-      "error": "فشل في إنشاء المهمة. يرجى المحاولة مرة أخرى.",
-      "validation": {
-        "required": "يرجى ملء جميع الحقول المطلوبة وإضافة سؤال واحد على الأقل."
-      }
-    },
-    "createLesson": {
-      "title": "إنشاء درس",
-      "lessonTitle": "عنوان الدرس",
-      "videoUrl": "رابط الفيديو",
-      "audioUrl": "رابط الصوت",
-      "instructions": "التعليمات",
-      "description": "الوصف",
-      "lessonContent": "محتوى الدرس",
-      "add": "إضافة الدرس",
-      "adding": "جاري الإضافة...",
-      "cancel": "إلغاء",
-      "success": "تم إضافة الدرس بنجاح!",
-      "error": "فشل في إضافة الدرس. يرجى المحاولة مرة أخرى."
-    },
-    "createCourse": {
-      "title": "إنشاء دورة",
-      "courseTitle": "عنوان الدورة",
-      "courseImage": "رابط صورة الدورة",
-      "coursePrice": "سعر الدورة (جنيه سوداني)",
-      "prerequisites": "متطلبات الدورة",
-      "prerequisitesHelp": "أدخل المتطلبات مفصولة بفواصل",
-      "objectives": "أهداف الدورة",
-      "objectivesHelp": "أدخل أهداف التعلم مفصولة بفواصل",
-      "description": "وصف الدورة",
-      "create": "إنشاء الدورة",
-      "creating": "جاري الإنشاء...",
-      "success": "تم إنشاء الدورة بنجاح!",
-      "error": "فشل في إنشاء الدورة. يرجى المحاولة مرة أخرى."
-    },
-    "createQuiz": {
-      "title": "إنشاء اختبار",
-      "question": "السؤال",
-      "answer": "الإجابة الصحيحة",
-      "options": "الخيارات",
-      "add": "إضافة اختبار",
-      "success": "تم إضافة الاختبار بنجاح!",
-      "error": "فشل في إضافة الاختبار. يرجى المحاولة مرة أخرى."
-    }
-  },
-  "lesson": {
-    "details": {
-      "title": "تفاصيل الدرس",
-      "delete": "حذف الدرس",
-      "addTask": "إضافة مهمة",
-      "instructions": "تعليمات الدرس",
-      "description": "وصف الدرس",
-      "script": "نص الدرس"
-    }
-  },
-  "course": {
-    "details": {
-      "delete": "حذف الدورة",
-      "view": "عرض",
-      "deleteConfirm": {
-        "title": "حذف الدورة",
-        "message": "هل أنت متأكد من حذف هذه الدورة؟ لا يمكن التراجع عن هذا الإجراء.",
-        "cancel": "إلغاء",
-        "confirm": "حذف"
-      }
-    }
-  },
-  "tables": {
-    "courses": {
-      "title": "الدورات",
-      "actions": "الإجراءات",
-      "view": "عرض",
-      "edit": "تعديل",
-      "delete": "حذف",
-      "deleteConfirm": {
-        "title": "حذف الدورة",
-        "message": "هل أنت متأكد من حذف هذه الدورة؟ لا يمكن التراجع عن هذا الإجراء.",
-        "cancel": "إلغاء",
-        "confirm": "حذف"
-      },
-      "columns": {
-        "title": "العنوان",
-        "price": "السعر",
-        "students": "الطلاب",
-        "lessons": "الدروس",
-        "createdAt": "تاريخ الإنشاء",
-        "status": "الحالة"
-      },
-      "status": {
-        "active": "نشط",
-        "draft": "مسودة",
-        "archived": "مؤرشف"
-      },
-      "noData": "لم يتم العثور على دورات",
-      "loading": "جاري تحميل الدورات...",
-      "error": "فشل في تحميل الدورات"
-    },
-    "students": {
-      "title": "الطلاب",
-      "actions": "الإجراءات",
-      "view": "عرض الملف الشخصي",
-      "edit": "تعديل",
-      "delete": "إزالة",
-      "deleteConfirm": {
-        "title": "إزالة الطالب",
-        "message": "هل أنت متأكد من إزالة هذا الطالب من الدورة؟",
-        "cancel": "إلغاء",
-        "confirm": "إزالة"
-      },
-      "columns": {
-        "name": "الاسم",
-        "email": "البريد الإلكتروني",
-        "progress": "التقدم",
-        "lastAccess": "آخر دخول",
-        "status": "الحالة",
-        "enrolledAt": "تاريخ التسجيل"
-      },
-      "status": {
-        "active": "نشط",
-        "inactive": "غير نشط",
-        "completed": "مكتمل"
-      },
-      "noData": "لم يتم العثور على طلاب",
-      "loading": "جاري تحميل الطلاب...",
-      "error": "فشل في تحميل الطلاب"
-    },
-    "tasks": {
-      "title": "المهام",
-      "actions": "الإجراءات",
-      "edit": "تعديل",
-      "delete": "حذف",
-      "deleteConfirm": {
-        "title": "حذف المهمة",
-        "message": "هل أنت متأكد من حذف هذه المهمة؟ لا يمكن التراجع عن هذا الإجراء.",
-        "cancel": "إلغاء",
-        "confirm": "حذف"
-      },
-      "columns": {
-        "title": "العنوان",
-        "type": "النوع",
-        "lesson": "الدرس",
-        "createdAt": "تاريخ الإنشاء",
-        "status": "الحالة"
-      },
-      "types": {
-        "true_false": "صح/خطأ",
-        "fill_in_the_blank": "املأ الفراغ",
-        "matching": "توصيل",
-        "short_answer": "إجابة قصيرة",
-        "choose_the_best_answer": "اختر الإجابة الصحيحة"
-      },
-      "status": {
-        "active": "نشط",
-        "draft": "مسودة",
-        "archived": "مؤرشف"
-      },
-      "noData": "لم يتم العثور على مهام",
-      "loading": "جاري تحميل المهام...",
-      "error": "فشل في تحميل المهام"
-    }
-  },
-  "cards": {
-    "course": {
-      "enroll": "سجل الآن",
-      "view": "عرض الدورة",
-      "price": "السعر",
-      "students": "الطلاب",
-      "lessons": "الدروس",
-      "prerequisites": "المتطلبات",
-      "objectives": "الأهداف",
-      "status": {
-        "active": "نشط",
-        "draft": "مسودة",
-        "archived": "مؤرشف"
-      }
-    }
-  },
-  "components": {
-    "lesson": {
-      "description": {
-        "title": "الوصف",
-        "noDescription": "لا يوجد وصف متاح"
-      },
-      "instructions": {
-        "title": "التعليمات",
-        "noInstructions": "لا توجد تعليمات متاحة"
-      },
-      "script": {
-        "title": "نص الدرس",
-        "noScript": "لا يوجد نص متاح"
-      }
-    },
-    "task": {
-      "title": "المهمة",
-      "instructions": "التعليمات",
-      "type": "النوع",
-      "submit": "إرسال",
-      "reset": "إعادة تعيين",
-      "success": "تم إكمال المهمة بنجاح!",
-      "error": "فشل في إرسال المهمة. يرجى المحاولة مرة أخرى.",
-      "validation": {
-        "required": "يرجى الإجابة على جميع الأسئلة"
-      }
-    },
-    "quiz": {
-      "title": "الاختبار",
-      "instructions": "التعليمات",
-      "submit": "إرسال الاختبار",
-      "reset": "إعادة تعيين",
-      "success": "تم إرسال الاختبار بنجاح!",
-      "error": "فشل في إرسال الاختبار. يرجى المحاولة مرة أخرى.",
-      "validation": {
-        "required": "يرجى الإجابة على جميع الأسئلة"
-      }
-    },
-    "spinner": {
-      "loading": "جاري التحميل...",
-      "processing": "جاري المعالجة..."
-    },
-    "message": {
-      "send": "إرسال رسالة",
-      "reply": "رد",
-      "delete": "حذف",
-      "deleteConfirm": {
-        "title": "حذف الرسالة",
-        "message": "هل أنت متأكد من حذف هذه الرسالة؟",
-        "cancel": "إلغاء",
-        "confirm": "حذف"
-      },
-      "placeholder": "اكتب رسالتك هنا...",
-      "noMessages": "لا توجد رسائل بعد",
-      "error": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى."
-    },
-    "stats": {
-      "title": "إحصائيات الطالب",
-      "progress": "تقدم الدورة",
-      "completion": "معدل الإكمال",
-      "averageScore": "متوسط الدرجات",
-      "timeSpent": "الوقت المستغرق",
-      "noData": "لا توجد إحصائيات متاحة"
-    }
-  },
-  "header": {
-    "profile": "الملف الشخصي",
-    "dashboard": "لوحة التحكم",
-    "logout": "تسجيل الخروج"
-  },
-  "faq": {
-    "title": "الأسئلة الشائعة",
-    "subtitle": "اعثر على إجابات للأسئلة الشائعة حول منصتنا وخدماتنا",
-    "question1": "كيف تعمل عملية التعلم؟",
-    "answer1": "تم تصميم عملية التعلم لدينا لتكون تفاعلية وجذابة. سيكون لديك إمكانية الوصول إلى دروس الفيديو وتمارين التدريب وتغذية راجعة فورية من المدربين. المنهج منظم لمساعدتك على التقدم من المستويات الأساسية إلى المتقدمة بوتيرتك الخاصة.",
-    "question2": "ما هي الأجهزة التي يمكنني استخدامها للوصول إلى المنصة؟",
-    "answer2": "يمكنك الوصول إلى منصتنا من أي جهاز متصل بالإنترنت، بما في ذلك أجهزة الكمبيوتر المكتبية وأجهزة الكمبيوتر المحمولة والأجهزة اللوحية والهواتف الذكية. يضمن تصميمنا المتجاوب تجربة تعليمية سلسة عبر جميع الأجهزة.",
-    "question3": "كم من الوقت يستغرق تحقيق الطلاقة؟",
-    "answer3": "يختلف الوقت اللازم لتحقيق الطلاقة اعتمادًا على مستواك الأولي وأهداف التعلم وتفانيك. مع الممارسة المنتظمة ومنهجنا المنظم، يرى معظم الطلاب تحسنًا كبيرًا خلال 3-6 أشهر.",
-    "question4": "هل هناك نسخة تجريبية مجانية متاحة؟",
-    "answer4": "نعم، نقدم نسخة تجريبية مجانية لمدة 7 أيام تمنحك وصولاً كاملاً إلى منصتنا ودوراتنا. هذا يسمح لك بتجربة طرق التدريس لدينا واتخاذ قرار بشأن ما إذا كانت منصتنا مناسبة لك.",
-    "question5": "ما هي أنواع الدعم المتاحة إذا احتجت إلى المساعدة؟",
-    "answer5": "نقدم دعمًا شاملاً من خلال قنوات متعددة. يمكنك التواصل مع فريق الدعم لدينا عبر البريد الإلكتروني أو الدردشة المباشرة أو جدولة جلسة فردية مع مدرب. لدينا أيضًا منتدى مجتمعي حيث يمكنك التواصل مع المتعلمين الآخرين."
-  },
-  "tasks": {
-    "title": "عنوان المهمة",
-    "description": "الوصف",
-    "type": "نوع المهمة",
-    "types": {
-      "quiz": "اختبار",
-      "assignment": "واجب",
-      "multipleChoice": "اختيار متعدد",
-      "trueFalse": "صح/خطأ",
-      "fillInBlanks": "إكمال الفراغات",
-      "verbPractice": "تدريب الأفعال",
-      "conversation": "محادثة"
-    },
-    "passingScore": "الدرجة المطلوبة للنجاح (%)",
-    "timeLimit": "الوقت المحدد (دقائق)",
-    "sections": "الأقسام",
-    "addSection": "إضافة قسم",
-    "sectionTitle": "عنوان القسم",
-    "sectionType": "نوع القسم",
-    "questions": "الأسئلة",
-    "addQuestion": "إضافة سؤال",
-    "questionText": "نص السؤال",
-    "option": "خيار",
-    "addOption": "إضافة خيار",
-    "points": "النقاط",
-    "createTask": "إنشاء مهمة جديدة",
-    "editTask": "تعديل المهمة",
-    "deleteTask": "حذف المهمة",
-    "createSuccess": "تم إنشاء المهمة بنجاح",
-    "createError": "فشل في إنشاء المهمة",
-    "updateSuccess": "تم تحديث المهمة بنجاح",
-    "updateError": "فشل في تحديث المهمة",
-    "deleteSuccess": "تم حذف المهمة بنجاح",
-    "deleteError": "فشل في حذف المهمة"
+  "createLessonForm": {
+    "lessonTitleLabel": "عنوان الدرس",
+    "descriptionLabel": "الوصف",
+    "durationLabel": "المدة (دقائق)",
+    "orderLabel": "الترتيب",
+    "lessonSequenceInCourse": "ترتيب الدرس في الدورة",
+    "vocabularyLabel": "كلمات المفردات",
+    "addVocabularyWordPlaceholder": "إضافة كلمة مفردات",
+    "addButton": "إضافة",
+    "grammarFocusLabel": "تركيز القواعد",
+    "addGrammarPointPlaceholder": "إضافة نقطة قواعد",
+    "skillsLabel": "المهارات",
+    "addSkillPlaceholder": "إضافة مهارة",
+    "assessmentLabel": "التقييم",
+    "keyActivitiesLabel": "الأنشطة الرئيسية",
+    "addActivityPlaceholder": "إضافة نشاط",
+    "contentLabel": "محتوى الدرس",
+    "learningObjectivesLabel": "أهداف التعلم",
+    "addLearningObjectivePlaceholder": "إضافة هدف تعلم",
+    "resourcesLabel": "الموارد",
+    "addResourcePlaceholder": "إضافة مورد",
+    "addResourceUrlPlaceholder": "رابط المورد",
+    "videoLabel": "الفيديو",
+    "uploadVideoButton": "رفع فيديو",
+    "audioLabel": "الصوت",
+    "uploadAudioButton": "رفع ملف صوتي",
+    "imageLabel": "الصورة",
+    "uploadImageButton": "رفع صورة",
+    "courseMaterialsLabel": "مواد الدورة",
+    "uploadPdfMaterialsButton": "رفع ملفات PDF"
   },
   "lessonManagement": {
+    "searchLessons": "البحث في الدروس...",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "status": {
+      "all": "جميع الحالات",
+      "published": "منشور",
+      "draft": "مسودة",
+      "archived": "مؤرشف"
+    },
+    "sortBy": {
+      "newest": "الأحدث أولاً",
+      "oldest": "الأقدم أولاً",
+      "title": "حسب العنوان"
+    },
     "fields": {
       "title": "العنوان",
-      "description": "الوصف",
       "status": "الحالة",
       "duration": "المدة",
       "lastUpdated": "آخر تحديث",
       "actions": "الإجراءات"
     },
     "actions": {
-      "more": "المزيد"
+      "view": "عرض",
+      "edit": "تعديل",
+      "assign": "تعيين",
+      "analytics": "التحليلات",
+      "resources": "الموارد",
+      "delete": "حذف",
+      "more": "المزيد",
+      "publish": "نشر",
+      "draft": "وضع كمسودة",
+      "archive": "أرشفة"
     }
   },
-  "studentCourseDetails": {
-    "header": {
-      "startLearning": "ابدأ التعلم",
-      "instructor": "المدرب",
-      "role": "المدرب"
-    },
-    "contentOutline": {
-      "title": "محتوى الدورة",
-      "ariaLabel": "قسم محتوى الدورة",
-      "markAsCompleted": "وضع علامة مكتمل على {{lesson}}",
-      "lessonCompleted": "تم وضع علامة مكتمل على الدرس!{{title}}",
-      "undo": "تراجع"
-    },
-    "materialsDialog": {
-      "title": "مواد الدورة",
-      "noMaterials": "لا توجد مواد متاحة.",
-      "download": "تحميل",
-      "close": "إغلاق"
-    },
-    "reviews": {
-      "title": "المراجعات والتقييمات",
-      "summary": "{{avg}} ({{count}} مراجعة)",
-      "noReviews": "لا توجد مراجعات بعد.",
-      "student": "طالب",
-      "addEdit": "أضف/عدل مراجعتك",
-      "loginToReview": "سجل الدخول للمراجعة",
-      "submitTitle": "إرسال مراجعتك",
-      "yourReview": "مراجعتك",
-      "cancel": "إلغاء",
-      "submitting": "جاري الإرسال...",
-      "submit": "إرسال"
-    },
-    "moduleList": {
-      "title": "الوحدات والدروس",
-      "showLess": "عرض أقل",
-      "showAll": "عرض جميع الوحدات"
-    },
-    "overview": {
-      "title": "نظرة عامة على الدورة",
-      "objectives": "الأهداف",
-      "whatYouWillLearn": "ما سوف تتعلمه",
-      "viewLess": "عرض أقل",
-      "viewMore": "عرض المزيد"
-    },
-    "supportDialog": {
-      "title": "الدعم والأسئلة الشائعة",
-      "contactSupport": "تواصل مع الدعم",
-      "email": "البريد الإلكتروني",
-      "hours": "ساعات العمل",
-      "responseTime": "وقت الاستجابة",
-      "faq": "الأسئلة الشائعة",
-      "close": "إغلاق"
-    },
-    "instructorInfo": {
-      "title": "المدرب",
-      "support": "الدعم",
-      "email": "البريد الإلكتروني",
-      "hours": "ساعات العمل",
-      "responseTime": "وقت الاستجابة"
-    },
-    "progressStats": {
-      "title": "التقدم",
-      "lessons": "{{completed}} / {{total}} درس",
-      "achievement": "إنجاز"
-    },
-    "page": {
-      "fetchReviewsError": "فشل في جلب المراجعات.",
-      "loadDetailsError": "فشل في تحميل تفاصيل الدورة. يرجى المحاولة مرة أخرى.",
-      "enrollError": "فشل في التسجيل. يرجى المحاولة مرة أخرى.",
-      "progressError": "فشل في تحديث التقدم.",
-      "undoError": "فشل في التراجع عن إكمال الدرس.",
-      "reviewError": "فشل في إرسال المراجعة.",
-      "lessonUndone": "تم التراجع عن إكمال الدرس.",
-      "viewMaterials": "عرض المواد",
-      "supportFaq": "الدعم والأسئلة الشائعة"
-    },
-    "fields": {
-      "title": "العنوان",
-      "description": "الوصف",
-      "instructor": "المدرب",
-      "level": "المستوى",
-      "requirements": "المتطلبات",
-      "whatYouWillLearn": "ما سوف تتعلمه",
-      "certificate": "الشهادة",
-      "certificateIncluded": "الشهادة مشمولة",
-      "certificateTemplate": "نموذج الشهادة",
-      "accessDuration": "مدة الوصول",
-      "lifetime": "مدى الحياة",
-      "category": "الفئة",
-      "createdAt": "تاريخ الإنشاء",
-      "currency": "العملة",
-      "discount": "خصم",
-      "discountEndDate": "تاريخ انتهاء الخصم",
-      "duration": "المدة",
-      "earlyBirdEndDate": "تاريخ نهاية السعر المبكر",
-      "earlyBirdPrice": "سعر مبكر",
-      "endDate": "تاريخ الانتهاء",
-      "enrolledStudents": "الطلاب المسجلون",
-      "enrollmentStatus": "حالة التسجيل",
-      "featured": "مميز",
-      "format": "التنسيق",
-      "id": "المعرف",
-      "instructorBio": "نبذة عن المدرب",
-      "intro": "مقدمة",
-      "language": "اللغة",
-      "maxStudents": "الحد الأقصى للطلاب",
-      "metaDescription": "وصف ميتا",
-      "price": "السعر",
-      "pricingModel": "نموذج التسعير",
-      "published": "منشور",
-      "rating": "التقييم",
-      "requirementsList": "قائمة المتطلبات",
-      "reviews": "المراجعات",
-      "schedule": "الجدول",
-      "seoTitle": "عنوان SEO",
-      "shortDescription": "وصف مختصر",
-      "startDate": "تاريخ البدء",
-      "status": "الحالة",
-      "support": "الدعم",
-      "tags": "الوسوم",
-      "targetAudience": "الجمهور المستهدف",
-      "thumbnail": "الصورة المصغرة",
-      "totalAssignments": "إجمالي المهام",
-      "totalLessons": "إجمالي الدروس",
-      "totalQuizzes": "إجمالي الاختبارات",
-      "totalRatings": "إجمالي التقييمات",
-      "updatedAt": "تاريخ التحديث",
-      "objectives": "الأهداف"
-    }
-  },
-  "lessonDetails": {
-    "loading": "جاري تحميل تفاصيل الدرس...",
-    "error": "فشل في تحميل تفاصيل الدرس.",
-    "notFound": "الدرس غير موجود.",
-    "empty": "لا توجد بيانات للدرس.",
-    "markComplete": "وضع علامة كمكتمل",
-    "common": {
-      "back": "رجوع"
-    },
-    "noMedia": "لا توجد وسائط متاحة لهذا الدرس.",
-    "videoPlayer": "مشغل فيديو الدرس",
-    "audioPlayer": "مشغل صوت الدرس",
-    "noContent": "لا يوجد محتوى متاح لهذا الدرس.",
-    "contentSection": "قسم محتوى الدرس",
-    "noObjectives": "لا توجد أهداف متاحة لهذا الدرس.",
-    "noResources": "لا توجد موارد متاحة لهذا الدرس.",
-    "resources": "الموارد",
-    "resource": "مورد",
-    "noProgress": "لا توجد بيانات تقدم متاحة.",
-    "progress": "التقدم",
-    "progressBar": "شريط تقدم الدرس",
-    "completed": "مكتمل",
-    "startQuiz": "بدء الاختبار",
-    "noInstructor": "لا توجد معلومات عن المعلم.",
-    "instructor": "المعلم",
-    "noSupport": "لا توجد معلومات دعم متاحة.",
-    "supportFaq": "الدعم والأسئلة الشائعة",
-    "email": "البريد الإلكتروني",
-    "hours": "ساعات العمل",
-    "responseTime": "زمن الاستجابة"
-  },
-  "createLessonForm": {
-    "steps": ["معلومات أساسية", "المحتوى", "الوسائط", "مراجعة"],
-    "lessonTitle": "عنوان الدرس",
-    "description": "الوصف",
-    "duration": "المدة (ساعات)",
-    "order": "الترتيب",
-    "lessonSequence": "ترتيب الدرس في الدورة",
+  "menu": {
+    "dashboard": "لوحة التحكم",
+    "overviewAnalytics": "نظرة عامة وتحليلات",
+    "overviewProgress": "نظرة عامة وتقدم",
+    "courses": "الدورات",
+    "createManageCourses": "إنشاء وإدارة الدورات",
+    "students": "الطلاب",
+    "studentManagement": "إدارة الطلاب",
+    "enrollments": "التسجيلات",
+    "manageEnrollments": "إدارة تسجيلات الدورات",
+    "payments": "المدفوعات",
+    "paymentManagement": "إدارة المدفوعات",
+    "analytics": "التحليلات",
+    "performanceReports": "تقارير الأداء",
+    "settings": "الإعدادات",
+    "platformSettings": "إعدادات المنصة",
+    "myCourses": "دوراتي",
+    "enrolledCourses": "الدورات المسجلة",
     "vocabulary": "المفردات",
-    "grammarFocus": "التركيز النحوي",
-    "skills": "المهارات",
-    "addVocabulary": "أضف كلمة مفردات",
-    "addGrammar": "أضف نقطة نحوية",
-    "addSkill": "أضف مهارة",
-    "assessment": "التقييم",
-    "keyActivities": "الأنشطة الرئيسية",
-    "addActivity": "أضف نشاطًا",
-    "content": "المحتوى",
-    "learningObjectives": "الأهداف التعليمية",
-    "addObjective": "أضف هدفًا تعليميًا",
-    "resources": "الموارد",
-    "addResource": "أضف موردًا",
-    "addResourceUrl": "أضف رابط المورد",
-    "materials": "مواد الدورة (PDF)",
-    "uploadPdf": "رفع مواد PDF",
-    "uploadedMaterials": "المواد المرفوعة:",
-    "video": "فيديو",
-    "uploadVideo": "رفع فيديو",
-    "audio": "صوت",
-    "uploadAudio": "رفع صوت",
-    "image": "صورة",
-    "uploadImage": "رفع صورة",
-    "review": "مراجعة",
-    "edit": "تعديل",
-    "preview": "معاينة",
-    "clearDraft": "مسح المسودة",
-    "back": "رجوع",
-    "next": "التالي",
-    "add": "إضافة",
-    "remove": "إزالة",
-    "submit": "إرسال",
-    "save": "حفظ",
-    "cancel": "إلغاء",
-    "errorSaving": "حدث خطأ أثناء حفظ الدرس",
-    "unsavedChanges": "لديك تغييرات غير محفوظة. هل ترغب في حفظها كمسودة؟",
-    "required": "مطلوب",
-    "atLeastOneObjective": "يجب إضافة هدف واحد على الأقل",
-    "emptyObjectives": "لا يُسمح بالأهداف الفارغة",
-    "contentRequired": "المحتوى مطلوب",
-    "titleRequired": "العنوان مطلوب",
-    "descriptionRequired": "الوصف مطلوب",
-    "durationRequired": "المدة مطلوبة",
-    "courseIdRequired": "معرّف الدورة ومعرّف الوحدة مطلوبان",
-    "contentLabel": "المحتوى",
-    "learningObjectivesLabel": "الأهداف التعليمية",
-    "addLearningObjectivePlaceholder": "أضف هدفًا تعليميًا",
-    "resourcesLabel": "الموارد",
-    "addResourcePlaceholder": "أضف موردًا",
-    "addResourceUrlPlaceholder": "أضف رابط المورد",
-    "videoLabel": "فيديو",
-    "uploadVideoButton": "رفع فيديو",
-    "audioLabel": "صوت",
-    "uploadAudioButton": "رفع صوت",
-    "imageLabel": "صورة",
-    "uploadImageButton": "رفع صورة",
-    "courseMaterialsLabel": "مواد الدورة (PDF)",
-    "uploadPdfMaterialsButton": "رفع مواد PDF",
-    "uploadedMaterialsLabel": "المواد المرفوعة",
-    "minutes": "دقائق"
+    "vocabularyBuilding": "بناء المفردات",
+    "assignments": "الواجبات",
+    "myAssignments": "مهامي وواجباتي",
+    "progress": "التقدم",
+    "learningProgress": "تقدم التعلم",
+    "achievements": "الإنجازات",
+    "myAchievements": "إنجازاتي",
+    "messages": "الرسائل",
+    "instructorMessages": "رسائل المعلم",
+    "notifications": "الإشعارات",
+    "systemNotifications": "إشعارات النظام",
+    "profile": "الملف الشخصي",
+    "userProfile": "ملفي الشخصي",
+    "accountSettings": "إعدادات الحساب",
+    "helpSupport": "الدعم والمساعدة",
+    "helpCenterSupport": "مركز الدعم والمساعدة",
+    "getHelp": "الحصول على المساعدة",
+    "about": "حول",
+    "aboutUs": "معلومات عنا",
+    "contact": "اتصل",
+    "contactUs": "اتصل بنا",
+    "help": "مساعدة",
+    "helpCenter": "مركز المساعدة",
+    "exploreCourses": "استكشاف الدورات"
   }
 }

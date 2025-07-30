@@ -25,6 +25,7 @@ const LessonSection = ({
   onMenuClose,
   onDeleteLesson,
   onUpdateLesson,
+  onStatusChange,
   onCreate,
   courseId,
   moduleId,
@@ -89,6 +90,7 @@ const LessonSection = ({
           onDeleteLesson(selectedLessonForMenu.id);
           handleMenuClose();
         }}
+        onStatusChange={onStatusChange}
       />
       {editDialogOpen && (
         <CreateLessonForm

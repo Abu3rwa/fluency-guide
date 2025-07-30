@@ -11,7 +11,14 @@ import {
 import { useCustomTheme } from "../../../../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
 
-const StudentCourseDetailHeaderSection = ({ course, user, loading }) => {
+const StudentCourseDetailHeaderSection = ({
+  course,
+  user,
+  loading,
+  onEnroll,
+  isEnrolled,
+  enrollmentStatus,
+}) => {
   const { theme } = useCustomTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { t } = useTranslation();
@@ -48,9 +55,9 @@ const StudentCourseDetailHeaderSection = ({ course, user, loading }) => {
               maxWidth: "100%",
             }}
           >
-            {course.intro ? (
+            {course.introVideo ? (
               <video
-                src={course.intro}
+                src={course.introVideo}
                 controls
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 aria-label={t(
@@ -116,19 +123,44 @@ const StudentCourseDetailHeaderSection = ({ course, user, loading }) => {
                 </Typography>
               </Box>
             </Stack>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              fullWidth={isMobile}
-              sx={{
-                mt: 2,
-                minWidth: { xs: "auto", md: 220 },
-                alignSelf: isMobile ? "stretch" : "flex-start",
-              }}
-            >
-              {t("studentCourseDetails.header.startLearning")}
-            </Button>
+            {isEnrolled ? (
+              <Button
+                variant="contained"
+                color="success"
+                size="large"
+                fullWidth={isMobile}
+                sx={{
+                  mt: 2,
+                  minWidth: { xs: "auto", md: 220 },
+                  alignSelf: isMobile ? "stretch" : "flex-start",
+                }}
+              >
+                {t("studentCourseDetails.header.startLearning")}
+              </Button>
+            ) : enrollmentStatus === "pending" ? (
+              <Typography sx={{ mt: 2 }} color="text.secondary">
+                {t("studentCourseDetails.header.enrollmentPending")}
+              </Typography>
+            ) : enrollmentStatus === "rejected" ? (
+              <Typography sx={{ mt: 2 }} color="error">
+                {t("studentCourseDetails.header.enrollmentRejected")}
+              </Typography>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth={isMobile}
+                onClick={onEnroll}
+                sx={{
+                  mt: 2,
+                  minWidth: { xs: "auto", md: 220 },
+                  alignSelf: isMobile ? "stretch" : "flex-start",
+                }}
+              >
+                {t("studentCourseDetails.header.enrollNow")}
+              </Button>
+            )}
           </Stack>
         </Grid>
       </Grid>

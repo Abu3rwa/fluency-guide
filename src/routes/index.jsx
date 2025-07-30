@@ -7,8 +7,16 @@ import CustomSpinner from "../components/CustomSpinner";
 import StudentDashboardPage from "../student-ui/students-pages/student-dashboard-page/StudentDashboardPage";
 import StudentCourseDetailsPage from "../student-ui/students-pages/student-course-details-page/StudentCourseDetailsPage";
 import StudentLessonDetailsPage from "../student-ui/students-pages/student-lesson-details-page/StudentLessonDetailsPage";
-
+import StudentFillInBlanksTaskPage from "../student-ui/students-pages/student-tasks-pages/student-fill-in-blanks-task-page/StudentFillInBlanksTaskPage";
+import StudentMultipleChoiceTaskPage from "../student-ui/students-pages/student-tasks-pages/student-mutiple-choice-task-page/StudentMultipleChoiceTaskPage";
+import StudentTrueFalseTaskPage from "../student-ui/students-pages/student-tasks-pages/student-true-false-task-page/StudentTrueFalseTaskPage";
+import StudentVocabularyBuildingPage from "../student-ui/students-pages/student-vocabulary-building-page/StudentVocabularyBuildingPage";
+import TesseractOCR from "../components/TesseractOCR";
+// import StudentProgressPage from "../student-ui/students-pages/student-progress-page/StudentProgressPage";
 // Lazy load components
+const StudentStatisticsPage = React.lazy(() =>
+  import("../screens/student-statistics/StudentStatisticsPage")
+);
 const Landing = React.lazy(() => import("../screens/Landing"));
 const Auth = React.lazy(() => import("../screens/Auth"));
 const Dashboard = React.lazy(() => import("../screens/Dashboard"));
@@ -45,6 +53,12 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+// Student Route component (for logged-in students)
+const StudentRoute = ({ children }) => {
+  const { currentUser } = useAuth();
+  return currentUser ? children : <Navigate to={ROUTES.AUTH} />;
+};
+
 // Public routes
 export const publicRoutes = [
   // { path: ROUTES.LANDING, element: <Landing /> },
@@ -53,6 +67,14 @@ export const publicRoutes = [
     element: (
       <AppLayout>
         <Auth />
+      </AppLayout>
+    ),
+  },
+  {
+    path: ROUTES.STUDENT_STATISTICS,
+    element: (
+      <AppLayout>
+        <StudentStatisticsPage />
       </AppLayout>
     ),
   },
@@ -91,6 +113,59 @@ export const publicRoutes = [
     element: (
       <AppLayout>
         <StudentLessonDetailsPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: ROUTES.STUDENT_FILL_IN_BLANKS_TASK,
+    element: (
+      <AppLayout>
+        <StudentFillInBlanksTaskPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: ROUTES.STUDENT_MULTIPLE_CHOICE_TASK,
+    element: (
+      <AppLayout>
+        <StudentMultipleChoiceTaskPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: ROUTES.STUDENT_TRUE_FALSE_TASK,
+    element: (
+      <AppLayout>
+        <StudentTrueFalseTaskPage />
+      </AppLayout>
+    ),
+  },
+  // Generic task route for any task type
+  {
+    path: "/student/tasks/:taskId",
+    element: (
+      <AppLayout>
+        <StudentFillInBlanksTaskPage />
+      </AppLayout>
+    ),
+  },
+  // Student Vocabulary Building Page (protected for logged-in students)
+  {
+    path: ROUTES.STUDENT_VOCABULARY_BUILDING,
+    element: (
+      <StudentRoute>
+        <AppLayout>
+          <StudentVocabularyBuildingPage />
+        </AppLayout>
+      </StudentRoute>
+    ),
+  },
+  // OCR Test Route
+  {
+    path: ROUTES.OCR_TEST,
+    element: (
+      <AppLayout>
+        <TesseractOCR />
       </AppLayout>
     ),
   },
@@ -159,7 +234,7 @@ export const adminRoutes = [
     element: (
       <AdminRoute>
         <AppLayout>
-          <Analytics />
+          <StudentStatisticsPage />
         </AppLayout>
       </AdminRoute>
     ),

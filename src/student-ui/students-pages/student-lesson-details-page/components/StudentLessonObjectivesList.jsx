@@ -15,7 +15,7 @@ const StudentLessonObjectivesList = ({ objectives }) => {
 
   if (!objectives || objectives.length === 0) {
     return (
-      <Box sx={{ p: { xs: 1, sm: 2, md: 4 } }}>
+      <Box>
         <Typography color="text.secondary" variant="body2">
           {t("lessonDetails.noObjectives")}
         </Typography>
@@ -24,7 +24,7 @@ const StudentLessonObjectivesList = ({ objectives }) => {
   }
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 2, md: 4 } }}>
+    <Box>
       <Typography
         variant="h6"
         sx={{

@@ -21,8 +21,6 @@ import {
   Alert,
   Snackbar,
   CircularProgress,
-  Tabs,
-  Tab,
   Menu,
   Divider,
   TextField,
@@ -36,47 +34,24 @@ import {
   Visibility as ViewIcon,
   MoreVert as MoreVertIcon,
   School as SchoolIcon,
-  Assignment as AssignmentIcon,
-  Folder as ModuleIcon,
-  Task as TaskIcon,
   TrendingUp as TrendingUpIcon,
   Search as SearchIcon,
   Refresh as RefreshIcon,
   CheckCircle as CheckIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
 import courseService from "../services/courseService";
-import {
-  createLesson,
-  updateLesson,
-  deleteLesson,
-  getAllLessons,
-} from "../services/lessonService";
-import moduleService from "../services/moduleService";
-import {
-  createTask,
-  updateTask,
-  deleteTask,
-  getAllTasks,
-} from "../services/taskService";
-import StatCard from "../components/StatCard";
-import ResourceDialog from "../components/ResourceDialog";
+import CourseDialog from "../components/course/CourseDialog";
 import { useTranslation } from "react-i18next";
-import {
-  courseSchema,
-  moduleSchema,
-  lessonSchema,
-  taskSchema,
-} from "../utils/validation";
 import ManagementSearchBar from "../components/content-management/ManagementSearchBar";
-import ManagementTabs from "../components/content-management/ManagementTabs";
 import ManagementTable from "../components/content-management/ManagementTable";
 import ManagementStats from "../components/content-management/ManagementStats";
 import ManagementMenu from "../components/content-management/ManagementMenu";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
-import LessonAnalytics from "../components/course/LessonAnalytics";
-
+import PaymentsTable from "../components/PaymentsTable";
+import { useAuth } from "../contexts/AuthContext";
 const ManagementDashboard = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -84,15 +59,12 @@ const ManagementDashboard = () => {
   const { t } = useTranslation();
 
   // Core States
-  const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   // Data States
   const [courses, setCourses] = useState([]);
-  const [lessons, setLessons] = useState([]);
-  const [modules, setModules] = useState([]);
-  const [tasks, setTasks] = useState([]);
   const [stats, setStats] = useState({
     totalCourses: 0,
     activeCourses: 0,
@@ -132,169 +104,22 @@ const ManagementDashboard = () => {
       price: "",
       status: "draft",
     },
-    module: { title: "", description: "", order: 1, status: "draft" },
-    lesson: {
-      title: "",
-      description: "",
-      content: "",
-      duration: 0,
-      order: 1,
-      type: "video",
-      status: "draft",
-    },
-    task: {
-      title: "",
-      description: "",
-      type: "assignment",
-      points: 10,
-      status: "draft",
-    },
-  };
-
-  const dialogFields = {
-    course: [
-      { id: "title", label: t("courses.fields.title"), required: true },
-      { id: "category", label: t("courses.fields.category"), required: true },
-      {
-        id: "level",
-        label: t("courses.fields.level"),
-        type: "select",
-        required: true,
-        options: [
-          { value: "beginner", label: t("courses.levels.beginner") },
-          { value: "intermediate", label: t("courses.levels.intermediate") },
-          { value: "advanced", label: t("courses.levels.advanced") },
-        ],
-      },
-      {
-        id: "price",
-        label: t("courses.fields.price"),
-        type: "number",
-        required: true,
-      },
-      {
-        id: "description",
-        label: t("courses.fields.description"),
-        multiline: true,
-        rows: 3,
-        sm: 12,
-        required: true,
-      },
-    ],
-    module: [
-      { id: "title", label: t("modules.fields.title"), required: true },
-      {
-        id: "order",
-        label: t("modules.fields.order"),
-        type: "number",
-        required: true,
-      },
-      {
-        id: "description",
-        label: t("modules.fields.description"),
-        multiline: true,
-        rows: 3,
-        sm: 12,
-        required: true,
-      },
-    ],
-    lesson: [
-      { id: "title", label: t("lessons.fields.title"), required: true },
-      {
-        id: "duration",
-        label: t("lessons.fields.duration"),
-        type: "number",
-        required: true,
-      },
-      {
-        id: "description",
-        label: t("lessons.fields.description"),
-        multiline: true,
-        rows: 3,
-        sm: 12,
-        required: true,
-      },
-      {
-        id: "content",
-        label: t("lessons.fields.content"),
-        multiline: true,
-        rows: 6,
-        sm: 12,
-        required: true,
-      },
-    ],
-    task: [
-      { id: "title", label: t("tasks.fields.title"), required: true },
-      {
-        id: "points",
-        label: t("tasks.fields.points"),
-        type: "number",
-        required: true,
-      },
-      {
-        id: "description",
-        label: t("tasks.fields.description"),
-        multiline: true,
-        rows: 3,
-        sm: 12,
-        required: true,
-      },
-      {
-        id: "instructions",
-        label: t("tasks.fields.instructions"),
-        multiline: true,
-        rows: 4,
-        sm: 12,
-        required: true,
-      },
-    ],
-  };
-
-  const validationSchemas = {
-    course: courseSchema,
-    module: moduleSchema,
-    lesson: lessonSchema,
-    task: taskSchema,
   };
 
   const resourceApi = {
     course: {
       ...courseService,
+      create: courseService.createCourse,
       delete: courseService.deleteCourse,
-    },
-    module: {
-      ...moduleService,
-      delete: moduleService.deleteModule,
-    },
-    lesson: {
-      create: createLesson,
-      update: updateLesson,
-      delete: deleteLesson,
-      getAll: getAllLessons,
-    },
-    task: {
-      create: createTask,
-      update: updateTask,
-      delete: deleteTask,
-      getAll: getAllTasks,
     },
   };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [coursesData, modulesData, lessonsData, tasksData] =
-        await Promise.all([
-          resourceApi.course.getAllCourses(),
-          resourceApi.module.getAllModules(),
-          resourceApi.lesson.getAll(),
-          resourceApi.task.getAll(),
-        ]);
+      const coursesData = await resourceApi.course.getAllCourses();
 
       setCourses(coursesData || []);
-      setModules(modulesData || []);
-      setLessons(lessonsData || []);
-      setTasks(tasksData || []);
 
       const activeCourses = (coursesData || []).filter(
         (c) => c.status === "active"
@@ -303,9 +128,9 @@ const ManagementDashboard = () => {
       setStats({
         totalCourses: (coursesData || []).length,
         activeCourses,
-        totalLessons: (lessonsData || []).length,
-        totalModules: (modulesData || []).length,
-        totalTasks: (tasksData || []).length,
+        totalLessons: 0,
+        totalModules: 0,
+        totalTasks: 0,
         completionRate:
           (coursesData || []).length > 0
             ? Math.round((activeCourses / (coursesData || []).length) * 100)
@@ -350,24 +175,43 @@ const ManagementDashboard = () => {
     setDialogConfig((prev) => ({ ...prev, open: false }));
   }, []);
 
-  const handleDialogSubmit = useCallback(async () => {
-    const { type, mode, formData } = dialogConfig;
-    setSubmitting(true);
+  const handleDialogSubmit = useCallback(
+    async (courseData) => {
+      const { type, mode } = dialogConfig;
+      setSubmitting(true);
 
-    try {
-      if (mode === "create") {
-        await resourceApi[type].create(formData);
-      } else {
-        //
+      try {
+        if (mode === "create") {
+          await resourceApi[type].create(courseData);
+        } else {
+          await resourceApi[type].updateCourse(
+            dialogConfig.formData.id,
+            courseData
+          );
+        }
+        closeDialog();
+        fetchData();
+      } catch (error) {
+        console.error(`Failed to save ${type}:`, error);
+      } finally {
+        setSubmitting(false);
       }
-      closeDialog();
+    },
+    [dialogConfig, fetchData, closeDialog, t]
+  );
+
+  const handlePublish = async (course) => {
+    try {
+      const courseRef = doc(db, "courses", course.id);
+      await updateDoc(courseRef, {
+        published: !course.published,
+      });
       fetchData();
     } catch (error) {
-      console.error(`Failed to save ${type}:`, error);
-    } finally {
-      setSubmitting(false);
+      console.error("Failed to update course status:", error);
+      setError("Failed to update course status");
     }
-  }, [dialogConfig, fetchData, closeDialog, t]);
+  };
 
   const handleDeleteConfirm = useCallback(async () => {
     const { type, item } = deleteDialog;
@@ -397,39 +241,22 @@ const ManagementDashboard = () => {
   }, []);
 
   const filteredData = useMemo(() => {
-    const dataMap = {
-      course: courses,
-      module: modules,
-      lesson: lessons,
-      task: tasks,
-    };
+    const data = courses;
 
-    const data = dataMap[Object.keys(dataMap)[activeTab]] || [];
+    let filteredData = data.filter(
+      (item) =>
+        item.title?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (filterStatus === "all" || item.status === filterStatus)
+    );
 
-    return data
-      .filter(
-        (item) =>
-          item.title?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          (filterStatus === "all" || item.status === filterStatus)
-      )
-      .sort((a, b) => {
-        const aVal = a[sortBy] || "";
-        const bVal = b[sortBy] || "";
-        return sortOrder === "asc"
-          ? String(aVal).localeCompare(bVal)
-          : String(bVal).localeCompare(aVal);
-      });
-  }, [
-    courses,
-    modules,
-    lessons,
-    tasks,
-    activeTab,
-    searchQuery,
-    filterStatus,
-    sortBy,
-    sortOrder,
-  ]);
+    return filteredData.sort((a, b) => {
+      const aVal = a[sortBy] || "";
+      const bVal = b[sortBy] || "";
+      return sortOrder === "asc"
+        ? String(aVal).localeCompare(bVal)
+        : String(bVal).localeCompare(aVal);
+    });
+  }, [courses, searchQuery, filterStatus, sortBy, sortOrder]);
 
   const resourceDefs = {
     course: {
@@ -448,32 +275,9 @@ const ManagementDashboard = () => {
         },
       ],
     },
-    module: {
-      singular: t("management.resources.module"),
-      plural: t("management.resources.modules"),
-      data: modules,
-      columns: [
-        { id: "title", label: t("management.columns.title") },
-        {
-          id: "course",
-          label: t("management.columns.course"),
-          render: (item, { courses }) =>
-            courses.find((c) => c.id === item.courseId)?.title ||
-            t("common.unknown"),
-        },
-        { id: "order", label: t("management.columns.order") },
-        { id: "status", label: t("management.columns.status") },
-        {
-          id: "lessons",
-          label: t("management.columns.lessons"),
-          render: (item, { lessons }) =>
-            lessons.filter((l) => l.moduleId === item.id).length,
-        },
-      ],
-    },
   };
 
-  const activeResource = Object.keys(resourceDefs)[activeTab];
+  const activeResource = "course";
 
   if (loading) {
     return (
@@ -515,12 +319,6 @@ const ManagementDashboard = () => {
           setSortOrder={setSortOrder}
         />
 
-        <ManagementTabs
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          resourceDefs={resourceDefs}
-        />
-
         <ManagementTable
           resourceDefs={resourceDefs}
           activeResource={activeResource}
@@ -529,10 +327,15 @@ const ManagementDashboard = () => {
           handleMenuOpen={handleMenuOpen}
           getStatusColor={getStatusColor}
           courses={courses}
-          modules={modules}
-          lessons={lessons}
           loading={loading}
         />
+        {/* Payments Table for Admins */}
+        <Box sx={{ mt: 6 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Pending Payments
+          </Typography>
+          <PaymentsTable />
+        </Box>
       </Box>
 
       <ManagementMenu
@@ -542,21 +345,16 @@ const ManagementDashboard = () => {
         openDialog={openDialog}
         activeResource={activeResource}
         setDeleteDialog={setDeleteDialog}
+        handlePublish={handlePublish}
       />
 
-      <ResourceDialog
+      <CourseDialog
         open={dialogConfig.open}
         onClose={closeDialog}
         mode={dialogConfig.mode}
-        title={resourceDefs[dialogConfig.type]?.singular || ""}
-        fields={dialogFields[dialogConfig.type] || []}
-        formData={dialogConfig.formData}
-        onFormChange={(data) =>
-          setDialogConfig((prev) => ({ ...prev, formData: data }))
-        }
-        onSubmit={handleDialogSubmit}
+        courseData={dialogConfig.formData}
+        onSave={handleDialogSubmit}
         loading={submitting}
-        validationSchema={validationSchemas[dialogConfig.type]}
       />
 
       <DeleteConfirmationDialog

@@ -21,10 +21,12 @@ export const enrollmentService = {
     try {
       const enrollmentsRef = collection(db, COLLECTION_NAME);
       const snapshot = await getDocs(enrollmentsRef);
-      return snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const enrollments = await Promise.all(
+        snapshot.docs.map(async (doc) => {
+          return await enrollmentService.getEnrollmentDetails(doc.id);
+        })
+      );
+      return enrollments;
     } catch (error) {
       console.error("Error fetching enrollments:", error);
       throw error;

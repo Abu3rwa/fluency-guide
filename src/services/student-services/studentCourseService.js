@@ -30,7 +30,7 @@ export async function getAllCourses() {
     return [];
   }
 }
-
+//
 // Get a single course by ID
 export async function getCourseById(courseId) {
   try {

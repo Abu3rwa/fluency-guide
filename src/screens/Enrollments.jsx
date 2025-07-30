@@ -1,10 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Tabs, Tab } from "@mui/material";
 import EnrollmentsTable from "../components/EnrollmentsTable";
 import PendingEnrollments from "../components/PendingEnrollments";
+import { enrollmentService } from "../services/enrollmentService";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const Enrollments = () => {
   const [activeTab, setActiveTab] = React.useState(0);
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedEnrollment, setSelectedEnrollment] = useState(null);
+  const [dialogAction, setDialogAction] = useState(null);
+
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      try {
+        setLoading(true);
+        const enrollmentsData = await enrollmentService.getAllEnrollments();
+        setEnrollments(enrollmentsData);
+      } catch (err) {
+        console.error("Error fetching enrollments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnrollments();
+  }, []);
+
+  const handleApprove = (enrollment) => {
+    setSelectedEnrollment(enrollment);
+    setDialogAction("approve");
+    setDialogOpen(true);
+  };
+
+  const handleReject = (enrollment) => {
+    setSelectedEnrollment(enrollment);
+    setDialogAction("reject");
+    setDialogOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    if (dialogAction === "approve") {
+      await enrollmentService.approveEnrollment(selectedEnrollment.id);
+    } else if (dialogAction === "reject") {
+      await enrollmentService.rejectEnrollment(selectedEnrollment.id);
+    }
+    const enrollmentsData = await enrollmentService.getAllEnrollments();
+    setEnrollments(enrollmentsData);
+    setDialogOpen(false);
+  };
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -27,7 +73,22 @@ const Enrollments = () => {
         </Tabs>
       </Box>
 
-      {activeTab === 0 ? <EnrollmentsTable /> : <PendingEnrollments />}
+      {activeTab === 0 ? (
+        <EnrollmentsTable
+          enrollments={enrollments}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
+      ) : (
+        <PendingEnrollments />
+      )}
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={handleConfirm}
+        title={dialogAction === "approve" ? "Approve Enrollment" : "Reject Enrollment"}
+        message={`Are you sure you want to ${dialogAction} this enrollment?`}
+      />
     </Box>
   );
 };

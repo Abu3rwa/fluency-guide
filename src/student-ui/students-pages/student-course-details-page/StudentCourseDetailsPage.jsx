@@ -39,6 +39,7 @@ import { db } from "../../../firebase";
 import { useCustomTheme } from "../../../contexts/ThemeContext";
 import StudentCourseDetailModuleList from "./components/StudentCourseDetailModuleList";
 import { useTranslation } from "react-i18next";
+import PaymentDialog from "../../../components/PaymentDialog";
 
 const StudentCourseDetailsPage = () => {
   const { theme } = useCustomTheme();
@@ -67,6 +68,9 @@ const StudentCourseDetailsPage = () => {
   // Dialog state
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [enrollmentStatus, setEnrollmentStatus] = useState("not-enrolled");
 
   // Fetch reviews from Firestore
   const fetchReviews = async () => {
@@ -97,6 +101,26 @@ const StudentCourseDetailsPage = () => {
         console.log("courseId", courseId);
         if (!mounted) return;
         setModules(modulesData);
+
+        // Check enrollment status
+        if (userData) {
+          try {
+            const enrollments = await enrollmentService.getEnrollmentsByStudent(
+              userData.uid || userData.id
+            );
+            const enrollment = enrollments.find((e) => e.courseId === courseId);
+            if (enrollment) {
+              setIsEnrolled(enrollment.status === "active");
+              setEnrollmentStatus(enrollment.status);
+            } else {
+              setIsEnrolled(false);
+              setEnrollmentStatus("not-enrolled");
+            }
+          } catch (e) {
+            console.error("Error checking enrollment:", e);
+            setIsEnrolled(false);
+          }
+        }
         // Fetch all lessons for all modules
         let allLessons = [];
         for (const mod of modulesData) {
@@ -148,15 +172,16 @@ const StudentCourseDetailsPage = () => {
 
   // Backend integration for enroll, progress, reviews
   const handleEnroll = async () => {
-    try {
-      await enrollmentService.enrollStudent({
-        studentId: userData.uid || userData.id,
-        courseId,
-      });
-      setError(null);
-    } catch (e) {
-      setError(e.message || t("studentCourseDetails.page.enrollError"));
-    }
+    // Show payment dialog instead of direct enrollment
+    setShowPaymentDialog(true);
+  };
+
+  const handlePaymentComplete = (result) => {
+    // Handle successful payment
+    setShowPaymentDialog(false);
+    setError(null);
+    // Update enrollment status to show pending
+    setEnrollmentStatus("pending");
   };
 
   // Real progress update logic: mark lesson as completed
@@ -306,6 +331,8 @@ const StudentCourseDetailsPage = () => {
         course={course}
         user={userData}
         onEnroll={handleEnroll}
+        isEnrolled={isEnrolled}
+        enrollmentStatus={enrollmentStatus}
       />
       <Grid container spacing={4} sx={{ mt: 4, px: 2 }}>
         <Grid item xs={12} md={8}>
@@ -374,6 +401,15 @@ const StudentCourseDetailsPage = () => {
           />
         </Grid>
       </Grid>
+
+      {/* Payment Dialog */}
+      <PaymentDialog
+        open={showPaymentDialog}
+        onClose={() => setShowPaymentDialog(false)}
+        course={course}
+        userData={userData}
+        onPaymentComplete={handlePaymentComplete}
+      />
     </Box>
   );
 };

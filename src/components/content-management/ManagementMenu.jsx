@@ -1,13 +1,11 @@
 import React from "react";
-import {
-  Menu,
-  MenuItem as MenuItemComponent,
-  Divider,
-} from "@mui/material";
+import { Menu, MenuItem as MenuItemComponent, Divider } from "@mui/material";
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Visibility as ViewIcon,
+  Publish as PublishIcon,
+  FileDownloadOff as UnpublishedIcon,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +17,7 @@ const ManagementMenu = ({
   openDialog,
   activeResource,
   setDeleteDialog,
+  handlePublish,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -32,6 +31,20 @@ const ManagementMenu = ({
         sx: {
           borderRadius: 2,
           minWidth: 200,
+        },
+      }}
+      sx={{
+        "& .MuiPaper-root": {
+          position: "fixed",
+          zIndex: 1300,
+        },
+        // Desktop-specific fixes
+        "@media (min-width: 960px)": {
+          "& .MuiPaper-root": {
+            position: "fixed",
+            zIndex: 1300,
+            transformOrigin: "top left",
+          },
         },
       }}
     >
@@ -54,6 +67,22 @@ const ManagementMenu = ({
       <Divider />
       <MenuItemComponent
         onClick={() => {
+          handlePublish(menuItem);
+          handleMenuClose();
+        }}
+        sx={{ py: 1.5 }}
+      >
+        {menuItem?.published ? (
+          <UnpublishedIcon sx={{ mr: 2 }} />
+        ) : (
+          <PublishIcon sx={{ mr: 2 }} />
+        )}
+        {menuItem?.published
+          ? t("management.actions.unpublish")
+          : t("management.actions.publish")}
+      </MenuItemComponent>
+      <MenuItemComponent
+        onClick={() => {
           setDeleteDialog({
             open: true,
             type: activeResource,
@@ -62,10 +91,9 @@ const ManagementMenu = ({
           handleMenuClose();
         }}
         aria-label={t("management.actions.delete")}
-        sx={{ py: 1.5 }}
+        sx={{ py: 1.5, color: "error.main" }}
       >
-        <DeleteIcon color="error" sx={{ mr: 2 }} />{" "}
-        {t("management.actions.delete")}
+        <DeleteIcon sx={{ mr: 2 }} /> {t("management.actions.delete")}
       </MenuItemComponent>
     </Menu>
   );

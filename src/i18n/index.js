@@ -5,13 +5,6 @@ import Backend from "i18next-http-backend";
 import arTranslation from "./locales/ar/translation.json";
 import enTranslation from "./locales/en/translation.json";
 
-// Get browser language
-const getBrowserLanguage = () => {
-  const lang = navigator.language || navigator.userLanguage;
-  return lang.startsWith("ar") ? "ar" : "en";
-};
-
-// Set document direction based on language
 const setDocumentDirection = (lang) => {
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   document.documentElement.lang = lang;
@@ -30,23 +23,22 @@ i18n
         translation: arTranslation,
       },
     },
-    fallbackLng: "en",
+    fallbackLng: "ar",
     debug: process.env.NODE_ENV === "development",
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      order: ["navigator", "htmlTag", "path", "subdomain"],
+      order: ["localStorage", "navigator", "htmlTag", "path", "subdomain"],
       caches: ["localStorage"],
     },
   });
 
-// Set initial direction
-setDocumentDirection(getBrowserLanguage());
-
-// Listen for language changes
 i18n.on("languageChanged", (lng) => {
   setDocumentDirection(lng);
 });
+
+// Set initial direction based on detected language after i18n is initialized
+setDocumentDirection(i18n.language);
 
 export default i18n;

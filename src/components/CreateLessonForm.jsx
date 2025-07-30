@@ -31,6 +31,11 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  useTheme,
+  useMediaQuery,
+  Stack,
+  Fade,
+  Zoom,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -39,11 +44,14 @@ import {
   Save as SaveIcon,
   CloudUpload as CloudUploadIcon,
   Close as CloseIcon,
+  Visibility as VisibilityIcon,
+  Edit as EditIcon,
 } from "@mui/icons-material";
 import { createLesson } from "../services/lessonService";
 import { useHybridStorage } from "../services/hybridStorageService";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
+import { useCustomTheme } from "../contexts/ThemeContext";
 
 const steps = ["Basic Info", "Content", "Media", "Review"];
 
@@ -71,6 +79,12 @@ const CreateLessonForm = ({
   moduleId,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const { theme: customTheme } = useCustomTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const {
     uploadFile,
     uploadMultipleFiles,
@@ -151,30 +165,93 @@ const CreateLessonForm = ({
       const prev = JSON.stringify(prevInitialData.current);
       const next = JSON.stringify(initialData);
       if (prev !== next) {
-        setFormData({
-          courseId: courseId || initialData.courseId || "",
-          moduleId: moduleId || initialData.moduleId || "",
-          title: initialData.title || "",
-          description: initialData.description || "",
-          content: initialData.content || "",
-          duration: initialData.duration || "",
-          objectives: initialData.objectives || [],
-          resources: initialData.resources || [],
-          order: initialData.order || 0,
-          video: initialData.video || null,
-          audio: initialData.audio || null,
-          image: initialData.image || null,
-          materials: initialData.materials || [],
-          type: initialData.type || "lesson",
-          status: initialData.status || "draft",
-          vocabulary: initialData.vocabulary || [],
-          grammarFocus: initialData.grammarFocus || [],
-          skills: initialData.skills || [],
-          assessment: initialData.assessment || "",
-          keyActivities: initialData.keyActivities || [],
-          createdAt: initialData.createdAt || new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
+        // If editing an existing lesson, use the initialData directly
+        if (initialData.id) {
+          setFormData({
+            courseId: courseId || initialData.courseId || "",
+            moduleId: moduleId || initialData.moduleId || "",
+            title: initialData.title || "",
+            description: initialData.description || "",
+            content: initialData.content || "",
+            duration: initialData.duration || "",
+            objectives: initialData.objectives || [],
+            resources: initialData.resources || [],
+            order: initialData.order || 0,
+            video: initialData.video || null,
+            audio: initialData.audio || null,
+            image: initialData.image || null,
+            materials: initialData.materials || [],
+            type: initialData.type || "lesson",
+            status: initialData.status || "draft",
+            vocabulary: initialData.vocabulary || [],
+            grammarFocus: initialData.grammarFocus || [],
+            skills: initialData.skills || [],
+            assessment: initialData.assessment || "",
+            keyActivities: initialData.keyActivities || [],
+            createdAt: initialData.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } else {
+          // If creating a new lesson, check for draft first
+          const draft = localStorage.getItem("lessonDraft");
+          if (draft) {
+            try {
+              setFormData(JSON.parse(draft));
+            } catch (e) {
+              // If draft is corrupted, use default values
+              setFormData({
+                courseId: courseId || initialData.courseId || "",
+                moduleId: moduleId || initialData.moduleId || "",
+                title: initialData.title || "",
+                description: initialData.description || "",
+                content: initialData.content || "",
+                duration: initialData.duration || "",
+                objectives: initialData.objectives || [],
+                resources: initialData.resources || [],
+                order: initialData.order || 0,
+                video: initialData.video || null,
+                audio: initialData.audio || null,
+                image: initialData.image || null,
+                materials: initialData.materials || [],
+                type: initialData.type || "lesson",
+                status: initialData.status || "draft",
+                vocabulary: initialData.vocabulary || [],
+                grammarFocus: initialData.grammarFocus || [],
+                skills: initialData.skills || [],
+                assessment: initialData.assessment || "",
+                keyActivities: initialData.keyActivities || [],
+                createdAt: initialData.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              });
+            }
+          } else {
+            // No draft, use default values
+            setFormData({
+              courseId: courseId || initialData.courseId || "",
+              moduleId: moduleId || initialData.moduleId || "",
+              title: initialData.title || "",
+              description: initialData.description || "",
+              content: initialData.content || "",
+              duration: initialData.duration || "",
+              objectives: initialData.objectives || [],
+              resources: initialData.resources || [],
+              order: initialData.order || 0,
+              video: initialData.video || null,
+              audio: initialData.audio || null,
+              image: initialData.image || null,
+              materials: initialData.materials || [],
+              type: initialData.type || "lesson",
+              status: initialData.status || "draft",
+              vocabulary: initialData.vocabulary || [],
+              grammarFocus: initialData.grammarFocus || [],
+              skills: initialData.skills || [],
+              assessment: initialData.assessment || "",
+              keyActivities: initialData.keyActivities || [],
+              createdAt: initialData.createdAt || new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
         prevInitialData.current = initialData;
       }
     }
@@ -194,24 +271,13 @@ const CreateLessonForm = ({
     }));
   }, []);
 
-  // Load draft from localStorage if available and no initialData is provided
-  useEffect(() => {
-    if (open && !initialData.id) {
-      const draft = localStorage.getItem("lessonDraft");
-      if (draft) {
-        try {
-          setFormData(JSON.parse(draft));
-        } catch (e) {
-          // Ignore JSON parse errors for corrupted drafts
-        }
-      }
-    }
-  }, [open, initialData.id]);
-
   // Persist formData to localStorage on every change
   useEffect(() => {
-    if (open && !initialData.id) {
-      localStorage.setItem("lessonDraft", JSON.stringify(formData));
+    if (open) {
+      const draftKey = initialData.id
+        ? `lessonDraft_${initialData.id}`
+        : "lessonDraft";
+      localStorage.setItem(draftKey, JSON.stringify(formData));
     }
   }, [formData, open, initialData.id]);
 
@@ -500,7 +566,11 @@ const CreateLessonForm = ({
         updatedAt: new Date().toISOString(),
       };
       await onSubmit(lessonData);
-      localStorage.removeItem("lessonDraft"); // Clear draft only after success
+      // Clear draft only after success
+      const draftKey = initialData.id
+        ? `lessonDraft_${initialData.id}`
+        : "lessonDraft";
+      localStorage.removeItem(draftKey);
     } catch (err) {
       setError(err.message || t("createLessonForm.errorSaving"));
     } finally {
@@ -515,11 +585,59 @@ const CreateLessonForm = ({
           "You have unsaved changes. Do you want to save them as a draft?"
         )
       ) {
-        localStorage.setItem("lessonDraft", JSON.stringify(formData));
+        const draftKey = initialData.id
+          ? `lessonDraft_${initialData.id}`
+          : "lessonDraft";
+        localStorage.setItem(draftKey, JSON.stringify(formData));
+      } else {
+        // Clear draft if user doesn't want to save
+        const draftKey = initialData.id
+          ? `lessonDraft_${initialData.id}`
+          : "lessonDraft";
+        localStorage.removeItem(draftKey);
       }
     }
+    // Reset form state
+    setActiveStep(0);
+    setErrors({});
+    setError(null);
+    setPreviewMode(false);
     onClose();
   };
+
+  const renderPreview = () => (
+    <Box sx={{ p: 2 }}>
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          {formData.title || "Lesson Title"}
+        </Typography>
+        <Typography variant="body1" paragraph>
+          {formData.description || "Lesson description will appear here."}
+        </Typography>
+        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+          <Chip label={`${formData.duration} minutes`} color="primary" />
+          <Chip label={formData.type || "Lesson"} color="secondary" />
+        </Box>
+        <Divider sx={{ my: 2 }} />
+        <Typography variant="h6" gutterBottom>
+          Learning Objectives
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+          {formData.objectives.map((objective, index) => (
+            <Chip key={index} label={objective} />
+          ))}
+        </Box>
+        <Typography variant="h6" gutterBottom>
+          Vocabulary
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          {formData.vocabulary.map((word, index) => (
+            <Chip key={index} label={word} />
+          ))}
+        </Box>
+      </Paper>
+    </Box>
+  );
 
   const renderStepContent = (step) => {
     switch (step) {
@@ -529,7 +647,8 @@ const CreateLessonForm = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label={t("createLessonForm.lessonTitleLabel")}
+                label="Lesson Title"
+                name="title"
                 value={formData.title}
                 onChange={handleChange("title")}
                 error={!!errors.title}
@@ -540,7 +659,8 @@ const CreateLessonForm = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label={t("createLessonForm.descriptionLabel")}
+                label="Description"
+                name="description"
                 value={formData.description}
                 onChange={handleChange("description")}
                 multiline
@@ -553,7 +673,8 @@ const CreateLessonForm = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label={t("createLessonForm.durationLabel")}
+                label="Duration (minutes)"
+                name="duration"
                 type="number"
                 value={formData.duration}
                 onChange={handleChange("duration")}
@@ -570,13 +691,45 @@ const CreateLessonForm = ({
                 value={formData.order}
                 onChange={handleChange("order")}
                 helperText={t("createLessonForm.lessonSequenceInCourse")}
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.background.paper,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.action.hover,
+                    },
+                    "&.Mui-focused": {
+                      bgcolor: customTheme.palette.background.paper,
+                      boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: customTheme.palette.text.secondary,
+                    "&.Mui-focused": {
+                      color: customTheme.palette.primary.main,
+                    },
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                }}
+              >
                 {t("createLessonForm.vocabularyLabel")}
               </Typography>
-              <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                sx={{ mb: 2 }}
+              >
                 <TextField
                   fullWidth
                   size="small"
@@ -585,81 +738,207 @@ const CreateLessonForm = ({
                   )}
                   value={newVocabulary}
                   onChange={(e) => setNewVocabulary(e.target.value)}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.background.paper,
+                      "&:hover": {
+                        bgcolor: customTheme.palette.action.hover,
+                      },
+                      "&.Mui-focused": {
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                      },
+                    },
+                  }}
                 />
                 <Button
                   variant="contained"
                   onClick={handleAddVocabulary}
                   startIcon={<AddIcon />}
+                  size="small"
+                  sx={{
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.primary.main,
+                    color: customTheme.palette.primary.contrastText,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.primary.dark,
+                    },
+                    minWidth: { xs: "auto", sm: 100 },
+                  }}
                 >
                   {t("createLessonForm.addButton")}
                 </Button>
-              </Box>
+              </Stack>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {(formData.vocabulary || []).map((word, index) => (
                   <Chip
                     key={index}
                     label={word}
                     onDelete={() => handleRemoveVocabulary(index)}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.primary.light + "20",
+                      color: customTheme.palette.primary.main,
+                      "& .MuiChip-deleteIcon": {
+                        color: customTheme.palette.primary.main,
+                        "&:hover": {
+                          color: customTheme.palette.primary.dark,
+                        },
+                      },
+                    }}
                   />
                 ))}
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                }}
+              >
                 {t("createLessonForm.grammarFocusLabel")}
               </Typography>
-              <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                sx={{ mb: 2 }}
+              >
                 <TextField
                   fullWidth
                   size="small"
                   placeholder={t("createLessonForm.addGrammarPointPlaceholder")}
                   value={newGrammarFocus}
                   onChange={(e) => setNewGrammarFocus(e.target.value)}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.background.paper,
+                      "&:hover": {
+                        bgcolor: customTheme.palette.action.hover,
+                      },
+                      "&.Mui-focused": {
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                      },
+                    },
+                  }}
                 />
                 <Button
                   variant="contained"
                   onClick={handleAddGrammarFocus}
                   startIcon={<AddIcon />}
+                  size="small"
+                  sx={{
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.secondary.main,
+                    color: customTheme.palette.secondary.contrastText,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.secondary.dark,
+                    },
+                    minWidth: { xs: "auto", sm: 100 },
+                  }}
                 >
                   {t("createLessonForm.addButton")}
                 </Button>
-              </Box>
+              </Stack>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {(formData.grammarFocus || []).map((grammar, index) => (
                   <Chip
                     key={index}
                     label={grammar}
                     onDelete={() => handleRemoveGrammarFocus(index)}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.secondary.light + "20",
+                      color: customTheme.palette.secondary.main,
+                      "& .MuiChip-deleteIcon": {
+                        color: customTheme.palette.secondary.main,
+                        "&:hover": {
+                          color: customTheme.palette.secondary.dark,
+                        },
+                      },
+                    }}
                   />
                 ))}
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                }}
+              >
                 {t("createLessonForm.skillsLabel")}
               </Typography>
-              <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                sx={{ mb: 2 }}
+              >
                 <TextField
                   fullWidth
                   size="small"
                   placeholder={t("createLessonForm.addSkillPlaceholder")}
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.background.paper,
+                      "&:hover": {
+                        bgcolor: customTheme.palette.action.hover,
+                      },
+                      "&.Mui-focused": {
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                      },
+                    },
+                  }}
                 />
                 <Button
                   variant="contained"
                   onClick={handleAddSkill}
                   startIcon={<AddIcon />}
+                  size="small"
+                  sx={{
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.success.main,
+                    color: customTheme.palette.success.contrastText,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.success.dark,
+                    },
+                    minWidth: { xs: "auto", sm: 100 },
+                  }}
                 >
                   {t("createLessonForm.addButton")}
                 </Button>
-              </Box>
+              </Stack>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {(formData.skills || []).map((skill, index) => (
                   <Chip
                     key={index}
                     label={skill}
                     onDelete={() => handleRemoveSkill(index)}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.success.light + "20",
+                      color: customTheme.palette.success.main,
+                      "& .MuiChip-deleteIcon": {
+                        color: customTheme.palette.success.main,
+                        "&:hover": {
+                          color: customTheme.palette.success.dark,
+                        },
+                      },
+                    }}
                   />
                 ))}
               </Box>
@@ -671,35 +950,101 @@ const CreateLessonForm = ({
                 value={formData.assessment || ""}
                 onChange={handleChange("assessment")}
                 multiline
-                rows={2}
+                rows={isSmallMobile ? 2 : 3}
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.background.paper,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.action.hover,
+                    },
+                    "&.Mui-focused": {
+                      bgcolor: customTheme.palette.background.paper,
+                      boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: customTheme.palette.text.secondary,
+                    "&.Mui-focused": {
+                      color: customTheme.palette.primary.main,
+                    },
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                }}
+              >
                 {t("createLessonForm.keyActivitiesLabel")}
               </Typography>
-              <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                sx={{ mb: 2 }}
+              >
                 <TextField
                   fullWidth
                   size="small"
                   placeholder={t("createLessonForm.addActivityPlaceholder")}
                   value={newActivity}
                   onChange={(e) => setNewActivity(e.target.value)}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.background.paper,
+                      "&:hover": {
+                        bgcolor: customTheme.palette.action.hover,
+                      },
+                      "&.Mui-focused": {
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                      },
+                    },
+                  }}
                 />
                 <Button
                   variant="contained"
                   onClick={handleAddActivity}
                   startIcon={<AddIcon />}
+                  size="small"
+                  sx={{
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.info.main,
+                    color: customTheme.palette.info.contrastText,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.info.dark,
+                    },
+                    minWidth: { xs: "auto", sm: 100 },
+                  }}
                 >
                   {t("createLessonForm.addButton")}
                 </Button>
-              </Box>
+              </Stack>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {(formData.keyActivities || []).map((activity, index) => (
                   <Chip
                     key={index}
                     label={activity}
                     onDelete={() => handleRemoveActivity(index)}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.info.light + "20",
+                      color: customTheme.palette.info.main,
+                      "& .MuiChip-deleteIcon": {
+                        color: customTheme.palette.info.main,
+                        "&:hover": {
+                          color: customTheme.palette.info.dark,
+                        },
+                      },
+                    }}
                   />
                 ))}
               </Box>
@@ -709,7 +1054,7 @@ const CreateLessonForm = ({
 
       case 1:
         return (
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -717,17 +1062,49 @@ const CreateLessonForm = ({
                 value={formData.content}
                 onChange={handleChange("content")}
                 multiline
-                rows={6}
+                rows={isSmallMobile ? 4 : 6}
                 error={!!errors.content}
                 helperText={errors.content}
                 required
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.background.paper,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.action.hover,
+                    },
+                    "&.Mui-focused": {
+                      bgcolor: customTheme.palette.background.paper,
+                      boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: customTheme.palette.text.secondary,
+                    "&.Mui-focused": {
+                      color: customTheme.palette.primary.main,
+                    },
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                }}
+              >
                 {t("createLessonForm.learningObjectivesLabel")}
               </Typography>
-              <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                sx={{ mb: 2 }}
+              >
                 <TextField
                   fullWidth
                   size="small"
@@ -738,62 +1115,155 @@ const CreateLessonForm = ({
                   onChange={(e) => setNewObjective(e.target.value)}
                   error={!!errors.objectives}
                   helperText={errors.objectives}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.background.paper,
+                      "&:hover": {
+                        bgcolor: customTheme.palette.action.hover,
+                      },
+                      "&.Mui-focused": {
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                      },
+                    },
+                  }}
                 />
                 <Button
                   variant="contained"
                   onClick={handleAddObjective}
                   startIcon={<AddIcon />}
+                  size="small"
+                  sx={{
+                    borderRadius: customTheme.shape.borderRadius,
+                    bgcolor: customTheme.palette.primary.main,
+                    color: customTheme.palette.primary.contrastText,
+                    "&:hover": {
+                      bgcolor: customTheme.palette.primary.dark,
+                    },
+                    minWidth: { xs: "auto", sm: 100 },
+                  }}
                 >
                   {t("createLessonForm.addButton")}
                 </Button>
-              </Box>
+              </Stack>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {formData.objectives.map((objective, index) => (
                   <Chip
                     key={index}
                     label={objective}
                     onDelete={() => handleRemoveObjective(index)}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.primary.light + "20",
+                      color: customTheme.palette.primary.main,
+                      "& .MuiChip-deleteIcon": {
+                        color: customTheme.palette.primary.main,
+                        "&:hover": {
+                          color: customTheme.palette.primary.dark,
+                        },
+                      },
+                    }}
                   />
                 ))}
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                }}
+              >
                 {t("createLessonForm.resourcesLabel")}
               </Typography>
-              <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder={t("createLessonForm.addResourcePlaceholder")}
-                  value={newResource.label}
-                  onChange={(e) =>
-                    setNewResource({ ...newResource, label: e.target.value })
-                  }
-                />
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder={t("createLessonForm.addResourceUrlPlaceholder")}
-                  value={newResource.url}
-                  onChange={(e) =>
-                    setNewResource({ ...newResource, url: e.target.value })
-                  }
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleAddResource}
-                  startIcon={<AddIcon />}
-                >
-                  {t("createLessonForm.addButton")}
-                </Button>
-              </Box>
+              <Stack direction="column" spacing={1} sx={{ mb: 2 }}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    placeholder={t("createLessonForm.addResourcePlaceholder")}
+                    value={newResource.label}
+                    onChange={(e) =>
+                      setNewResource({ ...newResource, label: e.target.value })
+                    }
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: customTheme.shape.borderRadius,
+                        bgcolor: customTheme.palette.background.paper,
+                        "&:hover": {
+                          bgcolor: customTheme.palette.action.hover,
+                        },
+                        "&.Mui-focused": {
+                          bgcolor: customTheme.palette.background.paper,
+                          boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                        },
+                      },
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    size="small"
+                    placeholder={t(
+                      "createLessonForm.addResourceUrlPlaceholder"
+                    )}
+                    value={newResource.url}
+                    onChange={(e) =>
+                      setNewResource({ ...newResource, url: e.target.value })
+                    }
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: customTheme.shape.borderRadius,
+                        bgcolor: customTheme.palette.background.paper,
+                        "&:hover": {
+                          bgcolor: customTheme.palette.action.hover,
+                        },
+                        "&.Mui-focused": {
+                          bgcolor: customTheme.palette.background.paper,
+                          boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                        },
+                      },
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={handleAddResource}
+                    startIcon={<AddIcon />}
+                    size="small"
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.secondary.main,
+                      color: customTheme.palette.secondary.contrastText,
+                      "&:hover": {
+                        bgcolor: customTheme.palette.secondary.dark,
+                      },
+                      minWidth: { xs: "auto", sm: 100 },
+                    }}
+                  >
+                    {t("createLessonForm.addButton")}
+                  </Button>
+                </Stack>
+              </Stack>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {formData.resources.map((resource, index) => (
                   <Chip
                     key={index}
                     label={`${resource.label}: ${resource.url}`}
                     onDelete={() => handleRemoveResource(index)}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.secondary.light + "20",
+                      color: customTheme.palette.secondary.main,
+                      "& .MuiChip-deleteIcon": {
+                        color: customTheme.palette.secondary.main,
+                        "&:hover": {
+                          color: customTheme.palette.secondary.dark,
+                        },
+                      },
+                    }}
                   />
                 ))}
               </Box>
@@ -803,11 +1273,28 @@ const CreateLessonForm = ({
 
       case 2:
         return (
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             <Grid item xs={12} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              <Card
+                sx={{
+                  borderRadius: customTheme.shape.borderRadius * 2,
+                  bgcolor: customTheme.palette.background.paper,
+                  boxShadow: customTheme.shadows[2],
+                  "&:hover": {
+                    boxShadow: customTheme.shadows[4],
+                  },
+                }}
+              >
+                <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      mb: 2,
+                      color: customTheme.palette.text.primary,
+                      fontWeight: 600,
+                      fontSize: { xs: "0.9rem", sm: "1rem" },
+                    }}
+                  >
                     {t("createLessonForm.videoLabel")}
                   </Typography>
                   <Button
@@ -815,7 +1302,17 @@ const CreateLessonForm = ({
                     variant="outlined"
                     startIcon={<CloudUploadIcon />}
                     fullWidth
-                    sx={{ mb: 1 }}
+                    size={isSmallMobile ? "small" : "medium"}
+                    sx={{
+                      mb: 2,
+                      borderRadius: customTheme.shape.borderRadius,
+                      borderColor: customTheme.palette.primary.main,
+                      color: customTheme.palette.primary.main,
+                      "&:hover": {
+                        borderColor: customTheme.palette.primary.dark,
+                        bgcolor: customTheme.palette.primary.light + "10",
+                      },
+                    }}
                     disabled={loading}
                   >
                     {t("createLessonForm.uploadVideoButton")}
@@ -826,14 +1323,24 @@ const CreateLessonForm = ({
                     />
                   </Button>
                   {formData.video && (
-                    <Box sx={{ mt: 1 }}>
-                      <Typography variant="body2" color="text.secondary">
+                    <Box sx={{ mt: 2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: customTheme.palette.text.secondary,
+                          mb: 1,
+                        }}
+                      >
                         {formData.video.name}
                       </Typography>
                       <video
                         src={formData.video.url}
                         controls
-                        style={{ width: "100%", maxHeight: "200px" }}
+                        style={{
+                          width: "100%",
+                          maxHeight: "200px",
+                          borderRadius: customTheme.shape.borderRadius,
+                        }}
                       />
                     </Box>
                   )}
@@ -842,9 +1349,26 @@ const CreateLessonForm = ({
             </Grid>
 
             <Grid item xs={12} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              <Card
+                sx={{
+                  borderRadius: customTheme.shape.borderRadius * 2,
+                  bgcolor: customTheme.palette.background.paper,
+                  boxShadow: customTheme.shadows[2],
+                  "&:hover": {
+                    boxShadow: customTheme.shadows[4],
+                  },
+                }}
+              >
+                <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      mb: 2,
+                      color: customTheme.palette.text.primary,
+                      fontWeight: 600,
+                      fontSize: { xs: "0.9rem", sm: "1rem" },
+                    }}
+                  >
                     {t("createLessonForm.audioLabel")}
                   </Typography>
                   <Button
@@ -852,7 +1376,17 @@ const CreateLessonForm = ({
                     variant="outlined"
                     startIcon={<CloudUploadIcon />}
                     fullWidth
-                    sx={{ mb: 1 }}
+                    size={isSmallMobile ? "small" : "medium"}
+                    sx={{
+                      mb: 2,
+                      borderRadius: customTheme.shape.borderRadius,
+                      borderColor: customTheme.palette.secondary.main,
+                      color: customTheme.palette.secondary.main,
+                      "&:hover": {
+                        borderColor: customTheme.palette.secondary.dark,
+                        bgcolor: customTheme.palette.secondary.light + "10",
+                      },
+                    }}
                     disabled={loading}
                   >
                     {t("createLessonForm.uploadAudioButton")}
@@ -863,14 +1397,23 @@ const CreateLessonForm = ({
                     />
                   </Button>
                   {formData.audio && (
-                    <Box sx={{ mt: 1 }}>
-                      <Typography variant="body2" color="text.secondary">
+                    <Box sx={{ mt: 2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: customTheme.palette.text.secondary,
+                          mb: 1,
+                        }}
+                      >
                         {formData.audio.name}
                       </Typography>
                       <audio
                         src={formData.audio.url}
                         controls
-                        style={{ width: "100%" }}
+                        style={{
+                          width: "100%",
+                          borderRadius: customTheme.shape.borderRadius,
+                        }}
                       />
                     </Box>
                   )}
@@ -879,9 +1422,26 @@ const CreateLessonForm = ({
             </Grid>
 
             <Grid item xs={12} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              <Card
+                sx={{
+                  borderRadius: customTheme.shape.borderRadius * 2,
+                  bgcolor: customTheme.palette.background.paper,
+                  boxShadow: customTheme.shadows[2],
+                  "&:hover": {
+                    boxShadow: customTheme.shadows[4],
+                  },
+                }}
+              >
+                <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      mb: 2,
+                      color: customTheme.palette.text.primary,
+                      fontWeight: 600,
+                      fontSize: { xs: "0.9rem", sm: "1rem" },
+                    }}
+                  >
                     {t("createLessonForm.imageLabel")}
                   </Typography>
                   <Button
@@ -889,7 +1449,17 @@ const CreateLessonForm = ({
                     variant="outlined"
                     startIcon={<CloudUploadIcon />}
                     fullWidth
-                    sx={{ mb: 1 }}
+                    size={isSmallMobile ? "small" : "medium"}
+                    sx={{
+                      mb: 2,
+                      borderRadius: customTheme.shape.borderRadius,
+                      borderColor: customTheme.palette.success.main,
+                      color: customTheme.palette.success.main,
+                      "&:hover": {
+                        borderColor: customTheme.palette.success.dark,
+                        bgcolor: customTheme.palette.success.light + "10",
+                      },
+                    }}
                     disabled={loading}
                   >
                     {t("createLessonForm.uploadImageButton")}
@@ -900,8 +1470,14 @@ const CreateLessonForm = ({
                     />
                   </Button>
                   {formData.image && (
-                    <Box sx={{ mt: 1 }}>
-                      <Typography variant="body2" color="text.secondary">
+                    <Box sx={{ mt: 2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: customTheme.palette.text.secondary,
+                          mb: 1,
+                        }}
+                      >
                         {formData.image.name}
                       </Typography>
                       <img
@@ -911,6 +1487,7 @@ const CreateLessonForm = ({
                           width: "100%",
                           maxHeight: "200px",
                           objectFit: "cover",
+                          borderRadius: customTheme.shape.borderRadius,
                         }}
                       />
                     </Box>
@@ -920,9 +1497,26 @@ const CreateLessonForm = ({
             </Grid>
 
             <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              <Card
+                sx={{
+                  borderRadius: customTheme.shape.borderRadius * 2,
+                  bgcolor: customTheme.palette.background.paper,
+                  boxShadow: customTheme.shadows[2],
+                  "&:hover": {
+                    boxShadow: customTheme.shadows[4],
+                  },
+                }}
+              >
+                <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      mb: 2,
+                      color: customTheme.palette.text.primary,
+                      fontWeight: 600,
+                      fontSize: { xs: "0.9rem", sm: "1rem" },
+                    }}
+                  >
                     {t("createLessonForm.courseMaterialsLabel")}
                   </Typography>
                   <Button
@@ -930,7 +1524,17 @@ const CreateLessonForm = ({
                     variant="outlined"
                     startIcon={<CloudUploadIcon />}
                     fullWidth
-                    sx={{ mb: 1 }}
+                    size={isSmallMobile ? "small" : "medium"}
+                    sx={{
+                      mb: 2,
+                      borderRadius: customTheme.shape.borderRadius,
+                      borderColor: customTheme.palette.info.main,
+                      color: customTheme.palette.info.main,
+                      "&:hover": {
+                        borderColor: customTheme.palette.info.dark,
+                        bgcolor: customTheme.palette.info.light + "10",
+                      },
+                    }}
                     disabled={loading}
                   >
                     {t("createLessonForm.uploadPdfMaterialsButton")}
@@ -943,7 +1547,14 @@ const CreateLessonForm = ({
                   </Button>
                   {formData.materials.length > 0 && (
                     <Box sx={{ mt: 2 }}>
-                      <Typography variant="subtitle2" gutterBottom>
+                      <Typography
+                        variant="subtitle2"
+                        gutterBottom
+                        sx={{
+                          color: customTheme.palette.text.primary,
+                          fontWeight: 600,
+                        }}
+                      >
                         {t("createLessonForm.uploadedMaterialsLabel")}:
                       </Typography>
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -953,7 +1564,18 @@ const CreateLessonForm = ({
                             label={material.name}
                             onDelete={() => handleRemoveMaterial(index)}
                             icon={<CloudUploadIcon />}
-                            sx={{ m: 0.5 }}
+                            sx={{
+                              m: 0.5,
+                              borderRadius: customTheme.shape.borderRadius,
+                              bgcolor: customTheme.palette.info.light + "20",
+                              color: customTheme.palette.info.main,
+                              "& .MuiChip-deleteIcon": {
+                                color: customTheme.palette.info.main,
+                                "&:hover": {
+                                  color: customTheme.palette.info.dark,
+                                },
+                              },
+                            }}
                           />
                         ))}
                       </Box>
@@ -967,51 +1589,152 @@ const CreateLessonForm = ({
 
       case 3:
         return (
-          <Box sx={{ p: 2 }}>
-            <Paper sx={{ p: 3, mb: 3 }}>
-              <Typography variant="h5" gutterBottom>
+          <Box
+            sx={{
+              p: { xs: 1, sm: 2 },
+              pb: { xs: 4, sm: 6 }, // Add extra bottom padding to prevent cutoff
+            }}
+          >
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 3 },
+                mb: 3,
+                borderRadius: customTheme.shape.borderRadius * 2,
+                bgcolor: customTheme.palette.background.paper,
+                boxShadow: customTheme.shadows[2],
+              }}
+            >
+              <Typography
+                variant={isSmallMobile ? "h6" : "h5"}
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: customTheme.typography.h5.fontWeight,
+                  fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.5rem" },
+                }}
+              >
                 {formData.title}
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography
+                variant="body1"
+                paragraph
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                }}
+              >
                 {formData.description}
               </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: customTheme.palette.text.secondary,
+                  mb: 2,
+                  fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                }}
+              >
                 {t("createLessonForm.durationLabel")}: {formData.duration}{" "}
                 {t("createLessonForm.minutes")}
               </Typography>
 
-              <Divider sx={{ my: 2 }} />
+              <Divider
+                sx={{
+                  my: { xs: 2, sm: 3 },
+                  borderColor: customTheme.palette.divider,
+                }}
+              />
 
-              <Typography variant="h6" gutterBottom>
+              <Typography
+                variant={isSmallMobile ? "subtitle1" : "h6"}
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
+                }}
+              >
                 {t("createLessonForm.contentLabel")}
               </Typography>
-              <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  whiteSpace: "pre-wrap",
+                  color: customTheme.palette.text.primary,
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                  lineHeight: 1.6,
+                }}
+              >
                 {formData.content}
               </Typography>
 
-              <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+              <Typography
+                variant={isSmallMobile ? "subtitle1" : "h6"}
+                gutterBottom
+                sx={{
+                  mt: { xs: 2, sm: 3 },
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
+                }}
+              >
                 {t("createLessonForm.learningObjectivesLabel")}
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
                 {formData.objectives.map((objective, index) => (
-                  <Chip key={index} label={objective} />
+                  <Chip
+                    key={index}
+                    label={objective}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.primary.light + "20",
+                      color: customTheme.palette.primary.main,
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    }}
+                  />
                 ))}
               </Box>
 
-              <Typography variant="h6" gutterBottom>
+              <Typography
+                variant={isSmallMobile ? "subtitle1" : "h6"}
+                gutterBottom
+                sx={{
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
+                }}
+              >
                 {t("createLessonForm.resourcesLabel")}
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
                 {formData.resources.map((resource, index) => (
                   <Chip
                     key={index}
                     label={`${resource.label}: ${resource.url}`}
                     onClick={() => window.open(resource.url, "_blank")}
+                    sx={{
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.secondary.light + "20",
+                      color: customTheme.palette.secondary.main,
+                      cursor: "pointer",
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      "&:hover": {
+                        bgcolor: customTheme.palette.secondary.light + "30",
+                      },
+                    }}
                   />
                 ))}
               </Box>
 
-              <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+              <Typography
+                variant={isSmallMobile ? "subtitle1" : "h6"}
+                gutterBottom
+                sx={{
+                  mt: { xs: 2, sm: 3 },
+                  color: customTheme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
+                }}
+              >
                 {t("createLessonForm.courseMaterialsLabel")}
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
@@ -1021,23 +1744,51 @@ const CreateLessonForm = ({
                     label={material.name}
                     icon={<CloudUploadIcon />}
                     onClick={() => window.open(material.url, "_blank")}
-                    sx={{ m: 0.5 }}
+                    sx={{
+                      m: 0.5,
+                      borderRadius: customTheme.shape.borderRadius,
+                      bgcolor: customTheme.palette.info.light + "20",
+                      color: customTheme.palette.info.main,
+                      cursor: "pointer",
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      "&:hover": {
+                        bgcolor: customTheme.palette.info.light + "30",
+                      },
+                    }}
                   />
                 ))}
               </Box>
 
-              <Grid container spacing={2} sx={{ mt: 3 }}>
+              <Grid container spacing={{ xs: 1, sm: 2 }} sx={{ mt: 3 }}>
                 {formData.video && (
                   <Grid item xs={12} md={4}>
-                    <Card>
+                    <Card
+                      sx={{
+                        borderRadius: customTheme.shape.borderRadius * 2,
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: customTheme.shadows[2],
+                      }}
+                    >
                       <CardMedia
                         component="video"
                         controls
                         src={formData.video.url}
-                        sx={{ height: 200 }}
+                        sx={{
+                          height: { xs: 150, sm: 200 },
+                          borderRadius: `${
+                            customTheme.shape.borderRadius * 2
+                          }px ${customTheme.shape.borderRadius * 2}px 0 0`,
+                        }}
                       />
-                      <CardContent>
-                        <Typography variant="subtitle2">
+                      <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            color: customTheme.palette.text.primary,
+                            fontWeight: 600,
+                            fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                          }}
+                        >
                           {t("createLessonForm.videoLabel")}
                         </Typography>
                       </CardContent>
@@ -1046,15 +1797,33 @@ const CreateLessonForm = ({
                 )}
                 {formData.audio && (
                   <Grid item xs={12} md={4}>
-                    <Card>
+                    <Card
+                      sx={{
+                        borderRadius: customTheme.shape.borderRadius * 2,
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: customTheme.shadows[2],
+                      }}
+                    >
                       <CardMedia
                         component="audio"
                         controls
                         src={formData.audio.url}
-                        sx={{ height: 100 }}
+                        sx={{
+                          height: { xs: 80, sm: 100 },
+                          borderRadius: `${
+                            customTheme.shape.borderRadius * 2
+                          }px ${customTheme.shape.borderRadius * 2}px 0 0`,
+                        }}
                       />
-                      <CardContent>
-                        <Typography variant="subtitle2">
+                      <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            color: customTheme.palette.text.primary,
+                            fontWeight: 600,
+                            fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                          }}
+                        >
                           {t("createLessonForm.audioLabel")}
                         </Typography>
                       </CardContent>
@@ -1063,14 +1832,33 @@ const CreateLessonForm = ({
                 )}
                 {formData.image && (
                   <Grid item xs={12} md={4}>
-                    <Card>
+                    <Card
+                      sx={{
+                        borderRadius: customTheme.shape.borderRadius * 2,
+                        bgcolor: customTheme.palette.background.paper,
+                        boxShadow: customTheme.shadows[2],
+                      }}
+                    >
                       <CardMedia
                         component="img"
                         image={formData.image.url}
-                        sx={{ height: 200, objectFit: "cover" }}
+                        sx={{
+                          height: { xs: 150, sm: 200 },
+                          objectFit: "cover",
+                          borderRadius: `${
+                            customTheme.shape.borderRadius * 2
+                          }px ${customTheme.shape.borderRadius * 2}px 0 0`,
+                        }}
                       />
-                      <CardContent>
-                        <Typography variant="subtitle2">
+                      <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            color: customTheme.palette.text.primary,
+                            fontWeight: 600,
+                            fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                          }}
+                        >
                           {t("createLessonForm.imageLabel")}
                         </Typography>
                       </CardContent>
@@ -1101,71 +1889,11 @@ const CreateLessonForm = ({
       }}
     >
       <DialogTitle>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="h5">
-            {dialogTitle ||
-              (initialData && initialData.id
-                ? t("courses.lessons.editLesson")
-                : t("courses.lessons.createLesson"))}
-          </Typography>
-          <Box>
-            <IconButton onClick={onClose} sx={{ mr: 1 }}>
-              <CloseIcon />
-            </IconButton>
-            <Button
-              variant="outlined"
-              onClick={() => setPreviewMode(!previewMode)}
-              startIcon={<PreviewIcon />}
-              sx={{ mr: 1 }}
-            >
-              {previewMode ? "Edit" : "Preview"}
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => {
-                localStorage.removeItem("lessonDraft");
-                setFormData({
-                  courseId: courseId || "",
-                  moduleId: moduleId || "",
-                  title: "",
-                  description: "",
-                  content: "",
-                  duration: "",
-                  objectives: [],
-                  resources: [],
-                  order: 0,
-                  video: null,
-                  audio: null,
-                  image: null,
-                  materials: [],
-                  type: "lesson",
-                  status: "draft",
-                  vocabulary: [],
-                  grammarFocus: [],
-                  skills: [],
-                  assessment: "",
-                  keyActivities: [],
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                });
-              }}
-              sx={{ borderRadius: 2 }}
-            >
-              {t("common.clearDraft")}
-            </Button>
-          </Box>
-        </Box>
+        {initialData && initialData.id ? "Edit Lesson" : "Create New Lesson"}
       </DialogTitle>
       <DialogContent>
         {previewMode ? (
-          renderStepContent(3)
+          renderPreview()
         ) : (
           <>
             <Stepper activeStep={activeStep} sx={{ mb: 4, mt: 2 }}>
@@ -1175,6 +1903,7 @@ const CreateLessonForm = ({
                 </Step>
               ))}
             </Stepper>
+
             <Box sx={{ mt: 2 }}>{renderStepContent(activeStep)}</Box>
           </>
         )}
@@ -1196,12 +1925,7 @@ const CreateLessonForm = ({
               color="primary"
               disabled={loading}
             >
-              {loading
-                ? t("common.saving")
-                : submitLabel ||
-                  (initialData && initialData.id
-                    ? t("common.save")
-                    : t("courses.lessons.add"))}
+              {loading ? "Saving..." : "Create Lesson"}
             </Button>
           ) : (
             <Button variant="contained" onClick={handleNext} color="primary">

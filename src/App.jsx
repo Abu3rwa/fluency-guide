@@ -18,6 +18,10 @@ import { StudentVocabularyProgressProvider } from "./contexts/studentVocabularyP
 import { StudentVocabularyUploadProvider } from "./contexts/studentVocabularyUploadContext";
 import { StudentSpeechRecognitionProvider } from "./contexts/studentSpeechRecognitionContext";
 import { StudentElevenlabsProvider } from "./contexts/studentElevenlabsContext";
+import { StudentVocabularyProvider } from "./contexts/studentVocabularyContext";
+import { VocabularyWordsProvider } from "./contexts/vocabularyWordsContext";
+import { VocabularyProgressProvider } from "./contexts/vocabularyProgressContext";
+import { VocabularyGoalsProvider } from "./contexts/vocabularyGoalsContext";
 import "./index.css";
 
 const router = createBrowserRouter(
@@ -54,7 +58,15 @@ function App() {
                                 <StudentVocabularyUploadProvider>
                                   <StudentSpeechRecognitionProvider>
                                     <StudentElevenlabsProvider>
-                                      <RouterProvider router={router} />
+                                      <StudentVocabularyProvider>
+                                        <VocabularyProgressProvider>
+                                          <VocabularyGoalsProvider>
+                                            <VocabularyWordsProvider>
+                                              <RouterProvider router={router} />
+                                            </VocabularyWordsProvider>
+                                          </VocabularyGoalsProvider>
+                                        </VocabularyProgressProvider>
+                                      </StudentVocabularyProvider>
                                     </StudentElevenlabsProvider>
                                   </StudentSpeechRecognitionProvider>
                                 </StudentVocabularyUploadProvider>

@@ -11,7 +11,7 @@ const StudentLessonProgressBar = ({ progress }) => {
 
   if (typeof progress !== "number") {
     return (
-      <Box sx={{ p: { xs: 2, md: 4 } }}>
+      <Box>
         <Typography color="text.secondary" variant="body2">
           {t("lessonDetails.noProgress")}
         </Typography>
@@ -20,7 +20,7 @@ const StudentLessonProgressBar = ({ progress }) => {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <Box>
       <Typography
         variant="h6"
         sx={{ mb: 1, fontFamily: theme.typography.h6.fontFamily }}

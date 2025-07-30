@@ -24,6 +24,7 @@ export const ROUTES = {
   SETTINGS: "/settings",
   PROFILE: "/profile",
   ANALYTICS: "/analytics",
+  STUDENT_STATISTICS: "/student-statistics",
 };
 
 // Firebase Collections

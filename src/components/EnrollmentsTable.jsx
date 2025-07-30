@@ -87,6 +87,7 @@ const EnrollmentsTable = ({ enrollments, onApprove, onReject }) => {
         return "success";
       case "pending":
         return "warning";
+      
       case "rejected":
         return "error";
       default:
@@ -226,24 +227,24 @@ const EnrollmentsTable = ({ enrollments, onApprove, onReject }) => {
                   </TableCell>
                   <TableCell>{formatDate(enrollment.enrolledAt)}</TableCell>
                   <TableCell>
-                    {enrollment.status === "pending" && (
+                    {enrollment.status === "pending" ? (
                       <Box>
                         <IconButton
                           color="success"
-                          onClick={() => onApprove(enrollment.id)}
+                          onClick={() => onApprove(enrollment)}
                           size="small"
                         >
                           <CheckCircleIcon />
                         </IconButton>
                         <IconButton
                           color="error"
-                          onClick={() => onReject(enrollment.id)}
+                          onClick={() => onReject(enrollment)}
                           size="small"
                         >
                           <CancelIcon />
                         </IconButton>
                       </Box>
-                    )}
+                    ) : null}
                   </TableCell>
                 </TableRow>
               ))

@@ -386,6 +386,18 @@ export default function CoursesTable() {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: "flex", gap: 1 }}>
+                      <Tooltip title="Publish/Unpublish">
+                        <IconButton
+                          size="small"
+                          onClick={() => handlePublish(course)}
+                        >
+                          {course.published ? (
+                            <UnpublishedIcon />
+                          ) : (
+                            <PublishIcon />
+                          )}
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title="View Details">
                         <IconButton
                           component={Link}

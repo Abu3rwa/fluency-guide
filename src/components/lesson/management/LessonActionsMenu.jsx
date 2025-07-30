@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem, Divider } from "@mui/material";
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -7,6 +7,9 @@ import {
   BarChart as BarChartIcon,
   Assignment as AssignmentIcon,
   CloudUpload as CloudUploadIcon,
+  Publish as PublishIcon,
+  Archive as ArchiveIcon,
+  Create as DraftIcon,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +23,7 @@ const LessonActionsMenu = ({
   onAssignClick,
   onAnalyticsClick,
   onResourcesClick,
+  onStatusChange,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -29,7 +33,25 @@ const LessonActionsMenu = ({
   }
 
   return (
-    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+    <Menu
+      anchorEl={anchorEl}
+      open={Boolean(anchorEl)}
+      onClose={onClose}
+      sx={{
+        "& .MuiPaper-root": {
+          position: "fixed",
+          zIndex: 1300,
+        },
+        // Desktop-specific fixes
+        "@media (min-width: 960px)": {
+          "& .MuiPaper-root": {
+            position: "fixed",
+            zIndex: 1300,
+            transformOrigin: "top left",
+          },
+        },
+      }}
+    >
       <MenuItem onClick={() => navigate(`/lessons/${lesson.id}`)}>
         <VisibilityIcon sx={{ mr: 1 }} />
         {t("lessonManagement.actions.view")}
@@ -74,6 +96,44 @@ const LessonActionsMenu = ({
         <CloudUploadIcon sx={{ mr: 1 }} />
         {t("lessonManagement.actions.resources")}
       </MenuItem>
+
+      {onStatusChange && (
+        <>
+          <Divider />
+          <MenuItem
+            onClick={() => {
+              onStatusChange(lesson.id, "published");
+              onClose();
+            }}
+            disabled={lesson.status === "published"}
+          >
+            <PublishIcon sx={{ mr: 1 }} />
+            {t("lessonManagement.actions.publish")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              onStatusChange(lesson.id, "draft");
+              onClose();
+            }}
+            disabled={lesson.status === "draft"}
+          >
+            <DraftIcon sx={{ mr: 1 }} />
+            {t("lessonManagement.actions.draft")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              onStatusChange(lesson.id, "archived");
+              onClose();
+            }}
+            disabled={lesson.status === "archived"}
+          >
+            <ArchiveIcon sx={{ mr: 1 }} />
+            {t("lessonManagement.actions.archive")}
+          </MenuItem>
+        </>
+      )}
+
+      <Divider />
       <MenuItem onClick={onDeleteClick}>
         <DeleteIcon sx={{ mr: 1 }} />
         {t("lessonManagement.actions.delete")}

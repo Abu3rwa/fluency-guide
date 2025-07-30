@@ -1,12 +1,23 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// All text is now hardcoded in English; i18n removed.
+import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import CourseHeader from "../components/course/CourseHeader";
 import CourseOverview from "../components/course/CourseOverview";
 import TaskFormTabs from "../components/tasks/TaskFormTabs";
 import TaskDialog from "../components/tasks/TaskDialog";
 
-import { updateTask, deleteTask, createTask } from "../services/taskService";
+import {
+  updateTask,
+  deleteTask,
+  createTask,
+  getTasksByLesson,
+  publishTask,
+  archiveTask,
+  draftTask,
+  getTasksWithEmptyIds,
+} from "../services/taskService";
 import {
   Box,
   Typography,
@@ -77,7 +88,13 @@ import {
   ExpandLess as ExpandLessIcon,
 } from "@mui/icons-material";
 import courseService from "../services/courseService";
-import { deleteLesson, updateLesson } from "../services/lessonService";
+import {
+  deleteLesson,
+  updateLesson,
+  publishLesson,
+  archiveLesson,
+  draftLesson,
+} from "../services/lessonService";
 import { useAuth } from "../contexts/AuthContext";
 import CourseDialog from "../components/course/CourseDialog";
 import CreateLessonForm from "../components/CreateLessonForm";
@@ -99,7 +116,10 @@ import LessonSection from "../components/course/LessonSection";
 import TasksTable from "../components/tasks/TasksTable";
 
 const CourseDetailsScreen = () => {
-  // All text is now hardcoded in English; i18n removed.
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
@@ -155,7 +175,7 @@ const CourseDetailsScreen = () => {
       // Fetch course details
       const courseData = await courseService.getCourseById(id);
       if (!courseData) {
-        throw new Error("Course not found");
+        throw new Error(t("courseDetails.courseNotFound"));
       }
       setCourse(courseData);
 
@@ -183,11 +203,11 @@ const CourseDetailsScreen = () => {
       }
     } catch (error) {
       console.error("Error fetching course data:", error);
-      setError(error.message || "Failed to fetch course data");
+      setError(error.message || t("courseDetails.fetchError"));
     } finally {
       setLoading(false);
     }
-  }, [id, user]);
+  }, [id, user, t]);
 
   useEffect(() => {
     fetchCourseAndLessons();
@@ -221,17 +241,37 @@ const CourseDetailsScreen = () => {
     }
   }, [moduleLessons, selectedLesson]);
 
+  // Fetch tasks for the course
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!id || !selectedLesson?.id) return;
+
+      try {
+        setLoadingTasks(true);
+        const lessonTasks = await getTasksByLesson(id, selectedLesson.id);
+        setTasks(lessonTasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        setError(t("courseDetails.fetchTasksError"));
+      } finally {
+        setLoadingTasks(false);
+      }
+    };
+
+    fetchTasks();
+  }, [id, selectedLesson?.id, t]);
+
   const handleDeleteCourse = useCallback(async () => {
     try {
       setSubmitting(true);
       await courseService.deleteCourse(id);
       navigate("/courses");
     } catch (error) {
-      setError("Failed to delete course");
+      setError(t("courseDetails.deleteError"));
     } finally {
       setSubmitting(false);
     }
-  }, [id, navigate]);
+  }, [id, navigate, t]);
 
   const handleEditCourse = useCallback(
     async (updatedCourse) => {
@@ -241,12 +281,12 @@ const CourseDetailsScreen = () => {
         setCourse(updatedCourse);
         setEditDialogOpen(false);
       } catch (error) {
-        setError("Failed to update course");
+        setError(t("courseDetails.updateError"));
       } finally {
         setSubmitting(false);
       }
     },
-    [id]
+    [id, t]
   );
 
   const handleAddLesson = useCallback(() => {
@@ -297,10 +337,10 @@ const CourseDetailsScreen = () => {
         }));
         setCreateLessonOpen(false);
       } catch (error) {
-        setError("Failed to create lesson");
+        setError(t("courseDetails.createLessonError"));
       }
     },
-    [id, selectedModuleId]
+    [id, selectedModuleId, t]
   );
 
   const handlePublishToggle = useCallback(async () => {
@@ -313,22 +353,22 @@ const CourseDetailsScreen = () => {
       await courseService.updateCourse(id, updatedCourse);
       setCourse(updatedCourse);
     } catch (error) {
-      setError("Failed to update course status");
+      setError(t("courseDetails.publishToggleError"));
     } finally {
       setSubmitting(false);
     }
-  }, [course, id]);
+  }, [course, id, t]);
 
   const handleExportCourse = useCallback(async () => {
     try {
       setSubmitting(true);
       await courseService.exportCourse(id);
     } catch (error) {
-      setError("Failed to export course data");
+      setError(t("courseDetails.exportError"));
     } finally {
       setSubmitting(false);
     }
-  }, [id]);
+  }, [id, t]);
 
   const handleImportContent = useCallback(
     async (content) => {
@@ -339,12 +379,12 @@ const CourseDetailsScreen = () => {
         const courseData = await courseService.getCourseById(id);
         setCourse(courseData);
       } catch (error) {
-        setError("Failed to import course data");
+        setError(t("courseDetails.importError"));
       } finally {
         setSubmitting(false);
       }
     },
-    [id]
+    [id, t]
   );
 
   const handleTabChange = useCallback((event, newValue) => {
@@ -360,30 +400,30 @@ const CourseDetailsScreen = () => {
         setModuleDialogOpen(false);
       } catch (error) {
         console.error("Error updating module:", error);
-        setError("Failed to update module");
+        setError(t("courseDetails.updateModuleError"));
       } finally {
         setSubmitting(false);
       }
     },
-    [fetchCourseAndLessons]
+    [fetchCourseAndLessons, t]
   );
 
   const handleDeleteModule = useCallback(
     async (moduleId) => {
-      if (window.confirm("Are you sure you want to delete this module?")) {
+      if (window.confirm(t("courseDetails.confirmDeleteModule"))) {
         try {
           setSubmitting(true);
           await moduleService.deleteModule(moduleId);
           await fetchCourseAndLessons();
         } catch (error) {
           console.error("Error deleting module:", error);
-          setError("Failed to delete module");
+          setError(t("courseDetails.deleteModuleError"));
         } finally {
           setSubmitting(false);
         }
       }
     },
-    [fetchCourseAndLessons]
+    [fetchCourseAndLessons, t]
   );
 
   const handleCreateModule = useCallback(
@@ -395,29 +435,29 @@ const CourseDetailsScreen = () => {
         setCreateModuleOpen(false);
       } catch (error) {
         console.error("Error creating module:", error);
-        setError("Failed to create module");
+        setError(t("courseDetails.createModuleError"));
       } finally {
         setSubmitting(false);
       }
     },
-    [id, fetchCourseAndLessons]
+    [id, fetchCourseAndLessons, t]
   );
 
   const handleCreateTask = useCallback(
     async (taskData) => {
       try {
         if (!selectedLesson) {
-          setError("Please select a lesson first");
+          setError(t("courseDetails.selectLessonFirst"));
           return;
         }
         const newTask = await createTask(id, selectedLesson.id, taskData);
         setTasks([...tasks, newTask]);
         setTaskDialogOpen(false);
       } catch (error) {
-        setError(error.message || "Failed to create task");
+        setError(error.message || t("courseDetails.createTaskError"));
       }
     },
-    [id, selectedLesson, tasks]
+    [id, selectedLesson, tasks, t]
   );
 
   const handleTaskDialogOpen = useCallback((lesson) => {
@@ -429,7 +469,7 @@ const CourseDetailsScreen = () => {
     async (taskData) => {
       try {
         if (!selectedLesson || !selectedTask) {
-          setError("Please select a task");
+          setError(t("courseDetails.selectTaskFirst"));
           return;
         }
         const updatedTask = await updateTask(
@@ -443,10 +483,10 @@ const CourseDetailsScreen = () => {
         );
         setTaskDialogOpen(false);
       } catch (error) {
-        setError(error.message || "Failed to update task");
+        setError(error.message || t("courseDetails.updateTaskError"));
       }
     },
-    [id, selectedLesson, selectedTask, tasks]
+    [id, selectedLesson, selectedTask, tasks, t]
   );
 
   const handleDeleteTask = useCallback(
@@ -460,6 +500,77 @@ const CourseDetailsScreen = () => {
     },
     [id, selectedLesson, tasks]
   );
+
+  const handleTaskStatusChange = useCallback(
+    async (taskId, newStatus) => {
+      try {
+        setSubmitting(true);
+
+        // Validate taskId
+        if (!taskId || taskId.trim() === "") {
+          throw new Error("Invalid task ID - task ID is empty or missing");
+        }
+
+        console.log("Changing task status:", {
+          taskId,
+          newStatus,
+          courseId: id,
+          lessonId: selectedLesson?.id,
+        });
+
+        let result;
+
+        switch (newStatus) {
+          case "published":
+            result = await publishTask(id, selectedLesson.id, taskId);
+            break;
+          case "archived":
+            result = await archiveTask(id, selectedLesson.id, taskId);
+            break;
+          case "draft":
+            result = await draftTask(id, selectedLesson.id, taskId);
+            break;
+          default:
+            throw new Error("Invalid status");
+        }
+
+        console.log("Task status change result:", result);
+
+        // Update the task in the state
+        setTasks((tasks) =>
+          tasks.map((task) =>
+            task.id === taskId ? { ...task, status: newStatus } : task
+          )
+        );
+
+        console.log(`Task ${taskId} status changed to ${newStatus}`);
+      } catch (error) {
+        console.error("Error changing task status:", error);
+        setError(
+          t("courseDetails.taskStatusChangeError") ||
+            "Failed to change task status"
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [id, selectedLesson, t]
+  );
+
+  // Temporary debug function to identify tasks with empty IDs
+  const debugTasksWithEmptyIds = useCallback(async () => {
+    try {
+      const tasksWithEmptyIds = await getTasksWithEmptyIds();
+      console.log("Tasks with empty IDs:", tasksWithEmptyIds);
+      if (tasksWithEmptyIds.length > 0) {
+        console.warn(
+          `Found ${tasksWithEmptyIds.length} tasks with empty IDs. These need to be fixed manually.`
+        );
+      }
+    } catch (error) {
+      console.error("Error checking for tasks with empty IDs:", error);
+    }
+  }, []);
 
   const toggleModuleExpand = useCallback((moduleId) => {
     setExpandedModules((prev) => ({
@@ -480,12 +591,53 @@ const CourseDetailsScreen = () => {
           ),
         }));
       } catch (error) {
-        setError("Failed to delete lesson. Please try again.");
+        setError(t("courseDetails.deleteLessonError"));
       } finally {
         setSubmitting(false);
       }
     },
-    [id, selectedModuleId]
+    [id, selectedModuleId, t]
+  );
+
+  const handleLessonStatusChange = useCallback(
+    async (lessonId, newStatus) => {
+      try {
+        setSubmitting(true);
+        let result;
+
+        switch (newStatus) {
+          case "published":
+            result = await publishLesson(lessonId);
+            break;
+          case "archived":
+            result = await archiveLesson(lessonId);
+            break;
+          case "draft":
+            result = await draftLesson(lessonId);
+            break;
+          default:
+            throw new Error("Invalid status");
+        }
+
+        // Update the lesson in the state
+        setLessons((lessons) => ({
+          ...lessons,
+          [selectedModuleId]: lessons[selectedModuleId].map((l) =>
+            l.id === lessonId ? { ...l, status: newStatus } : l
+          ),
+        }));
+
+        console.log(`Lesson ${lessonId} status changed to ${newStatus}`);
+      } catch (error) {
+        console.error("Error changing lesson status:", error);
+        setError(
+          t("courseDetails.statusChangeError") || "Failed to change status"
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [selectedModuleId, t]
   );
 
   const filteredLessons = moduleLessons.filter((lesson) => {
@@ -519,7 +671,7 @@ const CourseDetailsScreen = () => {
           alignItems="center"
           minHeight="60vh"
         >
-          <CircularProgress />
+          <CircularProgress sx={{ color: theme.palette.primary.main }} />
         </Box>
       </Container>
     );
@@ -535,7 +687,7 @@ const CourseDetailsScreen = () => {
             onClick={() => navigate("/courses")}
             sx={{ mt: 2 }}
           >
-            Back to Courses
+            {t("courseDetails.backToCourses")}
           </Button>
         </Box>
       </Container>
@@ -546,13 +698,13 @@ const CourseDetailsScreen = () => {
     return (
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Box p={3}>
-          <Alert severity="warning">Course not found</Alert>
+          <Alert severity="warning">{t("courseDetails.courseNotFound")}</Alert>
           <Button
             startIcon={<ArrowBackIcon />}
             onClick={() => navigate("/courses")}
             sx={{ mt: 2 }}
           >
-            Back to Courses
+            {t("courseDetails.backToCourses")}
           </Button>
         </Box>
       </Container>
@@ -560,7 +712,17 @@ const CourseDetailsScreen = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container
+      maxWidth="lg"
+      sx={{
+        mt: { xs: 2, md: 4 },
+        mb: { xs: 2, md: 4 },
+        px: { xs: 2, md: 3 },
+        backgroundColor: theme.palette.background.default,
+        minHeight: "100vh",
+        py: { xs: theme.spacing(2), md: theme.spacing(3) },
+      }}
+    >
       {/* Course Header */}
       <CourseHeader
         course={course}
@@ -573,8 +735,23 @@ const CourseDetailsScreen = () => {
         onShare={() => setShareDialogOpen(true)}
         onDelete={() => setDeleteDialogOpen(true)}
       />
+
+      {/* Temporary Debug Button - Remove after fixing empty ID tasks */}
+      {process.env.NODE_ENV === "development" && (
+        <Box sx={{ mb: 2, display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            variant="outlined"
+            size="small"
+            color="warning"
+            onClick={debugTasksWithEmptyIds}
+            sx={{ fontSize: "0.75rem" }}
+          >
+            Debug: Check Empty ID Tasks
+          </Button>
+        </Box>
+      )}
       {/* Course Info and Analytics */}
-      <Grid container spacing={3} mb={4}>
+      <Grid container spacing={{ xs: 2, md: 3 }} mb={{ xs: 2, md: 4 }}>
         {/* Course Overview */}
         <Grid item xs={12} md={8}>
           <CourseOverview course={course} />
@@ -584,20 +761,45 @@ const CourseDetailsScreen = () => {
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
-        sx={{ mb: 3 }}
+        variant={isMobile ? "scrollable" : "standard"}
+        scrollButtons={isMobile ? "auto" : false}
+        sx={{
+          mb: { xs: 2, md: 3 },
+          backgroundColor: theme.palette.background.paper,
+          borderRadius: theme.shape.borderRadius,
+          "& .MuiTab-root": {
+            color: theme.palette.text.secondary,
+            fontSize: { xs: "0.875rem", md: "1rem" },
+            minWidth: { xs: "auto", md: 120 },
+            "&.Mui-selected": {
+              color: theme.palette.primary.main,
+            },
+          },
+          "& .MuiTabs-indicator": {
+            backgroundColor: theme.palette.primary.main,
+          },
+        }}
         aria-label="Tabs"
       >
-        <Tab label="Overview" />
-        <Tab label="Modules" />
-        <Tab label="Lessons" />
-        <Tab label="Analytics" />
+        <Tab label={t("courseDetails.overview")} />
+        <Tab label={t("courseDetails.modules")} />
+        <Tab label={t("courseDetails.lessons")} />
+        <Tab label={t("courseDetails.analytics")} />
       </Tabs>
       {/* Tab Content */}
       <Box sx={{ mt: 2 }}>
         {/* Overview Tab */}
         {activeTab === 0 && (
-          <Card>
-            <CardContent>
+          <Card
+            sx={{
+              backgroundColor: theme.palette.background.paper,
+              boxShadow: theme.shadows[2],
+              borderRadius: theme.shape.borderRadius * 2,
+            }}
+          >
+            <CardContent
+              sx={{ p: { xs: theme.spacing(2), md: theme.spacing(3) } }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -606,30 +808,54 @@ const CourseDetailsScreen = () => {
                   mb: 2,
                 }}
               >
-                <Typography variant="h5">Modules</Typography>
+                <Typography variant="h5">
+                  {t("courseDetails.modules")}
+                </Typography>
                 <Box>
                   <Button
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => setCreateModuleOpen(true)}
-                    sx={{ mr: 1 }}
-                    aria-label="Create New Module"
+                    sx={{
+                      mr: 1,
+                      backgroundColor: theme.palette.primary.main,
+                      color: theme.palette.primary.contrastText,
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.dark,
+                      },
+                    }}
+                    aria-label={t("courseDetails.createNewModule")}
                   >
-                    Create New Module
+                    {t("courseDetails.createNewModule")}
                   </Button>
                 </Box>
               </Box>
               {modules.length === 0 ? (
-                <Box sx={{ textAlign: "center", py: 4 }}>
+                <Box
+                  sx={{
+                    textAlign: "center",
+                    py: theme.spacing(4),
+                    color: theme.palette.text.secondary,
+                  }}
+                >
                   <Typography variant="h6" color="text.secondary" gutterBottom>
-                    No modules yet
+                    {t("courseDetails.noModulesYet")}
                   </Typography>
                   <Button
                     variant="outlined"
                     startIcon={<AddIcon />}
                     onClick={() => setCreateModuleOpen(true)}
+                    sx={{
+                      borderColor: theme.palette.primary.main,
+                      color: theme.palette.primary.main,
+                      "&:hover": {
+                        borderColor: theme.palette.primary.dark,
+                        backgroundColor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                      },
+                    }}
                   >
-                    Create First Module
+                    {t("courseDetails.createFirstModule")}
                   </Button>
                 </Box>
               ) : (
@@ -659,16 +885,44 @@ const CourseDetailsScreen = () => {
         {activeTab === 2 && (
           <>
             {/* Module Filter Dropdown */}
-            <Box mb={2} display="flex" alignItems="center" gap={2}>
-              <Typography variant="subtitle1">Modules</Typography>
-              <FormControl size="small" sx={{ minWidth: 200 }}>
-                <InputLabel id="module-filter-label">Select Module</InputLabel>
+            <Box
+              mb={2}
+              display="flex"
+              alignItems="center"
+              gap={2}
+              flexDirection={{ xs: "column", sm: "row" }}
+            >
+              <Typography
+                variant="subtitle1"
+                sx={{ color: theme.palette.text.primary }}
+              >
+                {t("courseDetails.modules")}
+              </Typography>
+              <FormControl
+                size="small"
+                sx={{
+                  minWidth: { xs: "100%", sm: 200 },
+                  width: { xs: "100%", sm: "auto" },
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: theme.palette.background.paper,
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  },
+                }}
+              >
+                <InputLabel id="module-filter-label">
+                  {t("courseDetails.selectModule")}
+                </InputLabel>
                 <Select
                   labelId="module-filter-label"
                   value={
                     selectedModuleId || (modules[0] && modules[0].id) || ""
                   }
-                  label="Select Module"
+                  label={t("courseDetails.selectModule")}
                   onChange={(e) => setSelectedModuleId(e.target.value)}
                 >
                   {modules.map((module) => (
@@ -696,6 +950,7 @@ const CourseDetailsScreen = () => {
               selectedLesson={selectedLesson}
               onDeleteLesson={handleDeleteLesson}
               onUpdateLesson={handleUpdateLesson}
+              onStatusChange={handleLessonStatusChange}
               onCreate={() => setCreateLessonOpen(true)}
               courseId={id}
               moduleId={selectedModuleId}
@@ -704,16 +959,42 @@ const CourseDetailsScreen = () => {
             {selectedModuleId && moduleLessons.length > 0 && (
               <Box mt={4}>
                 {/* Lesson Filter Dropdown */}
-                <Box mb={2} display="flex" alignItems="center" gap={2}>
-                  <Typography variant="subtitle1">Lessons</Typography>
-                  <FormControl size="small" sx={{ minWidth: 200 }}>
+                <Box
+                  mb={2}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                  flexDirection={{ xs: "column", sm: "row" }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: theme.palette.text.primary }}
+                  >
+                    {t("courseDetails.lessons")}
+                  </Typography>
+                  <FormControl
+                    size="small"
+                    sx={{
+                      minWidth: { xs: "100%", sm: 200 },
+                      width: { xs: "100%", sm: "auto" },
+                      "& .MuiOutlinedInput-root": {
+                        backgroundColor: theme.palette.background.paper,
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: theme.palette.primary.main,
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: theme.palette.primary.main,
+                        },
+                      },
+                    }}
+                  >
                     <InputLabel id="lesson-filter-label">
-                      Select Lesson
+                      {t("courseDetails.selectLesson")}
                     </InputLabel>
                     <Select
                       labelId="lesson-filter-label"
                       value={selectedLesson?.id || moduleLessons[0]?.id || ""}
-                      label="Select Lesson"
+                      label={t("courseDetails.selectLesson")}
                       onChange={(e) => {
                         const lesson = moduleLessons.find(
                           (l) => l.id === e.target.value
@@ -736,8 +1017,17 @@ const CourseDetailsScreen = () => {
                       justifyContent="space-between"
                       alignItems="center"
                       mb={2}
+                      flexDirection={{ xs: "column", sm: "row" }}
+                      gap={{ xs: 2, sm: 0 }}
                     >
-                      <Typography variant="h6">Tasks</Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{ color: theme.palette.text.primary }}
+                      >
+                        {t("courseDetails.tasksForLesson", {
+                          count: tasks.length,
+                        })}
+                      </Typography>
                       <Button
                         variant="contained"
                         startIcon={<AddIcon />}
@@ -745,22 +1035,37 @@ const CourseDetailsScreen = () => {
                           setSelectedTask(null);
                           setTaskDialogOpen(true);
                         }}
+                        sx={{
+                          backgroundColor: theme.palette.primary.main,
+                          color: theme.palette.primary.contrastText,
+                          width: { xs: "100%", sm: "auto" },
+                          "&:hover": {
+                            backgroundColor: theme.palette.primary.dark,
+                          },
+                        }}
                       >
-                        Create Task
+                        {t("courseDetails.createTask")}
                       </Button>
                     </Box>
-                    <TasksTable
-                      tasks={tasks.filter(
-                        (task) => task.lessonId === selectedLesson.id
-                      )}
-                      onEditTask={(task) => {
-                        setSelectedTask(task);
-                        setTaskDialogOpen(true);
-                      }}
-                      onDeleteTask={async (taskId) => {
-                        await handleDeleteTask(taskId);
-                      }}
-                    />
+                    {loadingTasks ? (
+                      <Box display="flex" justifyContent="center" p={3}>
+                        <CircularProgress
+                          sx={{ color: theme.palette.primary.main }}
+                        />
+                      </Box>
+                    ) : (
+                      <TasksTable
+                        tasks={tasks}
+                        onEditTask={(task) => {
+                          setSelectedTask(task);
+                          setTaskDialogOpen(true);
+                        }}
+                        onDeleteTask={async (taskId) => {
+                          await handleDeleteTask(taskId);
+                        }}
+                        onStatusChange={handleTaskStatusChange}
+                      />
+                    )}
                   </>
                 )}
               </Box>
@@ -769,10 +1074,22 @@ const CourseDetailsScreen = () => {
         )}
         {/* Analytics Tab */}
         {activeTab === 3 && (
-          <Card>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                Progress
+          <Card
+            sx={{
+              backgroundColor: theme.palette.background.paper,
+              boxShadow: theme.shadows[2],
+              borderRadius: theme.shape.borderRadius * 2,
+            }}
+          >
+            <CardContent
+              sx={{ p: { xs: theme.spacing(2), md: theme.spacing(3) } }}
+            >
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{ color: theme.palette.text.primary }}
+              >
+                {t("courseDetails.progress")}
               </Typography>
               <StudentProgressList students={studentProgress} />
             </CardContent>
@@ -792,19 +1109,18 @@ const CourseDetailsScreen = () => {
         aria-labelledby="delete-course-dialog-title"
         aria-describedby="delete-course-dialog-description"
       >
-        <DialogTitle id="delete-course-dialog-title">Delete Lesson</DialogTitle>
+        <DialogTitle id="delete-course-dialog-title">
+          {t("courseDetails.deleteLesson")}
+        </DialogTitle>
         <DialogContent id="delete-course-dialog-description">
-          <Typography>
-            Are you sure you want to delete this lesson? This action cannot be
-            undone.
-          </Typography>
+          <Typography>{t("courseDetails.deleteLessonConfirmation")}</Typography>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => setDeleteDialogOpen(false)}
             disabled={submitting}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={() => {
@@ -817,7 +1133,7 @@ const CourseDetailsScreen = () => {
             {submitting ? (
               <CircularProgress size={20} color="inherit" />
             ) : (
-              "Delete"
+              t("common.delete")
             )}
           </Button>
         </DialogActions>
@@ -860,13 +1176,25 @@ const CourseDetailsScreen = () => {
         }}
         maxWidth="md"
         fullWidth
+        fullScreen={isMobile}
         aria-labelledby="task-dialog-title"
+        PaperProps={{
+          sx: {
+            backgroundColor: theme.palette.background.paper,
+            borderRadius: isMobile ? 0 : theme.shape.borderRadius * 2,
+            boxShadow: theme.shadows[8],
+            m: { xs: 0, md: 2 },
+            height: { xs: "100%", md: "auto" },
+          },
+        }}
       >
         <DialogTitle id="task-dialog-title">
           <Box display="flex" alignItems="center" gap={1}>
             <AssignmentIcon color="primary" />
             <Typography variant="h6">
-              {selectedTask ? "Edit Task" : "Create Task"}
+              {selectedTask
+                ? t("courseDetails.editTask")
+                : t("courseDetails.createTask")}
             </Typography>
           </Box>
         </DialogTitle>
@@ -887,11 +1215,15 @@ const CourseDetailsScreen = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            bgcolor: "rgba(0, 0, 0, 0.5)",
+            bgcolor:
+              theme.palette.mode === "dark"
+                ? "rgba(0, 0, 0, 0.8)"
+                : "rgba(255, 255, 255, 0.8)",
+            backdropFilter: "blur(4px)",
             zIndex: 9999,
           }}
         >
-          <CircularProgress />
+          <CircularProgress sx={{ color: theme.palette.primary.main }} />
         </Box>
       )}
     </Container>

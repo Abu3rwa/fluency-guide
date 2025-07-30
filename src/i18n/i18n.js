@@ -6,13 +6,17 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import translationEN from "./locales/en/translation.json";
 import translationAR from "./locales/ar/translation.json";
 import translationFR from "./locales/fr/translation.json";
+import studentCourseDetailsEN from "./locales/en/student-course-details.json";
+import studentCourseDetailsAR from "./locales/ar/student-course-details.json";
 
 const resources = {
   en: {
     translation: translationEN,
+    "student-course-details": studentCourseDetailsEN,
   },
   ar: {
     translation: translationAR,
+    "student-course-details": studentCourseDetailsAR,
   },
   fr: {
     translation: translationFR,

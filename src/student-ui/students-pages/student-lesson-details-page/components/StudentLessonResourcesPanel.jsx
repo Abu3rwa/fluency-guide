@@ -16,7 +16,7 @@ const StudentLessonResourcesPanel = ({ resources }) => {
 
   if (!resources || resources.length === 0) {
     return (
-      <Box sx={{ p: { xs: 1, sm: 2, md: 4 } }}>
+      <Box>
         <Typography color="text.secondary" variant="body2">
           {t("lessonDetails.noResources")}
         </Typography>
@@ -25,7 +25,7 @@ const StudentLessonResourcesPanel = ({ resources }) => {
   }
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 2, md: 4 } }}>
+    <Box>
       <Typography
         variant="h6"
         sx={{

@@ -75,6 +75,19 @@ export function AuthProvider({ children }) {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
+
+      // Create or update user profile with Google data
+      const userData = await userService.createOrUpdateUser({
+        uid: result.user.uid,
+        email: result.user.email,
+        name: result.user.displayName,
+        displayName: result.user.displayName,
+        photoURL: result.user.photoURL,
+        emailVerified: result.user.emailVerified,
+        isAdmin: false,
+        isStudent: true,
+      });
+
       return result.user;
     } catch (error) {
       console.error("Error signing in with Google:", error);
@@ -83,13 +96,26 @@ export function AuthProvider({ children }) {
   };
 
   // Sign up with email and password
-  const signup = async (email, password) => {
+  const signup = async (email, password, name) => {
     try {
       const result = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+
+      // Create user profile with name
+      const userData = await userService.createOrUpdateUser({
+        uid: result.user.uid,
+        email: result.user.email,
+        name: name,
+        displayName: name,
+        photoURL: result.user.photoURL || "",
+        emailVerified: result.user.emailVerified,
+        isAdmin: false,
+        isStudent: true,
+      });
+
       return result.user;
     } catch (error) {
       console.error("Error signing up:", error);

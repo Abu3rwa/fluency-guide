@@ -61,7 +61,14 @@ const LessonCard = ({ lesson, onMenuClick }) => {
           <Typography variant="h6" component="h2" gutterBottom>
             {lesson.title}
           </Typography>
-          <IconButton size="small" onClick={(e) => onMenuClick(e, lesson)}>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onMenuClick(e, lesson);
+            }}
+          >
             <MoreVertIcon />
           </IconButton>
         </Box>

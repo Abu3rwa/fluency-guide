@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { Box, Typography, Button, Modal, Fade } from "@mui/material";
 import GradientText from "./GradientText";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
-import heroImage from "../../assets/heroImage.png";
+import heroImage from "../../assets/heroImage.jpg";
 
 const HeroSection = ({ isRTL, t, navigate, theme }) => {
   const [open, setOpen] = useState(false);
+
+  const linearGradient = (color1, color2) => {
+    return `linear-gradient(40deg, ${color1}, ${color2})`;
+  };
 
   return (
     <Box
@@ -53,20 +57,26 @@ const HeroSection = ({ isRTL, t, navigate, theme }) => {
             position: "relative",
           }}
         >
-          <GradientText
+          <Typography
             variant="h1"
             sx={{
               mb: 2,
               textAlign: { xs: "center", md: "left" },
               fontSize: { xs: "2.5rem", md: "4rem" },
+              fontWeight: 700,
+              color: linearGradient(
+                theme.palette.primary.main,
+                theme.palette.secondary.main
+              ),
+              lineHeight: 1.2,
             }}
           >
             {t("landing.hero.title")}{" "}
             <Box component="span" color="secondary.main">
               {t("landing.hero.titleHighlight")}
             </Box>
-          </GradientText>
-          <Typography
+          </Typography>
+          {/* <Typography
             variant="h5"
             // color="textSecondary"
             className="hero-subtitle"
@@ -77,7 +87,7 @@ const HeroSection = ({ isRTL, t, navigate, theme }) => {
             }}
           >
             {t("landing.hero.subtitle")}
-          </Typography>
+          </Typography> */}
           <Box
             sx={{
               display: "flex",
@@ -88,30 +98,11 @@ const HeroSection = ({ isRTL, t, navigate, theme }) => {
               alignItems: { xs: "stretch", sm: "center" },
             }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => navigate("/signup")}
-              sx={{
-                px: { xs: 2, md: 4 },
-                py: { xs: 1.25, md: 1.5 },
-                fontSize: { xs: "1rem", md: "1.1rem" },
-                borderRadius: "30px",
-                fontWeight: 700,
-                boxShadow: "0 4px 14px rgba(0,0,0,0.2)",
-                transition: "all 0.3s ease",
-                width: { xs: "100%", sm: "auto" },
-              }}
-            >
-              {t("landing.hero.startLearning")}
-            </Button>
+            
             <Button
               variant="contained"
               color="secondary"
               size="large"
-              startIcon={isRTL ? null : <PlayCircleOutlineIcon />}
-              endIcon={isRTL ? <PlayCircleOutlineIcon /> : null}
               onClick={() => setOpen(true)}
               sx={{
                 px: { xs: 2, md: 4 },
@@ -121,8 +112,15 @@ const HeroSection = ({ isRTL, t, navigate, theme }) => {
                 fontWeight: 700,
                 transition: "all 0.3s ease",
                 width: { xs: "100%", sm: "auto" },
+                display: "flex",
+                flexDirection: isRTL ? "row-reverse" : "row",
+                alignItems: "center",
+                gap: 1,
               }}
             >
+              <PlayCircleOutlineIcon
+                sx={{ fontSize: 28, ml: isRTL ? 0 : 1, mr: isRTL ? 1 : 0 }}
+              />
               {t("landing.hero.watchDemo")}
             </Button>
           </Box>

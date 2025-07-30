@@ -39,20 +39,6 @@ import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import courseService from "../../services/courseService";
 
-const steps = ["Basic Info", "Content", "Pricing", "Publishing"];
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
-
 const CourseDialog = ({
   open,
   onClose,
@@ -61,108 +47,72 @@ const CourseDialog = ({
   mode = "create",
 }) => {
   const { t } = useTranslation();
+
+  const steps = [
+    t("courseDialog.steps.basicInfo"),
+    t("courseDialog.steps.content"),
+    t("courseDialog.steps.pricing"),
+    t("courseDialog.steps.publishing"),
+  ];
+
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
-    title: "Foundation - Level 1",
-    description:
-      "A comprehensive 12-week course designed for complete beginners with no English knowledge. This course focuses on building essential survival English skills to reach A1 level proficiency.",
-    shortDescription:
-      "Master basic English communication skills in 12 weeks - perfect for absolute beginners",
-    category: "foundation",
-    level: "beginner",
+    title: "",
+    description: "",
+    shortDescription: "",
+    category: "",
+    level: "",
     thumbnail: null,
-    instructor: "Abdulhafeez",
-    instructorBio:
-      "Experienced ESL instructor specializing in teaching absolute beginners. Certified in TESOL with 5+ years of teaching experience.",
+    introVideo: null,
+    instructor: "",
+    instructorBio: "",
     language: "english",
-    prerequisites: [
-      "No prior English knowledge required",
-      "Basic literacy in native language",
-      "Commitment to attend 4 sessions per week",
-      "Willingness to practice outside class",
-    ],
-    objectives: [
-      "Master the English alphabet and basic pronunciation",
-      "Use simple greetings and courtesy expressions",
-      "Introduce yourself with name and basic information",
-      "Count from 0-20",
-      "Ask and answer basic personal questions",
-      "Understand and use basic classroom instructions",
-      "Develop basic listening and speaking skills",
-      "Build confidence in using English in daily situations",
-    ],
-    duration: "12",
-    totalLessons: 48,
-    totalQuizzes: 12,
-    totalAssignments: 24,
-    maxStudents: "12",
+    prerequisites: [],
+    objectives: [],
+    duration: "",
+    totalLessons: 0,
+    totalQuizzes: 0,
+    totalAssignments: 0,
+    maxStudents: "",
     startDate: "",
     endDate: "",
-    schedule: "4 sessions per week, 90 minutes each",
-    format: "scheduled",
-    price: "499",
-    discount: "20",
+    schedule: "",
+    format: "self-paced",
+    price: "",
+    discount: "",
     pricingModel: "one-time",
     currency: "USD",
     discountEndDate: "",
-    earlyBirdPrice: "399",
+    earlyBirdPrice: "",
     earlyBirdEndDate: "",
     status: "draft",
-    seoTitle:
-      "Complete English Foundation Course - Level 1 | Beginner English Course",
-    metaDescription:
-      "Start your English learning journey with our comprehensive 12-week foundation course. Perfect for absolute beginners. Learn basic survival English and reach A1 level proficiency.",
-    tags: [
-      "beginner english",
-      "foundation course",
-      "A1 level",
-      "survival english",
-      "basic communication",
-      "english for beginners",
-      "esl foundation",
-      "basic pronunciation",
-    ],
-    featured: true,
-    certificateIncluded: true,
+    seoTitle: "",
+    metaDescription: "",
+    tags: [],
+    featured: false,
+    certificateIncluded: false,
     certificateTemplate: "standard",
     accessDuration: "lifetime",
-    requirements: [
-      "No prior English knowledge required",
-      "Basic literacy in native language",
-      "Commitment to attend 4 sessions per week",
-      "Willingness to practice outside class",
-    ],
-    targetAudience: [
-      "Complete beginners with no English knowledge",
-      "Adult learners",
-      "International students",
-      "Immigrants",
-      "Business professionals starting English",
-    ],
-    whatYouWillLearn: [
-      "Basic greetings and introductions",
-      "English alphabet and pronunciation",
-      "Numbers 0-20",
-      "Personal information exchange",
-      "Basic classroom instructions",
-      "Simple present tense",
-      "Basic vocabulary for daily life",
-      "Essential survival phrases",
-    ],
-    courseMaterials: [
-      "Course textbook",
-      "Workbook",
-      "Audio materials",
-      "Online practice platform access",
-      "Supplementary worksheets",
-      "Vocabulary flashcards",
-      "Pronunciation guide",
-      "Progress tracking tools",
-    ],
+    requirements: [],
+    targetAudience: [],
+    whatYouWillLearn: [],
+    courseMaterials: [],
     support: {
-      email: "support@englishfluencyguide.com",
-      hours: "Monday-Friday, 9 AM - 6 PM",
-      responseTime: "Within 24 hours",
+      email: "",
+      hours: "",
+      responseTime: "",
     },
   });
 
@@ -204,16 +154,16 @@ const CourseDialog = ({
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e, field) => {
     const file = e.target.files[0];
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        thumbnail: file,
+        [field]: file,
       }));
       // Save to draft if in create mode
       if (mode === "create") {
-        courseService.saveDraft({ ...formData, thumbnail: file });
+        courseService.saveDraft({ ...formData, [field]: file });
       }
     }
   };
@@ -291,34 +241,44 @@ const CourseDialog = ({
     const newErrors = {};
     switch (activeStep) {
       case 0:
-        if (!formData.title) newErrors.title = "Title is required";
+        if (!formData.title)
+          newErrors.title = t("courseDialog.validation.titleRequired");
         if (!formData.description)
-          newErrors.description = "Description is required";
-        if (!formData.category) newErrors.category = "Category is required";
-        if (!formData.level) newErrors.level = "Level is required";
+          newErrors.description = t(
+            "courseDialog.validation.descriptionRequired"
+          );
+        if (!formData.category)
+          newErrors.category = t("courseDialog.validation.categoryRequired");
+        if (!formData.level)
+          newErrors.level = t("courseDialog.validation.levelRequired");
         break;
       case 1:
-        if (!formData.duration) newErrors.duration = "Duration is required";
+        if (!formData.duration)
+          newErrors.duration = t("courseDialog.validation.durationRequired");
         if (formData.prerequisites.some((p) => !p)) {
-          newErrors.prerequisites = "All prerequisites must be filled";
+          newErrors.prerequisites = t(
+            "courseDialog.validation.prerequisitesFilled"
+          );
         }
         if (formData.objectives.some((o) => !o)) {
-          newErrors.objectives = "All objectives must be filled";
+          newErrors.objectives = t("courseDialog.validation.objectivesFilled");
         }
         break;
       case 2:
-        if (!formData.price) newErrors.price = "Price is required";
+        if (!formData.price)
+          newErrors.price = t("courseDialog.validation.priceRequired");
         if (
           formData.discount &&
           (isNaN(formData.discount) ||
             formData.discount < 0 ||
             formData.discount > 100)
         ) {
-          newErrors.discount = "Discount must be between 0 and 100";
+          newErrors.discount = t("courseDialog.validation.discountRange");
         }
         break;
       case 3:
-        if (!formData.status) newErrors.status = "Status is required";
+        if (!formData.status)
+          newErrors.status = t("courseDialog.validation.statusRequired");
         break;
       default:
         break;
@@ -359,11 +319,7 @@ const CourseDialog = ({
       mode === "create" &&
       Object.values(formData).some((value) => value !== "")
     ) {
-      if (
-        window.confirm(
-          "You have unsaved changes. Do you want to save them as a draft?"
-        )
-      ) {
+      if (window.confirm(t("courseDialog.confirm.unsavedChanges"))) {
         courseService.saveDraft(formData);
       }
     }
@@ -378,7 +334,7 @@ const CourseDialog = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Course Title"
+                label={t("courseDialog.fields.courseTitle")}
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
@@ -390,7 +346,7 @@ const CourseDialog = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Short Description"
+                label={t("courseDialog.fields.shortDescription")}
                 name="shortDescription"
                 value={formData.shortDescription}
                 onChange={handleChange}
@@ -400,14 +356,14 @@ const CourseDialog = ({
                 error={!!errors.shortDescription}
                 helperText={
                   errors.shortDescription ||
-                  "Brief description for course cards and previews"
+                  t("courseDialog.helpText.shortDescription")
                 }
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Full Description"
+                label={t("courseDialog.fields.fullDescription")}
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -420,22 +376,40 @@ const CourseDialog = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth error={!!errors.category} required>
-                <InputLabel>Category</InputLabel>
+                <InputLabel>{t("courseDialog.fields.category")}</InputLabel>
                 <Select
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  label="Category"
+                  label={t("courseDialog.fields.category")}
                 >
-                  <MenuItem value="grammar">Grammar</MenuItem>
-                  <MenuItem value="vocabulary">Vocabulary</MenuItem>
-                  <MenuItem value="pronunciation">Pronunciation</MenuItem>
-                  <MenuItem value="conversation">Conversation</MenuItem>
-                  <MenuItem value="writing">Writing</MenuItem>
-                  <MenuItem value="reading">Reading</MenuItem>
-                  <MenuItem value="listening">Listening</MenuItem>
-                  <MenuItem value="business">Business English</MenuItem>
-                  <MenuItem value="exam">Exam Preparation</MenuItem>
+                  <MenuItem value="grammar">
+                    {t("courseDialog.categories.grammar")}
+                  </MenuItem>
+                  <MenuItem value="vocabulary">
+                    {t("courseDialog.categories.vocabulary")}
+                  </MenuItem>
+                  <MenuItem value="pronunciation">
+                    {t("courseDialog.categories.pronunciation")}
+                  </MenuItem>
+                  <MenuItem value="conversation">
+                    {t("courseDialog.categories.conversation")}
+                  </MenuItem>
+                  <MenuItem value="writing">
+                    {t("courseDialog.categories.writing")}
+                  </MenuItem>
+                  <MenuItem value="reading">
+                    {t("courseDialog.categories.reading")}
+                  </MenuItem>
+                  <MenuItem value="listening">
+                    {t("courseDialog.categories.listening")}
+                  </MenuItem>
+                  <MenuItem value="business">
+                    {t("courseDialog.categories.business")}
+                  </MenuItem>
+                  <MenuItem value="exam">
+                    {t("courseDialog.categories.exam")}
+                  </MenuItem>
                 </Select>
                 {errors.category && (
                   <FormHelperText>{errors.category}</FormHelperText>
@@ -444,16 +418,22 @@ const CourseDialog = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth error={!!errors.level} required>
-                <InputLabel>Level</InputLabel>
+                <InputLabel>{t("courseDialog.fields.level")}</InputLabel>
                 <Select
                   name="level"
                   value={formData.level}
                   onChange={handleChange}
-                  label="Level"
+                  label={t("courseDialog.fields.level")}
                 >
-                  <MenuItem value="beginner">Beginner (A1-A2)</MenuItem>
-                  <MenuItem value="intermediate">Intermediate (B1-B2)</MenuItem>
-                  <MenuItem value="advanced">Advanced (C1-C2)</MenuItem>
+                  <MenuItem value="beginner">
+                    {t("courseDialog.levels.beginner")}
+                  </MenuItem>
+                  <MenuItem value="intermediate">
+                    {t("courseDialog.levels.intermediate")}
+                  </MenuItem>
+                  <MenuItem value="advanced">
+                    {t("courseDialog.levels.advanced")}
+                  </MenuItem>
                 </Select>
                 {errors.level && (
                   <FormHelperText>{errors.level}</FormHelperText>
@@ -463,7 +443,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Instructor Name"
+                label={t("courseDialog.fields.instructorName")}
                 name="instructor"
                 value={formData.instructor}
                 onChange={handleChange}
@@ -475,7 +455,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Instructor Bio"
+                label={t("courseDialog.fields.instructorBio")}
                 name="instructorBio"
                 value={formData.instructorBio}
                 onChange={handleChange}
@@ -493,16 +473,37 @@ const CourseDialog = ({
                   variant="outlined"
                   startIcon={<CloudUploadIcon />}
                 >
-                  Upload Thumbnail
+                  {t("courseDialog.actions.uploadThumbnail")}
                   <VisuallyHiddenInput
                     type="file"
                     accept="image/*"
-                    onChange={handleFileChange}
+                    onChange={(e) => handleFileChange(e, "thumbnail")}
                   />
                 </Button>
                 {formData.thumbnail && (
                   <Typography variant="body2" color="text.secondary">
                     {formData.thumbnail.name}
+                  </Typography>
+                )}
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Button
+                  component="label"
+                  variant="outlined"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  {t("courseDialog.actions.uploadIntroVideo")}
+                  <VisuallyHiddenInput
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => handleFileChange(e, "introVideo")}
+                  />
+                </Button>
+                {formData.introVideo && (
+                  <Typography variant="body2" color="text.secondary">
+                    {formData.introVideo.name}
                   </Typography>
                 )}
               </Box>
@@ -515,13 +516,13 @@ const CourseDialog = ({
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Prerequisites
+                {t("courseDialog.sections.prerequisites")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add a prerequisite"
+                  placeholder={t("courseDialog.placeholders.addPrerequisite")}
                   value={newPrerequisite}
                   onChange={(e) => setNewPrerequisite(e.target.value)}
                   error={!!errors.prerequisites}
@@ -532,7 +533,7 @@ const CourseDialog = ({
                   onClick={handleAddPrerequisite}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("courseDialog.actions.add")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -547,13 +548,15 @@ const CourseDialog = ({
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Learning Objectives
+                {t("courseDialog.sections.learningObjectives")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add a learning objective"
+                  placeholder={t(
+                    "courseDialog.placeholders.addLearningObjective"
+                  )}
                   value={newObjective}
                   onChange={(e) => setNewObjective(e.target.value)}
                   error={!!errors.objectives}
@@ -564,7 +567,7 @@ const CourseDialog = ({
                   onClick={handleAddObjective}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("courseDialog.actions.add")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -580,7 +583,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Course Duration (hours)"
+                label={t("courseDialog.fields.courseDuration")}
                 name="duration"
                 type="number"
                 value={formData.duration}
@@ -593,7 +596,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Maximum Students"
+                label={t("courseDialog.fields.maximumStudents")}
                 name="maxStudents"
                 type="number"
                 value={formData.maxStudents}
@@ -603,7 +606,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Total Lessons"
+                label={t("courseDialog.fields.totalLessons")}
                 name="totalLessons"
                 type="number"
                 value={formData.totalLessons}
@@ -614,7 +617,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Total Quizzes"
+                label={t("courseDialog.fields.totalQuizzes")}
                 name="totalQuizzes"
                 type="number"
                 value={formData.totalQuizzes}
@@ -624,7 +627,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Start Date"
+                label={t("courseDialog.fields.startDate")}
                 name="startDate"
                 type="date"
                 value={formData.startDate}
@@ -635,7 +638,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="End Date"
+                label={t("courseDialog.fields.endDate")}
                 name="endDate"
                 type="date"
                 value={formData.endDate}
@@ -645,15 +648,19 @@ const CourseDialog = ({
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel>Course Format</InputLabel>
+                <InputLabel>{t("courseDialog.fields.courseFormat")}</InputLabel>
                 <Select
                   name="format"
                   value={formData.format}
                   onChange={handleChange}
-                  label="Course Format"
+                  label={t("courseDialog.fields.courseFormat")}
                 >
-                  <MenuItem value="self-paced">Self-paced</MenuItem>
-                  <MenuItem value="scheduled">Scheduled</MenuItem>
+                  <MenuItem value="self-paced">
+                    {t("courseDialog.formats.selfPaced")}
+                  </MenuItem>
+                  <MenuItem value="scheduled">
+                    {t("courseDialog.formats.scheduled")}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -661,11 +668,11 @@ const CourseDialog = ({
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Schedule"
+                  label={t("courseDialog.fields.schedule")}
                   name="schedule"
                   value={formData.schedule}
                   onChange={handleChange}
-                  placeholder="e.g., Every Monday, 2 PM"
+                  placeholder={t("courseDialog.placeholders.scheduleExample")}
                 />
               </Grid>
             )}
@@ -678,7 +685,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Price"
+                label={t("courseDialog.fields.price")}
                 name="price"
                 type="number"
                 value={formData.price}
@@ -694,7 +701,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Discount (%)"
+                label={t("courseDialog.fields.discount")}
                 name="discount"
                 type="number"
                 value={formData.discount}
@@ -707,7 +714,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Early Bird Price"
+                label={t("courseDialog.fields.earlyBirdPrice")}
                 name="earlyBirdPrice"
                 type="number"
                 value={formData.earlyBirdPrice}
@@ -720,7 +727,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Early Bird End Date"
+                label={t("courseDialog.fields.earlyBirdEndDate")}
                 name="earlyBirdEndDate"
                 type="date"
                 value={formData.earlyBirdEndDate}
@@ -731,7 +738,7 @@ const CourseDialog = ({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Discount End Date"
+                label={t("courseDialog.fields.discountEndDate")}
                 name="discountEndDate"
                 type="date"
                 value={formData.discountEndDate}
@@ -741,28 +748,34 @@ const CourseDialog = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel>Pricing Model</InputLabel>
+                <InputLabel>{t("courseDialog.fields.pricingModel")}</InputLabel>
                 <Select
                   name="pricingModel"
                   value={formData.pricingModel}
                   onChange={handleChange}
-                  label="Pricing Model"
+                  label={t("courseDialog.fields.pricingModel")}
                 >
-                  <MenuItem value="free">Free</MenuItem>
-                  <MenuItem value="one-time">One-time Payment</MenuItem>
-                  <MenuItem value="subscription">Subscription</MenuItem>
+                  <MenuItem value="free">
+                    {t("courseDialog.pricingModels.free")}
+                  </MenuItem>
+                  <MenuItem value="one-time">
+                    {t("courseDialog.pricingModels.oneTime")}
+                  </MenuItem>
+                  <MenuItem value="subscription">
+                    {t("courseDialog.pricingModels.subscription")}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Course Tags
+                {t("courseDialog.sections.courseTags")}
               </Typography>
               <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Add a tag"
+                  placeholder={t("courseDialog.placeholders.addTag")}
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                 />
@@ -771,7 +784,7 @@ const CourseDialog = ({
                   onClick={handleAddTag}
                   startIcon={<AddIcon />}
                 >
-                  Add
+                  {t("courseDialog.actions.add")}
                 </Button>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -792,16 +805,22 @@ const CourseDialog = ({
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <FormControl fullWidth error={!!errors.status} required>
-                <InputLabel>Status</InputLabel>
+                <InputLabel>{t("courseDialog.fields.status")}</InputLabel>
                 <Select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  label="Status"
+                  label={t("courseDialog.fields.status")}
                 >
-                  <MenuItem value="draft">Draft</MenuItem>
-                  <MenuItem value="published">Published</MenuItem>
-                  <MenuItem value="archived">Archived</MenuItem>
+                  <MenuItem value="draft">
+                    {t("courseDialog.statuses.draft")}
+                  </MenuItem>
+                  <MenuItem value="published">
+                    {t("courseDialog.statuses.published")}
+                  </MenuItem>
+                  <MenuItem value="archived">
+                    {t("courseDialog.statuses.archived")}
+                  </MenuItem>
                 </Select>
                 {errors.status && (
                   <FormHelperText>{errors.status}</FormHelperText>
@@ -811,11 +830,11 @@ const CourseDialog = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="SEO Title"
+                label={t("courseDialog.fields.seoTitle")}
                 name="seoTitle"
                 value={formData.seoTitle}
                 onChange={handleChange}
-                helperText="This will be used for search engine optimization"
+                helperText={t("courseDialog.helpText.seoTitle")}
                 required
                 error={!!errors.seoTitle}
               />
@@ -823,30 +842,38 @@ const CourseDialog = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Meta Description"
+                label={t("courseDialog.fields.metaDescription")}
                 name="metaDescription"
                 value={formData.metaDescription}
                 onChange={handleChange}
                 multiline
                 rows={2}
-                helperText="This will be used for search engine optimization"
+                helperText={t("courseDialog.helpText.metaDescription")}
                 required
                 error={!!errors.metaDescription}
               />
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
+                <InputLabel>{t("courseDialog.fields.language")}</InputLabel>
                 <Select
                   name="language"
                   value={formData.language}
                   onChange={handleChange}
-                  label="Language"
+                  label={t("courseDialog.fields.language")}
                 >
-                  <MenuItem value="english">English</MenuItem>
-                  <MenuItem value="spanish">Spanish</MenuItem>
-                  <MenuItem value="french">French</MenuItem>
-                  <MenuItem value="german">German</MenuItem>
+                  <MenuItem value="english">
+                    {t("courseDialog.languages.english")}
+                  </MenuItem>
+                  <MenuItem value="spanish">
+                    {t("courseDialog.languages.spanish")}
+                  </MenuItem>
+                  <MenuItem value="french">
+                    {t("courseDialog.languages.french")}
+                  </MenuItem>
+                  <MenuItem value="german">
+                    {t("courseDialog.languages.german")}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -863,7 +890,7 @@ const CourseDialog = ({
                     }
                   />
                 }
-                label="Feature this course"
+                label={t("courseDialog.fields.featureThisCourse")}
               />
             </Grid>
             <Grid item xs={12}>
@@ -879,38 +906,52 @@ const CourseDialog = ({
                     }
                   />
                 }
-                label="Include Certificate"
+                label={t("courseDialog.fields.includeCertificate")}
               />
             </Grid>
             {formData.certificateIncluded && (
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Certificate Template"
+                  label={t("courseDialog.fields.certificateTemplate")}
                   name="certificateTemplate"
                   value={formData.certificateTemplate}
                   onChange={handleChange}
                   select
                 >
-                  <MenuItem value="standard">Standard Certificate</MenuItem>
-                  <MenuItem value="premium">Premium Certificate</MenuItem>
-                  <MenuItem value="custom">Custom Certificate</MenuItem>
+                  <MenuItem value="standard">
+                    {t("courseDialog.certificateTemplates.standard")}
+                  </MenuItem>
+                  <MenuItem value="premium">
+                    {t("courseDialog.certificateTemplates.premium")}
+                  </MenuItem>
+                  <MenuItem value="custom">
+                    {t("courseDialog.certificateTemplates.custom")}
+                  </MenuItem>
                 </TextField>
               </Grid>
             )}
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Access Duration"
+                label={t("courseDialog.fields.accessDuration")}
                 name="accessDuration"
                 value={formData.accessDuration}
                 onChange={handleChange}
                 select
               >
-                <MenuItem value="lifetime">Lifetime Access</MenuItem>
-                <MenuItem value="6months">6 Months</MenuItem>
-                <MenuItem value="1year">1 Year</MenuItem>
-                <MenuItem value="2years">2 Years</MenuItem>
+                <MenuItem value="lifetime">
+                  {t("courseDialog.accessDurations.lifetime")}
+                </MenuItem>
+                <MenuItem value="6months">
+                  {t("courseDialog.accessDurations.sixMonths")}
+                </MenuItem>
+                <MenuItem value="1year">
+                  {t("courseDialog.accessDurations.oneYear")}
+                </MenuItem>
+                <MenuItem value="2years">
+                  {t("courseDialog.accessDurations.twoYears")}
+                </MenuItem>
               </TextField>
             </Grid>
           </Grid>
@@ -925,18 +966,24 @@ const CourseDialog = ({
     <Box sx={{ p: 2 }}>
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h5" gutterBottom>
-          {formData.title || "Course Title"}
+          {formData.title || t("courseDialog.preview.courseTitle")}
         </Typography>
         <Typography variant="body1" paragraph>
-          {formData.description || "Course description will appear here."}
+          {formData.description || t("courseDialog.preview.courseDescription")}
         </Typography>
         <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-          <Chip label={formData.level || "Level"} color="primary" />
-          <Chip label={formData.category || "Category"} color="secondary" />
+          <Chip
+            label={formData.level || t("courseDialog.preview.level")}
+            color="primary"
+          />
+          <Chip
+            label={formData.category || t("courseDialog.preview.category")}
+            color="secondary"
+          />
         </Box>
         <Divider sx={{ my: 2 }} />
         <Typography variant="h6" gutterBottom>
-          Prerequisites
+          {t("courseDialog.sections.prerequisites")}
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
           {formData.prerequisites.map((prerequisite, index) => (
@@ -944,7 +991,7 @@ const CourseDialog = ({
           ))}
         </Box>
         <Typography variant="h6" gutterBottom>
-          Learning Objectives
+          {t("courseDialog.sections.learningObjectives")}
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
           {formData.objectives.map((objective, index) => (
@@ -970,7 +1017,9 @@ const CourseDialog = ({
         }}
       >
         <DialogTitle>
-          {mode === "create" ? "Create New Course" : "Edit Course"}
+          {mode === "create"
+            ? t("courseDialog.titles.createNewCourse")
+            : t("courseDialog.titles.editCourse")}
         </DialogTitle>
         <DialogContent>
           {previewMode ? (
@@ -997,7 +1046,7 @@ const CourseDialog = ({
               onClick={handleBack}
               sx={{ mr: 1 }}
             >
-              Back
+              {t("courseDialog.actions.back")}
             </Button>
             <Box sx={{ flex: "1 1 auto" }} />
             {activeStep === steps.length - 1 ? (
@@ -1007,11 +1056,13 @@ const CourseDialog = ({
                 color="primary"
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Create Course"}
+                {saving
+                  ? t("courseDialog.actions.saving")
+                  : t("courseDialog.actions.createCourse")}
               </Button>
             ) : (
               <Button variant="contained" onClick={handleNext} color="primary">
-                Next
+                {t("courseDialog.actions.next")}
               </Button>
             )}
           </DialogActions>

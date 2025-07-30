@@ -32,6 +32,10 @@ const UnifiedDashboardTabs = ({ tabs = [], initialTab = 0, sx = {} }) => {
             px: theme.spacing(3),
             minHeight: theme.spacing(8),
             fontFamily: theme.typography.body1.fontFamily,
+            "&.Mui-selected": {
+              backgroundColor: theme.palette.primary.dark,
+              color: theme.palette.primary.contrastText,
+            },
           },
           "& .MuiTabs-indicator": {
             height: 3,

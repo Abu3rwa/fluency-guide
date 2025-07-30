@@ -46,6 +46,7 @@ const courseService = {
       category: data.category || "",
       level: data.level || "",
       thumbnail: data.thumbnail || null,
+      introVideo: data.introVideo || null,
       instructor: data.instructor || "",
       instructorBio: data.instructorBio || "",
       language: data.language || "english",
@@ -113,18 +114,29 @@ const courseService = {
   async createCourse(courseData) {
     try {
       let thumbnailUrl = courseData.thumbnail;
-      if (courseData.thumbnailFile) {
+      if (courseData.thumbnail instanceof File) {
         const storageRef = ref(
           storage,
-          `courses/${Date.now()}_${courseData.thumbnailFile.name}`
+          `courses/${Date.now()}_${courseData.thumbnail.name}`
         );
-        await uploadBytes(storageRef, courseData.thumbnailFile);
+        await uploadBytes(storageRef, courseData.thumbnail);
         thumbnailUrl = await getDownloadURL(storageRef);
+      }
+
+      let introVideoUrl = courseData.introVideo;
+      if (courseData.introVideo instanceof File) {
+        const storageRef = ref(
+          storage,
+          `courses/${Date.now()}_${courseData.introVideo.name}`
+        );
+        await uploadBytes(storageRef, courseData.introVideo);
+        introVideoUrl = await getDownloadURL(storageRef);
       }
 
       const normalizedCourse = this.normalizeCourseData({
         ...courseData,
         thumbnail: thumbnailUrl,
+        introVideo: introVideoUrl,
         enrolledStudents: 0,
         rating: 0,
         totalRatings: 0,
@@ -167,7 +179,33 @@ const courseService = {
   async updateCourse(courseId, courseData) {
     try {
       const courseRef = doc(db, "courses", courseId);
-      const normalizedCourse = this.normalizeCourseData(courseData);
+
+      let thumbnailUrl = courseData.thumbnail;
+      if (courseData.thumbnail instanceof File) {
+        const storageRef = ref(
+          storage,
+          `courses/${Date.now()}_${courseData.thumbnail.name}`
+        );
+        await uploadBytes(storageRef, courseData.thumbnail);
+        thumbnailUrl = await getDownloadURL(storageRef);
+      }
+
+      let introVideoUrl = courseData.introVideo;
+      if (courseData.introVideo instanceof File) {
+        const storageRef = ref(
+          storage,
+          `courses/${Date.now()}_${courseData.introVideo.name}`
+        );
+        await uploadBytes(storageRef, courseData.introVideo);
+        introVideoUrl = await getDownloadURL(storageRef);
+      }
+
+      const normalizedCourse = this.normalizeCourseData({
+        ...courseData,
+        thumbnail: thumbnailUrl,
+        introVideo: introVideoUrl,
+      });
+
       normalizedCourse.updatedAt = serverTimestamp();
       await updateDoc(courseRef, normalizedCourse);
       return { id: courseId, ...normalizedCourse };

@@ -43,7 +43,13 @@ const StudentCourseDetailContentOutline = ({
       />
     );
   }
-  if (!Array.isArray(modules) || modules.length === 0) return null;
+  if (!Array.isArray(modules) || modules.length === 0) {
+    return (
+      <Typography sx={{ mt: 2, textAlign: "center" }}>
+        {t("studentCourseDetails.contentOutline.noContent")}
+      </Typography>
+    );
+  }
   const userId = user?.uid || user?.id;
 
   // Group lessons by moduleId
