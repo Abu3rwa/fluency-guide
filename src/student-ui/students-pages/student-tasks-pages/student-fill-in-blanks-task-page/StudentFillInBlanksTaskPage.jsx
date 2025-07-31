@@ -30,6 +30,8 @@ import StudentFillInBlanksOptionList from "./StudentFillInBlanksOptionList";
 import StudentFillInBlanksFeedbackSection from "./StudentFillInBlanksFeedbackSection";
 import { useStudentTask } from "../../../../contexts/studentTaskContext";
 import StudentTaskResultsPage from "../components/StudentTaskResultsPage";
+import { useStudyTimer } from "../../../../hooks/useStudyTimer";
+import { useStudyTime } from "../../../../contexts/StudyTimeContext";
 import { playCorrectSound, playIncorrectSound } from "../utils/audioUtils";
 
 const FillInBlanksTaskPage = () => {
@@ -38,6 +40,10 @@ const FillInBlanksTaskPage = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { getTaskById, submitTaskAttempt } = useStudentTask();
+
+  // Study time tracking
+  const { startSession, endSession, isSessionActive } = useStudyTime();
+  const { timeout } = useStudyTimer(5 * 60 * 1000); // 5 minutes timeout for task pages
 
   // State
   const [task, setTask] = useState(null);
@@ -73,6 +79,22 @@ const FillInBlanksTaskPage = () => {
   // Mobile and accessibility support
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Start study session when task loads
+  useEffect(() => {
+    if (task && !isSessionActive) {
+      startSession();
+    }
+  }, [task, isSessionActive, startSession]);
+
+  // End session when component unmounts
+  useEffect(() => {
+    return () => {
+      if (isSessionActive) {
+        endSession();
+      }
+    };
+  }, [isSessionActive, endSession]);
 
   // Get current question options with inline generation
   const currentQuestionOptions = useMemo(() => {
@@ -351,9 +373,12 @@ const FillInBlanksTaskPage = () => {
         const userAnswer = answers[index];
         const correctAnswer = blank.answer;
         const isCorrect =
-          userAnswer &&
-          userAnswer.trim().toLowerCase() ===
-            correctAnswer.trim().toLowerCase();
+          String(userAnswer || "")
+            .trim()
+            .toLowerCase() ===
+          String(correctAnswer || "")
+            .trim()
+            .toLowerCase();
 
         console.log(
           `Blank ${
@@ -592,8 +617,12 @@ const FillInBlanksTaskPage = () => {
       if (!question || !answers) return;
       const correctness = answers.map((answer, index) => {
         return (
-          answer.trim().toLowerCase() ===
-          question.blanks[index]?.answer.trim().toLowerCase()
+          String(answer || "")
+            .trim()
+            .toLowerCase() ===
+          String(question.blanks[index]?.answer || "")
+            .trim()
+            .toLowerCase()
         );
       });
       setBlanksCorrectness(correctness);

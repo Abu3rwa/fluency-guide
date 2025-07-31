@@ -77,7 +77,6 @@ const FeaturesSection = ({ t }) => {
             {
               icon: (
                 <PsychologyIcon
-                  background
                   color="primary"
                   sx={{
                     fontSize: 48,

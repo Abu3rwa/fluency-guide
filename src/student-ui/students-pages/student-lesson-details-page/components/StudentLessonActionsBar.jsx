@@ -7,15 +7,96 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import QuizIcon from "@mui/icons-material/Quiz";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../../routes/constants";
+import { useStudyTime } from "../../../../contexts/StudyTimeContext";
+import { updateTodayStats } from "../../../../services/student-services/studentTodayStatsService";
+import { createActivityFromLessonCompletion } from "../../../../services/student-services/studentRecentActivityService";
+import { getAuth } from "firebase/auth";
 
 const StudentLessonActionsBar = ({ lesson }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [completed, setCompleted] = useState(lesson?.completed || false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { endSession, activeSessionDuration } = useStudyTime();
+  const auth = getAuth();
 
-  const handleMarkComplete = () => {
-    setCompleted(true);
+  const handleMarkComplete = async () => {
+    if (completed || isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // End the current study session and get the duration
+      const sessionDuration = activeSessionDuration;
+      console.log(
+        "Session duration before ending:",
+        sessionDuration,
+        "seconds"
+      );
+
+      endSession();
+
+      // Submit lesson completion activity with study time
+      const userId = auth.currentUser?.uid;
+      console.log("User ID:", userId);
+      console.log("Lesson ID:", lesson.id);
+      console.log("Lesson title:", lesson.title);
+
+      if (userId && sessionDuration > 0) {
+        const durationInMinutes = Math.ceil(sessionDuration / 60);
+        console.log("Duration in minutes:", durationInMinutes);
+
+        const activityData = {
+          type: "lesson_completed",
+          duration: durationInMinutes,
+          lessonId: lesson.id,
+          lessonTitle: lesson.title,
+          timestamp: new Date(),
+        };
+
+        console.log("Submitting activity data:", activityData);
+
+        await updateTodayStats(userId, activityData);
+        console.log("Activity submitted successfully!");
+
+        // Create recent activity for lesson completion
+        try {
+          const lessonTitle = lesson.title || "Lesson Completed";
+
+          await createActivityFromLessonCompletion(
+            userId,
+            lesson.id,
+            lessonTitle,
+            lesson.courseId,
+            durationInMinutes
+          );
+
+          console.log("Recent activity created for lesson completion");
+        } catch (error) {
+          console.error("Error creating recent activity for lesson:", error);
+        }
+      } else {
+        console.warn("No user ID or session duration too low:", {
+          userId,
+          sessionDuration,
+        });
+      }
+
+      setCompleted(true);
+
+      // Show success message
+      console.log(
+        "Lesson completed! Study time recorded:",
+        sessionDuration,
+        "seconds"
+      );
+    } catch (error) {
+      console.error("Error marking lesson as complete:", error);
+      // You can add error handling here
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Example: lesson.tasks = [{ id, type }]
@@ -44,7 +125,7 @@ const StudentLessonActionsBar = ({ lesson }) => {
         color="primary"
         startIcon={<CheckCircleIcon />}
         onClick={handleMarkComplete}
-        disabled={completed}
+        disabled={completed || isSubmitting}
         sx={{
           borderRadius: theme.shape.borderRadius,
           minWidth: 140,
@@ -55,6 +136,8 @@ const StudentLessonActionsBar = ({ lesson }) => {
       >
         {completed
           ? t("lessonDetails.completed")
+          : isSubmitting
+          ? "Recording..."
           : t("lessonDetails.markComplete")}
       </Button>
       {lesson?.tasks?.map((task) => (

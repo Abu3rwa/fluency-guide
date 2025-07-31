@@ -61,13 +61,24 @@ const ProgressOverviewSection = ({
     return null;
   }
 
+  // Debug logging for study time
+  console.log("ProgressOverviewSection - todayStats:", todayStats);
+  console.log("ProgressOverviewSection - studyTime:", todayStats.studyTime);
+  console.log(
+    "ProgressOverviewSection - studyTime type:",
+    typeof todayStats.studyTime
+  );
+
+  // Convert study time from seconds to minutes for display
+  const studyTimeInMinutes = Math.ceil(todayStats.studyTime / 60);
+
   const metrics = [
     {
       title: "Study Time",
-      value: `${todayStats.studyTime} min`,
+      value: `${studyTimeInMinutes} min`,
       icon: <TimeIcon />,
       color: theme.palette.primary.main,
-      progress: Math.min((todayStats.studyTime / 60) * 100, 100), // Assuming 60 min is 100%
+      progress: Math.min((studyTimeInMinutes / 60) * 100, 100), // Assuming 60 min is 100%
     },
     {
       title: "Streak",

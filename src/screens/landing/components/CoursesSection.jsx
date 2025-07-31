@@ -15,20 +15,20 @@ import { useStudentCourse } from "../../../contexts/studentCourseContext";
 import { useUser } from "../../../contexts/UserContext";
 import { enrollmentService } from "../../../services/enrollmentService";
 import { useTheme } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
 
-const categories = [
-  { label: "All", value: "all" },
-  { label: "Foundation", value: "foundation" },
-  { label: "Business", value: "business" },
-  { label: "Conversation", value: "conversation" },
-  { label: "Exam Prep", value: "exam" },
-];
-
-const CoursesSection = () => {
+const CoursesSection = ({ t }) => {
   const theme = useTheme();
-  const { t } = useTranslation();
 
+  const categories = [
+    { label: t("landing.courses.categories.all"), value: "all" },
+    { label: t("landing.courses.categories.foundation"), value: "foundation" },
+    { label: t("landing.courses.categories.business"), value: "business" },
+    {
+      label: t("landing.courses.categories.conversation"),
+      value: "conversation",
+    },
+    { label: t("landing.courses.categories.examPrep"), value: "exam" },
+  ];
   // Memoized fade indicator styles
   const fadeStyles = useMemo(
     () => ({
@@ -203,8 +203,8 @@ const CoursesSection = () => {
     if (!user) {
       return {
         href: "/auth",
-        label: "Sign Up Now",
-        bannerText: "Join thousands of learners – Sign up for free!",
+        label: t("landing.courses.cta.signUpNow"),
+        bannerText: t("landing.courses.cta.joinThousands"),
       };
     }
 
@@ -212,21 +212,21 @@ const CoursesSection = () => {
       if (isEnrolledInAnyCourse) {
         return {
           href: "/dashboard",
-          label: "Continue Learning",
-          bannerText: "Continue your learning journey!",
+          label: t("landing.courses.cta.continueLearning"),
+          bannerText: t("landing.courses.cta.continueJourney"),
         };
       }
       if (filteredCourses.length > 0) {
         return {
           href: `/courses/${filteredCourses[0].id}/enroll`,
-          label: "Enroll Now",
-          bannerText: "Ready to start learning? Enroll in a course!",
+          label: t("landing.courses.cta.enrollNow"),
+          bannerText: t("landing.courses.cta.readyToLearn"),
         };
       }
       return {
         href: "/courses",
-        label: "Browse All Courses",
-        bannerText: "Explore our full course catalog.",
+        label: t("landing.courses.cta.browseAllCourses"),
+        bannerText: t("landing.courses.cta.exploreCatalog"),
       };
     }
 
@@ -286,7 +286,7 @@ const CoursesSection = () => {
         </Box>
       ) : filteredCourses.length === 0 ? (
         <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
-          No courses found.
+          {t("landing.courses.noCoursesFound")}
         </Typography>
       ) : (
         <Box sx={{ position: "relative" }}>
@@ -316,7 +316,7 @@ const CoursesSection = () => {
               "&:active": { cursor: "grabbing" },
             }}
             tabIndex={0}
-            aria-label="Featured Courses Carousel"
+            aria-label={t("landing.courses.carouselLabel")}
           >
             {filteredCourses.map((course) => (
               <Box
@@ -333,6 +333,7 @@ const CoursesSection = () => {
                   course={course}
                   enrollment={enrollments.find((e) => e.courseId === course.id)}
                   onSignUp={() => navigate("/auth")}
+                  t={t}
                 />
               </Box>
             ))}

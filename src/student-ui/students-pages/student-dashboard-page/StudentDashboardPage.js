@@ -22,8 +22,9 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import AddIcon from "@mui/icons-material/Add";
 import Confetti from "react-confetti"; // Placeholder, install react-confetti if not present
 import studentAchievementService from "../../../services/student-services/studentAchievementService";
-import "./StudentDashboardPage.css";
 import StudentDashboardHeader from "./components/StudentDashboardHeader";
+import DashboardErrorBoundary from "./components/DashboardErrorBoundary";
+import CenteredLoader from "../../../components/CenteredLoader";
 
 // Import new components
 import useStudentDashboard from "./hooks/useStudentDashboard";
@@ -69,10 +70,12 @@ const StudentDashboardPage = () => {
     trendData,
     vocabularyStats,
     pronunciationStats,
+    learningPaths,
     loading: dashboardLoading,
     error: dashboardError,
     refetch,
     refetchSection,
+    clearError,
   } = useStudentDashboard(user?.uid);
 
   useEffect(() => {
@@ -133,8 +136,28 @@ const StudentDashboardPage = () => {
   };
 
   const handleActivityClick = (activity) => {
-    // TODO: Navigate to activity details
-    console.log("Activity clicked:", activity);
+    // Handle different activity types
+    switch (activity.type) {
+      case "vocabulary_practice":
+        navigate("/student/vocabulary");
+        break;
+      case "lesson_completed":
+        // TODO: Navigate to lesson details
+        console.log("Lesson completed:", activity);
+        break;
+      case "quiz_completed":
+        // TODO: Navigate to quiz results
+        console.log("Quiz completed:", activity);
+        break;
+      case "achievement_unlocked":
+        // TODO: Show achievement details
+        console.log("Achievement unlocked:", activity);
+        break;
+      default:
+        // TODO: Navigate to activity details
+        console.log("Activity clicked:", activity);
+        break;
+    }
   };
 
   const handleViewAllActivities = () => {
@@ -150,13 +173,22 @@ const StudentDashboardPage = () => {
     // TODO: Update analytics time range
     console.log("Time range changed:", range);
   };
+
+  // Handle dashboard retry
+  const handleDashboardRetry = () => {
+    clearError();
+    refetch();
+  };
+
   if (loading) {
     return (
-      <Box sx={{ p: 4 }}>
-        <Skeleton variant="rectangular" height={60} sx={{ mb: 2 }} />
-        <Skeleton variant="rectangular" height={200} sx={{ mb: 2 }} />
-        <Skeleton variant="rectangular" height={200} />
-      </Box>
+      <CenteredLoader
+        type="spinner"
+        message="Loading your dashboard..."
+        fullScreen={true}
+        size={80}
+        showMessage={true}
+      />
     );
   }
   if (error) return <div className="student-dashboard-error">{error}</div>;
@@ -207,184 +239,249 @@ const StudentDashboardPage = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <div
-        className={`student-dashboard-page ${mode} p-3`}
-        style={{
-          "--primary": theme.palette.primary.main,
-          "--background": theme.palette.background.default,
-          "--text": theme.palette.text.primary,
-          "--card": theme.palette.background.paper,
-        }}
-      >
-        {showConfetti && <Confetti numberOfPieces={200} recycle={false} />}
-        <div className="student-dashboard-grid">
-          <StudentDashboardHeader
-            user={{
-              ...user,
-              enrolledCoursesCount: courseProgress?.length || 0,
-            }}
-            displayName={displayName}
-            avatar={avatar}
-            preferences={preferences}
-            mode={mode}
-            theme={theme}
-            isMobile={isMobile}
-            onEditProfile={() => setIsEditModalOpen(true)}
-            onSettings={() => navigate("/settings")}
-            onLogout={handleLogout}
-            toggleTheme={toggleTheme}
-          />
-          <main className="student-dashboard-main">
-            <Suspense
-              fallback={
-                <Box sx={{ p: 2 }}>
-                  <Skeleton variant="rectangular" height={120} />
-                </Box>
-              }
-            >
-              {/* Progress Overview Section */}
-              <Fade in timeout={1000}>
-                <Box>
-                  <ProgressOverviewSection
-                    todayStats={todayStats}
-                    goals={goals}
-                    loading={dashboardLoading}
-                    error={dashboardError}
-                  />
-                </Box>
-              </Fade>
-
-              {/* Review Queue Widget */}
-              <Fade in timeout={1200}>
-                <Box>
-                  <ReviewQueueWidget userId={user?.uid} />
-                </Box>
-              </Fade>
-
-              {/* Vocabulary Review Integration */}
-              <Fade in timeout={1250}>
-                <Box>
-                  <VocabularyReviewIntegration />
-                </Box>
-              </Fade>
-
-              {/* Learning Path & Course Progress Section */}
-              <Fade in timeout={1300}>
-                <Box>
-                  <LearningPathSection
-                    enrolledCourses={courseProgress}
-                    courseProgress={courseProgress}
-                    onCourseClick={handleCourseClick}
-                  />
-                </Box>
-              </Fade>
-
-              {/* Goals Progress Section */}
-              <Fade in timeout={1500}>
-                <Box>
-                  <GoalsProgressSection
-                    goals={goals}
-                    onGoalClick={handleGoalClick}
-                    onCreateGoal={handleCreateGoal}
-                    onGoalUpdated={handleUpdateGoal}
-                    onGoalDeleted={handleDeleteGoal}
-                    loading={dashboardLoading}
-                    error={dashboardError}
-                    userId={user?.uid}
-                  />
-                </Box>
-              </Fade>
-
-              <Fade in timeout={1700}>
-                <Box>
-                  <GoalAnalyticsSection
-                    userId={user?.uid}
-                    loading={dashboardLoading}
-                    error={dashboardError}
-                  />
-                </Box>
-              </Fade>
-
-              {/* Achievements Section */}
-              <Fade in timeout={1800}>
-                <Box>
-                  <AchievementsList
-                    achievements={achievements}
-                    horizontalScroll={true}
-                    onAchievementClick={handleAchievementClick}
-                  />
-                </Box>
-              </Fade>
-
-              {/* Progress Analytics Section */}
-              <Fade in timeout={1900}>
-                <Box>
-                  <ProgressAnalyticsSection
-                    trendData={trendData}
-                    vocabularyStats={vocabularyStats}
-                    pronunciationStats={pronunciationStats}
-                    onTimeRangeChange={handleTimeRangeChange}
-                    loading={dashboardLoading}
-                    error={dashboardError}
-                  />
-                </Box>
-              </Fade>
-
-              {/* Recent Activities Section */}
-              <Fade in timeout={2100}>
-                <Box>
-                  <RecentActivitiesSection
-                    activities={recentActivities}
-                    onActivityClick={handleActivityClick}
-                    onViewAll={handleViewAllActivities}
-                    loading={dashboardLoading}
-                    error={dashboardError}
-                  />
-                </Box>
-              </Fade>
-
-              {/* Quick Actions Section */}
-              <Fade in timeout={2300}>
-                <Box>
-                  <QuickActionsSection
-                    onEditProfile={() => setIsEditModalOpen(true)}
-                    pinnedActions={pinnedActions}
-                    onPinAction={handlePinAction}
-                  />
-                </Box>
-              </Fade>
-            </Suspense>
-          </main>
-        </div>
-        {fab}
-        <EditProfileModal
-          open={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onProfileUpdate={handleProfileUpdate}
-        />
-
-        <Snackbar
-          open={!!profileUpdateMsg}
-          message={profileUpdateMsg}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          ContentProps={{ "aria-live": "polite" }}
-        />
-        {/* ARIA live region for important updates */}
-        <div
-          aria-live="polite"
-          style={{
-            position: "absolute",
-            left: -9999,
-            top: "auto",
-            width: 1,
-            height: 1,
-            overflow: "hidden",
+      <DashboardErrorBoundary onRetry={handleDashboardRetry}>
+        <Box
+          sx={{
+            minHeight: "100vh",
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.primary,
+            padding: { xs: 0.5, sm: 2, md: 3 },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+            maxWidth: "100vw",
+            overflowX: "hidden",
+            // Mobile-specific fixes
+            "@media (max-width: 600px)": {
+              padding: "0.25rem",
+              minHeight: "100dvh", // Use dynamic viewport height for mobile
+            },
+            // Safari and iOS specific fixes
+            "@supports (-webkit-touch-callout: none)": {
+              minHeight: "-webkit-fill-available",
+            },
           }}
         >
-          {profileUpdateMsg}
-        </div>
-        {/* TODO: Add animated transitions for cards/sections */}
-      </div>
+          {showConfetti && <Confetti numberOfPieces={200} recycle={false} />}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: { xs: 1, sm: 2 },
+              width: "100%",
+              maxWidth: { xs: "100%", sm: "100%", md: "1200px" },
+              margin: "0 auto",
+              padding: { xs: 0, sm: 1, md: 2 },
+              // Mobile-specific container fixes
+              "@media (max-width: 600px)": {
+                gap: "0.5rem",
+                padding: "0",
+                width: "100vw",
+                maxWidth: "100vw",
+                boxSizing: "border-box",
+              },
+              // Prevent horizontal scroll on mobile
+              "@media (max-width: 480px)": {
+                width: "100%",
+                maxWidth: "100%",
+                overflowX: "hidden",
+              },
+            }}
+          >
+            <StudentDashboardHeader
+              user={{
+                ...user,
+                enrolledCoursesCount: courseProgress?.length || 0,
+              }}
+              displayName={displayName}
+              avatar={avatar}
+              preferences={preferences}
+              mode={mode}
+              theme={theme}
+              isMobile={isMobile}
+              onEditProfile={() => setIsEditModalOpen(true)}
+              onSettings={() => navigate("/settings")}
+              onLogout={handleLogout}
+              toggleTheme={toggleTheme}
+            />
+            <Box
+              component="main"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: { xs: 1, sm: 2 },
+                width: "100%",
+                // Mobile-specific main content fixes
+                "@media (max-width: 600px)": {
+                  gap: "0.5rem",
+                  width: "100%",
+                  maxWidth: "100%",
+                  overflowX: "hidden",
+                },
+                // Extra small devices
+                "@media (max-width: 480px)": {
+                  padding: "0",
+                  margin: "0",
+                },
+              }}
+            >
+              <Suspense
+                fallback={
+                  <CenteredLoader
+                    type="skeleton"
+                    message="Loading components..."
+                    skeletonCount={4}
+                    skeletonHeight={24}
+                    minHeight="300px"
+                  />
+                }
+              >
+                {/* Progress Overview Section */}
+                <Fade in timeout={1000}>
+                  <Box>
+                    <ProgressOverviewSection
+                      todayStats={todayStats}
+                      goals={goals}
+                      loading={dashboardLoading}
+                      error={dashboardError}
+                    />
+                  </Box>
+                </Fade>
+
+                {/* Review Queue Widget */}
+                <Fade in timeout={1200}>
+                  <Box>
+                    <ReviewQueueWidget userId={user?.uid} />
+                  </Box>
+                </Fade>
+
+                {/* Vocabulary Review Integration */}
+                <Fade in timeout={1250}>
+                  <Box>
+                    <VocabularyReviewIntegration />
+                  </Box>
+                </Fade>
+
+                {/* Learning Path & Course Progress Section */}
+                <Fade in timeout={1300}>
+                  <Box>
+                    <LearningPathSection
+                      enrolledCourses={courseProgress}
+                      courseProgress={courseProgress}
+                      onCourseClick={handleCourseClick}
+                      userId={user?.uid}
+                    />
+                  </Box>
+                </Fade>
+
+                {/* Goals Progress Section */}
+                <Fade in timeout={1500}>
+                  <Box>
+                    <GoalsProgressSection
+                      goals={goals}
+                      onGoalClick={handleGoalClick}
+                      onCreateGoal={handleCreateGoal}
+                      onGoalUpdated={handleUpdateGoal}
+                      onGoalDeleted={handleDeleteGoal}
+                      loading={dashboardLoading}
+                      error={dashboardError}
+                      userId={user?.uid}
+                    />
+                  </Box>
+                </Fade>
+
+                <Fade in timeout={1700}>
+                  <Box>
+                    <GoalAnalyticsSection
+                      userId={user?.uid}
+                      loading={dashboardLoading}
+                      error={dashboardError}
+                    />
+                  </Box>
+                </Fade>
+
+                {/* Achievements Section */}
+                <Fade in timeout={1800}>
+                  <Box>
+                    <AchievementsList
+                      achievements={achievements}
+                      horizontalScroll={true}
+                      onAchievementClick={handleAchievementClick}
+                    />
+                  </Box>
+                </Fade>
+
+                {/* Progress Analytics Section */}
+                <Fade in timeout={1900}>
+                  <Box>
+                    <ProgressAnalyticsSection
+                      trendData={trendData}
+                      vocabularyStats={vocabularyStats}
+                      pronunciationStats={pronunciationStats}
+                      onTimeRangeChange={handleTimeRangeChange}
+                      loading={dashboardLoading}
+                      error={dashboardError}
+                    />
+                  </Box>
+                </Fade>
+
+                {/* Recent Activities Section */}
+                <Fade in timeout={2100}>
+                  <Box>
+                    <RecentActivitiesSection
+                      activities={recentActivities}
+                      onActivityClick={handleActivityClick}
+                      onViewAll={handleViewAllActivities}
+                      loading={dashboardLoading}
+                      error={dashboardError}
+                    />
+                  </Box>
+                </Fade>
+
+                {/* Quick Actions Section */}
+                <Fade in timeout={2300}>
+                  <Box>
+                    <QuickActionsSection
+                      onEditProfile={() => setIsEditModalOpen(true)}
+                      pinnedActions={pinnedActions}
+                      onPinAction={handlePinAction}
+                    />
+                  </Box>
+                </Fade>
+              </Suspense>
+            </Box>
+          </Box>
+          {fab}
+          <EditProfileModal
+            open={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onProfileUpdate={handleProfileUpdate}
+          />
+
+          <Snackbar
+            open={!!profileUpdateMsg}
+            message={profileUpdateMsg}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            ContentProps={{ "aria-live": "polite" }}
+          />
+          {/* ARIA live region for important updates */}
+          <Box
+            aria-live="polite"
+            sx={{
+              position: "absolute",
+              left: -9999,
+              top: "auto",
+              width: 1,
+              height: 1,
+              overflow: "hidden",
+            }}
+          >
+            {profileUpdateMsg}
+          </Box>
+          {/* TODO: Add animated transitions for cards/sections */}
+        </Box>
+      </DashboardErrorBoundary>
     </MuiThemeProvider>
   );
 };

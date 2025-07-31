@@ -521,7 +521,6 @@ const StudentVocabularyWordCard = React.memo(
         } else if (onToggleFavorite) {
           console.log("🔄 Using prop function for favorite toggle");
           await onToggleFavorite(word.id);
-          console.log("✅ Favorite toggle successful");
         } else {
           throw new Error("No toggle function available");
         }
@@ -545,17 +544,6 @@ const StudentVocabularyWordCard = React.memo(
         setOptimisticFavorite(null); // Revert optimistic update
         setUpdateMessage(`Failed to update favorites: ${error.message}`);
         setTimeout(() => setUpdateMessage(""), 5000);
-
-        // Show more detailed error for debugging
-        if (process.env.NODE_ENV === "development") {
-          console.error("🔧 Development mode - showing detailed error:");
-          console.error("Word object:", word);
-          console.error("Current user:", currentUser);
-          console.error("Available functions:", {
-            toggleFavorite: typeof toggleFavorite,
-            onToggleFavorite: typeof onToggleFavorite,
-          });
-        }
       } finally {
         setIsUpdating(false);
       }
@@ -1185,43 +1173,6 @@ const StudentVocabularyWordCard = React.memo(
             {updateMessage}
           </Alert>
         </Snackbar>
-
-        {/* Debug Section - Development Only */}
-        {process.env.NODE_ENV === "development" && (
-          <Box sx={{ mt: 2, p: 2, bgcolor: "grey.100", borderRadius: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              <strong>Debug Info:</strong>
-            </Typography>
-            <Typography variant="caption" display="block">
-              Word ID: {word.id}
-            </Typography>
-            <Typography variant="caption" display="block">
-              User ID: {currentUser?.uid || "Not logged in"}
-            </Typography>
-            <Typography variant="caption" display="block">
-              Has toggleFavorite: {toggleFavorite ? "Yes" : "No"}
-            </Typography>
-            <Typography variant="caption" display="block">
-              Has onToggleFavorite: {onToggleFavorite ? "Yes" : "No"}
-            </Typography>
-            <Typography variant="caption" display="block">
-              Current favorite status: {isFavorite ? "Yes" : "No"}
-            </Typography>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => {
-                console.log("🔧 Debug: Testing favorite toggle");
-                console.log("Word:", word);
-                console.log("User:", currentUser);
-                console.log("Functions:", { toggleFavorite, onToggleFavorite });
-              }}
-              sx={{ mt: 1 }}
-            >
-              Test Debug
-            </Button>
-          </Box>
-        )}
       </>
     );
   }

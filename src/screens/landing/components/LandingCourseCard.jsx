@@ -19,7 +19,7 @@ import { ROUTES } from "../../../routes/constants";
 import { useNavigate } from "react-router-dom";
 import PaymentDialog from "../../../components/PaymentDialog";
 
-const LandingCourseCard = ({ course, enrollment, onSignUp }) => {
+const LandingCourseCard = ({ course, enrollment, onSignUp, t }) => {
   const { userData: user, isStudent } = useUser();
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const LandingCourseCard = ({ course, enrollment, onSignUp }) => {
         sx={{ mt: 0 }}
         onClick={onSignUp}
       >
-        Login or Sign Up
+        {t("landing.courseCard.loginOrSignUp")}
       </Button>
     );
   } else if (enrollmentStatus === "active") {
@@ -53,19 +53,19 @@ const LandingCourseCard = ({ course, enrollment, onSignUp }) => {
           );
         }}
       >
-        Start Learning
+        {t("landing.courseCard.startLearning")}
       </Button>
     );
   } else if (enrollmentStatus === "pending") {
     actionButton = (
       <Typography sx={{ mt: 0 }} color="text.secondary" align="center">
-        Enrollment Pending
+        {t("landing.courseCard.enrollmentPending")}
       </Typography>
     );
   } else if (enrollmentStatus === "rejected") {
     actionButton = (
       <Typography sx={{ mt: 0 }} color="error" align="center">
-        Enrollment Rejected
+        {t("landing.courseCard.enrollmentRejected")}
       </Typography>
     );
   } else {
@@ -77,7 +77,7 @@ const LandingCourseCard = ({ course, enrollment, onSignUp }) => {
         sx={{ mt: 0 }}
         onClick={() => setShowPaymentDialog(true)}
       >
-        Enroll
+        {t("landing.courseCard.enroll")}
       </Button>
     );
   }
@@ -144,39 +144,7 @@ const LandingCourseCard = ({ course, enrollment, onSignUp }) => {
             >
               {course.title}
             </Typography>
-            <Stack
-              direction="row"
-              spacing={0.5}
-              sx={{ mb: 1.5, justifyContent: "flex-end" }}
-            >
-              {/* {course.certificateIncluded && (
-                <Chip label="Certificate" size="small" color="success" />
-              )} */}
-              {course.discount && (
-                <Chip
-                  sx={{
-                    fontWeight: 400,
-                    fontSize: "0.775rem",
-                    lineHeight: 1,
-                    position: "absolute",
-                    top: 1,
-                    [theme.direction === "rtl" ? "left" : "right"]: 1,
-                    backgroundColor: "transparent",
-                    border: "1px solid #ffc107",
-                    color: "#ffc107",
-                    borderRadius: "10px",
-                    padding: "0 8px",
-                    height: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  label={`${course.discount}% off`}
-                  size="small"
-                  color="warning"
-                />
-              )}
-            </Stack>
+
             <Typography
               variant="body2"
               color="text.secondary"
@@ -200,7 +168,7 @@ const LandingCourseCard = ({ course, enrollment, onSignUp }) => {
               display="block"
               sx={{ mb: 1.5, fontWeight: 500 }}
             >
-              By {course.instructor}
+              {t("landing.courseCard.by")} {course.instructor}
             </Typography>
             <Stack
               direction="row"
@@ -210,13 +178,58 @@ const LandingCourseCard = ({ course, enrollment, onSignUp }) => {
               <Chip label={course.level} size="small" />
               <Chip label={course.category} size="small" />
             </Stack>
-            <Typography
-              variant="subtitle2"
-              color="primary"
-              sx={{ mb: 2, fontWeight: 600 }}
+            <Stack
+              direction="row"
+              spacing={0.5}
+              sx={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 1.5,
+              }}
             >
-              {course.price === 0 ? "Free" : `$${course.price}`}
-            </Typography>
+              {/* {course.certificateIncluded && (
+                <Chip label="Certificate" size="small" color="success" />
+              )} */}
+
+              <Typography
+                variant="subtitle2"
+                color="primary"
+                sx={{ mb: 2, fontWeight: 600 }}
+              >
+                {course.price === 0
+                  ? t("landing.courseCard.free")
+                  : `$${course.price}`}
+              </Typography>
+              {course.discount && (
+                <Chip
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: "0.775rem",
+                    lineHeight: 1,
+                    // position: "absolute",
+                    // top: 1,
+                    // [theme.direction === "rtl" ? "left" : "right"]: 1,
+                    backgroundColor: "transparent",
+                    border: "1px solidrgb(204, 153, 0)",
+                    color: "#ffc107",
+                    borderRadius: "10px",
+                    padding: "0 8px",
+                    height: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  label={t("landing.courseCard.percentOff", {
+                    percent: course.discount,
+                  })}
+                  size="small"
+                  color="warning"
+                />
+              )}
+            </Stack>
+
             {actionButton}
           </CardContent>
         </Card>

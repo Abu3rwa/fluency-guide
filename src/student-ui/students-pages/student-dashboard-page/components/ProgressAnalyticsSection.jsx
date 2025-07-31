@@ -373,7 +373,15 @@ const ProgressAnalyticsSection = ({
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease-in-out",
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main + "20",
+                      transform: "translateY(-2px)",
+                      boxShadow: 2,
+                    },
                   }}
+                  onClick={() => (window.location.href = "/student/vocabulary")}
                 >
                   <Typography
                     variant={isMobile ? "caption" : "subtitle2"}

@@ -23,6 +23,9 @@ import StudentLessonVocabularySection from "./components/StudentLessonVocabulary
 import StudentLessonGrammarSection from "./components/StudentLessonGrammarSection";
 import StudentLessonSkillsSection from "./components/StudentLessonSkillsSection";
 import StudentLessonTasksSection from "./components/StudentLessonTasksSection";
+
+import { useStudyTimer } from "../../../hooks/useStudyTimer";
+import { useStudyTime } from "../../../contexts/StudyTimeContext";
 import "./StudentLessonDetailsPage.styles.js";
 
 const StudentLessonDetailsPage = () => {
@@ -32,6 +35,10 @@ const StudentLessonDetailsPage = () => {
   const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Study time tracking
+  const { startSession, endSession, isSessionActive } = useStudyTime();
+  const { timeout } = useStudyTimer(10 * 60 * 1000); // 10 minutes timeout for lesson pages
 
   useEffect(() => {
     setLoading(true);
@@ -50,6 +57,22 @@ const StudentLessonDetailsPage = () => {
         setLoading(false);
       });
   }, [lessonId, t]);
+
+  // Start study session when lesson loads
+  useEffect(() => {
+    if (lesson && !isSessionActive) {
+      startSession();
+    }
+  }, [lesson, isSessionActive, startSession]);
+
+  // End session when component unmounts
+  useEffect(() => {
+    return () => {
+      if (isSessionActive) {
+        endSession();
+      }
+    };
+  }, [isSessionActive, endSession]);
 
   if (loading) {
     return (
@@ -268,6 +291,7 @@ const StudentLessonDetailsPage = () => {
       >
         <Container maxWidth="lg" sx={{ py: 0, px: { xs: 0, sm: 2, md: 3 } }}>
           <StudentLessonHeaderSection lesson={lesson} />
+
           {/* this is the video player of the lesson */}
           {media.length > 0 && (
             <Box sx={{ mb: 3, mx: { xs: 0, sm: 2, md: 3 } }}>

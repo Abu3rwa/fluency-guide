@@ -42,12 +42,14 @@ export async function getUserRecentActivities(userId, limitCount = 10) {
       limit(limitCount)
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ 
-      id: doc.id, 
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
       ...doc.data(),
-      lastAccessed: doc.data().lastAccessed?.toDate?.() || doc.data().lastAccessed,
+      lastAccessed:
+        doc.data().lastAccessed?.toDate?.() || doc.data().lastAccessed,
       createdAt: doc.data().createdAt?.toDate?.() || doc.data().createdAt,
       updatedAt: doc.data().updatedAt?.toDate?.() || doc.data().updatedAt,
+      completedAt: doc.data().completedAt?.toDate?.() || doc.data().completedAt,
     }));
   } catch (e) {
     console.error("Error getting recent activities:", e);
@@ -64,12 +66,14 @@ export async function getIncompleteActivities(userId) {
       where("status", "in", ["inProgress", "failed", "notStarted"])
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ 
-      id: doc.id, 
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
       ...doc.data(),
-      lastAccessed: doc.data().lastAccessed?.toDate?.() || doc.data().lastAccessed,
+      lastAccessed:
+        doc.data().lastAccessed?.toDate?.() || doc.data().lastAccessed,
       createdAt: doc.data().createdAt?.toDate?.() || doc.data().createdAt,
       updatedAt: doc.data().updatedAt?.toDate?.() || doc.data().updatedAt,
+      completedAt: doc.data().completedAt?.toDate?.() || doc.data().completedAt,
     }));
   } catch (e) {
     console.error("Error getting incomplete activities:", e);
@@ -127,7 +131,15 @@ export async function createActivityFromTaskAttempt(
       updatedAt: serverTimestamp(),
     };
 
-    const docRef = await addDoc(collection(db, RECENT_ACTIVITIES_COLLECTION), activity);
+    // Add completedAt timestamp if status is completed
+    if (status === "completed") {
+      activity.completedAt = serverTimestamp();
+    }
+
+    const docRef = await addDoc(
+      collection(db, RECENT_ACTIVITIES_COLLECTION),
+      activity
+    );
     return {
       id: docRef.id,
       ...activity,
@@ -138,12 +150,80 @@ export async function createActivityFromTaskAttempt(
   }
 }
 
+// Create activity from lesson completion
+export async function createActivityFromLessonCompletion(
+  userId,
+  lessonId,
+  lessonTitle,
+  courseId,
+  timeSpent = null
+) {
+  try {
+    const activity = {
+      userId,
+      title: lessonTitle,
+      description: "Lesson completed successfully",
+      type: "lesson",
+      status: "completed",
+      targetId: "/lesson",
+      lessonId,
+      courseId,
+      lastAccessed: serverTimestamp(),
+      progress: 1.0,
+      timeSpent,
+      completedAt: serverTimestamp(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(
+      collection(db, RECENT_ACTIVITIES_COLLECTION),
+      activity
+    );
+    return {
+      id: docRef.id,
+      ...activity,
+    };
+  } catch (e) {
+    console.error("Error creating activity from lesson completion:", e);
+    throw new Error("Failed to create activity from lesson completion");
+  }
+}
+
+// Mark activity as completed
+export async function markActivityCompleted(
+  activityId,
+  score = null,
+  timeSpent = null
+) {
+  try {
+    const activityRef = doc(db, RECENT_ACTIVITIES_COLLECTION, activityId);
+    const updateData = {
+      status: "completed",
+      completedAt: serverTimestamp(),
+      progress: 1.0,
+      lastAccessed: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    if (score !== null) updateData.score = score;
+    if (timeSpent !== null) updateData.timeSpent = timeSpent;
+
+    await updateDoc(activityRef, updateData);
+  } catch (e) {
+    console.error("Error marking activity as completed:", e);
+    throw new Error("Failed to mark activity as completed");
+  }
+}
+
 const studentRecentActivityService = {
   saveActivity,
   getUserRecentActivities,
   getIncompleteActivities,
   updateActivityProgress,
   createActivityFromTaskAttempt,
+  createActivityFromLessonCompletion,
+  markActivityCompleted,
 };
 
 export default studentRecentActivityService;

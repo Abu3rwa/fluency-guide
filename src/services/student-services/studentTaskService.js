@@ -20,6 +20,8 @@ import {
 import { db } from "../../config/firebase";
 import { getAuth } from "firebase/auth";
 import vocabularyReviewIntegrationService from "./vocabularyReviewIntegrationService";
+import { updateTodayStats } from "./studentTodayStatsService";
+import { createActivityFromTaskAttempt } from "./studentRecentActivityService";
 
 const TASKS_COLLECTION = "tasks";
 const TASK_ATTEMPTS_COLLECTION = "taskAttempts";
@@ -84,8 +86,12 @@ function calculateFillInBlanksScore(task, userAnswers) {
     const userAnswer = userAnswers[question.id];
     const correctAnswer = question.correctAnswer;
     const isCorrect =
-      userAnswer?.toLowerCase()?.trim() ===
-      correctAnswer?.toLowerCase()?.trim();
+      String(userAnswer || "")
+        .toLowerCase()
+        .trim() ===
+      String(correctAnswer || "")
+        .toLowerCase()
+        .trim();
     const pointsEarned = isCorrect ? 1 : 0;
     const timeSpent = 0; // This would need to be tracked per question
 
@@ -321,6 +327,55 @@ export async function submitTaskAttempt(
           console.error("Error creating vocabulary review items:", error);
           // Don't throw error here as it shouldn't break the task completion
         }
+      }
+
+      // Create activity for study time tracking
+      try {
+        // Import time utilities for standardized conversion
+        const { secondsToMinutes } = await import("../../utils/timeUtils");
+        const durationInMinutes = secondsToMinutes(timeSpent);
+
+        await updateTodayStats(userId, {
+          type: "quiz_completed",
+          duration: durationInMinutes,
+          taskId,
+          score: scoreData.score,
+          isPassed,
+          totalQuestions: task.questions.length,
+          timestamp: new Date(),
+        });
+      } catch (error) {
+        console.error("Error updating today stats:", error);
+        // Don't throw error here as it shouldn't break the task completion
+      }
+
+      // Create recent activity for task completion
+      try {
+        const targetId = `/${task.type}`;
+        const taskTitle =
+          task.title ||
+          `English Grammar: ${task.type
+            .replace(/([A-Z])/g, " $1")
+            .trim()} Quiz`;
+
+        await createActivityFromTaskAttempt(
+          taskId,
+          userId,
+          targetId,
+          taskTitle,
+          task.lessonId,
+          task.courseId,
+          isPassed ? "completed" : "failed",
+          1.0, // progress
+          scoreData.score,
+          Math.ceil(timeSpent / 60), // timeSpent in minutes
+          task.questions.length
+        );
+
+        console.log("Recent activity created for task completion");
+      } catch (error) {
+        console.error("Error creating recent activity:", error);
+        // Don't throw error here as it shouldn't break the task completion
       }
     }
 

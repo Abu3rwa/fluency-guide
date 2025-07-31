@@ -34,7 +34,8 @@
     "profile": "Profile"
   },
   "header": {
-    "toggleTheme": "Toggle Theme"
+    "toggleTheme": "Toggle Theme",
+    "goHome": "Go to Home"
   },
   "language": {
     "changeLanguage": "Language",
@@ -73,6 +74,39 @@
       "subtitle": "Experience personalized English learning with AI-powered conversations, pronunciation practice, and adaptive lessons designed for your success.",
       "startLearning": "Start Learning",
       "watchDemo": "Watch Demo"
+    },
+    "courseCard": {
+      "loginOrSignUp": "Login or Sign Up",
+      "startLearning": "Start Learning",
+      "enroll": "Enroll",
+      "enrollmentPending": "Enrollment Pending",
+      "enrollmentRejected": "Enrollment Rejected",
+      "free": "Free",
+      "by": "By",
+      "featured": "Featured",
+      "percentOff": "{{percent}}% off"
+    },
+    "courses": {
+      "title": "Explore Our Courses",
+      "noCoursesFound": "No courses found.",
+      "carouselLabel": "Featured Courses Carousel",
+      "categories": {
+        "all": "All",
+        "foundation": "Foundation",
+        "business": "Business",
+        "conversation": "Conversation",
+        "examPrep": "Exam Prep"
+      },
+      "cta": {
+        "signUpNow": "Sign Up Now",
+        "joinThousands": "Join thousands of learners – Sign up for free!",
+        "continueLearning": "Continue Learning",
+        "continueJourney": "Continue your learning journey!",
+        "enrollNow": "Enroll Now",
+        "readyToLearn": "Ready to start learning? Enroll in a course!",
+        "browseAllCourses": "Browse All Courses",
+        "exploreCatalog": "Explore our full course catalog."
+      }
     },
     "features": {
       "title": "Why Choose Our Platform?",

@@ -19,12 +19,15 @@ import StudentVocabularyNavigationControls from "./components/StudentVocabularyN
 import StudentGoalCompletedDialog from "./components/dialogs/StudentGoalCompletedDialog";
 import StudentMotivationDialog from "./components/dialogs/StudentMotivationDialog";
 import StudentPronunciationDialog from "./components/dialogs/StudentPronunciationDialog";
+import { useStudyTimer } from "../../../hooks/useStudyTimer";
+import StudyMotivationDialog from "../../../components/StudyMotivationDialog";
 import VocabularyErrorBoundary from "../../../shared/components/VocabularyErrorBoundary";
 import VocabularyReviewIntegration from "../../../shared/components/VocabularyReviewIntegration";
 import useKeyboardNavigation from "./hooks/useKeyboardNavigation";
 import { useTranslation } from "react-i18next";
 
 const StudentVocabularyBuildingPage = React.memo(() => {
+  useStudyTimer();
   const { currentUser } = useAuth();
   const { t } = useTranslation();
   // Use split contexts
@@ -345,6 +348,7 @@ const StudentVocabularyBuildingPage = React.memo(() => {
           onClose={handleClosePronunciationDialog}
           word={selectedWord}
         />
+        <StudyMotivationDialog />
       </Box>
     </VocabularyErrorBoundary>
   );

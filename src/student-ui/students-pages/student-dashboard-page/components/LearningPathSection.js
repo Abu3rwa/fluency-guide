@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,63 +8,50 @@ import {
   Grid,
   LinearProgress,
   useTheme,
+  Skeleton,
+  Alert,
 } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useNavigate } from "react-router-dom";
-
-const staticCards = [
-  {
-    title: "Hard Words",
-    icon: (
-      <span role="img" aria-label="Hard Words">
-        📄
-      </span>
-    ),
-    progress: 80,
-    color: "#1976d2", // blue
-  },
-  {
-    title: "Vocabulary",
-    icon: (
-      <span role="img" aria-label="Vocabulary">
-        🌐
-      </span>
-    ),
-    progress: 60,
-    color: "#388e3c", // green
-  },
-  {
-    title: "Listening",
-    icon: (
-      <span role="img" aria-label="Listening">
-        🎧
-      </span>
-    ),
-    progress: 20,
-    color: "#8e24aa", // purple
-  },
-  {
-    title: "Speaking",
-    icon: (
-      <span role="img" aria-label="Speaking">
-        🎤
-      </span>
-    ),
-    progress: 10,
-    color: "#e53935", // red
-  },
-];
+import studentLearningPathService from "../../../../services/student-services/studentLearningPathService";
 
 const LearningPathSection = ({
   enrolledCourses = [],
   courseProgress = [],
   onCourseClick,
+  userId,
 }) => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const [learningPathCards, setLearningPathCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Combine static learning path cards with real course progress
-  const learningPathCards = staticCards;
+  // Fetch learning path data with user progress
+  useEffect(() => {
+    const fetchLearningPaths = async () => {
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        const paths =
+          await studentLearningPathService.getLearningPathsWithProgress(userId);
+        setLearningPathCards(paths);
+      } catch (err) {
+        console.error("Error fetching learning paths:", err);
+        setError("Failed to load learning paths");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLearningPaths();
+  }, [userId]);
+
   const hasCourseProgress = courseProgress && courseProgress.length > 0;
 
   return (
@@ -93,94 +80,131 @@ const LearningPathSection = ({
 
       {/* Learning Path Cards */}
       <Box sx={{ mb: hasCourseProgress ? 3 : 0 }}>
-        <Grid container spacing={2}>
-          {learningPathCards.map((course, idx) => (
-            <Grid
-              item
-              xs={6}
-              sm={6}
-              md={4}
-              lg={3}
-              key={idx}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Paper
-                elevation={1}
-                tabIndex={0}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {loading ? (
+          <Grid container spacing={2}>
+            {[1, 2, 3, 4].map((idx) => (
+              <Grid
+                item
+                xs={6}
+                sm={6}
+                md={4}
+                lg={3}
+                key={idx}
                 sx={{
-                  cursor: "pointer",
-                  borderRadius: 3,
-                  p: 2,
-                  height: { xs: 100, sm: 120 },
-                  aspectRatio: "1.2",
                   display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  boxShadow: "0 2px 8px rgba(60,60,60,0.06)",
-                  border: "1px solid #f0f0f0",
-                  transition: "box-shadow 0.2s, border 0.2s",
-                  "&:hover, &:focus": {
-                    boxShadow: "0 4px 16px rgba(60,60,60,0.10)",
-                    border: `1.5px solid ${course.color}`,
-                  },
-                  background: theme.palette.background.paper,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-                aria-label={`Course: ${course.title}, ${course.progress}% complete`}
               >
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
+                <Skeleton
+                  variant="rectangular"
+                  sx={{
+                    borderRadius: 3,
+                    height: { xs: 100, sm: 120 },
+                    width: "100%",
+                    aspectRatio: "1.2",
+                  }}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Grid container spacing={2}>
+            {learningPathCards.map((path, idx) => (
+              <Grid
+                item
+                xs={6}
+                sm={6}
+                md={4}
+                lg={3}
+                key={path.id || idx}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Paper
+                  elevation={1}
+                  tabIndex={0}
+                  sx={{
+                    cursor: "pointer",
+                    borderRadius: 3,
+                    p: 2,
+                    height: { xs: 100, sm: 120 },
+                    aspectRatio: "1.2",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    boxShadow: "0 2px 8px rgba(60,60,60,0.06)",
+                    border: "1px solid #f0f0f0",
+                    transition: "box-shadow 0.2s, border 0.2s",
+                    "&:hover, &:focus": {
+                      boxShadow: "0 4px 16px rgba(60,60,60,0.10)",
+                      border: `1.5px solid ${path.color}`,
+                    },
+                    background: theme.palette.background.paper,
+                  }}
+                  aria-label={`Learning path: ${path.title}, ${path.progress}% complete`}
+                  onClick={() => navigate(path.route)}
                 >
                   <Box
-                    sx={{
-                      bgcolor: course.color + "11",
-                      borderRadius: 2,
-                      p: 1,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
                   >
-                    <Typography fontSize={20}>{course.icon}</Typography>
+                    <Box
+                      sx={{
+                        bgcolor: path.color + "11",
+                        borderRadius: 2,
+                        p: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Typography fontSize={20}>{path.icon}</Typography>
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      fontWeight={700}
+                      color={path.color}
+                    >
+                      {`${path.progress}%`}
+                    </Typography>
                   </Box>
                   <Typography
-                    variant="body2"
+                    variant="subtitle2"
                     fontWeight={700}
-                    color={course.color}
+                    sx={{ mt: 1, mb: 1, maxWidth: "90%" }}
+                    noWrap
                   >
-                    {`${course.progress}%`}
+                    {path.title}
                   </Typography>
-                </Box>
-                <Typography
-                  variant="subtitle2"
-                  fontWeight={700}
-                  sx={{ mt: 1, mb: 1, maxWidth: "90%" }}
-                  noWrap
-                >
-                  {course.title}
-                </Typography>
-                <LinearProgress
-                  variant="determinate"
-                  value={course.progress}
-                  sx={{
-                    height: 8,
-                    borderRadius: 4,
-                    background: "#f5f5f5",
-                    "& .MuiLinearProgress-bar": {
-                      backgroundColor: course.color,
-                    },
-                  }}
-                  aria-label={`Progress for ${course.title}`}
-                />
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+                  <LinearProgress
+                    variant="determinate"
+                    value={path.progress}
+                    sx={{
+                      height: 8,
+                      borderRadius: 4,
+                      background: "#f5f5f5",
+                      "& .MuiLinearProgress-bar": {
+                        backgroundColor: path.color,
+                      },
+                    }}
+                    aria-label={`Progress for ${path.title}`}
+                  />
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Box>
 
       {/* Course Progress Bars */}

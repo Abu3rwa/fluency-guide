@@ -42,7 +42,7 @@ const Landing = () => {
       }}
     >
       <HeroSection t={t} theme={theme} />
-      <CoursesSection />
+      <CoursesSection t={t} />
 
       <FeaturesSection t={t} />
 

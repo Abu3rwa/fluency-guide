@@ -10,59 +10,93 @@ import {
   limit,
   Timestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 /**
- * Get today's study statistics for a user
+ * Sync totalStudyTime in user document with sum of all todayStats studyTime
  * @param {string} userId - User ID
+ * @returns {Promise<number>} Updated total study time in minutes
+ */
+const syncTotalStudyTime = async (userId) => {
+  try {
+    // Get all todayStats documents for this user
+    const todayStatsRef = collection(db, "users", userId, "todayStats");
+    const todayStatsSnapshot = await getDocs(todayStatsRef);
+
+    let totalStudyTimeInSeconds = 0;
+
+    todayStatsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.studyTime) {
+        totalStudyTimeInSeconds += data.studyTime;
+      }
+    });
+
+    // Convert to minutes for user document
+    const totalStudyTimeInMinutes = Math.ceil(totalStudyTimeInSeconds / 60);
+
+    // Update user document
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      totalStudyTime: totalStudyTimeInMinutes,
+      lastUpdated: Timestamp.now(),
+    });
+
+    console.log(
+      `Synced totalStudyTime: ${totalStudyTimeInSeconds} seconds = ${totalStudyTimeInMinutes} minutes`
+    );
+
+    return totalStudyTimeInMinutes;
+  } catch (error) {
+    console.error("Error syncing totalStudyTime:", error);
+    throw new Error("Failed to sync total study time");
+  }
+};
+
+/**
+ * Get today's statistics for a user
+ * @param {string} userId - User ID
+ * @param {string} date - Optional date string (YYYY-MM-DD), defaults to today
  * @returns {Promise<Object>} Today's stats
  */
-export const getTodayStats = async (userId) => {
+const getTodayStats = async (userId, date = null) => {
   try {
-    const today = new Date();
-    const startOfToday = new Date(today);
-    startOfToday.setHours(0, 0, 0, 0);
-    const endOfToday = new Date(today);
-    endOfToday.setHours(23, 59, 59, 999);
-
-    // Get user's today stats document
-    const todayStatsRef = doc(
-      db,
-      "users",
-      userId,
-      "todayStats",
-      today.toISOString().split("T")[0]
-    );
+    const dateString = date || new Date().toISOString().split("T")[0];
+    const todayStatsRef = doc(db, "users", userId, "todayStats", dateString);
     const todayStatsDoc = await getDoc(todayStatsRef);
 
     if (todayStatsDoc.exists()) {
       return todayStatsDoc.data();
     }
 
-    // If no today stats exist, calculate from activities
+    // If no stats exist for today, calculate from activities
     const activitiesRef = collection(db, "users", userId, "activities");
-    const todayActivitiesQuery = query(
+    const todayQuery = query(
       activitiesRef,
-      where("timestamp", ">=", Timestamp.fromDate(startOfToday)),
-      where("timestamp", "<=", Timestamp.fromDate(endOfToday))
+      where("timestamp", ">=", Timestamp.fromDate(new Date(dateString))),
+      where(
+        "timestamp",
+        "<",
+        Timestamp.fromDate(new Date(dateString + "T23:59:59"))
+      )
     );
 
-    const todayActivitiesSnapshot = await getDocs(todayActivitiesQuery);
-    const activities = todayActivitiesSnapshot.docs.map((doc) => doc.data());
+    const activitiesSnapshot = await getDocs(todayQuery);
+    const activities = activitiesSnapshot.docs.map((doc) => doc.data());
 
-    // Calculate today's stats from activities
     const todayStats = calculateTodayStats(activities);
 
     // Save calculated stats
     await setDoc(todayStatsRef, {
       ...todayStats,
-      date: today.toISOString().split("T")[0],
+      date: dateString,
       lastUpdated: Timestamp.now(),
     });
 
     return todayStats;
   } catch (error) {
-    console.error("Error fetching today stats:", error);
+    console.error("Error fetching today's stats:", error);
     throw new Error("Failed to fetch today's statistics");
   }
 };
@@ -72,7 +106,7 @@ export const getTodayStats = async (userId) => {
  * @param {string} userId - User ID
  * @returns {Promise<Object>} Weekly stats
  */
-export const getWeeklyStats = async (userId) => {
+const getWeeklyStats = async (userId) => {
   try {
     const today = new Date();
     const startOfWeek = new Date(today);
@@ -104,7 +138,7 @@ export const getWeeklyStats = async (userId) => {
  * @param {string} userId - User ID
  * @returns {Promise<Object>} Monthly stats
  */
-export const getMonthlyStats = async (userId) => {
+const getMonthlyStats = async (userId) => {
   try {
     const today = new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -242,7 +276,7 @@ const calculateMonthlyStats = (activities) => {
  * @param {string} userId - User ID
  * @param {Object} activity - Activity data
  */
-export const updateTodayStats = async (userId, activity) => {
+const updateTodayStats = async (userId, activity) => {
   try {
     const today = new Date();
     const dateString = today.toISOString().split("T")[0];
@@ -288,9 +322,10 @@ export const updateTodayStats = async (userId, activity) => {
   }
 };
 
-export default {
+export {
   getTodayStats,
   getWeeklyStats,
   getMonthlyStats,
   updateTodayStats,
+  syncTotalStudyTime,
 };

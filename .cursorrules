@@ -6,6 +6,120 @@
       "selector": "Component",
       "message": "Props are being forwarded to the DOM. Ensure you are not passing non-standard props down to DOM elements.",
       "suggestion": "Destructure the props you need and pass only valid HTML attributes to the underlying DOM element, or use a transient prop (prefixed with $) if you are using a library like styled-components."
+    },
+    {
+      "id": "performance-optimization",
+      "selector": "useEffect",
+      "message": "Consider performance implications of useEffect dependencies.",
+      "suggestion": "Use useCallback, useMemo, or useRef to optimize dependencies. Consider if the effect is necessary or can be moved to a custom hook."
+    },
+    {
+      "id": "memoization",
+      "selector": "Component",
+      "message": "Consider memoizing expensive components or calculations.",
+      "suggestion": "Use React.memo for components that receive the same props frequently, or useMemo for expensive calculations."
+    },
+    {
+      "id": "error-boundaries",
+      "selector": "Component",
+      "message": "Consider adding error boundaries for better error handling.",
+      "suggestion": "Wrap components that might fail in ErrorBoundary components to prevent the entire app from crashing."
+    },
+    {
+      "id": "loading-states",
+      "selector": "async",
+      "message": "Ensure proper loading states are implemented for async operations.",
+      "suggestion": "Add loading indicators, skeleton screens, or optimistic updates to improve user experience during async operations."
+    },
+    {
+      "id": "accessibility",
+      "selector": "JSX",
+      "message": "Ensure proper accessibility attributes are included.",
+      "suggestion": "Add aria-labels, roles, and keyboard navigation support for better accessibility."
+    },
+    {
+      "id": "type-safety",
+      "selector": "function",
+      "message": "Consider adding TypeScript types for better type safety.",
+      "suggestion": "Add proper TypeScript interfaces, types, and generic constraints to prevent runtime errors."
+    },
+    {
+      "id": "code-splitting",
+      "selector": "import",
+      "message": "Consider code splitting for better performance.",
+      "suggestion": "Use React.lazy() and Suspense for route-based code splitting, or dynamic imports for component-level splitting."
+    },
+    {
+      "id": "state-management",
+      "selector": "useState",
+      "message": "Consider if local state is the best choice for this data.",
+      "suggestion": "Use Context API for shared state, or consider state management libraries like Redux/Zustand for complex state."
+    },
+    {
+      "id": "custom-hooks",
+      "selector": "useEffect",
+      "message": "Consider extracting logic into custom hooks for reusability.",
+      "suggestion": "Create custom hooks for common patterns like data fetching, form handling, or local storage management."
+    },
+    {
+      "id": "naming-conventions",
+      "selector": "variable",
+      "message": "Follow consistent naming conventions.",
+      "suggestion": "Use camelCase for variables/functions, PascalCase for components, and UPPER_CASE for constants."
+    },
+    {
+      "id": "file-organization",
+      "selector": "import",
+      "message": "Organize imports for better readability.",
+      "suggestion": "Group imports: external libraries, internal modules, relative imports, and type imports."
+    },
+    {
+      "id": "testing",
+      "selector": "Component",
+      "message": "Consider adding tests for this component.",
+      "suggestion": "Write unit tests for component logic, integration tests for user interactions, and snapshot tests for UI consistency."
+    },
+    {
+      "id": "documentation",
+      "selector": "function",
+      "message": "Add JSDoc comments for better documentation.",
+      "suggestion": "Document function parameters, return values, and usage examples with JSDoc comments."
+    },
+    {
+      "id": "security",
+      "selector": "user-input",
+      "message": "Ensure proper input validation and sanitization.",
+      "suggestion": "Validate and sanitize user inputs to prevent XSS attacks and data corruption."
+    },
+    {
+      "id": "responsive-design",
+      "selector": "CSS",
+      "message": "Ensure responsive design considerations.",
+      "suggestion": "Use responsive units (rem, em, %), media queries, and mobile-first design principles."
+    },
+    {
+      "id": "optimization",
+      "selector": "render",
+      "message": "Optimize render performance.",
+      "suggestion": "Avoid creating objects/functions in render, use React.memo, and implement shouldComponentUpdate when needed."
+    },
+    {
+      "id": "error-handling",
+      "selector": "try-catch",
+      "message": "Implement comprehensive error handling.",
+      "suggestion": "Add proper error boundaries, logging, and user-friendly error messages."
+    },
+    {
+      "id": "data-fetching",
+      "selector": "fetch",
+      "message": "Implement proper data fetching patterns.",
+      "suggestion": "Use React Query, SWR, or custom hooks for caching, background updates, and error handling."
+    },
+    {
+      "id": "form-handling",
+      "selector": "form",
+      "message": "Use proper form handling libraries.",
+      "suggestion": "Consider React Hook Form, Formik, or similar libraries for form validation and state management."
     }
   ]
 }

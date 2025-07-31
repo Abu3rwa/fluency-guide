@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "./constants";
 import AppLayout from "../components/Layout/AppLayout";
-import CustomSpinner from "../components/CustomSpinner";
+import CenteredLoader from "../components/CenteredLoader";
 import StudentDashboardPage from "../student-ui/students-pages/student-dashboard-page/StudentDashboardPage";
 import StudentCourseDetailsPage from "../student-ui/students-pages/student-course-details-page/StudentCourseDetailsPage";
 import StudentLessonDetailsPage from "../student-ui/students-pages/student-lesson-details-page/StudentLessonDetailsPage";
@@ -13,8 +13,6 @@ import StudentTrueFalseTaskPage from "../student-ui/students-pages/student-tasks
 import StudentVocabularyBuildingPage from "../student-ui/students-pages/student-vocabulary-building-page/StudentVocabularyBuildingPage";
 import ReviewPage from "../student-ui/students-pages/student-dashboard-page/components/ReviewPage";
 import TesseractOCR from "../components/TesseractOCR";
-import DictionaryApiTest from "../components/test/DictionaryApiTest";
-// import StudentProgressPage from "../student-ui/students-pages/student-progress-page/StudentProgressPage";
 // Lazy load components
 const StudentStatisticsPage = React.lazy(() =>
   import("../screens/student-statistics/StudentStatisticsPage")
@@ -100,14 +98,6 @@ export const publicRoutes = [
   { path: ROUTES.PRICING, element: <Pricing /> },
   { path: ROUTES.ABOUT, element: <About /> },
   { path: ROUTES.CONTACT, element: <Contact /> },
-  {
-    path: "/test/dictionary-api",
-    element: (
-      <AppLayout>
-        <DictionaryApiTest />
-      </AppLayout>
-    ),
-  },
 ];
 
 // Student routes (for logged-in students)
@@ -306,7 +296,15 @@ export const fallbackRoute = {
 const AppRoutes = () => {
   return (
     <React.Suspense
-      fallback={<CustomSpinner message="Loading application..." />}
+      fallback={
+        <CenteredLoader
+          type="spinner"
+          message="Loading application..."
+          fullScreen={true}
+          size={80}
+          showMessage={true}
+        />
+      }
     >
       <Routes>
         {/* Public routes */}

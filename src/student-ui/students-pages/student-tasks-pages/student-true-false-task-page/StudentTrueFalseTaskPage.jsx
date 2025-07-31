@@ -8,12 +8,18 @@ import StudentTrueFalseAnswerButtons from "./StudentTrueFalseAnswerButtons";
 import StudentTrueFalseFeedbackSection from "./StudentTrueFalseFeedbackSection";
 import { useStudentTask } from "../../../../contexts/studentTaskContext";
 import StudentTaskResultsPage from "../components/StudentTaskResultsPage";
+import { useStudyTimer } from "../../../../hooks/useStudyTimer";
+import { useStudyTime } from "../../../../contexts/StudyTimeContext";
 
 const TrueFalseTaskPage = () => {
   const { taskId } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { getTaskById, submitTaskAttempt } = useStudentTask();
+
+  // Study time tracking
+  const { startSession, endSession, isSessionActive } = useStudyTime();
+  const { timeout } = useStudyTimer(5 * 60 * 1000); // 5 minutes timeout for task pages
 
   // State
   const [task, setTask] = useState(null);
@@ -29,6 +35,22 @@ const TrueFalseTaskPage = () => {
   const [score, setScore] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
 
+  // Start study session when task loads
+  useEffect(() => {
+    if (task && !isSessionActive) {
+      startSession();
+    }
+  }, [task, isSessionActive, startSession]);
+
+  // End session when component unmounts
+  useEffect(() => {
+    return () => {
+      if (isSessionActive) {
+        endSession();
+      }
+    };
+  }, [isSessionActive, endSession]);
+
   const handleSubmit = useCallback(async () => {
     if (quizCompleted) return;
 
@@ -36,7 +58,8 @@ const TrueFalseTaskPage = () => {
 
     let finalScore = 0;
     task.questions.forEach((q) => {
-      const correctAnswer = String(q.correctAnswer).toLowerCase() === "true";
+      const correctAnswer =
+        String(q.correctAnswer || "").toLowerCase() === "true";
       if (userAnswers[q.id] === correctAnswer) {
         finalScore++;
       }
@@ -98,30 +121,19 @@ const TrueFalseTaskPage = () => {
 
     const correctAnswer =
       String(
-        task.questions[currentQuestionIndex].correctAnswer
+        task.questions[currentQuestionIndex].correctAnswer || ""
       ).toLowerCase() === "true";
     const isAnswerCorrect = answer === correctAnswer;
 
     setUserAnswers((prev) => ({ ...prev, [questionId]: answer }));
     setIsAnswered((prev) => ({ ...prev, [questionId]: true }));
     setIsCorrect(isAnswerCorrect);
-
-    setTimeout(() => {
-      if (currentQuestionIndex < task.questions.length - 1) {
-        setCurrentQuestionIndex((prev) => prev + 1);
-        setIsCorrect(null);
-      } else {
-        handleSubmit();
-      }
-    }, 1000);
   };
 
   const handleNext = () => {
     if (currentQuestionIndex < task.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
       setIsCorrect(null);
-    } else {
-      handleSubmit();
     }
   };
 
@@ -133,10 +145,11 @@ const TrueFalseTaskPage = () => {
   };
 
   const handleRestart = () => {
-    setQuizCompleted(false);
     setCurrentQuestionIndex(0);
     setUserAnswers({});
     setIsAnswered({});
+    setIsCorrect(null);
+    setQuizCompleted(false);
     setScore(0);
     setSecondsRemaining((task.timeLimit || 0) * 60);
     setQuizStartTime(Date.now());
@@ -145,10 +158,12 @@ const TrueFalseTaskPage = () => {
   if (loading) {
     return (
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
       >
         <CircularProgress />
       </Box>
@@ -158,27 +173,14 @@ const TrueFalseTaskPage = () => {
   if (error) {
     return (
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
       >
-        <Typography color="error" dir="auto">
-          {error}
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (!task || !task.questions || task.questions.length === 0) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-      >
-        <Typography dir="auto">{t("tasks.noQuestions")}</Typography>
+        <Typography color="error">{error}</Typography>
       </Box>
     );
   }
@@ -188,14 +190,14 @@ const TrueFalseTaskPage = () => {
       <StudentTaskResultsPage
         score={score}
         totalPoints={totalPoints}
+        task={task}
         onRestart={handleRestart}
-        onFinish={() => navigate(-1)}
       />
     );
   }
 
   const currentQuestion = task.questions[currentQuestionIndex];
-  const isCurrentAnswered = isAnswered[currentQuestion.id] || false;
+  const isLastQuestion = currentQuestionIndex === task.questions.length - 1;
 
   return (
     <StudentTaskLayout
@@ -203,23 +205,25 @@ const TrueFalseTaskPage = () => {
       currentQuestionIndex={currentQuestionIndex}
       totalQuestions={task.questions.length}
       timeRemaining={secondsRemaining}
-      onNext={handleNext}
-      onPrevious={handlePrevious}
-      onSubmit={handleSubmit}
-      isAnswered={isCurrentAnswered}
-      isLastQuestion={currentQuestionIndex === task.questions.length - 1}
+      isAnswered={isAnswered[currentQuestion.id]}
+      isLastQuestion={isLastQuestion}
     >
-      <StudentTrueFalseQuestionCard question={currentQuestion} />
+      <StudentTrueFalseQuestionCard
+        question={currentQuestion}
+        questionNumber={currentQuestionIndex + 1}
+        totalQuestions={task.questions.length}
+      />
+
       <StudentTrueFalseAnswerButtons
         onAnswer={handleAnswer}
-        disabled={isCurrentAnswered}
-        isCorrect={isCorrect}
-        selectedAnswer={userAnswers[currentQuestion.id]}
+        disabled={isAnswered[currentQuestion.id]}
       />
-      {isCurrentAnswered && task.showFeedback && (
+
+      {isCorrect !== null && (
         <StudentTrueFalseFeedbackSection
           isCorrect={isCorrect}
-          explanation={currentQuestion.explanation}
+          onNext={handleNext}
+          isLastQuestion={isLastQuestion}
         />
       )}
     </StudentTaskLayout>

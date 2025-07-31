@@ -75,7 +75,7 @@ const QuickActionsSection = ({
       key: "myVocabulary",
       name: "My Vocabulary",
       icon: <BookIcon />,
-      onClick: () => navigate("/vocabulary"),
+      onClick: () => navigate("/student/vocabulary"),
       tooltip: "Review your vocabulary",
       ariaLabel: "My Vocabulary",
     },

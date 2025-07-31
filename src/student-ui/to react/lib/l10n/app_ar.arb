@@ -1,1850 +1,0 @@
-{
-  "@@locale": "ar",
-  "appTitle": "EFG",
-  "@appTitle": {
-    "description": "عنوان التطبيق"
-  },
-  "selectLanguage": "اختر اللغة",
-  "@selectLanguage": {
-    "description": "عنوان مربع حوار اختيار اللغة"
-  },
-  "todaysProgress": "تقدم اليوم",
-  "@todaysProgress": {
-    "description": "عنوان قسم تقدم اليوم"
-  },
-  "dayStreak": "سلسلة {days} أيام!",
-  "@dayStreak": {
-    "description": "رسالة سلسلة الأيام",
-    "placeholders": {
-      "days": {
-        "type": "int",
-        "example": "7"
-      }
-    }
-  },
-  "dayStreakLabel": "سلسلة الأيام",
-  "@dayStreakLabel": {
-    "description": "تسمية إحصائية سلسلة الأيام"
-  },
-  "progressCompleted": "تم إنجاز {percent}% من الهدف اليومي",
-  "@progressCompleted": {
-    "description": "رسالة إتمام التقدم",
-    "placeholders": {
-      "percent": {
-        "type": "int",
-        "example": "70"
-      }
-    }
-  },
-  "minutesCompleted": "{completed}/{total} دقيقة",
-  "@minutesCompleted": {
-    "description": "رسالة الدقائق المكتملة",
-    "placeholders": {
-      "completed": {
-        "type": "int",
-        "example": "14"
-      },
-      "total": {
-        "type": "int",
-        "example": "20"
-      }
-    }
-  },
-  "minutesToday": "دقائق اليوم",
-  "@minutesToday": {
-    "description": "تسمية دقائق اليوم"
-  },
-  "achievements": "الإنجازات",
-  "@achievements": {
-    "description": "تسمية الإنجازات"
-  },
-  "xpPoints": "نقاط الخبرة",
-  "@xpPoints": {
-    "description": "تسمية نقاط الخبرة"
-  },
-  "practiceNow": "تدرب الآن",
-  "@practiceNow": {
-    "description": "عنوان قسم التدرب الآن"
-  },
-  "continueLesson": "متابعة الدرس",
-  "@continueLesson": {
-    "description": "نص زر متابعة الدرس"
-  },
-  "dailyQuiz": "الاختبار اليومي",
-  "@dailyQuiz": {
-    "description": "نص زر الاختبار اليومي"
-  },
-  "testKnowledge": "اختبر معرفتك",
-  "@testKnowledge": {
-    "description": "عنوان فرعي لاختبار المعرفة"
-  },
-  "recentAchievements": "الإنجازات الأخيرة",
-  "@recentAchievements": {
-    "description": "عنوان قسم الإنجازات الأخيرة"
-  },
-  "viewAll": "عرض الكل",
-  "@viewAll": {
-    "description": "نص زر عرض الكل"
-  },
-  "learningPath": "مسار التعلم",
-  "@learningPath": {
-    "description": "عنوان قسم مسار التعلم"
-  },
-  "seeAll": "عرض الكل",
-  "@seeAll": {
-    "description": "نص زر عرض الكل"
-  },
-  "welcome": "مرحباً",
-  "@welcome": {
-    "description": "رسالة الترحيب"
-  },
-  "signIn": "تسجيل الدخول",
-  "@signIn": {
-    "description": "نص زر تسجيل الدخول"
-  },
-  "signUp": "إنشاء حساب",
-  "@signUp": {
-    "description": "نص زر إنشاء حساب"
-  },
-  "email": "البريد الإلكتروني",
-  "@email": {
-    "description": "تسمية حقل البريد الإلكتروني"
-  },
-  "password": "كلمة المرور",
-  "@password": {
-    "description": "تسمية حقل كلمة المرور"
-  },
-  "forgotPassword": "نسيت كلمة المرور؟",
-  "@forgotPassword": {
-    "description": "نص رابط نسيان كلمة المرور"
-  },
-  "courses": "الدورات",
-  "@courses": {
-    "description": "عنوان شاشة الدورات"
-  },
-  "enrollNow": "التسجيل الآن",
-  "@enrollNow": {
-    "description": "نص زر التسجيل"
-  },
-  "enrollmentPending": "التسجيل قيد المراجعة",
-  "@enrollmentPending": {
-    "description": "حالة التسجيل قيد المراجعة"
-  },
-  "startLearning": "ابدأ التعلم",
-  "@startLearning": {
-    "description": "نص زر بدء التعلم"
-  },
-  "reapply": "إعادة التقديم",
-  "@reapply": {
-    "description": "نص زر إعادة التقديم"
-  },
-  "alreadyEnrolled": "أنت مسجل بالفعل في هذه الدورة",
-  "@alreadyEnrolled": {
-    "description": "رسالة تظهر عندما يكون المستخدم مسجلاً بالفعل"
-  },
-  "enrollmentPendingMessage": "طلب التسجيل الخاص بك قيد مراجعة الموافقة",
-  "@enrollmentPendingMessage": {
-    "description": "رسالة تظهر عندما يكون التسجيل قيد المراجعة"
-  },
-  "enrollmentSuccess": "تم إرسال طلب التسجيل بنجاح",
-  "@enrollmentSuccess": {
-    "description": "رسالة تظهر عند نجاح طلب التسجيل"
-  },
-  "enrollmentFailed": "فشل في إرسال طلب التسجيل",
-  "@enrollmentFailed": {
-    "description": "رسالة تظهر عند فشل طلب التسجيل"
-  },
-  "signInRequired": "يرجى تسجيل الدخول للتسجيل في الدورات",
-  "@signInRequired": {
-    "description": "رسالة تظهر عندما يحتاج المستخدم لتسجيل الدخول"
-  },
-  "errorOccurred": "حدث خطأ أثناء معالجة طلبك",
-  "@errorOccurred": {
-    "description": "رسالة خطأ عامة"
-  },
-  "profile": "الملف الشخصي",
-  "@profile": {
-    "description": "عنوان شاشة الملف الشخصي"
-  },
-  "settings": "الإعدادات",
-  "@settings": {
-    "description": "عنوان قسم الإعدادات"
-  },
-  "language": "اللغة",
-  "@language": {
-    "description": "تسمية إعداد اللغة"
-  },
-  "theme": "السمة",
-  "@theme": {
-    "description": "تسمية إعداد السمة"
-  },
-  "darkMode": "الوضع الداكن",
-  "@darkMode": {
-    "description": "تسمية إعداد الوضع الداكن"
-  },
-  "lightMode": "الوضع الفاتح",
-  "@lightMode": {
-    "description": "تسمية إعداد الوضع الفاتح"
-  },
-  "overview": "نظرة عامة",
-  "@overview": {
-    "description": "عنوان تبويب النظرة العامة"
-  },
-  "modules": "الوحدات",
-  "@modules": {
-    "description": "عنوان تبويب الوحدات"
-  },
-  "students": "الطلاب",
-  "@students": {
-    "description": "Students tab title"
-  },
-  "totalStudents": "إجمالي الطلاب",
-  "@totalStudents": {
-    "description": "تسمية إجمالي الطلاب"
-  },
-  "completionRate": "معدل الإنجاز",
-  "@completionRate": {
-    "description": "تسمية معدل الإنجاز"
-  },
-  "averageScore": "المتوسط",
-  "@averageScore": {
-    "description": "تسمية المتوسط"
-  },
-  "totalTimeSpent": "إجمالي الوقت المستغرق",
-  "@totalTimeSpent": {
-    "description": "تسمية إجمالي الوقت المستغرق"
-  },
-  "noModulesAvailable": "لا توجد وحدات متاحة لهذه الدورة",
-  "@noModulesAvailable": {
-    "description": "رسالة تظهر عندما لا توجد وحدات متاحة"
-  },
-  "refresh": "تحديث",
-  "@refresh": {
-    "description": "نص زر التحديث"
-  },
-  "errorLoadingModules": "خطأ في تحميل الوحدات",
-  "@errorLoadingModules": {
-    "description": "رسالة خطأ عند فشل تحميل الوحدات"
-  },
-  "lessonDetails": "تفاصيل الدرس",
-  "@lessonDetails": {
-    "description": "عنوان تفاصيل الدرس"
-  },
-  "content": "المحتوى",
-  "@content": {
-    "description": "عنوان قسم المحتوى"
-  },
-  "learningObjectives": "أهداف التعلم",
-  "@learningObjectives": {
-    "description": "عنوان قسم أهداف التعلم"
-  },
-  "skillsYoullLearn": "المهارات التي ستتعلمها",
-  "@skillsYoullLearn": {
-    "description": "عنوان قسم المهارات"
-  },
-  "resources": "الموارد",
-  "@resources": {
-    "description": "عنوان قسم الموارد"
-  },
-  "assessment": "التقييم",
-  "@assessment": {
-    "description": "عنوان قسم التقييم"
-  },
-  "startAssessment": "ابدأ التقييم",
-  "@startAssessment": {
-    "description": "نص زر بدء التقييم"
-  },
-  "quiz": "الاختبار",
-  "@quiz": {
-    "description": "عنوان قسم الاختبار"
-  },
-  "startQuiz": "ابدأ الاختبار",
-  "@startQuiz": {
-    "description": "نص زر بدء الاختبار"
-  },
-  "tasks": "المهام",
-  "@tasks": {
-    "description": "عنوان قسم المهام"
-  },
-  "noTasksAvailable": "لا توجد مهام متاحة لهذا الدرس",
-  "@noTasksAvailable": {
-    "description": "رسالة عندما لا توجد مهام متاحة"
-  },
-  "retry": "إعادة المحاولة",
-  "@retry": {
-    "description": "نص زر إعادة المحاولة"
-  },
-  "minutes": "{minutes} دقيقة",
-  "@minutes": {
-    "description": "المدة الزمنية بالدقائق",
-    "placeholders": {
-      "minutes": {
-        "type": "int",
-        "example": "15"
-      }
-    }
-  },
-  "featured": "مميز",
-  "@featured": {
-    "description": "تسمية مميز"
-  },
-  "lessons": "دروس",
-  "@lessons": {
-    "description": "تسمية الدروس"
-  },
-  "shortDuration": "قصيرة (أقل من ساعة)",
-  "@shortDuration": {
-    "description": "خيار تصفية المدة القصيرة"
-  },
-  "mediumDuration": "متوسطة (1-3 ساعات)",
-  "@mediumDuration": {
-    "description": "خيار تصفية المدة المتوسطة"
-  },
-  "longDuration": "طويلة (أكثر من 3 ساعات)",
-  "@longDuration": {
-    "description": "خيار تصفية المدة الطويلة"
-  },
-  "free": "مجاني",
-  "@free": {
-    "description": "خيار تصفية السعر المجاني"
-  },
-  "paid": "مدفوع",
-  "@paid": {
-    "description": "خيار تصفية السعر المدفوع"
-  },
-  "beginner": "مبتدئ",
-  "@beginner": {
-    "description": "مستوى صعوبة المبتدئ"
-  },
-  "intermediate": "متوسط",
-  "@intermediate": {
-    "description": "مستوى صعوبة المتوسط"
-  },
-  "advanced": "متقدم",
-  "@advanced": {
-    "description": "مستوى صعوبة المتقدم"
-  },
-  "business": "الأعمال",
-  "@business": {
-    "description": "فئة الأعمال"
-  },
-  "conversational": "المحادثة",
-  "@conversational": {
-    "description": "فئة المحادثة"
-  },
-  "grammar": "القواعد",
-  "@grammar": {
-    "description": "فئة القواعد"
-  },
-  "vocabulary": "المفردات",
-  "@vocabulary": {
-    "description": "فئة المفردات"
-  },
-  "settingsDataNotAvailable": "بيانات الإعدادات غير متاحة",
-  "@settingsDataNotAvailable": {
-    "description": "رسالة تظهر عندما تكون بيانات الإعدادات غير متاحة"
-  },
-  "profileAndAccount": "الملف الشخصي والحساب",
-  "@profileAndAccount": {
-    "description": "عنوان قسم الملف الشخصي والحساب"
-  },
-  "guestUser": "مستخدم ضيف",
-  "@guestUser": {
-    "description": "تسمية المستخدم الضيف"
-  },
-  "noEmail": "لا يوجد بريد إلكتروني",
-  "@noEmail": {
-    "description": "تسمية عند عدم توفر بريد إلكتروني"
-  },
-  "fluencyLevel": "مستوى الطلاقة",
-  "@fluencyLevel": {
-    "description": "تسمية مستوى الطلاقة"
-  },
-  "progressSync": "مزامنة التقدم",
-  "@progressSync": {
-    "description": "تسمية خيار مزامنة التقدم"
-  },
-  "signOut": "تسجيل الخروج",
-  "@signOut": {
-    "description": "تسمية زر تسجيل الخروج"
-  },
-  "deleteAccount": "حذف الحساب",
-  "@deleteAccount": {
-    "description": "تسمية خيار حذف الحساب"
-  },
-  "exportData": "تصدير البيانات",
-  "@exportData": {
-    "description": "تسمية خيار تصدير البيانات"
-  },
-  "learningPreferences": "تفضيلات التعلم",
-  "@learningPreferences": {
-    "description": "عنوان قسم تفضيلات التعلم"
-  },
-  "dailyStudyGoal": "الهدف الدراسي اليومي",
-  "@dailyStudyGoal": {
-    "description": "تسمية إعداد الهدف الدراسي اليومي"
-  },
-  "learningFocusAreas": "مجالات التركيز في التعلم",
-  "@learningFocusAreas": {
-    "description": "تسمية إعداد مجالات التركيز في التعلم"
-  },
-  "noneSelected": "لم يتم اختيار أي شيء",
-  "@noneSelected": {
-    "description": "تسمية عند عدم اختيار أي عنصر"
-  },
-  "preferredAccent": "اللكنة المفضلة",
-  "@preferredAccent": {
-    "description": "تسمية إعداد اللكنة المفضلة"
-  },
-  "selectDailyStudyGoal": "اختر الهدف الدراسي اليومي",
-  "@selectDailyStudyGoal": {
-    "description": "عنوان مربع حوار اختيار الهدف الدراسي اليومي"
-  },
-  "selectDifficultyLevel": "اختر مستوى الصعوبة",
-  "@selectDifficultyLevel": {
-    "description": "عنوان مربع حوار اختيار مستوى الصعوبة"
-  },
-  "selectLearningFocusAreas": "اختر مجالات التركيز في التعلم",
-  "@selectLearningFocusAreas": {
-    "description": "عنوان مربع حوار اختيار مجالات التركيز في التعلم"
-  },
-  "selectPreferredAccent": "اختر اللكنة المفضلة",
-  "@selectPreferredAccent": {
-    "description": "عنوان مربع حوار اختيار اللكنة المفضلة"
-  },
-  "cancel": "إلغاء",
-  "@cancel": {
-    "description": "تسمية زر الإلغاء"
-  },
-  "ok": "موافق",
-  "@ok": {
-    "description": "تسمية زر الموافق"
-  },
-  "americanAccent": "أمريكية",
-  "@americanAccent": {
-    "description": "تسمية اللكنة الأمريكية"
-  },
-  "britishAccent": "بريطانية",
-  "@britishAccent": {
-    "description": "تسمية اللكنة البريطانية"
-  },
-  "australianAccent": "أسترالية",
-  "@australianAccent": {
-    "description": "تسمية اللكنة الأسترالية"
-  },
-  "pronunciation": "النطق",
-  "@pronunciation": {
-    "description": "تسمية النطق"
-  },
-  "conversation": "المحادثة",
-  "@conversation": {
-    "description": "تسمية المحادثة"
-  },
-  "all": "الكل",
-  "@all": {
-    "description": "تسمية الكل"
-  },
-  "navHome": "الرئيسية",
-  "@navHome": {
-    "description": "تسمية التنقل للرئيسية"
-  },
-  "navCourses": "الدورات",
-  "@navCourses": {
-    "description": "تسمية التنقل للدورات"
-  },
-  "navProgress": "التقدم",
-  "@navProgress": {
-    "description": "تسمية التنقل للتقدم"
-  },
-  "navProfile": "الملف الشخصي",
-  "@navProfile": {
-    "description": "تسمية التنقل للملف الشخصي"
-  },
-  "learningStats": "إحصائيات التعلم",
-  "@learningStats": {
-    "description": "عنوان قسم إحصائيات التعلم"
-  },
-  "currentStreak": "السلسلة الحالية",
-  "@currentStreak": {
-    "description": "تسمية إحصائية السلسلة الحالية"
-  },
-  "longestStreak": "أطول سلسلة",
-  "@longestStreak": {
-    "description": "تسمية إحصائية أطول سلسلة"
-  },
-  "studyTime": "وقت الدراسة",
-  "@studyTime": {
-    "description": "تسمية إحصائية وقت الدراسة"
-  },
-  "completedLessons": "الدروس المكتملة",
-  "@completedLessons": {
-    "description": "تسمية إحصائية الدروس المكتملة"
-  },
-  "accountInformation": "معلومات الحساب",
-  "@accountInformation": {
-    "description": "عنوان قسم معلومات الحساب"
-  },
-  "appSettings": "إعدادات التطبيق",
-  "@appSettings": {
-    "description": "عنوان قسم إعدادات التطبيق"
-  },
-  "accountActions": "إجراءات الحساب",
-  "@accountActions": {
-    "description": "عنوان قسم إجراءات الحساب"
-  },
-  "downloadLearningData": "تحميل بيانات التعلم الخاصة بك",
-  "@downloadLearningData": {
-    "description": "وصف إجراء تصدير البيانات"
-  },
-  "deleteAccountDescription": "حذف حسابك نهائياً",
-  "@deleteAccountDescription": {
-    "description": "وصف إجراء حذف الحساب"
-  },
-  "signOutDescription": "تسجيل الخروج من حسابك",
-  "@signOutDescription": {
-    "description": "وصف إجراء تسجيل الخروج"
-  },
-  "notAvailable": "غير متاح",
-  "@notAvailable": {
-    "description": "نص يظهر عندما تكون البيانات غير متاحة"
-  },
-  "memberSince": "عضو منذ",
-  "@memberSince": {
-    "description": "تسمية تاريخ العضوية"
-  },
-  "lastLogin": "آخر تسجيل دخول",
-  "@lastLogin": {
-    "description": "تسمية تاريخ آخر تسجيل دخول"
-  },
-  "preferredLanguage": "اللغة المفضلة",
-  "@preferredLanguage": {
-    "description": "تسمية إعداد اللغة المفضلة"
-  },
-  "phoneNumber": "رقم الهاتف",
-  "@phoneNumber": {
-    "description": "تسمية رقم الهاتف"
-  },
-  "bio": "السيرة الذاتية",
-  "@bio": {
-    "description": "تسمية السيرة الذاتية للمستخدم"
-  },
-  "sound": "الصوت",
-  "@sound": {
-    "description": "تسمية إعداد الصوت"
-  },
-  "enabled": "مفعل",
-  "@enabled": {
-    "description": "نص الحالة المفعلة"
-  },
-  "disabled": "معطل",
-  "@disabled": {
-    "description": "نص الحالة المعطلة"
-  },
-  "editProfile": "تعديل الملف الشخصي",
-  "@editProfile": {
-    "description": "تسمية إجراء تعديل الملف الشخصي"
-  },
-  "editProfileComingSoon": "تعديل الملف الشخصي قريباً!",
-  "@editProfileComingSoon": {
-    "description": "رسالة تظهر عندما لا يكون تعديل الملف الشخصي متاحاً بعد"
-  },
-  "errorSigningOut": "خطأ في تسجيل الخروج: {error}",
-  "@errorSigningOut": {
-    "description": "رسالة خطأ عند فشل تسجيل الخروج",
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "openSettings": "فتح الإعدادات",
-  "@openSettings": {
-    "description": "عنوان مربع حوار الإعدادات"
-  },
-  "enableNotificationsSteps": "يرجى اتباع هذه الخطوات لتفعيل الإشعارات:",
-  "@enableNotificationsSteps": {
-    "description": "تعليمات تفعيل الإشعارات"
-  },
-  "openDeviceSettings": "1. افتح إعدادات الجهاز",
-  "@openDeviceSettings": {
-    "description": "الخطوة الأولى لتفعيل الإشعارات"
-  },
-  "findApps": "2. ابحث عن \"التطبيقات\" أو \"Applications\" واضغط عليها",
-  "@findApps": {
-    "description": "الخطوة الثانية لتفعيل الإشعارات"
-  },
-  "findEnglishFluency": "3. ابحث عن \"English Fluency\" واضغط عليه",
-  "@findEnglishFluency": {
-    "description": "الخطوة الثالثة لتفعيل الإشعارات"
-  },
-  "tapPermissions": "4. اضغط على \"الأذونات\"",
-  "@tapPermissions": {
-    "description": "الخطوة الرابعة لتفعيل الإشعارات"
-  },
-  "enableNotifications": "5. فعل \"الإشعارات\"",
-  "@enableNotifications": {
-    "description": "الخطوة الخامسة لتفعيل الإشعارات"
-  },
-  "dailyReminderSet": "تم تعيين التذكير اليومي للساعة {time}",
-  "@dailyReminderSet": {
-    "description": "رسالة تظهر عند تعيين التذكير اليومي",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "accountType": "نوع الحساب",
-  "@accountType": {
-    "description": "تسمية نوع الحساب"
-  },
-  "admin": "مشرف",
-  "@admin": {
-    "description": "تسمية نوع المستخدم المشرف"
-  },
-  "student": "طالب",
-  "@student": {
-    "description": "تسمية نوع المستخدم الطالب"
-  },
-  "days": "أيام",
-  "@days": {
-    "description": "تسمية وحدة الأيام"
-  },
-  "administrator": "مدير",
-  "@administrator": {
-    "description": "تسمية نوع المستخدم المدير"
-  },
-  "fifteenMinutes": "15 دقيقة",
-  "@fifteenMinutes": {
-    "description": "خيار 15 دقيقة للهدف الدراسي اليومي"
-  },
-  "thirtyMinutes": "30 دقيقة",
-  "@thirtyMinutes": {
-    "description": "خيار 30 دقيقة للهدف الدراسي اليومي"
-  },
-  "fortyFiveMinutes": "45 دقيقة",
-  "@fortyFiveMinutes": {
-    "description": "خيار 45 دقيقة للهدف الدراسي اليومي"
-  },
-  "sixtyMinutes": "60 دقيقة",
-  "@sixtyMinutes": {
-    "description": "خيار 60 دقيقة للهدف الدراسي اليومي"
-  },
-  "navMessages": "الرسائل",
-  "@navMessages": {
-    "description": "تسمية التنقل لعلامة التبويب الرسائل"
-  },
-  "resumeQuizTitle": "استئناف الاختبار؟",
-  "@resumeQuizTitle": {
-    "description": "عنوان مربع حوار استئناف الاختبار"
-  },
-  "resumeQuizContent": "لديك اختبار قيد التقدم. هل ترغب في الاستئناف؟",
-  "@resumeQuizContent": {
-    "description": "محتوى مربع حوار استئناف الاختبار"
-  },
-  "startOver": "ابدأ من جديد",
-  "@startOver": {
-    "description": "زر بدء الاختبار من جديد"
-  },
-  "resume": "استئناف",
-  "@resume": {
-    "description": "زر استئناف الاختبار"
-  },
-  "thirtySecondsWarning": "⚠️ تبقى 30 ثانية!",
-  "@thirtySecondsWarning": {
-    "description": "تحذير عند تبقي 30 ثانية في المؤقت"
-  },
-  "quizConfiguration": "إعدادات الاختبار:",
-  "@quizConfiguration": {
-    "description": "عنوان قسم إعدادات الاختبار"
-  },
-  "soundEffects": "المؤثرات الصوتية",
-  "@soundEffects": {
-    "description": "تسمية تبديل المؤثرات الصوتية"
-  },
-  "hapticFeedback": "الاهتزاز",
-  "@hapticFeedback": {
-    "description": "تسمية تبديل الاهتزاز"
-  },
-  "previous": "السابق",
-  "@previous": {
-    "description": "زر السؤال السابق"
-  },
-  "submitQuiz": "إرسال الاختبار",
-  "@submitQuiz": {
-    "description": "زر إرسال الاختبار"
-  },
-  "next": "التالي",
-  "@next": {
-    "description": "زر السؤال التالي"
-  },
-  "reviewAnswers": "مراجعة الإجابات",
-  "@reviewAnswers": {
-    "description": "زر مراجعة الإجابات"
-  },
-  "tryAgain": "حاول مرة أخرى",
-  "@tryAgain": {
-    "description": "زر المحاولة مرة أخرى"
-  },
-  "finish": "إنهاء",
-  "@finish": {
-    "description": "زر إنهاء"
-  },
-  "lessonDetailsError": "خطأ",
-  "@lessonDetailsError": {
-    "description": "عنوان شاشة الخطأ"
-  },
-  "lessonNotFound": "الدرس غير موجود",
-  "@lessonNotFound": {
-    "description": "رسالة عندما لا يتم العثور على الدرس"
-  },
-  "loadingLesson": "جاري تحميل الدرس...",
-  "@loadingLesson": {
-    "description": "رسالة التحميل للدرس"
-  },
-  "errorLoadingTasks": "خطأ في تحميل المهام: {error}",
-  "@errorLoadingTasks": {
-    "description": "رسالة خطأ عند فشل تحميل المهام",
-    "placeholders": {
-      "error": {
-        "type": "String",
-        "example": "خطأ في الشبكة"
-      }
-    }
-  },
-  "questions": "{count} أسئلة",
-  "@questions": {
-    "description": "عدد الأسئلة",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "10"
-      }
-    }
-  },
-  "resource": "المورد {number}",
-  "@resource": {
-    "description": "عنوان المورد الافتراضي",
-    "placeholders": {
-      "number": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "askQuestionAboutLesson": "اطرح سؤالاً حول هذا الدرس",
-  "@askQuestionAboutLesson": {
-    "description": "عنوان مربع حوار السؤال"
-  },
-  "typeYourQuestionHere": "اكتب سؤالك هنا...",
-  "@typeYourQuestionHere": {
-    "description": "نص تلميحي لحقل السؤال"
-  },
-  "sending": "جاري الإرسال...",
-  "@sending": {
-    "description": "نص الإرسال"
-  },
-  "send": "إرسال",
-  "@send": {
-    "description": "نص زر الإرسال"
-  },
-  "mustBeSignedInToAsk": "يجب عليك تسجيل الدخول لطرح سؤال.",
-  "@mustBeSignedInToAsk": {
-    "description": "رسالة عندما يحتاج المستخدم لتسجيل الدخول لطرح سؤال"
-  },
-  "noAdminAvailable": "لا يوجد مدير متاح لاستقبال سؤالك.",
-  "@noAdminAvailable": {
-    "description": "رسالة عندما لا يوجد مدير متاح"
-  },
-  "questionSentToAdmins": "تم إرسال سؤالك إلى المدراء!",
-  "@questionSentToAdmins": {
-    "description": "رسالة النجاح عند إرسال السؤال"
-  },
-  "created": "تم الإنشاء",
-  "@created": {
-    "description": "تسمية الإنشاء"
-  },
-  "updated": "تم التحديث",
-  "@updated": {
-    "description": "تسمية التحديث"
-  },
-  "author": "الكاتب",
-  "@author": {
-    "description": "تسمية الكاتب"
-  },
-  "discussion": "النقاش",
-  "@discussion": {
-    "description": "تسمية النقاش"
-  },
-  "task": "المهمة",
-  "@task": {
-    "description": "تسمية المهمة"
-  },
-  "estimatedTime": "الوقت المقدر",
-  "@estimatedTime": {
-    "description": "تسمية الوقت المقدر"
-  },
-  "lessonInformation": "معلومات الدرس",
-  "@lessonInformation": {
-    "description": "عنوان قسم معلومات الدرس"
-  },
-  "achievementDayStreak": "7 يوم متابعة",
-  "@achievementDayStreak": {
-    "description": "تسمية الحصول على جوائز اليوم"
-  },
-  "achievementSpeedLearner": "متعلم سريع",
-  "@achievementSpeedLearner": {
-    "description": "تسمية الحصول على جوائز السرعة"
-  },
-  "achievementPerfectScore": "درجة مثالية",
-  "@achievementPerfectScore": {
-    "description": "تسمية الحصول على جوائز الدرجة المثالية"
-  },
-  "courseBasicGrammar": "القواعد الأساسية",
-  "@courseBasicGrammar": {
-    "description": "تسمية دورة القواعد الأساسية"
-  },
-  "courseVocabulary": "المفردات",
-  "@courseVocabulary": {
-    "description": "تسمية دورة المفردات"
-  },
-  "coursePronunciation": "النطق",
-  "@coursePronunciation": {
-    "description": "تسمية دورة النطق"
-  },
-  "courseConversation": "المحادثة",
-  "@courseConversation": {
-    "description": "تسمية الدرس المحادثة"
-  },
-  "courseListening": "الاستماع",
-  "@courseListening": {
-    "description": "تسمية دورة الاستماع"
-  },
-  "analytics": "التحليلات",
-  "@analytics": {
-    "description": "عنوان قسم التحليلات"
-  },
-  "pleaseSignIn": "يرجى تسجيل الدخول لعرض ملفك الشخصي",
-  "@pleaseSignIn": {
-    "description": "رسالة عندما يحتاج المستخدم لتسجيل الدخول"
-  },
-  "enrollmentPendingApproval": "طلب التسجيل الخاص بك قيد مراجعة الموافقة",
-  "@enrollmentPendingApproval": {
-    "description": "رسالة تظهر عندما يكون التسجيل قيد المراجعة"
-  },
-  "enrollmentRequestSent": "تم إرسال طلب التسجيل بنجاح",
-  "@enrollmentRequestSent": {
-    "description": "رسالة تظهر عند نجاح طلب التسجيل"
-  },
-  "enrollmentRequestFailed": "فشل في إرسال طلب التسجيل",
-  "@enrollmentRequestFailed": {
-    "description": "رسالة تظهر عند فشل طلب التسجيل"
-  },
-  "searchCourses": "البحث في الدورات...",
-  "@searchCourses": {
-    "description": "نص تلميحي لحقل البحث في الدورات"
-  },
-  "filterCourses": "تصفية الدورات",
-  "@filterCourses": {
-    "description": "نص زر تصفية الدورات"
-  },
-  "difficultyLevel": "مستوى الصعوبة",
-  "@difficultyLevel": {
-    "description": "تسمية إعداد مستوى الصعوبة"
-  },
-  "duration": "المدة",
-  "@duration": {
-    "description": "تسمية المدة"
-  },
-  "price": "السعر",
-  "@price": {
-    "description": "تسمية السعر"
-  },
-  "reset": "إعادة تعيين",
-  "@reset": {
-    "description": "نص زر إعادة التعيين"
-  },
-  "apply": "تطبيق",
-  "@apply": {
-    "description": "نص زر التطبيق"
-  },
-  "noCoursesAvailable": "لا توجد دورات متاحة",
-  "@noCoursesAvailable": {
-    "description": "رسالة عندما لا توجد دورات متاحة"
-  },
-  "noCoursesInCategory": "لا توجد دورات في فئة {category}",
-  "@noCoursesInCategory": {
-    "description": "رسالة عندما لا توجد دورات متاحة في فئة معينة",
-    "placeholders": {
-      "category": {
-        "type": "String",
-        "example": "القواعد"
-      }
-    }
-  },
-  "checkBackLater": "تحقق لاحقاً من الدورات الجديدة",
-  "@checkBackLater": {
-    "description": "رسالة عندما لا توجد دورات متاحة"
-  },
-  "continueProgress": "متابعة تقدمك",
-  "@continueProgress": {
-    "description": "رسالة متابعة التقدم"
-  },
-  "resumeLastLesson": "استئناف آخر درس لك",
-  "@resumeLastLesson": {
-    "description": "رسالة استئناف آخر درس"
-  },
-  "beginJourney": "ابدأ رحلة تعلم اللغة",
-  "@beginJourney": {
-    "description": "رسالة بدء الرحلة"
-  },
-  "browseCourses": "تصفح الدورات",
-  "@browseCourses": {
-    "description": "نص زر تصفح الدورات"
-  },
-  "enrolled": "مسجل",
-  "@enrolled": {
-    "description": "تسمية حالة التسجيل"
-  },
-  "incompleteTasks": "المهام غير المكتملة",
-  "@incompleteTasks": {
-    "description": "عنوان قسم المهام غير المكتملة"
-  },
-  "noRecentActivities": "لا توجد أنشطة حديثة",
-  "@noRecentActivities": {
-    "description": "رسالة تظهر عندما لا توجد أنشطة حديثة"
-  },
-  "noIncompleteTasks": "لا توجد مهام غير مكتملة",
-  "@noIncompleteTasks": {
-    "description": "رسالة تظهر عندما لا توجد مهام غير مكتملة"
-  },
-  "allTasksCompleted": "تم إكمال جميع المهام! عمل رائع!",
-  "@allTasksCompleted": {
-    "description": "رسالة تظهر عندما يتم إكمال جميع المهام"
-  },
-  "startLearningToSeeActivities": "ابدأ التعلم لرؤية أنشطتك هنا",
-  "@startLearningToSeeActivities": {
-    "description": "رسالة تظهر عندما لم يبدأ المستخدم التعلم بعد"
-  },
-  "notificationSettings": "إعدادات الإشعارات",
-  "@notificationSettings": {
-    "description": "Title for notification settings screen"
-  },
-  "stayMotivated": "ابق متحمساً",
-  "@stayMotivated": {
-    "description": "Header title for notification settings"
-  },
-  "notificationSettingsDescription": "قم بتكوين الإشعارات للحفاظ على استمرارية التعلم والبقاء محدثاً بالمحتوى الجديد.",
-  "@notificationSettingsDescription": {
-    "description": "Description for notification settings"
-  },
-  "dailyLearningReminders": "تذكيرات التعلم اليومية",
-  "@dailyLearningReminders": {
-    "description": "Title for daily learning reminders section"
-  },
-  "dailyRemindersDescription": "احصل على تذكير للممارسة كل يوم",
-  "@dailyRemindersDescription": {
-    "description": "Description for daily reminders"
-  },
-  "reminderTime": "وقت التذكير",
-  "@reminderTime": {
-    "description": "Label for reminder time selector"
-  },
-  "dailyChallenges": "التحديات اليومية",
-  "@dailyChallenges": {
-    "description": "Title for daily challenges section"
-  },
-  "dailyChallengesDescription": "احصل على تحديات تعلم يومية",
-  "@dailyChallengesDescription": {
-    "description": "Description for daily challenges"
-  },
-  "challengeTime": "وقت التحدي",
-  "@challengeTime": {
-    "description": "Label for challenge time selector"
-  },
-  "achievementsAndStreaks": "الإنجازات والاستمرارية",
-  "@achievementsAndStreaks": {
-    "description": "Title for achievements section"
-  },
-  "achievementsDescription": "احتفل بمعالم تعلمك",
-  "@achievementsDescription": {
-    "description": "Description for achievements"
-  },
-  "newContent": "محتوى جديد",
-  "@newContent": {
-    "description": "Title for new content section"
-  },
-  "newContentDescription": "احصل على إشعارات حول الكلمات والدروس الجديدة",
-  "@newContentDescription": {
-    "description": "Description for new content"
-  },
-  "streakReminders": "تذكيرات الاستمرارية",
-  "@streakReminders": {
-    "description": "Title for streak reminders section"
-  },
-  "streakRemindersDescription": "تحذيرات عندما تكون استمراريتك في خطر",
-  "@streakRemindersDescription": {
-    "description": "Description for streak reminders"
-  },
-  "testNotifications": "اختبار الإشعارات",
-  "@testNotifications": {
-    "description": "Title for test notifications section"
-  },
-  "testNotificationsDescription": "أرسل إشعارات اختبار للتأكد من أن كل شيء يعمل بشكل صحيح.",
-  "@testNotificationsDescription": {
-    "description": "Description for test notifications"
-  },
-  "dailyReminder": "تذكير يومي",
-  "@dailyReminder": {
-    "description": "Label for daily reminder test button"
-  },
-  "achievement": "إنجاز",
-  "@achievement": {
-    "description": "Label for achievement test button"
-  },
-  "challenge": "تحدي",
-  "@challenge": {
-    "description": "Label for challenge test button"
-  },
-  "manageAllNotifications": "إدارة جميع الإشعارات",
-  "@manageAllNotifications": {
-    "description": "Label for manage all notifications button"
-  },
-  "notifications": "الإشعارات",
-  "@notifications": {
-    "description": "Title for notifications screen"
-  },
-  "dailyLearningReminderTitle": "تذكير التعلم اليومي",
-  "@dailyLearningReminderTitle": {
-    "description": "Title for daily learning reminder notification"
-  },
-  "dailyLearningReminderDescription": "حان وقت ممارسة اللغة اليومية! حافظ على استمراريتك.",
-  "@dailyLearningReminderDescription": {
-    "description": "Description for daily learning reminder notification"
-  },
-  "achievementUnlockedTitle": "تم فتح الإنجاز! 🏆",
-  "@achievementUnlockedTitle": {
-    "description": "Title for achievement unlocked notification"
-  },
-  "achievementUnlockedDescription": "تهانينا! لقد أكملت 7 أيام متتالية. تم كسب شارة سيد الاستمرارية!",
-  "@achievementUnlockedDescription": {
-    "description": "Description for achievement unlocked notification"
-  },
-  "newVocabularyTitle": "مفردات جديدة متاحة",
-  "@newVocabularyTitle": {
-    "description": "Title for new vocabulary notification"
-  },
-  "newVocabularyDescription": "تم إضافة 25 كلمة إنجليزية تجارية جديدة إلى دورتك.",
-  "@newVocabularyDescription": {
-    "description": "Description for new vocabulary notification"
-  },
-  "dailyChallengeTitle": "التحدي اليومي جاهز",
-  "@dailyChallengeTitle": {
-    "description": "Title for daily challenge notification"
-  },
-  "dailyChallengeDescription": "تحدي اليوم: مارس النطق لمدة 10 دقائق!",
-  "@dailyChallengeDescription": {
-    "description": "Description for daily challenge notification"
-  },
-  "streakWarningTitle": "تحذير الاستمرارية ⚠️",
-  "@streakWarningTitle": {
-    "description": "Title for streak warning notification"
-  },
-  "streakWarningDescription": "لا تفقد استمراريتك لمدة 5 أيام! لديك 3 ساعات متبقية للممارسة.",
-  "@streakWarningDescription": {
-    "description": "Description for streak warning notification"
-  },
-  "lessonCompletedTitle": "تم إكمال الدرس",
-  "@lessonCompletedTitle": {
-    "description": "Title for lesson completed notification"
-  },
-  "lessonCompletedDescription": "عمل رائع! لقد أكملت درس \"المحادثات الأساسية\".",
-  "@lessonCompletedDescription": {
-    "description": "Description for lesson completed notification"
-  },
-  "weeklyProgressReportTitle": "تقرير التقدم الأسبوعي",
-  "@weeklyProgressReportTitle": {
-    "description": "Title for weekly progress report notification"
-  },
-  "weeklyProgressReportDescription": "لقد درست لمدة 3.5 ساعة هذا الأسبوع. استمر في العمل الرائع!",
-  "@weeklyProgressReportDescription": {
-    "description": "Description for weekly progress report notification"
-  },
-  "notificationDeleted": "تم حذف الإشعار",
-  "@notificationDeleted": {
-    "description": "Message shown when notification is deleted"
-  },
-  "allNotificationsMarkedAsRead": "تم تحديد جميع الإشعارات كمقروءة",
-  "@allNotificationsMarkedAsRead": {
-    "description": "Message shown when all notifications are marked as read"
-  },
-  "clearAllNotificationsDialogTitle": "مسح جميع الإشعارات",
-  "@clearAllNotificationsDialogTitle": {
-    "description": "Title for clear all notifications dialog"
-  },
-  "clearAllNotificationsDialogContent": "هل أنت متأكد من أنك تريد حذف جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.",
-  "@clearAllNotificationsDialogContent": {
-    "description": "Content for clear all notifications dialog"
-  },
-  "clearAllNotifications": "تم مسح جميع الإشعارات",
-  "@clearAllNotifications": {
-    "description": "Message shown when all notifications are cleared"
-  },
-  "clearAll": "مسح الكل",
-  "@clearAll": {
-    "description": "Label for clear all button"
-  },
-  "markAllAsRead": "تحديد الكل كمقروء",
-  "@markAllAsRead": {
-    "description": "Tooltip for mark all as read button"
-  },
-  "loadingNotifications": "جاري تحميل الإشعارات...",
-  "@loadingNotifications": {
-    "description": "Text shown while loading notifications"
-  },
-  "noNotifications": "لا توجد إشعارات",
-  "@noNotifications": {
-    "description": "Title shown when there are no notifications"
-  },
-  "noNotificationsDescription": "أنت محدث بالكامل! تحقق لاحقاً للحصول على تحديثات وإنجازات جديدة.",
-  "@noNotificationsDescription": {
-    "description": "Description shown when there are no notifications"
-  },
-  "unreadNotifications": "{count} إشعارات غير مقروءة",
-  "@unreadNotifications": {
-    "description": "Text showing unread notification count",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "5"
-      }
-    }
-  },
-  "justNow": "الآن",
-  "@justNow": {
-    "description": "Text for very recent timestamp"
-  },
-  "minutesAgo": "منذ {minutes} دقيقة",
-  "@minutesAgo": {
-    "description": "Text for minutes ago timestamp",
-    "placeholders": {
-      "minutes": {
-        "type": "int",
-        "example": "5"
-      }
-    }
-  },
-  "hoursAgo": "منذ {hours} ساعة",
-  "@hoursAgo": {
-    "description": "Text for hours ago timestamp",
-    "placeholders": {
-      "hours": {
-        "type": "int",
-        "example": "2"
-      }
-    }
-  },
-  "daysAgo": "منذ {days} يوم",
-  "@daysAgo": {
-    "description": "Text for days ago timestamp",
-    "placeholders": {
-      "days": {
-        "type": "int",
-        "example": "3"
-      }
-    }
-  },
-  "openingLessons": "جاري فتح الدروس...",
-  "@openingLessons": {
-    "description": "Message shown when opening lessons from notification"
-  },
-  "openingAchievements": "جاري فتح الإنجازات...",
-  "@openingAchievements": {
-    "description": "Message shown when opening achievements from notification"
-  },
-  "openingNewContent": "جاري فتح المحتوى الجديد...",
-  "@openingNewContent": {
-    "description": "Message shown when opening new content from notification"
-  },
-  "openingChallenges": "جاري فتح التحديات...",
-  "@openingChallenges": {
-    "description": "Message shown when opening challenges from notification"
-  },
-  "openingPractice": "جاري فتح الممارسة...",
-  "@openingPractice": {
-    "description": "Message shown when opening practice from notification"
-  },
-  "openingProgress": "جاري فتح التقدم...",
-  "@openingProgress": {
-    "description": "Message shown when opening progress from notification"
-  },
-  "openingAnalytics": "جاري فتح التحليلات...",
-  "@openingAnalytics": {
-    "description": "Message shown when opening analytics from notification"
-  },
-  "courseSpeaking": "الدورة التعليمية للتحديث",
-  "@courseSpeaking": {
-    "description": "Title for course speaking"
-  },
-  "courseSpeakingDescription": "تحديث الدورة التعليمية للتحديث",
-  "@courseSpeakingDescription": {
-    "description": "Description for course speaking"
-  },
-  "setVocabularyGoal": "تعيين هدف المفردات",
-  "@setVocabularyGoal": {
-    "description": "Title for vocabulary goal setting screen"
-  },
-  "vocabularyGoalTitle": "حدد هدف المفردات اليومي",
-  "@vocabularyGoalTitle": {
-    "description": "Title for vocabulary goal section"
-  },
-  "vocabularyGoalDescription": "اختر عدد الكلمات الجديدة التي تريد تعلمها كل يوم. هذا سيساعدك على البقاء متحمساً وتتبع تقدمك.",
-  "@vocabularyGoalDescription": {
-    "description": "Description for vocabulary goal setting"
-  },
-  "chooseGoalPreset": "اختر هدفاً مسبق التحديد",
-  "@chooseGoalPreset": {
-    "description": "Title for goal preset selection"
-  },
-  "customTarget": "هدف مخصص",
-  "@customTarget": {
-    "description": "Label for custom target option"
-  },
-  "enterCustomTarget": "أدخل الهدف المخصص",
-  "@enterCustomTarget": {
-    "description": "Label for custom target input field"
-  },
-  "customTargetHint": "مثال: 20",
-  "@customTargetHint": {
-    "description": "Hint for custom target input"
-  },
-  "wordsPerDay": "كلمات/يوم",
-  "@wordsPerDay": {
-    "description": "Label for words per day"
-  },
-  "updateGoal": "تحديث الهدف",
-  "@updateGoal": {
-    "description": "Button text for updating goal"
-  },
-  "setGoal": "تعيين الهدف",
-  "@setGoal": {
-    "description": "Button text for setting goal"
-  },
-  "deleteGoal": "حذف الهدف",
-  "@deleteGoal": {
-    "description": "Button text for deleting goal"
-  },
-  "currentGoal": "الهدف الحالي",
-  "@currentGoal": {
-    "description": "Label for current goal section"
-  },
-  "dailyTarget": "الهدف اليومي",
-  "@dailyTarget": {
-    "description": "Label for daily target"
-  },
-  "words": "كلمات",
-  "@words": {
-    "description": "Label for words"
-  },
-  "progress": "التقدم",
-  "@progress": {
-    "description": "Label for progress"
-  },
-  "goalCompleted": "تم إكمال الهدف لليوم! 🎉",
-  "@goalCompleted": {
-    "description": "Message when goal is completed"
-  },
-  "remainingWords": "{count} كلمة متبقية",
-  "@remainingWords": {
-    "description": "Text showing remaining words",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "5"
-      }
-    }
-  },
-  "invalidTarget": "يرجى إدخال رقم صحيح أكبر من 0",
-  "@invalidTarget": {
-    "description": "Error message for invalid target"
-  },
-  "goalSetSuccessfully": "تم تعيين هدف المفردات بنجاح!",
-  "@goalSetSuccessfully": {
-    "description": "Success message when goal is set"
-  },
-  "deleteGoalConfirmation": "هل أنت متأكد من أنك تريد حذف هدف المفردات؟ لا يمكن التراجع عن هذا الإجراء.",
-  "@deleteGoalConfirmation": {
-    "description": "Confirmation message for deleting goal"
-  },
-  "delete": "حذف",
-  "@delete": {
-    "description": "Button text for delete"
-  },
-  "goalDeleted": "تم حذف هدف المفردات",
-  "@goalDeleted": {
-    "description": "Message when goal is deleted"
-  },
-  "loadingGoal": "جاري تحميل الهدف...",
-  "@loadingGoal": {
-    "description": "Text shown while loading vocabulary goal"
-  },
-  "noVocabularyGoal": "لم يتم تعيين هدف للمفردات",
-  "@noVocabularyGoal": {
-    "description": "Title when no vocabulary goal is set"
-  },
-  "setGoalToTrackProgress": "حدد هدفاً يومياً للمفردات لتتبع تقدم تعلمك والبقاء متحمساً.",
-  "@setGoalToTrackProgress": {
-    "description": "Description for setting vocabulary goal"
-  },
-  "dailyVocabularyGoal": "هدف المفردات اليومي",
-  "@dailyVocabularyGoal": {
-    "description": "Title for daily vocabulary goal"
-  },
-  "editGoal": "تعديل الهدف",
-  "@editGoal": {
-    "description": "Tooltip for edit goal button"
-  },
-  "learnWords": "تعلم الكلمات",
-  "@learnWords": {
-    "description": "Button text for learning words"
-  },
-  "addWords": "إضافة كلمات",
-  "@addWords": {
-    "description": "Button text for adding words"
-  },
-  "congratulationsGoalCompleted": "تهانينا! لقد أكملت هدف المفردات اليومي! 🎉",
-  "@congratulationsGoalCompleted": {
-    "description": "Congratulations message when goal is completed"
-  },
-  "addWordsManually": "إضافة كلمات يدوياً",
-  "@addWordsManually": {
-    "description": "Title for manual word addition dialog"
-  },
-  "howManyWordsLearned": "كم كلمة تعلمت اليوم؟",
-  "@howManyWordsLearned": {
-    "description": "Question for manual word addition"
-  },
-  "numberOfWords": "عدد الكلمات",
-  "@numberOfWords": {
-    "description": "Label for number of words input"
-  },
-  "add": "إضافة",
-  "@add": {
-    "description": "Button text for add action"
-  },
-  "manageVocabularyGoal": "إدارة هدف المفردات",
-  "@manageVocabularyGoal": {
-    "description": "Title for vocabulary goal management"
-  },
-  "noVocabularyProgress": "لا يوجد تقدم في المفردات بعد",
-  "@noVocabularyProgress": {
-    "description": "يظهر عند عدم وجود تقدم في المفردات"
-  },
-  "startLearningWords": "ابدأ تعلم الكلمات لرؤية تقدمك هنا",
-  "@startLearningWords": {
-    "description": "دعوة لبدء تعلم الكلمات لرؤية التقدم"
-  },
-  "vocabularyProgress": "تقدم المفردات",
-  "@vocabularyProgress": {
-    "description": "عنوان قسم تقدم المفردات"
-  },
-  "totalWords": "إجمالي الكلمات",
-  "@totalWords": {
-    "description": "تسمية إجمالي الكلمات"
-  },
-  "accuracy": "الدقة",
-  "@accuracy": {
-    "description": "تسمية الدقة"
-  },
-  "favorites": "المفضلة",
-  "@favorites": {
-    "description": "تسمية المفضلة"
-  },
-  "noPronunciationPractice": "لا يوجد تدريب على النطق بعد",
-  "@noPronunciationPractice": {
-    "description": "يظهر عند عدم وجود تدريب على النطق"
-  },
-  "startPracticingPronunciation": "ابدأ ممارسة النطق لرؤية تقدمك هنا",
-  "@startPracticingPronunciation": {
-    "description": "دعوة لبدء ممارسة النطق لرؤية التقدم"
-  },
-  "pronunciationProgress": "تقدم النطق",
-  "@pronunciationProgress": {
-    "description": "عنوان قسم تقدم النطق"
-  },
-  "totalAttempts": "إجمالي المحاولات",
-  "@totalAttempts": {
-    "description": "تسمية إجمالي المحاولات"
-  },
-  "successRate": "معدل النجاح",
-  "@successRate": {
-    "description": "تسمية معدل النجاح"
-  },
-  "avgAccuracy": "متوسط الدقة",
-  "@avgAccuracy": {
-    "description": "تسمية متوسط الدقة"
-  },
-  "bestAccuracy": "أفضل دقة",
-  "@bestAccuracy": {
-    "description": "تسمية أفضل دقة"
-  },
-  "avgConfidence": "متوسط الثقة",
-  "@avgConfidence": {
-    "description": "تسمية متوسط الثقة"
-  },
-  "wordsPracticed": "الكلمات التي تم التدرب عليها",
-  "@wordsPracticed": {
-    "description": "تسمية الكلمات التي تم التدرب عليها"
-  },
-  "recentPractice": "التدريب الأخير",
-  "@recentPractice": {
-    "description": "عنوان قسم التدريب الأخير"
-  },
-  "recentActivity": "النشاط الأخير",
-  "@recentActivity": {
-    "description": "عنوان قسم النشاط الأخير"
-  },
-  "recentActivities": "الأنشطة الأخيرة",
-  "@recentActivities": {
-    "description": "عنوان قسم الأنشطة الأخيرة"
-  },
-  "yourGoals": "أهدافك",
-  "@yourGoals": {
-    "description": "عنوان قسم أهداف المستخدم"
-  },
-  "courseProgress": "تقدم الدورة",
-  "@courseProgress": {
-    "description": "عنوان قسم تقدم الدورة"
-  },
-  "allTime": "كل الوقت",
-  "@allTime": {
-    "description": "تسمية فلتر كل الوقت"
-  },
-  "thisWeek": "هذا الأسبوع",
-  "@thisWeek": {
-    "description": "تسمية فلتر هذا الأسبوع"
-  },
-  "thisMonth": "هذا الشهر",
-  "@thisMonth": {
-    "description": "تسمية فلتر هذا الشهر"
-  },
-  "last30Days": "آخر 30 يومًا",
-  "@last30Days": {
-    "description": "تسمية فلتر آخر 30 يومًا"
-  },
-  "pleaseSignInToViewProgress": "يرجى تسجيل الدخول لعرض تقدمك",
-  "@pleaseSignInToViewProgress": {
-    "description": "دعوة لتسجيل الدخول لعرض التقدم"
-  },
-  "learningProgress": "تقدم التعلم",
-  "@learningProgress": {
-    "description": "عنوان قسم تقدم التعلم"
-  },
-  "vocabularyAndPronunciation": "المفردات والنطق",
-  "@vocabularyAndPronunciation": {
-    "description": "عنوان تبويب المفردات والنطق"
-  },
-  "completed": "مكتمل",
-  "@completed": {
-    "description": "تسمية مكتمل"
-  },
-  "dailyStudy": "الدراسة اليومية",
-  "@dailyStudy": {
-    "description": "تسمية الدراسة اليومية"
-  },
-  "lessonsCompleted": "الدروس المكتملة",
-  "@lessonsCompleted": {
-    "description": "تسمية الدروس المكتملة"
-  },
-  "firstLesson": "أول درس",
-  "@firstLesson": {
-    "description": "عنوان إنجاز أول درس"
-  },
-  "completedFirstLesson": "أكملت أول درس لك!",
-  "@completedFirstLesson": {
-    "description": "وصف إنجاز أول درس"
-  },
-  "threeDayStreak": "سلسلة 3 أيام",
-  "@threeDayStreak": {
-    "description": "عنوان إنجاز سلسلة 3 أيام"
-  },
-  "studiedThreeDays": "درست 3 أيام متتالية!",
-  "@studiedThreeDays": {
-    "description": "وصف إنجاز سلسلة 3 أيام"
-  },
-  "keepUpGreatWork": "واصل العمل الرائع! أنت تحقق تقدمًا ممتازًا.",
-  "@keepUpGreatWork": {
-    "description": "رسالة تشجيعية للتقدم"
-  },
-  "learningAnalytics": "تحليلات التعلم",
-  "@learningAnalytics": {
-    "description": "عنوان قسم تحليلات التعلم"
-  },
-  "timeRange": "النطاق الزمني",
-  "@timeRange": {
-    "description": "تسمية فلتر النطاق الزمني"
-  },
-  "category": "الفئة",
-  "@category": {
-    "description": "تسمية فلتر الفئة"
-  },
-  "vocabularyWords": "كلمات المفردات",
-  "@vocabularyWords": {
-    "description": "تسمية كلمات المفردات"
-  },
-  "pronunciationAttempts": "محاولات النطق",
-  "@pronunciationAttempts": {
-    "description": "تسمية محاولات النطق"
-  },
-  "vocabularyAccuracy": "دقة المفردات",
-  "@vocabularyAccuracy": {
-    "description": "تسمية دقة المفردات"
-  },
-  "pronunciationAccuracy": "دقة النطق",
-  "@pronunciationAccuracy": {
-    "description": "تسمية دقة النطق"
-  },
-  "progressTrends": "اتجاهات التقدم",
-  "@progressTrends": {
-    "description": "عنوان قسم اتجاهات التقدم"
-  },
-  "vocabVsPronunciation": "تقدم المفردات مقابل النطق",
-  "@vocabVsPronunciation": {
-    "description": "عنوان قسم تقدم المفردات مقابل النطق"
-  },
-  "firstAttempt": "أول محاولة",
-  "@firstAttempt": {
-    "description": "تسمية لأول محاولة في قسم تقدم النطق"
-  },
-  "lastAttempt": "آخر محاولة",
-  "@lastAttempt": {
-    "description": "تسمية لآخر محاولة في قسم تقدم النطق"
-  },
-  "commonMistakes": "الأخطاء الشائعة",
-  "@commonMistakes": {
-    "description": "تسمية للأخطاء الشائعة في قسم تقدم النطق"
-  },
-  "wordFrequency": "تكرار الكلمة",
-  "@wordFrequency": {
-    "description": "تسمية لتكرار الكلمة في قسم تقدم النطق"
-  },
-  "excellent": "ممتاز",
-  "@excellent": {
-    "description": "تسمية لدقة النطق الممتازة"
-  },
-  "good": "جيد",
-  "@good": {
-    "description": "تسمية لدقة النطق الجيدة"
-  },
-  "needsPractice": "يحتاج إلى ممارسة",
-  "@needsPractice": {
-    "description": "تسمية لدقة النطق التي تحتاج إلى ممارسة"
-  },
-  "attempts": "محاولات",
-  "@attempts": {
-    "description": "تسمية لعدد المحاولات في قسم تقدم النطق"
-  },
-  "success": "نجاح",
-  "@success": {
-    "description": "تسمية لمعدل النجاح في قسم تقدم النطق"
-  },
-  "greatJob": "عمل رائع!",
-  "@greatJob": {
-    "description": "تسمية لعمل رائع"
-  },
-  "youveBeenLearningForAnother10MinutesKeepItUp": "لقد كنت تتعلم لمدة 10 دقائق إضافية! واصل العمل الجيد! 🎉",
-  "@youveBeenLearningForAnother10MinutesKeepItUp": {
-    "description": "تسمية لقد كنت تتعلم لمدة 10 دقائق إضافية واصل العمل الجيد"
-  },
-  "thanks": "شكرًا!",
-  "@thanks": {
-    "description": "تسمية للشكر"
-  },
-  "goalAchieved": "تم تحقيق الهدف!",
-  "@goalAchieved": {
-    "description": "تسمية لتحقيق الهدف"
-  },
-  "congratulationsYouHaveReachedYourDailyVocabularyGoalWouldYouLikeToSetANewOne": "تهانينا! لقد وصلت إلى هدفك اليومي في المفردات. هل ترغب في تعيين هدف جديد؟",
-  "@congratulationsYouHaveReachedYourDailyVocabularyGoalWouldYouLikeToSetANewOne": {
-    "description": "تسمية لتهانينا لقد وصلت إلى هدفك اليومي في المفردات هل ترغب في تعيين هدف جديد"
-  },
-  "notNow": "ليس الآن",
-  "@notNow": {
-    "description": "تسمية ليس الآن"
-  },
-  "setNewGoal": "تعيين هدف جديد",
-  "@setNewGoal": {
-    "description": "تسمية لتعيين هدف جديد"
-  },
-  "failedToUpdateFavoriteStatus": "فشل في تحديث حالة المفضلة",
-  "@failedToUpdateFavoriteStatus": {
-    "description": "رسالة فشل تحديث المفضلة"
-  },
-  "addedToFavorites": "تمت الإضافة إلى المفضلة!",
-  "@addedToFavorites": {
-    "description": "رسالة عند الإضافة إلى المفضلة"
-  },
-  "removedFromFavorites": "تمت الإزالة من المفضلة",
-  "@removedFromFavorites": {
-    "description": "رسالة عند الإزالة من المفضلة"
-  },
-  "progressTrackingTemporarilyUnavailable": "تتبع التقدم غير متوفر مؤقتًا",
-  "@progressTrackingTemporarilyUnavailable": {
-    "description": "رسالة فشل تتبع التقدم"
-  },
-  "vocabularyProgressTestSuccessfulCheckConsoleForDetails": "تم اختبار تقدم المفردات بنجاح! تحقق من التفاصيل في وحدة التحكم.",
-  "@vocabularyProgressTestSuccessfulCheckConsoleForDetails": {
-    "description": "رسالة نجاح اختبار تقدم المفردات"
-  },
-  "vocabularyProgressTestFailed": "فشل اختبار تقدم المفردات",
-  "@vocabularyProgressTestFailed": {
-    "description": "رسالة فشل اختبار تقدم المفردات"
-  },
-  "wordPronunciationPractice": "تدريب نطق الكلمة",
-  "@wordPronunciationPractice": {
-    "description": "عنوان نافذة تدريب نطق الكلمة"
-  },
-  "unableToLoadPronunciationPractice": "تعذر تحميل تدريب النطق",
-  "@unableToLoadPronunciationPractice": {
-    "description": "رسالة خطأ تحميل تدريب النطق"
-  },
-  "pleaseTryAgainLater": "يرجى المحاولة لاحقًا.",
-  "@pleaseTryAgainLater": {
-    "description": "رسالة خطأ عامة للمحاولة لاحقًا"
-  },
-  "close": "إغلاق",
-  "@close": {
-    "description": "زر إغلاق النوافذ"
-  },
-  "noExampleSentenceAvailableForThisWord": "لا توجد جملة مثال لهذه الكلمة.",
-  "@noExampleSentenceAvailableForThisWord": {
-    "description": "رسالة عدم توفر جملة مثال"
-  },
-  "sentencePronunciationPractice": "تدريب نطق الجملة",
-  "@sentencePronunciationPractice": {
-    "description": "عنوان نافذة تدريب نطق الجملة"
-  },
-  "exampleSentenceFor": "جملة مثال لـ",
-  "@exampleSentenceFor": {
-    "description": "تسمية سياق جملة المثال"
-  },
-  "unableToLoadSentencePronunciationPractice": "تعذر تحميل تدريب نطق الجملة",
-  "@unableToLoadSentencePronunciationPractice": {
-    "description": "رسالة خطأ تحميل تدريب نطق الجملة"
-  },
-  "awesome": "رائع! 🎉",
-  "@awesome": {
-    "description": "رسالة تهنئة لنطق الكلمة بشكل صحيح"
-  },
-  "greatPronunciationKeepPracticingAndYoullMasterThisWord": "نطق رائع! استمر في التدريب وستتقن هذه الكلمة.",
-  "@greatPronunciationKeepPracticingAndYoullMasterThisWord": {
-    "description": "رسالة تشجيع بعد نطق الكلمة بشكل صحيح"
-  },
-  "yourBestAccuracy": "أفضل دقة لديك:",
-  "@yourBestAccuracy": {
-    "description": "تسمية أفضل دقة نطق"
-  },
-  "average": "المتوسط",
-  "@average": {
-    "description": "تسمية المتوسط"
-  },
-  "nextWord": "الكلمة التالية",
-  "@nextWord": {
-    "description": "زر الكلمة التالية"
-  },
-  "excellent": "ممتاز! 🎊",
-  "@excellent": {
-    "description": "رسالة تهنئة لنطق الجملة بشكل صحيح"
-  },
-  "greatSentencePronunciationKeepPracticingAndYoullSoundLikeANative": "نطق جملة رائع! استمر في التدريب وستنطق كأنك متحدث أصلي.",
-  "@greatSentencePronunciationKeepPracticingAndYoullSoundLikeANative": {
-    "description": "رسالة تشجيع بعد نطق الجملة بشكل صحيح"
-  },
-  "learningSessionInProgress": "جلسة التعلم جارية 📚",
-  "@learningSessionInProgress": {
-    "description": "عنوان إشعار جلسة التعلم"
-  },
-  "currentWord": "الكلمة الحالية",
-  "@currentWord": {
-    "description": "تسمية الكلمة الحالية في الإشعار"
-  },
-  "timeToPracticeYourVocabularyKeepYourLearningStreakAlive": "حان وقت ممارسة المفردات! حافظ على سلسلة تعلمك.",
-  "@timeToPracticeYourVocabularyKeepYourLearningStreakAlive": {
-    "description": "رسالة إشعار تذكير بالدراسة"
-  },
-  "learningSessionStartedCheckYourNotifications": "تم بدء جلسة التعلم! تحقق من الإشعارات.",
-  "@learningSessionStartedCheckYourNotifications": {
-    "description": "رسالة بدء جلسة التعلم"
-  },
-  "vocabularyBuilder": "بناء المفردات",
-  "@vocabularyBuilder": {
-    "description": "عنوان شاشة بناء المفردات"
-  },
-  "testFirebaseConnection": "اختبار اتصال Firebase",
-  "@testFirebaseConnection": {
-    "description": "تلميح زر اختبار اتصال Firebase"
-  },
-  "search": "بحث",
-  "@search": {
-    "description": "تلميح زر البحث"
-  },
-  "toggleFavorite": "تبديل المفضلة",
-  "@toggleFavorite": {
-    "description": "تلميح زر تبديل المفضلة"
-  },
-  "searchWordsOrMeanings": "ابحث عن كلمات أو معانٍ...",
-  "@searchWordsOrMeanings": {
-    "description": "نص تلميحي لشريط البحث"
-  },
-  "setYourDailyVocabularyGoal": "حدد هدفك اليومي للمفردات",
-  "@setYourDailyVocabularyGoal": {
-    "description": "دعوة لتحديد هدف المفردات اليومي"
-  },
-  "trackYourProgressAndStayMotivatedBySettingADailyVocabularyGoal": "تابع تقدمك وابقَ متحفزًا بتحديد هدف يومي للمفردات.",
-  "@trackYourProgressAndStayMotivatedBySettingADailyVocabularyGoal": {
-    "description": "وصف دعوة هدف اليومي"
-  },
-  "setGoal": "تحديد الهدف",
-  "@setGoal": {
-    "description": "زر تحديد الهدف"
-  },
-  "todaysGoal": "هدف اليوم",
-  "@todaysGoal": {
-    "description": "تسمية هدف اليوم"
-  },
-  "practicePronunciation": "تدريب النطق",
-  "@practicePronunciation": {
-    "description": "تلميح زر تدريب النطق"
-  },
-  "meaning": "المعنى",
-  "@meaning": {
-    "description": "تسمية قسم المعنى"
-  },
-  "wordPracticed": "تمت ممارسة الكلمة",
-  "@wordPracticed": {
-    "description": "زر ممارسة الكلمة"
-  },
-  "practiceWord": "تدريب الكلمة",
-  "@practiceWord": {
-    "description": "زر تدريب الكلمة"
-  },
-  "example": "مثال",
-  "@example": {
-    "description": "تسمية قسم المثال"
-  },
-  "sentencePracticed": "تمت ممارسة الجملة",
-  "@sentencePracticed": {
-    "description": "زر ممارسة الجملة"
-  },
-  "practiceSentence": "تدريب الجملة",
-  "@practiceSentence": {
-    "description": "زر تدريب الجملة"
-  },
-  "exampleMeaning": "معنى المثال",
-  "@exampleMeaning": {
-    "description": "تسمية قسم معنى المثال"
-  },
-  "usageFrequency": "تكرار الاستخدام",
-  "@usageFrequency": {
-    "description": "تسمية قسم تكرار الاستخدام"
-  },
-  "random": "عشوائي",
-  "@random": {
-    "description": "زر عشوائي"
-  },
-  "hide": "إخفاء",
-  "@hide": {
-    "description": "زر إخفاء الإجابة"
-  },
-  "reveal": "إظهار",
-  "@reveal": {
-    "description": "زر إظهار الإجابة"
-  },
-  "veryCommonlyUsedInEverydayEnglish": "شائع جدًا في الإنجليزية اليومية",
-  "@veryCommonlyUsedInEverydayEnglish": {
-    "description": "وصف التكرار مرتفع جدًا"
-  },
-  "frequentlyUsedInEnglish": "يستخدم كثيرًا في الإنجليزية",
-  "@frequentlyUsedInEnglish": {
-    "description": "وصف التكرار مرتفع"
-  },
-  "moderatelyUsedInEnglish": "يستخدم بشكل متوسط في الإنجليزية",
-  "@moderatelyUsedInEnglish": {
-    "description": "وصف التكرار متوسط"
-  },
-  "occasionallyUsedInEnglish": "يستخدم أحيانًا في الإنجليزية",
-  "@occasionallyUsedInEnglish": {
-    "description": "وصف التكرار منخفض"
-  },
-  "rarelyUsedInEnglish": "نادراً ما يستخدم في الإنجليزية",
-  "@rarelyUsedInEnglish": {
-    "description": "وصف التكرار منخفض جدًا"
-  },
-  "yourProgress": "تقدمك",
-  "@yourProgress": {
-    "description": "تسمية قسم تقدمك"
-  },
-  "views": "المشاهدات",
-  "@views": {
-    "description": "تسمية عدد المشاهدات"
-  },
-  "correct": "صحيح",
-  "@correct": {
-    "description": "تسمية عدد الإجابات الصحيحة"
-  },
-  "accuracy": "الدقة",
-  "@accuracy": {
-    "description": "تسمية الدقة"
-  },
-  "common": "شائع",
-  "@common": {
-    "description": "تسمية الشائع"
-  },
-  "uncommon": "غير شائع",
-  "@uncommon": {
-    "description": "تسمية غير الشائع"
-  },
-  "veryCommon": "شائع جدًا",
-  "@veryCommon": {
-    "description": "تسمية الشائع جدًا"
-  },
-  "rare": "نادر",
-  "@rare": {
-    "description": "تسمية النادر"
-  },
-  "viewed": "تمت المشاهدة",
-  "@viewed": {
-    "description": "تسمية عدد مرات المشاهدة"
-  },
-  "correctAnswers": "الإجابات الصحيحة",
-  "@correctAnswers": {
-    "description": "تسمية عدد الإجابات الصحيحة"
-  },
-  "microphonePermissionRequired": "مطلوب إذن الميكروفون للتعرف على الكلام.",
-  "speechRecognitionNotAvailable": "التعرف على الكلام غير متوفر. يرجى التحقق من أذونات الميكروفون.",
-  "failedToStartListening": "فشل في بدء الاستماع. يرجى المحاولة مرة أخرى.",
-  "errorStartingSpeechRecognition": "حدث خطأ أثناء بدء التعرف على الكلام.",
-  "errorEvaluatingPronunciation": "حدث خطأ أثناء تقييم النطق. يرجى المحاولة مرة أخرى.",
-  "perfectSentencePronunciation": "نطق الجملة مثالي! طلاقة ممتازة!",
-  "greatSentencePronunciation": "نطق الجملة رائع! تدفق طبيعي جدًا.",
-  "goodSentencePronunciation": "نطق جيد للجملة! استمر في التدريب لتحسين الطلاقة.",
-  "notQuiteRight": "ليس صحيحًا تمامًا. استمع للجملة مرة أخرى وتدرب على الإيقاع.",
-  "poor": "ضعيف",
-  "veryHigh": "مرتفع جدًا",
-  "high": "مرتفع",
-  "medium": "متوسط",
-  "practiceThisSentence": "تدرب على هذه الجملة",
-  "listening": "يستمع...",
-  "readyToListen": "جاهز للاستماع",
-  "youSaid": "قلت:",
-  "startSpeakingToSeeYourWordsHere": "ابدأ التحدث لترى كلماتك هنا...",
-  "liveTranscription": "نسخ مباشر",
-  "stop": "إيقاف",
-  "startSpeaking": "ابدأ التحدث",
-  "similarity": "التشابه",
-  "confidence": "الثقة",
-  "continueText": "استمر",
-  "newWords": "كلمات جديدة",
-  "goal": "الهدف",
-  "remaining": "المتبقي"
-}

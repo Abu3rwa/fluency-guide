@@ -306,15 +306,27 @@ const VocabularyReviewIntegration = () => {
               <SchoolIcon sx={{ fontSize: 20 }} />
               Vocabulary Review
             </Typography>
-            <Tooltip title="Refresh data (R)">
-              <IconButton
-                onClick={fetchVocabularyReviewData}
-                disabled={loading}
-                size="small"
-              >
-                <RefreshIcon />
-              </IconButton>
-            </Tooltip>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Tooltip title="Go to Vocabulary Building">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => (window.location.href = "/student/vocabulary")}
+                  sx={{ mr: 1 }}
+                >
+                  View All
+                </Button>
+              </Tooltip>
+              <Tooltip title="Refresh data (R)">
+                <IconButton
+                  onClick={fetchVocabularyReviewData}
+                  disabled={loading}
+                  size="small"
+                >
+                  <RefreshIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
 
           {/* Analytics Section */}

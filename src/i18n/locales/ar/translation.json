@@ -35,7 +35,8 @@
   },
   "header": {
     "toggleTheme": "تغيير المظهر",
-    "openDrawer": "افتح القائمة"
+    "openDrawer": "افتح القائمة",
+    "goHome": "اذهب إلى الرئيسية"
   },
   "language": {
     "changeLanguage": "تغيير اللغة",
@@ -74,6 +75,39 @@
       "subtitle": "اختبر تعلم الإنجليزية الشخصي مع المحادثات المدعومة بالذكاء الاصطناعي وممارسة النطق والدروس التكيفية المصممة لنجاحك.",
       "startLearning": "ابدأ التعلم",
       "watchDemo": "شاهد العرض التوضيحي"
+    },
+    "courseCard": {
+      "loginOrSignUp": "تسجيل الدخول أو إنشاء حساب",
+      "startLearning": "ابدأ التعلم",
+      "enroll": "سجل الآن",
+      "enrollmentPending": "قيد الانتظار",
+      "enrollmentRejected": "مرفوض",
+      "free": "مجاني",
+      "by": "بواسطة",
+      "featured": "مُميَّز",
+      "percentOff": "خصم {{percent}}%"
+    },
+    "courses": {
+      "title": "استكشف دوراتنا",
+      "noCoursesFound": "لم يتم العثور على دورات.",
+      "carouselLabel": "عرض الدورات المميزة",
+      "categories": {
+        "all": "الكل",
+        "foundation": "الأساسيات",
+        "business": "الأعمال",
+        "conversation": "المحادثة",
+        "examPrep": "تحضير الامتحان"
+      },
+      "cta": {
+        "signUpNow": "سجل الآن",
+        "joinThousands": "انضم إلى آلاف المتعلمين – سجل مجاناً!",
+        "continueLearning": "واصل التعلم",
+        "continueJourney": "واصل رحلة التعلم!",
+        "enrollNow": "سجل الآن",
+        "readyToLearn": "مستعد لبدء التعلم؟ سجل في دورة!",
+        "browseAllCourses": "تصفح جميع الدورات",
+        "exploreCatalog": "استكشف كتالوج الدورات الكامل."
+      }
     },
     "features": {
       "title": "لماذا تختار منصتنا؟",
@@ -148,9 +182,6 @@
     "footer": {
       "copyright": "© 2024 منصة تعلم الإنجليزية. جميع الحقوق محفوظة."
     }
-  },
-  "courses": {
-    "title": "استكشف دوراتنا"
   },
   "faq": {
     "question1": "ما مستوى الإنجليزية المطلوب للبدء؟",
@@ -567,6 +598,7 @@
     "editTask": "تعديل المهمة"
   },
   "courses": {
+    "title": "استكشف دوراتنا",
     "details": {
       "actions": {
         "publish": "نشر",

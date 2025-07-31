@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -7,13 +7,11 @@ import {
   Alert,
   Grid,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useCustomTheme } from "../../../contexts/ThemeContext";
+import { useTranslation } from "react-i18next";
 import { useUser } from "../../../contexts/UserContext";
-import { useStudentCourse } from "../../../contexts/studentCourseContext";
-import { useStudentModule } from "../../../contexts/studentModuleContext";
-import { useStudentLesson } from "../../../contexts/studentLessonContext";
-import { useStudentTask } from "../../../contexts/studentTaskContext";
-import { useStudentAchievement } from "../../../contexts/studentAchievementContext";
+import { useCourseDetails } from "./hooks/useCourseDetails";
+import { useCourseReviews } from "./hooks/useCourseReviews";
 import StudentCourseDetailHeaderSection from "./components/StudentCourseDetailHeaderSection";
 import StudentCourseDetailOverviewSection from "./components/StudentCourseDetailOverviewSection";
 import StudentCourseDetailProgressStats from "./components/StudentCourseDetailProgressStats";
@@ -22,156 +20,44 @@ import StudentCourseDetailMaterialsDialog from "./components/StudentCourseDetail
 import StudentCourseDetailInstructorInfo from "./components/StudentCourseDetailInstructorInfo";
 import StudentCourseDetailReviewsSection from "./components/StudentCourseDetailReviewsSection";
 import StudentCourseDetailSupportDialog from "./components/StudentCourseDetailSupportDialog";
-import { enrollmentService } from "../../../services/enrollmentService";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  serverTimestamp,
-  updateDoc,
-  doc,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
-import { db } from "../../../firebase";
-import { useCustomTheme } from "../../../contexts/ThemeContext";
 import StudentCourseDetailModuleList from "./components/StudentCourseDetailModuleList";
-import { useTranslation } from "react-i18next";
 import PaymentDialog from "../../../components/PaymentDialog";
 
 const StudentCourseDetailsPage = () => {
   const { theme } = useCustomTheme();
   const { t } = useTranslation();
-  const { id } = useParams();
-  const courseId = id;
-  const { userData, isStudent } = useUser();
-  const { getCourseById } = useStudentCourse();
-  const { getModulesByCourse } = useStudentModule();
-  const { getLessonsByModule } = useStudentLesson();
-  const { getTasksByLesson } = useStudentTask();
-  const { getUserAchievements } = useStudentAchievement();
+  const { userData } = useUser();
 
-  const [course, setCourse] = useState(null);
-  const [modules, setModules] = useState([]);
-  const [lessons, setLessons] = useState([]);
-  const [progress, setProgress] = useState(null);
-  const [achievements, setAchievements] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [progressLoading, setProgressLoading] = useState(false);
-  const [undoLoading, setUndoLoading] = useState(false);
-  const [undoSuccess, setUndoSuccess] = useState(false);
+  // Use the custom hooks for data management
+  const {
+    course,
+    modules,
+    lessons,
+    progress,
+    achievements,
+    loading,
+    error,
+    progressLoading,
+    undoLoading,
+    undoSuccess,
+    isEnrolled,
+    enrollmentStatus,
+    courseId,
+    handleProgressUpdate,
+    handleLessonUndo,
+    clearError,
+    clearUndoSuccess,
+  } = useCourseDetails();
+
+  const { reviews, submitReview } = useCourseReviews(courseId);
 
   // Dialog state
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
-  const [isEnrolled, setIsEnrolled] = useState(false);
-  const [enrollmentStatus, setEnrollmentStatus] = useState("not-enrolled");
-
-  // Fetch reviews from Firestore
-  const fetchReviews = async () => {
-    try {
-      const reviewsQuery = query(
-        collection(db, "courseReviews"),
-        where("courseId", "==", courseId)
-      );
-      const snapshot = await getDocs(reviewsQuery);
-      setReviews(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    } catch (e) {
-      setError(t("studentCourseDetails.page.fetchReviewsError"));
-    }
-  };
-
-  // Fetch all data
-  useEffect(() => {
-    let mounted = true;
-    async function fetchData() {
-      setLoading(true);
-      setError(null);
-      try {
-        const courseData = await getCourseById(courseId);
-        if (!mounted) return;
-        setCourse(courseData);
-        const modulesData = await getModulesByCourse(courseId); // <-- real Firestore data
-        console.log("modulesData", modulesData);
-        console.log("courseId", courseId);
-        if (!mounted) return;
-        setModules(modulesData);
-
-        // Check enrollment status
-        if (userData) {
-          try {
-            const enrollments = await enrollmentService.getEnrollmentsByStudent(
-              userData.uid || userData.id
-            );
-            const enrollment = enrollments.find((e) => e.courseId === courseId);
-            if (enrollment) {
-              setIsEnrolled(enrollment.status === "active");
-              setEnrollmentStatus(enrollment.status);
-            } else {
-              setIsEnrolled(false);
-              setEnrollmentStatus("not-enrolled");
-            }
-          } catch (e) {
-            console.error("Error checking enrollment:", e);
-            setIsEnrolled(false);
-          }
-        }
-        // Fetch all lessons for all modules
-        let allLessons = [];
-        for (const mod of modulesData) {
-          const lessonsData = await getLessonsByModule(mod.id); // <-- real Firestore data
-          allLessons = allLessons.concat(lessonsData);
-        }
-        if (!mounted) return;
-        setLessons(allLessons);
-        // Fetch achievements
-        if (userData) {
-          const ach = await getUserAchievements(userData.uid || userData.id);
-          if (!mounted) return;
-          setAchievements(ach);
-        }
-        // Fetch reviews from backend
-        await fetchReviews();
-        // Calculate progress
-        if (userData && allLessons.length > 0) {
-          const completedLessons = allLessons.filter(
-            (l) =>
-              Array.isArray(l.completedBy) &&
-              l.completedBy.includes(userData.uid || userData.id)
-          ).length;
-          setProgress({
-            completedLessons,
-            totalLessons: allLessons.length,
-          });
-        } else {
-          setProgress({ completedLessons: 0, totalLessons: allLessons.length });
-        }
-      } catch (e) {
-        setError(t("studentCourseDetails.page.loadDetailsError"));
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-    fetchData();
-    return () => {
-      mounted = false;
-    };
-  }, [
-    courseId,
-    userData,
-    getCourseById,
-    getModulesByCourse,
-    getLessonsByModule,
-    getUserAchievements,
-  ]);
 
   // Backend integration for enroll, progress, reviews
-  const handleEnroll = async () => {
+  const handleEnroll = () => {
     // Show payment dialog instead of direct enrollment
     setShowPaymentDialog(true);
   };
@@ -179,107 +65,12 @@ const StudentCourseDetailsPage = () => {
   const handlePaymentComplete = (result) => {
     // Handle successful payment
     setShowPaymentDialog(false);
-    setError(null);
-    // Update enrollment status to show pending
-    setEnrollmentStatus("pending");
-  };
-
-  // Real progress update logic: mark lesson as completed
-  const handleProgressUpdate = async (lessonId, status = "completed") => {
-    if (!userData) return;
-    setProgressLoading(true);
-    try {
-      const lessonRef = doc(db, "lessons", lessonId);
-      await updateDoc(lessonRef, {
-        completedBy: arrayUnion(userData.uid || userData.id),
-      });
-      // Recalculate progress after marking as completed
-      const updatedLessons = lessons.map((l) =>
-        l.id === lessonId
-          ? {
-              ...l,
-              completedBy: Array.isArray(l.completedBy)
-                ? [...l.completedBy, userData.uid || userData.id]
-                : [userData.uid || userData.id],
-            }
-          : l
-      );
-      setLessons(updatedLessons);
-      const completedLessons = updatedLessons.filter(
-        (l) =>
-          Array.isArray(l.completedBy) &&
-          l.completedBy.includes(userData.uid || userData.id)
-      ).length;
-      setProgress({
-        completedLessons,
-        totalLessons: updatedLessons.length,
-      });
-      setError(null);
-    } catch (e) {
-      setError(t("studentCourseDetails.page.progressError"));
-    } finally {
-      setProgressLoading(false);
-    }
-  };
-
-  // Undo lesson completion logic
-  const handleLessonUndo = async (lessonId) => {
-    if (!userData) return;
-    setUndoLoading(true);
-    try {
-      const lessonRef = doc(db, "lessons", lessonId);
-      await updateDoc(lessonRef, {
-        completedBy: arrayRemove(userData.uid || userData.id),
-      });
-      // Update lessons and progress state
-      const updatedLessons = lessons.map((l) =>
-        l.id === lessonId
-          ? {
-              ...l,
-              completedBy: Array.isArray(l.completedBy)
-                ? l.completedBy.filter(
-                    (uid) => uid !== (userData.uid || userData.id)
-                  )
-                : [],
-            }
-          : l
-      );
-      setLessons(updatedLessons);
-      const completedLessons = updatedLessons.filter(
-        (l) =>
-          Array.isArray(l.completedBy) &&
-          l.completedBy.includes(userData.uid || userData.id)
-      ).length;
-      setProgress({
-        completedLessons,
-        totalLessons: updatedLessons.length,
-      });
-      setUndoSuccess(true);
-    } catch (e) {
-      setError(t("studentCourseDetails.page.undoError"));
-    } finally {
-      setUndoLoading(false);
-    }
+    clearError();
+    // Note: Enrollment status will be updated by the hook on next data fetch
   };
 
   const handleReviewSubmit = async (rating, reviewText) => {
-    try {
-      await addDoc(collection(db, "courseReviews"), {
-        studentId: userData.uid || userData.id,
-        courseId,
-        rating,
-        review: reviewText,
-        userName:
-          userData.displayName ||
-          userData.name ||
-          t("studentCourseDetails.reviews.student"),
-        createdAt: serverTimestamp(),
-      });
-      setError(null);
-      await fetchReviews();
-    } catch (e) {
-      setError(t("studentCourseDetails.page.reviewError"));
-    }
+    await submitReview(rating, reviewText);
   };
 
   if (loading) {
@@ -315,7 +106,7 @@ const StudentCourseDetailsPage = () => {
       }}
     >
       {error && (
-        <Snackbar open autoHideDuration={6000} onClose={() => setError(null)}>
+        <Snackbar open autoHideDuration={6000} onClose={clearError}>
           <Alert severity="error">{error}</Alert>
         </Snackbar>
       )}
@@ -323,7 +114,7 @@ const StudentCourseDetailsPage = () => {
         <Snackbar
           open
           autoHideDuration={3000}
-          onClose={() => setUndoSuccess(false)}
+          onClose={clearUndoSuccess}
           message={t("studentCourseDetails.page.lessonUndone")}
         />
       )}

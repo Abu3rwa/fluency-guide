@@ -33,6 +33,17 @@ const RecentActivitiesSection = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Ensure activities is always an array
+  const safeActivities = Array.isArray(activities) ? activities : [];
+
+  // Debug logging for activities
+  console.log("RecentActivitiesSection - activities:", activities);
+  console.log("RecentActivitiesSection - safeActivities:", safeActivities);
+  console.log(
+    "RecentActivitiesSection - activities length:",
+    safeActivities.length
+  );
+
   const getActivityIcon = (type) => {
     switch (type) {
       case "lesson_completed":
@@ -72,8 +83,39 @@ const RecentActivitiesSection = ({
   };
 
   const formatTimeAgo = (timestamp) => {
+    // Handle undefined or null timestamps
+    if (!timestamp) {
+      return "Unknown time";
+    }
+
+    // Convert timestamp to Date object if it's not already
+    let date;
+    try {
+      if (timestamp instanceof Date) {
+        date = timestamp;
+      } else if (typeof timestamp === "string") {
+        date = new Date(timestamp);
+      } else if (timestamp.toDate && typeof timestamp.toDate === "function") {
+        // Handle Firestore Timestamp objects
+        date = timestamp.toDate();
+      } else if (timestamp.seconds) {
+        // Handle Firestore Timestamp with seconds
+        date = new Date(timestamp.seconds * 1000);
+      } else {
+        date = new Date(timestamp);
+      }
+    } catch (error) {
+      console.error("Error parsing timestamp:", timestamp, error);
+      return "Invalid time";
+    }
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return "Invalid time";
+    }
+
     const now = new Date();
-    const diffInMinutes = Math.floor((now - timestamp) / (1000 * 60));
+    const diffInMinutes = Math.floor((now - date) / (1000 * 60));
 
     if (diffInMinutes < 1) return "Just now";
     if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
@@ -86,7 +128,7 @@ const RecentActivitiesSection = ({
     if (diffInDays < 7)
       return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
 
-    return timestamp.toLocaleDateString();
+    return date.toLocaleDateString();
   };
 
   const getStatusChip = (status) => {
@@ -198,7 +240,7 @@ const RecentActivitiesSection = ({
             <HistoryIcon sx={{ fontSize: 20 }} />
             Recent Activities
           </Typography>
-          {activities.length > 0 && (
+          {safeActivities.length > 0 && (
             <IconButton
               onClick={onViewAll}
               size="small"
@@ -214,7 +256,7 @@ const RecentActivitiesSection = ({
           )}
         </Box>
 
-        {activities.length === 0 ? (
+        {safeActivities.length === 0 ? (
           <Box sx={{ textAlign: "center", py: 3 }}>
             <HistoryIcon
               sx={{ fontSize: 48, color: theme.palette.text.secondary, mb: 2 }}
@@ -225,85 +267,105 @@ const RecentActivitiesSection = ({
           </Box>
         ) : (
           <List sx={{ p: 0 }}>
-            {activities.slice(0, 5).map((activity, index) => (
-              <ListItem
-                key={activity.id || index}
-                sx={{
-                  px: 0,
-                  py: 1,
-                  cursor: "pointer",
-                  borderRadius: 1,
-                  transition: "all 0.2s ease-in-out",
-                  "&:hover": {
-                    backgroundColor: theme.palette.action.hover,
-                  },
-                }}
-                onClick={() => onActivityClick?.(activity)}
-              >
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Box
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      backgroundColor: getActivityColor(activity.type) + "20",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                    }}
-                  >
-                    {getActivityIcon(activity.type)}
-                  </Box>
-                </ListItemIcon>
+            {safeActivities.slice(0, 5).map((activity, index) => {
+              // Debug logging for each activity
+              console.log(`Activity ${index}:`, activity);
+              console.log(`Activity ${index} timestamp:`, activity.timestamp);
+              console.log(
+                `Activity ${index} lastAccessed:`,
+                activity.lastAccessed
+              );
+              console.log(
+                `Activity ${index} completedAt:`,
+                activity.completedAt
+              );
 
-                <ListItemText
-                  primary={
-                    <Typography
-                      variant="body2"
+              // Use the best available timestamp
+              const timestamp =
+                activity.completedAt ||
+                activity.lastAccessed ||
+                activity.timestamp;
+
+              return (
+                <ListItem
+                  key={activity.id || index}
+                  sx={{
+                    px: 0,
+                    py: 1,
+                    cursor: "pointer",
+                    borderRadius: 1,
+                    transition: "all 0.2s ease-in-out",
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.hover,
+                    },
+                  }}
+                  onClick={() => onActivityClick?.(activity)}
+                >
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <Box
                       sx={{
-                        fontWeight: 600,
-                        color: theme.palette.text.primary,
-                        mb: 0.5,
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        backgroundColor: getActivityColor(activity.type) + "20",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
                       }}
                     >
-                      {activity.title}
-                    </Typography>
-                  }
-                  secondary={
-                    <Box>
+                      {getActivityIcon(activity.type)}
+                    </Box>
+                  </ListItemIcon>
+
+                  <ListItemText
+                    primary={
                       <Typography
-                        variant="caption"
+                        variant="body2"
                         sx={{
-                          color: theme.palette.text.secondary,
-                          display: "block",
+                          fontWeight: 600,
+                          color: theme.palette.text.primary,
                           mb: 0.5,
                         }}
                       >
-                        {activity.description}
+                        {activity.title}
                       </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: theme.palette.text.secondary,
-                          fontSize: "0.75rem",
-                        }}
-                      >
-                        {formatTimeAgo(activity.timestamp)}
-                      </Typography>
-                    </Box>
-                  }
-                />
+                    }
+                    secondary={
+                      <Box>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: theme.palette.text.secondary,
+                            display: "block",
+                            mb: 0.5,
+                          }}
+                        >
+                          {activity.description}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: theme.palette.text.secondary,
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          {formatTimeAgo(timestamp)}
+                        </Typography>
+                      </Box>
+                    }
+                  />
 
-                <ListItemSecondaryAction>
-                  {activity.status && getStatusChip(activity.status)}
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
+                  <ListItemSecondaryAction>
+                    {activity.status && getStatusChip(activity.status)}
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })}
           </List>
         )}
 
-        {activities.length > 5 && (
+        {safeActivities.length > 5 && (
           <Box sx={{ textAlign: "center", mt: 2 }}>
             <Typography
               variant="body2"
@@ -316,7 +378,7 @@ const RecentActivitiesSection = ({
               }}
               onClick={onViewAll}
             >
-              View all {activities.length} activities
+              View all {safeActivities.length} activities
             </Typography>
           </Box>
         )}

@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import StudentTaskLayout from "../components/StudentTaskLayout";
 import StudentTaskResultsPage from "../components/StudentTaskResultsPage";
 import { useMultipleChoiceQuiz } from "./hooks/useMultipleChoiceQuiz";
+import { useStudyTimer } from "../../../../hooks/useStudyTimer";
+import { useStudyTime } from "../../../../contexts/StudyTimeContext";
 import {
   ResumeDialog,
   InstructionsAlert,
@@ -22,6 +24,10 @@ const MultipleChoiceTaskPage = () => {
   // Mobile and accessibility support
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Study time tracking
+  const { startSession, endSession, isSessionActive } = useStudyTime();
+  const { timeout } = useStudyTimer(5 * 60 * 1000); // 5 minutes timeout for task pages
 
   // Debug logging
   console.log("MultipleChoiceTaskPage - isMobile:", isMobile);
@@ -66,6 +72,22 @@ const MultipleChoiceTaskPage = () => {
     handleRestart,
   } = useMultipleChoiceQuiz();
 
+  // Start study session when task loads
+  React.useEffect(() => {
+    if (task && !isSessionActive) {
+      startSession();
+    }
+  }, [task, isSessionActive, startSession]);
+
+  // End session when component unmounts
+  React.useEffect(() => {
+    return () => {
+      if (isSessionActive) {
+        endSession();
+      }
+    };
+  }, [isSessionActive, endSession]);
+
   // Debug logging for state
   console.log("MultipleChoiceTaskPage - loading:", loading);
   console.log("MultipleChoiceTaskPage - error:", error);
@@ -98,64 +120,47 @@ const MultipleChoiceTaskPage = () => {
     );
   }
 
-  console.log("MultipleChoiceTaskPage - rendering main content");
-
+  // Show main quiz interface
   return (
-    <>
+    <StudentTaskLayout
+      task={task}
+      currentQuestionIndex={currentQuestionIndex}
+      totalQuestions={task?.questions?.length || 0}
+      isPaused={isPaused}
+      onPause={togglePause}
+      onResume={handleResumeQuiz}
+    >
+      {/* Instructions Alert */}
+      <InstructionsAlert
+        open={showInstructions}
+        onClose={() => setShowInstructions(false)}
+        task={task}
+      />
+
       {/* Resume Dialog */}
       <ResumeDialog
         open={showResumeDialog}
         onClose={handleResumeDialogClose}
         onResume={handleResumeQuiz}
         onStartOver={handleStartOver}
+        savedProgress={savedProgress}
       />
 
-      <StudentTaskLayout
-        task={task}
-        currentQuestionIndex={currentQuestionIndex}
-        totalQuestions={task?.questions?.length || 0}
-        timeRemaining={secondsRemaining}
+      {/* Keyboard Shortcuts */}
+      <KeyboardShortcuts
         onNext={handleNext}
         onPrevious={handlePrevious}
+        onAnswer={handleAnswer}
         onSubmit={handleSubmit}
-        isAnswered={isCurrentAnswered}
-        isLastQuestion={isLastQuestion}
-        onPause={togglePause}
         isPaused={isPaused}
-      >
-        <QuizContent
-          currentQuestion={currentQuestion}
-          selectedAnswer={selectedAnswer}
-          onAnswer={handleAnswer}
-          showFeedback={showFeedback}
-          isCurrentCorrect={isCurrentCorrect}
-          disabled={showFeedback}
-          isMobile={isMobile}
-          isSmallScreen={isSmallScreen}
-        />
-      </StudentTaskLayout>
-
-      {/* Instructions Alert */}
-      <InstructionsAlert
-        open={showInstructions}
-        onClose={() => setShowInstructions(false)}
+        onPause={togglePause}
       />
-
-      {/* Keyboard Shortcuts (desktop only) */}
-      {!isMobile && (
-        <KeyboardShortcuts
-          onNext={handleNext}
-          onPrevious={handlePrevious}
-          onSubmit={handleSubmit}
-          onPause={togglePause}
-        />
-      )}
 
       {/* Screen Reader Announcements */}
       <ScreenReaderAnnouncements
         currentQuestionIndex={currentQuestionIndex}
         totalQuestions={task?.questions?.length || 0}
-        isCorrect={isCurrentCorrect}
+        isCurrentCorrect={isCurrentCorrect}
         showFeedback={showFeedback}
       />
 
@@ -164,7 +169,26 @@ const MultipleChoiceTaskPage = () => {
         notification={notification}
         onClose={hideNotification}
       />
-    </>
+
+      {/* Main Quiz Content */}
+      <QuizContent
+        task={task}
+        currentQuestion={currentQuestion}
+        currentQuestionIndex={currentQuestionIndex}
+        selectedAnswer={selectedAnswer}
+        isCurrentAnswered={isCurrentAnswered}
+        isLastQuestion={isLastQuestion}
+        showFeedback={showFeedback}
+        isCurrentCorrect={isCurrentCorrect}
+        secondsRemaining={secondsRemaining}
+        onAnswer={handleAnswer}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        onSubmit={handleSubmit}
+        isMobile={isMobile}
+        isSmallScreen={isSmallScreen}
+      />
+    </StudentTaskLayout>
   );
 };
 

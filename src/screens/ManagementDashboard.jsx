@@ -51,6 +51,7 @@ import ManagementStats from "../components/content-management/ManagementStats";
 import ManagementMenu from "../components/content-management/ManagementMenu";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 import PaymentsTable from "../components/PaymentsTable";
+import CenteredLoader from "../components/CenteredLoader";
 import { useAuth } from "../contexts/AuthContext";
 const ManagementDashboard = () => {
   const theme = useTheme();
@@ -281,21 +282,14 @@ const ManagementDashboard = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={4}
-        >
-          <Skeleton variant="text" width={300} height={40} />
-          <Skeleton variant="rectangular" width={120} height={40} />
-        </Box>
-
-        <ManagementStats loading={loading} stats={stats} />
-
-        <Skeleton variant="rectangular" height={400} />
-      </Container>
+      <CenteredLoader
+        type="skeleton"
+        message="Loading management dashboard..."
+        skeletonCount={5}
+        skeletonHeight={24}
+        minHeight="400px"
+        fullScreen={true}
+      />
     );
   }
 
