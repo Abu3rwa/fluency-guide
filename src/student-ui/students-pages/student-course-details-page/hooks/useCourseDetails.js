@@ -125,10 +125,10 @@ export const useCourseDetails = () => {
     } catch (e) {
       dispatch({
         type: ACTIONS.SET_ERROR,
-        payload: t("studentCourseDetails.page.fetchReviewsError"),
+        payload: "Error fetching reviews",
       });
     }
-  }, [courseId, t]);
+  }, [courseId]);
 
   // Calculate progress based on lessons and user
   const calculateProgress = useCallback((lessons, userId) => {
@@ -214,7 +214,7 @@ export const useCourseDetails = () => {
     } catch (e) {
       dispatch({
         type: ACTIONS.SET_ERROR,
-        payload: t("studentCourseDetails.page.loadDetailsError"),
+        payload: "Error loading course details",
       });
     } finally {
       dispatch({ type: ACTIONS.SET_LOADING, payload: false });
@@ -227,8 +227,6 @@ export const useCourseDetails = () => {
     getLessonsByModule,
     getUserAchievements,
     calculateProgress,
-    fetchReviews,
-    t,
   ]);
 
   // Progress update with rollback capability
@@ -274,13 +272,13 @@ export const useCourseDetails = () => {
         });
         dispatch({
           type: ACTIONS.SET_ERROR,
-          payload: t("studentCourseDetails.page.progressError"),
+          payload: "Error updating progress",
         });
       } finally {
         dispatch({ type: ACTIONS.SET_PROGRESS_LOADING, payload: false });
       }
     },
-    [state.lessons, state.progress, userData, calculateProgress, t]
+    [state.lessons, state.progress, userData, calculateProgress]
   );
 
   // Undo lesson completion with rollback capability
@@ -327,13 +325,13 @@ export const useCourseDetails = () => {
         });
         dispatch({
           type: ACTIONS.SET_ERROR,
-          payload: t("studentCourseDetails.page.undoError"),
+          payload: "Error undoing progress",
         });
       } finally {
         dispatch({ type: ACTIONS.SET_UNDO_LOADING, payload: false });
       }
     },
-    [state.lessons, state.progress, userData, calculateProgress, t]
+    [state.lessons, state.progress, userData, calculateProgress]
   );
 
   // Clear error

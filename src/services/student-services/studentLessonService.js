@@ -24,7 +24,8 @@ export async function getLessonsByModule(moduleId) {
   try {
     const q = query(
       collection(db, LESSONS_COLLECTION),
-      where("moduleId", "==", moduleId)
+      where("moduleId", "==", moduleId),
+      orderBy("order", "asc")
     );
     const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -39,9 +40,54 @@ export async function getLessonById(lessonId) {
   try {
     const lessonRef = doc(db, LESSONS_COLLECTION, lessonId);
     const lessonDoc = await getDoc(lessonRef);
-    return lessonDoc.exists()
-      ? { id: lessonDoc.id, ...lessonDoc.data() }
-      : null;
+
+    if (!lessonDoc.exists()) {
+      return null;
+    }
+
+    const lessonData = lessonDoc.data();
+    const moduleId = lessonData.moduleId;
+
+    // Get all lessons in the module to calculate indices
+    const moduleLessons = await getLessonsByModule(moduleId);
+    // Data is already sorted by order from Firestore query
+    const sortedModuleLessons = moduleLessons;
+
+    // Calculate lesson index within module
+    const lessonIndexInModule = sortedModuleLessons.findIndex(
+      (l) => l.id === lessonId
+    );
+
+    // Get all modules to calculate module index
+    const modulesRef = collection(db, "modules");
+    const modulesSnapshot = await getDocs(modulesRef);
+    const modules = modulesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    // Sort modules by order
+    const sortedModules = modules.sort(
+      (a, b) => (a.order || 0) - (b.order || 0)
+    );
+
+    // Calculate module index
+    const moduleIndex = sortedModules.findIndex((m) => m.id === moduleId);
+
+    // Calculate overall lesson index
+    let lessonIndex = 0;
+    for (let i = 0; i < moduleIndex; i++) {
+      const prevModuleLessons = await getLessonsByModule(sortedModules[i].id);
+      lessonIndex += prevModuleLessons.length;
+    }
+    lessonIndex += lessonIndexInModule;
+
+    return {
+      id: lessonDoc.id,
+      ...lessonData,
+      moduleIndex,
+      lessonIndex,
+      lessonIndexInModule,
+    };
   } catch (e) {
     console.error("Error getting lesson by ID:", e);
     return null;

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import logo from "../../assets/images/logo.png";
+import logoVideo from "../../assets/logoVideo.mp4";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import { ROUTES } from "../../routes/constants";
 import { useCustomTheme } from "../../contexts/ThemeContext";
+import { useRTL, getDirectionalSpacing } from "../../utils/rtlUtils";
 import ThemeToggle from "./ThemeToggle";
 import LanguageSwitcher from "./LanguageSwitcher";
 import UserMenu from "./UserMenu";
@@ -48,12 +49,12 @@ const Header = ({
   menuItems = [],
   hideOnScroll = false,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
   const { user, userData, logout } = useAuth();
   const navigate = useNavigate();
+  const isRTL = useRTL();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   const isLoggedIn = user || userData;
 
@@ -222,19 +223,40 @@ const Header = ({
                       }
                     }}
                   >
-                    <img
-                      src={logo}
-                      alt="Logo"
+                    {/* Video Logo */}
+                    <Box
                       style={{
-                        height: isMobile ? 36 : 42,
-                        width: isMobile ? 36 : 42,
-                        marginRight: theme.spacing(1),
-                        borderRadius: "6px",
-                        objectFit: "contain",
-                        filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
-                        transition: "filter 0.2s",
+                        width: "200px",
+                        height: "60px",
+                        position: "relative",
+                        overflow: "hidden",
+                        borderRadius: "8px",
                       }}
-                    />
+                      sx={{
+                        width: { xs: "200px", sm: "200px", md: "200px" },
+                        height: { xs: "60px" },
+                        position: "relative",
+                        overflow: "hidden",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          // objectFit: "cover",
+                        }}
+                      >
+                        <source src={logoVideo} type="video/mp4" />
+                        {/* Fallback text */}
+                        {i18n.language === "ar" ? "سودانجلش" : "Sudanglish"}
+                      </video>
+                    </Box>
+
                     {!isMobile && title && (
                       <Typography
                         variant="h6"
@@ -247,6 +269,7 @@ const Header = ({
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           maxWidth: { sm: 200, md: 300 },
+                          ml: 1,
                         }}
                       >
                         {title}
@@ -380,17 +403,32 @@ const Header = ({
                       }
                     }}
                   >
-                    <img
-                      src={logo}
-                      alt="Logo"
-                      style={{
-                        height: 32,
-                        width: 32,
-                        borderRadius: "6px",
-                        objectFit: "contain",
-                        transition: "filter 0.2s",
+                    {/* Mobile Video Logo */}
+                    <Box
+                      sx={{
+                        width: { xs: "120px", sm: "150px" },
+                        height: { xs: "40px", sm: "50px" },
+                        position: "relative",
+                        overflow: "hidden",
+                        borderRadius: "8px",
                       }}
-                    />
+                    >
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain",
+                        }}
+                      >
+                        <source src={logoVideo} type="video/mp4" />
+                        {/* Fallback text */}
+                        {i18n.language === "ar" ? "سودانجلش" : "Sudanglish"}
+                      </video>
+                    </Box>
                   </Box>
                 </Tooltip>
               )}
@@ -404,6 +442,8 @@ const Header = ({
                 gap: { xs: 0.25, sm: 0.5, md: 1 },
                 flexShrink: 0,
                 minWidth: "fit-content",
+                direction: isRTL ? "rtl" : "ltr",
+                ...getDirectionalSpacing("auto", isRTL),
               }}
             >
               {/* Custom Actions */}
@@ -413,14 +453,20 @@ const Header = ({
                 </Box>
               )}
 
-              {/* Theme Toggle */}
-              {showThemeToggle && (
-                <ThemeToggle ariaLabel={t("header.toggleTheme")} />
+              {/* Language Switcher - enhanced with RTL support */}
+              {!isMobile && (
+                <LanguageSwitcher 
+                  ariaLabel={t("language.changeLanguage")} 
+                  variant="flag"
+                  showLabel={false}
+                />
               )}
 
-              {/* Language Switcher */}
-              {!isMobile && (
-                <LanguageSwitcher ariaLabel={t("language.changeLanguage")} />
+              {/* Theme Toggle - icon only, no labels to prevent overflow */}
+              {showThemeToggle && (
+                <ThemeToggle 
+                  ariaLabel={t("header.toggleTheme")} 
+                />
               )}
 
               {/* User Menu or Login Button */}

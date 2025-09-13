@@ -29,8 +29,6 @@ const studentVocabularyService = {
         userId,
       } = filters;
 
-      console.log("🔍 getVocabularyWords called with filters:", filters);
-
       // Ensure db is available
       if (!db) {
         console.error("❌ Firebase database is not initialized");
@@ -38,14 +36,11 @@ const studentVocabularyService = {
       }
 
       let vocabularyQuery = collection(db, COLLECTION_NAME);
-      console.log("📚 Collection name:", COLLECTION_NAME);
 
       // Build query with filters
       const conditions = [];
       if (level) conditions.push(where("difficulty_level", "==", level));
       if (category) conditions.push(where("category", "==", category));
-
-      console.log("🔧 Query conditions:", conditions);
 
       // Apply conditions and ordering
       let queryParams = [vocabularyQuery, ...conditions];
@@ -59,10 +54,8 @@ const studentVocabularyService = {
       }
 
       vocabularyQuery = query(...queryParams);
-      console.log("📋 Query params:", queryParams.length);
 
       const snapshot = await getDocs(vocabularyQuery);
-      console.log("📊 Snapshot size:", snapshot.docs.length);
 
       let words = snapshot.docs.map((doc) => {
         const data = doc.data();
@@ -83,20 +76,8 @@ const studentVocabularyService = {
         };
       });
 
-      console.log("📝 Found words:", words.length);
-      if (words.length > 0) {
-        console.log("📖 Sample word:", words[0]);
-        console.log("📋 Sample word fields:", Object.keys(words[0]));
-      } else {
-        console.log("❌ No words found. Let's check the raw documents:");
-        snapshot.docs.forEach((doc, index) => {
-          console.log(`📄 Document ${index}:`, doc.id, doc.data());
-        });
-      }
-
       // If favoritesOnly is true and userId is provided, filter for favorites
       if (favoritesOnly && userId) {
-        console.log("⭐ Filtering for favorites for user:", userId);
         // Get user's favorite words
         const progressRef = collection(db, "vocabularyProgress");
         const favoritesQuery = query(
@@ -109,7 +90,6 @@ const studentVocabularyService = {
 
         // Filter words to only include favorites
         words = words.filter((word) => favoriteWordIds.includes(word.id));
-        console.log("⭐ Filtered to favorites:", words.length);
       }
 
       return words;
@@ -125,16 +105,12 @@ const studentVocabularyService = {
       // Get basic word data
       const wordData = await this.getVocabularyWordById(wordId);
       if (!wordData) {
-        console.warn(`⚠️ No word data found for ID: ${wordId}`);
         return null;
       }
-
-      console.log(`🔍 Enhancing word data for: ${wordData.word}`);
 
       // Fetch API data
       const apiData = await studentDictionaryApiService.fetchWordData(wordData.word);
       if (!apiData) {
-        console.warn(`⚠️ No API data available for word: ${wordData.word}`);
         return wordData;
       }
 
@@ -152,7 +128,6 @@ const studentVocabularyService = {
         }
       };
 
-      console.log(`✅ Enhanced word data for: ${wordData.word}`);
       return enhancedWord;
     } catch (error) {
       console.error('❌ Error fetching enhanced word data:', error);
@@ -163,10 +138,7 @@ const studentVocabularyService = {
   // Get multiple words with API data
   async getVocabularyWordsWithApiData(filters = {}) {
     try {
-      console.log("🔍 Getting vocabulary words with API data...");
       const words = await this.getVocabularyWords(filters);
-      
-      console.log(`📚 Enhancing ${words.length} words with API data...`);
       
       // Enhance each word with API data
       const enhancedWords = await Promise.all(
@@ -194,7 +166,6 @@ const studentVocabularyService = {
         })
       );
 
-      console.log(`✅ Successfully enhanced ${enhancedWords.length} words`);
       return enhancedWords;
     } catch (error) {
       console.error('❌ Error fetching enhanced vocabulary words:', error);
@@ -205,7 +176,6 @@ const studentVocabularyService = {
   // Get audio sources for a word
   async getWordAudioSources(word, options = {}) {
     try {
-      console.log(`🔊 Getting audio sources for word: ${word}`);
       return await studentAudioService.getPriorityAudioSources(word, options);
     } catch (error) {
       console.error('❌ Error getting audio sources:', error);
@@ -256,7 +226,6 @@ const studentVocabularyService = {
           ...data,
         };
       } else {
-        console.log("❌ No such word!");
         return null;
       }
     } catch (error) {
@@ -268,8 +237,6 @@ const studentVocabularyService = {
   // Search vocabulary words
   async searchVocabularyWords(searchTerm) {
     try {
-      console.log("🔍 Searching for:", searchTerm);
-
       const vocabularyQuery = query(
         collection(db, COLLECTION_NAME),
         where("word", ">=", searchTerm),
@@ -295,7 +262,6 @@ const studentVocabularyService = {
         };
       });
 
-      console.log("📝 Search results:", words.length);
       return words;
     } catch (error) {
       console.error("❌ Error searching vocabulary words:", error);
@@ -311,7 +277,6 @@ const studentVocabularyService = {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      console.log("✅ Vocabulary word added with ID:", docRef.id);
       return docRef.id;
     } catch (error) {
       console.error("❌ Error adding vocabulary word:", error);
@@ -327,7 +292,6 @@ const studentVocabularyService = {
         ...wordData,
         updatedAt: serverTimestamp(),
       });
-      console.log("✅ Vocabulary word updated:", wordId);
     } catch (error) {
       console.error("❌ Error updating vocabulary word:", error);
       throw error;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Chip,
@@ -7,391 +7,452 @@ import {
   Stack,
   Paper,
   CircularProgress,
+  Container,
+  Fade,
   useMediaQuery,
 } from "@mui/material";
+import {
+  ViewList as ViewListIcon,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
+import { useCustomTheme } from "../../../contexts/ThemeContext";
 import LandingCourseCard from "./LandingCourseCard";
 import { useStudentCourse } from "../../../contexts/studentCourseContext";
 import { useUser } from "../../../contexts/UserContext";
 import { enrollmentService } from "../../../services/enrollmentService";
-import { useTheme } from "@mui/material/styles";
 
-const CoursesSection = ({ t }) => {
+
+const CoursesSection = () => {
+  // Use courses namespace for translations
+  const { t: tCourses } = useTranslation('courses');
+  const { t } = useTranslation(); // Default namespace for common translations
+  const { mode, theme: customTheme } = useCustomTheme();
   const theme = useTheme();
-
-  const categories = [
-    { label: t("landing.courses.categories.all"), value: "all" },
-    { label: t("landing.courses.categories.foundation"), value: "foundation" },
-    { label: t("landing.courses.categories.business"), value: "business" },
-    {
-      label: t("landing.courses.categories.conversation"),
-      value: "conversation",
-    },
-    { label: t("landing.courses.categories.examPrep"), value: "exam" },
-  ];
-  // Memoized fade indicator styles
-  const fadeStyles = useMemo(
-    () => ({
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      width: 32,
-      pointerEvents: "none",
-      zIndex: 1,
-      background: `linear-gradient(to right, ${theme.palette.background.default} 80%, transparent)`,
-    }),
-    [theme.palette.background.default]
-  );
-
-  const fadeRightStyles = useMemo(
-    () => ({
-      ...fadeStyles,
-      right: 0,
-      transform: "rotateY(180deg)",
-    }),
-    [fadeStyles]
-  );
-
-  const fadeLeftStyles = useMemo(
-    () => ({
-      ...fadeStyles,
-      left: 0,
-    }),
-    [fadeStyles]
-  );
   const navigate = useNavigate();
   const { getAllCourses } = useStudentCourse();
-  const { userData: user, isStudent } = useUser();
+  const { userData: user } = useUser();
+
+  // Responsive breakpoints
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const isLarge = useMediaQuery(theme.breakpoints.up('lg'));
+
+  // State management
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [enrollments, setEnrollments] = useState([]);
-  const scrollContainerRef = useRef(null);
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [isUserInteracting, setIsUserInteracting] = useState(false);
-  const [showFadeLeft, setShowFadeLeft] = useState(false);
-  const [showFadeRight, setShowFadeRight] = useState(false);
 
+  // Dynamic container maxWidth based on screen size for better centering
+  const containerMaxWidth = useMemo(() => {
+    if (isLarge) return "lg"; // Center content on large screens
+    if (isDesktop) return "md"; // Center content on medium desktop screens
+    return "xl"; // Full width on smaller screens
+  }, [isLarge, isDesktop]);
+
+  // Dynamic grid columns based on screen size
+  const gridColumns = useMemo(() => {
+    if (isLarge) return "repeat(3, 1fr)"; // 3 columns on large screens for better centering
+    if (isDesktop) return "repeat(2, 1fr)"; // 2 columns on desktop for better centering
+    if (isTablet) return "repeat(2, 1fr)"; // 2 columns on tablet
+    return "1fr"; // 1 column on mobile
+  }, [isLarge, isDesktop, isTablet]);
+
+  // Dynamic number of courses to display based on screen size
+  const maxCoursesToShow = useMemo(() => {
+    if (isLarge) return 6; // Show 6 courses (2 rows of 3) on large screens
+    if (isDesktop) return 4; // Show 4 courses (2 rows of 2) on desktop
+    if (isTablet) return 4; // Show 4 courses on tablet
+    return 8; // Show 8 courses on mobile (can scroll)
+  }, [isLarge, isDesktop, isTablet]);
+
+  // Enhanced categories with better mobile support
+  const categories = useMemo(() => [
+    { label: tCourses("listing.category") + " - " + t("common.all"), value: "all", icon: "🎯" },
+    { label: t("landing.courses.categories.foundation"), value: "foundation", icon: "📚" },
+    { label: t("landing.courses.categories.business"), value: "business", icon: "💼" },
+    { label: t("landing.courses.categories.conversation"), value: "conversation", icon: "💬" },
+    { label: t("landing.courses.categories.examPrep"), value: "exam", icon: "🎓" },
+  ], [tCourses, t]);
+
+
+  // Enhanced data fetching with performance optimizations
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
-    getAllCourses().then((data) => {
-      if (mounted) {
-        setCourses(data);
-        setLoading(false);
-      }
-    });
-
-    if (user) {
-      enrollmentService.getEnrollmentsByStudent(user.uid).then((data) => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        
+        // Parallel data fetching for better performance
+        const [coursesData, enrollmentsData] = await Promise.all([
+          getAllCourses(),
+          user ? enrollmentService.getEnrollmentsByStudent(user.uid) : Promise.resolve([])
+        ]);
+        
         if (mounted) {
-          setEnrollments(data);
+          setCourses(coursesData || []);
+          setEnrollments(enrollmentsData || []);
         }
-      });
-    }
-
-    const handleScroll = () => {
-      if (window.scrollY > 400) setShowStickyCTA(true);
-      else setShowStickyCTA(false);
+      } catch (error) {
+        console.error('Failed to load courses data:', error);
+        if (mounted) {
+          setCourses([]);
+          setEnrollments([]);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+
+    loadData();
 
     return () => {
       mounted = false;
-      window.removeEventListener("scroll", handleScroll);
     };
-  }, [getAllCourses]);
+  }, [getAllCourses, user]);
 
+  // Helper function to get course status based on dates
+  const getCourseStatus = (course) => {
+    const now = new Date();
+    const startDate = course.startDate ? new Date(course.startDate) : null;
+    const endDate = course.endDate ? new Date(course.endDate) : null;
+
+    if (!startDate) {
+      return 'available'; // No start date means always available
+    }
+
+    if (endDate && now > endDate) {
+      return 'ended'; // Course has ended
+    }
+
+    if (now < startDate) {
+      return 'upcoming'; // Course hasn't started yet
+    }
+
+    return 'active'; // Course is currently running
+  };
+
+  // Filtered courses with date-based visibility
   const filteredCourses = useMemo(() => {
-    return courses.filter(
-      (c) =>
-        c.status === "published" &&
-        (selectedCategory === "all" || c.category === selectedCategory)
-    );
-  }, [courses, selectedCategory]);
-
-  // Helper to check scroll position for fade indicators
-  const updateFadeIndicators = () => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    setShowFadeLeft(container.scrollLeft > 0);
-    setShowFadeRight(
-      container.scrollLeft + container.clientWidth < container.scrollWidth - 1
-    );
-  };
-
-  // 1. Improved auto-scroll with user interaction pause/resume
-  useEffect(() => {
-    if (!scrollContainerRef.current || filteredCourses.length <= 1) return;
-    const container = scrollContainerRef.current;
-    let intervalId;
-    let currentCardIndex = 0;
-    let resumeTimeout;
-
-    const startAutoScroll = () => {
-      if (intervalId) clearInterval(intervalId);
-      intervalId = setInterval(() => {
-        if (!container) return;
-        const scrollWidth = container.scrollWidth;
-        const clientWidth = container.clientWidth;
-        if (scrollWidth <= clientWidth) return;
-        const isMobileView = window.innerWidth < 960;
-        const gap = isMobileView ? 16 : 24;
-        const cardWidth = isMobileView
-          ? window.innerWidth - 120 + gap
-          : 340 + gap;
-        currentCardIndex++;
-        let targetScroll = currentCardIndex * cardWidth;
-        if (targetScroll >= scrollWidth - clientWidth) {
-          currentCardIndex = 0;
-          targetScroll = 0;
-        }
-        container.scrollTo({ left: targetScroll, behavior: "smooth" });
-      }, 3000);
-    };
-    const stopAutoScroll = () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
+    return courses.filter((course) => {
+      // Basic filters
+      const isPublished = course.status === "published";
+      const matchesCategory = selectedCategory === "all" || course.category === selectedCategory;
+      
+      if (!isPublished || !matchesCategory) {
+        return false;
       }
-    };
-    // Pause/resume logic
-    const pauseAutoScroll = () => {
-      setIsUserInteracting(true);
-      stopAutoScroll();
-      if (resumeTimeout) clearTimeout(resumeTimeout);
-      resumeTimeout = setTimeout(() => {
-        setIsUserInteracting(false);
-        startAutoScroll();
-      }, 3000);
-    };
-    // User interaction events
-    container.addEventListener("mousedown", pauseAutoScroll);
-    container.addEventListener("touchstart", pauseAutoScroll);
-    container.addEventListener("wheel", pauseAutoScroll, { passive: true });
-    container.addEventListener("keydown", pauseAutoScroll);
-    container.addEventListener("scroll", updateFadeIndicators);
-    // Keyboard navigation
-    container.setAttribute("tabindex", "0");
-    container.setAttribute("role", "region");
-    container.setAttribute("aria-label", "Featured Courses Carousel");
-    // Start auto-scroll after a delay
-    const startDelay = setTimeout(() => {
-      startAutoScroll();
-    }, 2000);
-    // Initial fade update
-    updateFadeIndicators();
-    // Clean up
-    return () => {
-      clearTimeout(startDelay);
-      stopAutoScroll();
-      if (resumeTimeout) clearTimeout(resumeTimeout);
-      container.removeEventListener("mousedown", pauseAutoScroll);
-      container.removeEventListener("touchstart", pauseAutoScroll);
-      container.removeEventListener("wheel", pauseAutoScroll);
-      container.removeEventListener("keydown", pauseAutoScroll);
-      container.removeEventListener("scroll", updateFadeIndicators);
-    };
-  }, [filteredCourses]);
 
-  const isEnrolledInAnyCourse =
-    user?.enrolledCourses && user.enrolledCourses.length > 0;
-  // console.log(filteredCourses);
-  // Determine CTA configuration
-  const getCtaConfig = () => {
-    if (!user) {
-      return {
-        href: "/auth",
-        label: t("landing.courses.cta.signUpNow"),
-        bannerText: t("landing.courses.cta.joinThousands"),
-      };
-    }
-
-    if (isStudent) {
-      if (isEnrolledInAnyCourse) {
-        return {
-          href: "/dashboard",
-          label: t("landing.courses.cta.continueLearning"),
-          bannerText: t("landing.courses.cta.continueJourney"),
-        };
+      // Date-based visibility logic
+      const courseStatus = getCourseStatus(course);
+      
+      // If user is admin, show all courses
+      if (user && (user.role === 'admin' || user.isAdmin)) {
+        return true;
       }
-      if (filteredCourses.length > 0) {
-        return {
-          href: `/courses/${filteredCourses[0].id}/enroll`,
-          label: t("landing.courses.cta.enrollNow"),
-          bannerText: t("landing.courses.cta.readyToLearn"),
-        };
-      }
-      return {
-        href: "/courses",
-        label: t("landing.courses.cta.browseAllCourses"),
-        bannerText: t("landing.courses.cta.exploreCatalog"),
-      };
-    }
-
-    // Logged in, but not a student (admin, etc.)
-    return null;
-  };
-
-  const ctaConfig = getCtaConfig();
+      
+      // For regular users, hide ended courses
+      return courseStatus !== 'ended';
+    });
+  }, [courses, selectedCategory, user]);
+// if (filteredCourses.length==0){return;}
 
   return (
     <Box
       sx={{
-        py: { xs: 4, md: 8 },
+        py: { xs: 6, md: 10 },
         bgcolor: theme.palette.background.default,
         position: "relative",
+        overflow: "hidden",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      <Typography
-        variant="h4"
-        align="center"
+      <Box
         sx={{
-          mb: 3,
-          fontWeight: 700,
-          color: theme.palette.primary.main,
-          fontFamily: theme.typography.h4.fontFamily,
+          width: "100%",
+          maxWidth: {
+            xs: "100%",
+            md: isLarge ? "1200px" : "900px",
+            lg: "1200px"
+          },
+          px: { xs: 2, sm: 3, md: 3, lg: 4 },
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
-        {t("courses.title", "Explore Our Courses")}
-      </Typography>
-      <Stack
-        direction="row"
-        spacing={1}
-        justifyContent="center"
-        mb={3}
-        flexWrap="wrap"
-      >
-        {categories.map((cat) => (
-          <Chip
-            key={cat.value}
-            label={cat.label}
-            color={selectedCategory === cat.value ? "primary" : "default"}
-            onClick={() => setSelectedCategory(cat.value)}
-            clickable
-          />
-        ))}
-      </Stack>
-      {loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: 200,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : filteredCourses.length === 0 ? (
-        <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
-          {t("landing.courses.noCoursesFound")}
-        </Typography>
-      ) : (
-        <Box sx={{ position: "relative" }}>
-          {/* Fade indicators */}
-          {showFadeLeft && <Box sx={fadeLeftStyles} />}
-          {showFadeRight && <Box sx={fadeRightStyles} />}
+        {/* Enhanced Section Header with Responsive Centering */}
+        <Fade in timeout={800}>
           <Box
-            ref={scrollContainerRef}
+            textAlign="center"
+            mb={{ xs: 4, md: 6 }}
             sx={{
+              width: "100%",
+              maxWidth: {
+                xs: "100%",
+                md: isLarge ? "800px" : "700px",
+                lg: "900px"
+              },
+              px: { xs: 2, md: 0 },
+              // Ensure perfect centering
               display: "flex",
-              flexDirection: "row",
-              gap: { xs: 2, md: 3 },
-              overflowX: "auto",
-              overflowY: "hidden",
-              py: 2,
-              px: { xs: 1, md: 1 },
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              "&::-webkit-scrollbar": { display: "none" },
-              scrollBehavior: "smooth",
-              WebkitOverflowScrolling: "touch",
-              userSelect: "none",
-              cursor: "grab",
-              minHeight: { xs: 320, md: 360 }, // Ensure enough height for cards
-              position: "relative",
-              outline: "none",
-              "&:active": { cursor: "grabbing" },
-            }}
-            tabIndex={0}
-            aria-label={t("landing.courses.carouselLabel")}
-          >
-            {filteredCourses.map((course) => (
-              <Box
-                key={course.id}
-                sx={{
-                  flex: "0 0 auto",
-                  minWidth: { xs: 260, sm: 280, md: 320 },
-                  maxWidth: { xs: 280, sm: 320, md: 340 },
-                  width: { xs: "calc(100vw - 120px)", sm: 300, md: 340 },
-                  mx: { xs: 0.5, md: 1 },
-                }}
-              >
-                <LandingCourseCard
-                  course={course}
-                  enrollment={enrollments.find((e) => e.courseId === course.id)}
-                  onSignUp={() => navigate("/auth")}
-                  t={t}
-                />
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      )}
-
-      {ctaConfig && (
-        <>
-          {/* Section CTA Banner */}
-          <Paper
-            elevation={3}
-            sx={{
-              mt: 5,
-              p: 3,
+              flexDirection: "column",
+              alignItems: "center",
               textAlign: "center",
-              bgcolor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
             }}
           >
-            <Typography variant="h6" fontWeight={700} mb={1}>
-              {ctaConfig.bannerText}
-            </Typography>
-            <Button
-              variant="contained"
-              color="secondary"
-              size="large"
-              onClick={() => navigate(ctaConfig.href)}
-            >
-              {ctaConfig.label}
-            </Button>
-          </Paper>
-          {/* Sticky CTA */}
-          {showStickyCTA && (
-            <Box
+            <Typography
+              variant="h3"
+              component="h2"
               sx={{
-                position: "fixed",
-                bottom: 24,
-                left: 0,
-                width: "100vw",
-                display: "flex",
-                justifyContent: "center",
-                zIndex: 2000,
+                mb: 2,
+                fontWeight: 800,
+                background: `linear-gradient(135deg,
+                  ${theme.palette.primary.main} 0%,
+                  ${theme.palette.secondary.main} 100%)`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+                textAlign: "center",
+                // Responsive letter spacing for better readability
+                letterSpacing: { xs: "-0.02em", md: "-0.03em" },
               }}
             >
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => navigate(ctaConfig.href)}
-                sx={{ boxShadow: 4 }}
+              {tCourses("listing.title", "Explore Our Courses")}
+            </Typography>
+
+            <Typography
+              variant="h6"
+              color="text.secondary"
+              sx={{
+                maxWidth: {
+                  xs: "100%",
+                  md: isLarge ? "700px" : "600px",
+                  lg: "800px"
+                },
+                mx: "auto",
+                fontSize: { xs: "1rem", md: "1.1rem" },
+                lineHeight: 1.6,
+                // Better text alignment for larger screens
+                textAlign: { xs: "center", md: "center" },
+              }}
+            >
+              {tCourses("listing.subtitle", "Discover our comprehensive course library")}
+            </Typography>
+          </Box>
+        </Fade>
+
+        {/* Enhanced Category Filters with Responsive Centering */}
+        <Fade in timeout={1000}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: { xs: 3, md: 5 },
+              px: { xs: 1, md: 0 },
+              width: "100%",
+              maxWidth: {
+                xs: "100%",
+                md: isLarge ? "900px" : "800px",
+                lg: "1000px"
+              },
+              flexDirection: "column",
+            }}
+          >
+            <Stack
+              direction="row"
+              spacing={{ xs: 1, md: 1.5 }}
+              sx={{
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: { xs: 1, md: 1.5 },
+                // Better spacing for larger screens
+                maxWidth: "100%",
+                "& > *": {
+                  flexShrink: 0,
+                },
+              }}
+            >
+              {categories.map((category) => (
+                <Chip
+                  key={category.value}
+                  label={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                      <span>{category.icon}</span>
+                      <span>{category.label}</span>
+                    </Box>
+                  }
+                  onClick={() => setSelectedCategory(category.value)}
+                  color={selectedCategory === category.value ? "primary" : "default"}
+                  variant={selectedCategory === category.value ? "filled" : "outlined"}
+                  clickable
+                  sx={{
+                    height: { xs: 36, md: 40 },
+                    fontSize: { xs: "0.85rem", md: "0.9rem" },
+                    fontWeight: selectedCategory === category.value ? 600 : 500,
+                    transition: "all 0.3s ease",
+                    // Enhanced hover effects for better UX
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: theme.shadows[4],
+                    },
+                    // Better padding for larger screens
+                    px: { xs: 1.5, md: 2 },
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </Fade>
+
+        {/* Course Content Area */}
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : filteredCourses.length === 0 ? (
+          <Fade in timeout={600}>
+            <Paper
+              elevation={2}
+              sx={{
+                textAlign: "center",
+                py: { xs: 6, md: 8 },
+                px: 3,
+                borderRadius: theme.shape.borderRadius * 3,
+                bgcolor: theme.palette.background.paper,
+              }}
+            >
+              <Typography
+                variant="h6"
+                color="text.secondary"
+                sx={{ mb: 2, fontSize: { xs: "1.1rem", md: "1.25rem" } }}
               >
-                {ctaConfig.label}
+                {tCourses("listing.noResults", "No courses found matching your criteria")}
+              </Typography>
+              
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setSelectedCategory("all")}
+                sx={{ mt: 2 }}
+              >
+                {tCourses("navigation.allCourses", "All Courses")}
               </Button>
+            </Paper>
+          </Fade>
+        ) : (
+          <Fade in timeout={1200}>
+            <Box
+              sx={{
+                // Ensure the entire content area is centered
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {/* Course Grid - Responsive Layout with Enhanced Centering */}
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: gridColumns,
+                  gap: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
+                  mb: { xs: 3, md: 4 },
+                  width: "100%",
+                  placeItems: { xs: "stretch", md: "center" },
+                  // Ensure the grid itself is centered
+                  justifyContent: "center",
+                  maxWidth: {
+                    xs: "100%",
+                    md: isLarge ? "1050px" : "850px",
+                    lg: "1250px"
+                  },
+                  mx: "auto",
+                  // Ensure grid items are properly sized and centered
+                  "& > *": {
+                    width: "100%",
+                    maxWidth: {
+                      xs: "100%",
+                      md: isLarge ? "320px" : "400px",
+                      lg: "380px"
+                    },
+                    minWidth: {
+                      xs: "100%",
+                      md: isLarge ? "300px" : "350px",
+                      lg: "350px"
+                    },
+                  },
+                }}
+              >
+                {filteredCourses.slice(0, maxCoursesToShow).map((course, index) => (
+                  <LandingCourseCard
+                    key={course.id}
+                    course={course}
+                    courseStatus={getCourseStatus(course)}
+                    enrollment={enrollments.find((e) => e.courseId === course.id)}
+                    onSignUp={() => navigate("/auth")}
+                    loading={loading}
+                    priority={index < 3}
+                  />
+                ))}
+              </Box>
+
+              {/* View All Courses Button with Enhanced Centering */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  mt: { xs: 3, md: 4 },
+                  width: "100%",
+                  maxWidth: {
+                    xs: "100%",
+                    md: isLarge ? "600px" : "500px",
+                    lg: "700px"
+                  },
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  endIcon={<ViewListIcon />}
+                  onClick={() => navigate("/student/courses")}
+                  sx={{
+                    px: { xs: 3, md: 4 },
+                    py: { xs: 1.5, md: 2 },
+                    fontSize: { xs: "0.9rem", md: "1rem" },
+                    fontWeight: 600,
+                    borderRadius: theme.shape.borderRadius * 3,
+                    textTransform: "none",
+                    minWidth: { xs: "200px", md: "250px" },
+                    // Enhanced button styling for larger screens
+                    ...(isDesktop && {
+                      fontSize: "1.1rem",
+                      px: 5,
+                      py: 2.5,
+                    }),
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: theme.shadows[8],
+                    },
+                  }}
+                >
+                  {tCourses("navigation.allCourses", "View All Courses")}
+                </Button>
+              </Box>
             </Box>
-          )}
-        </>
-      )}
+          </Fade>
+        )}
+
+      </Box>
     </Box>
   );
 };

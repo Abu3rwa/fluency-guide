@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   CircularProgress,
@@ -6,12 +6,23 @@ import {
   Snackbar,
   Alert,
   Grid,
+  Typography,
+  LinearProgress,
+  Chip,
+  Avatar,
 } from "@mui/material";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import LockIcon from "@mui/icons-material/Lock";
 import { useCustomTheme } from "../../../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../../contexts/UserContext";
 import { useCourseDetails } from "./hooks/useCourseDetails";
 import { useCourseReviews } from "./hooks/useCourseReviews";
+import {
+  useCourseAccess,
+  CourseAccessLevel,
+} from "../../../hooks/useCourseAccess";
+import { studentCoursePreviewService } from "../../../services/student-services/studentCoursePreviewService";
 import StudentCourseDetailHeaderSection from "./components/StudentCourseDetailHeaderSection";
 import StudentCourseDetailOverviewSection from "./components/StudentCourseDetailOverviewSection";
 import StudentCourseDetailProgressStats from "./components/StudentCourseDetailProgressStats";
@@ -22,6 +33,50 @@ import StudentCourseDetailReviewsSection from "./components/StudentCourseDetailR
 import StudentCourseDetailSupportDialog from "./components/StudentCourseDetailSupportDialog";
 import StudentCourseDetailModuleList from "./components/StudentCourseDetailModuleList";
 import PaymentDialog from "../../../components/PaymentDialog";
+import EnrollmentPrompt from "../../../components/course-preview/EnrollmentPrompt";
+
+// Preview Indicator Component
+const PreviewIndicator = ({ type = "lesson" }) => (
+  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <PlayCircleOutlineIcon color="primary" fontSize="small" />
+    <Typography variant="caption" color="primary" fontWeight={600}>
+      PREVIEW
+    </Typography>
+  </Box>
+);
+
+// Locked Indicator Component
+const LockedIndicator = () => (
+  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <LockIcon color="disabled" fontSize="small" />
+    <Typography variant="caption" color="text.secondary">
+      ENROLL TO UNLOCK
+    </Typography>
+  </Box>
+);
+
+// Course Progress Bar Component
+const CourseProgressBar = ({ course, previewLessons, lessons, isEnrolled }) => {
+  const totalLessons = lessons?.length || 0;
+  const availableLessons = isEnrolled ? totalLessons : previewLessons;
+  const progressPercentage =
+    totalLessons > 0 ? (availableLessons / totalLessons) * 100 : 0;
+
+  return (
+    <Box sx={{ mb: 3 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+        {isEnrolled
+          ? `Course Progress: ${availableLessons} of ${totalLessons} lessons available`
+          : `Preview Mode: ${previewLessons} of ${totalLessons} lessons available`}
+      </Typography>
+      <LinearProgress
+        variant="determinate"
+        value={progressPercentage}
+        sx={{ height: 8, borderRadius: 4 }}
+      />
+    </Box>
+  );
+};
 
 const StudentCourseDetailsPage = () => {
   const { theme } = useCustomTheme();
@@ -49,12 +104,41 @@ const StudentCourseDetailsPage = () => {
     clearUndoSuccess,
   } = useCourseDetails();
 
+  // Course access hook for preview functionality
+  const {
+    accessLevel,
+    previewLessons,
+    loading: accessLoading,
+    error: accessError,
+  } = useCourseAccess(courseId);
+
+  // Debug logging
+  console.log("Course Details Debug:", {
+    courseId,
+    isEnrolled,
+    enrollmentStatus,
+    accessLevel,
+    previewLessons,
+    hasCourse: !!course,
+    hasLessons: !!lessons,
+    lessonsCount: lessons?.length || 0,
+    isAuthenticated: !!userData,
+  });
+
   const { reviews, submitReview } = useCourseReviews(courseId);
 
   // Dialog state
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [showEnrollmentPrompt, setShowEnrollmentPrompt] = useState(false);
+
+  // Track preview page view when not enrolled
+  useEffect(() => {
+    if (!isEnrolled && courseId) {
+      studentCoursePreviewService.trackPreviewView(courseId, userData?.uid);
+    }
+  }, [isEnrolled, courseId, userData?.uid]);
 
   // Backend integration for enroll, progress, reviews
   const handleEnroll = () => {
@@ -67,6 +151,46 @@ const StudentCourseDetailsPage = () => {
     setShowPaymentDialog(false);
     clearError();
     // Note: Enrollment status will be updated by the hook on next data fetch
+  };
+
+  // Preview functionality handlers with analytics tracking
+  const handlePreviewEnroll = () => {
+    // Track conversion step
+    studentCoursePreviewService.trackConversionStep(
+      "enrollment_prompt",
+      courseId,
+      userData?.uid
+    );
+    studentCoursePreviewService.trackPreviewInteraction(
+      courseId,
+      "enrollment_prompt",
+      userData?.uid
+    );
+    setShowEnrollmentPrompt(true);
+  };
+
+  const handleLessonClick = (lesson, index) => {
+    if (
+      !isEnrolled &&
+      !studentCoursePreviewService.isLessonPreviewable(index, previewLessons)
+    ) {
+      // Track locked lesson interaction
+      studentCoursePreviewService.trackPreviewInteraction(
+        courseId,
+        "lesson_locked",
+        userData?.uid
+      );
+      setShowEnrollmentPrompt(true);
+    } else {
+      // Track lesson interaction
+      studentCoursePreviewService.trackPreviewInteraction(
+        courseId,
+        isEnrolled ? "lesson_watch" : "lesson_watch_preview",
+        userData?.uid
+      );
+      // Navigate to lesson (this would be handled by the existing lesson navigation)
+      console.log("Navigate to lesson:", lesson.id);
+    }
   };
 
   const handleReviewSubmit = async (rating, reviewText) => {
@@ -92,11 +216,11 @@ const StudentCourseDetailsPage = () => {
     );
   }
 
+  // Show full course page for all users (enrolled and non-enrolled)
   return (
     <Box
       sx={{
         width: "100%",
-        // maxWidth: 1400,
         mx: "auto",
         py: { xs: 1, md: 4 },
         px: { xs: 0, sm: 2, md: 4 },
@@ -110,24 +234,34 @@ const StudentCourseDetailsPage = () => {
           <Alert severity="error">{error}</Alert>
         </Snackbar>
       )}
-      {undoSuccess && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={clearUndoSuccess}
-          message={t("studentCourseDetails.page.lessonUndone")}
-        />
-      )}
+
       <StudentCourseDetailHeaderSection
         course={course}
-        user={userData}
-        onEnroll={handleEnroll}
-        isEnrolled={isEnrolled}
         enrollmentStatus={enrollmentStatus}
       />
+
+      {/* Progress Bar for non-enrolled users */}
+      {!isEnrolled && (
+        <Box sx={{ mb: 3 }}>
+          <CourseProgressBar
+            course={course}
+            previewLessons={previewLessons}
+            lessons={lessons}
+            isEnrolled={isEnrolled}
+          />
+        </Box>
+      )}
+
       <Grid container spacing={4} sx={{ mt: 4, px: 2 }}>
         <Grid item xs={12} md={8}>
-          <StudentCourseDetailModuleList modules={modules} lessons={lessons} />
+          <StudentCourseDetailModuleList
+            modules={modules}
+            lessons={lessons}
+            accessLevel={accessLevel}
+            previewLessons={previewLessons}
+            onLessonClick={handleLessonClick}
+            isEnrolled={isEnrolled}
+          />
 
           <StudentCourseDetailOverviewSection course={course} />
           <StudentCourseDetailProgressStats
@@ -135,13 +269,17 @@ const StudentCourseDetailsPage = () => {
             achievements={achievements}
             loading={progressLoading || undoLoading}
           />
-          <StudentCourseDetailContentOutline
+          {/* <StudentCourseDetailContentOutline
             modules={modules}
             lessons={lessons}
             onLessonComplete={handleProgressUpdate}
             onLessonUndo={handleLessonUndo}
             user={userData}
-          />
+            accessLevel={accessLevel}
+            previewLessons={previewLessons}
+            onLessonClick={handleLessonClick}
+            isEnrolled={isEnrolled}
+          /> */}
           <StudentCourseDetailReviewsSection
             courseId={courseId}
             user={userData}
@@ -171,6 +309,7 @@ const StudentCourseDetailsPage = () => {
             open={materialsOpen}
             onClose={() => setMaterialsOpen(false)}
             materials={course?.courseMaterials || []}
+            loading={loading}
           />
           <StudentCourseDetailInstructorInfo
             instructor={course?.instructor}
@@ -189,6 +328,7 @@ const StudentCourseDetailsPage = () => {
             onClose={() => setSupportOpen(false)}
             support={course?.support}
             faq={course?.faq || []}
+            loading={loading}
           />
         </Grid>
       </Grid>
@@ -200,6 +340,14 @@ const StudentCourseDetailsPage = () => {
         course={course}
         userData={userData}
         onPaymentComplete={handlePaymentComplete}
+      />
+
+      {/* Enrollment Prompt Modal for non-enrolled users */}
+      <EnrollmentPrompt
+        open={showEnrollmentPrompt}
+        course={course}
+        onClose={() => setShowEnrollmentPrompt(false)}
+        lessons={lessons}
       />
     </Box>
   );

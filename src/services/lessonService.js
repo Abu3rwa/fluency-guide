@@ -12,6 +12,7 @@ import {
   orderBy,
   serverTimestamp,
   runTransaction,
+  setDoc,
 } from "firebase/firestore";
 
 // Lesson operations
@@ -91,6 +92,129 @@ export const createLesson = async (lessonData) => {
   } catch (error) {
     console.error("Error in createLesson:", error);
     throw new Error(`Failed to create lesson: ${error.message}`);
+  }
+};
+
+/**
+ * Creates lesson requirements for a specific lesson
+ * @param {string} lessonId - The ID of the lesson
+ * @param {Object} requirements - The requirements configuration
+ * @returns {Promise<Object>} - Created requirements data
+ */
+export const createLessonRequirements = async (lessonId, requirements) => {
+  try {
+    console.log("Creating lesson requirements for lesson:", lessonId);
+
+    // Validate lesson exists
+    const lessonRef = doc(db, "lessons", lessonId);
+    const lessonDoc = await getDoc(lessonRef);
+    if (!lessonDoc.exists()) {
+      throw new Error("Lesson not found");
+    }
+
+    // Create requirements document
+    const requirementsRef = doc(db, "lessonRequirements", lessonId);
+    const requirementsData = {
+      lessonId,
+      enabled: true,
+      requiredTasks: requirements.requiredTasks || [],
+      minimumScore: requirements.minimumScore || 70,
+      requiredContent: requirements.requiredContent || [],
+      requiredTimeSpent: requirements.requiredTimeSpent || 0,
+      requireVideoCompletion: requirements.requireVideoCompletion || false,
+      requireAudioCompletion: requirements.requireAudioCompletion || false,
+      requireReadingCompletion: requirements.requireReadingCompletion || false,
+      requireTaskCompletion: requirements.requireTaskCompletion || false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    await setDoc(requirementsRef, requirementsData);
+
+    console.log(
+      "Lesson requirements created successfully for lesson:",
+      lessonId
+    );
+    return { id: lessonId, ...requirementsData };
+  } catch (error) {
+    console.error("Error in createLessonRequirements:", error);
+    throw new Error(`Failed to create lesson requirements: ${error.message}`);
+  }
+};
+
+/**
+ * Updates lesson requirements for a specific lesson
+ * @param {string} lessonId - The ID of the lesson
+ * @param {Object} requirements - The updated requirements configuration
+ * @returns {Promise<Object>} - Updated requirements data
+ */
+export const updateLessonRequirements = async (lessonId, requirements) => {
+  try {
+    console.log("Updating lesson requirements for lesson:", lessonId);
+
+    // Validate lesson exists
+    const lessonRef = doc(db, "lessons", lessonId);
+    const lessonDoc = await getDoc(lessonRef);
+    if (!lessonDoc.exists()) {
+      throw new Error("Lesson not found");
+    }
+
+    // Update requirements document
+    const requirementsRef = doc(db, "lessonRequirements", lessonId);
+    const requirementsData = {
+      lessonId,
+      enabled: requirements.enabled !== undefined ? requirements.enabled : true,
+      requiredTasks: requirements.requiredTasks || [],
+      minimumScore: requirements.minimumScore || 70,
+      requiredContent: requirements.requiredContent || [],
+      requiredTimeSpent: requirements.requiredTimeSpent || 0,
+      requireVideoCompletion: requirements.requireVideoCompletion || false,
+      requireAudioCompletion: requirements.requireAudioCompletion || false,
+      requireReadingCompletion: requirements.requireReadingCompletion || false,
+      requireTaskCompletion: requirements.requireTaskCompletion || false,
+      updatedAt: serverTimestamp(),
+    };
+
+    await setDoc(requirementsRef, requirementsData, { merge: true });
+
+    console.log(
+      "Lesson requirements updated successfully for lesson:",
+      lessonId
+    );
+    return { id: lessonId, ...requirementsData };
+  } catch (error) {
+    console.error("Error in updateLessonRequirements:", error);
+    throw new Error(`Failed to update lesson requirements: ${error.message}`);
+  }
+};
+
+/**
+ * Deletes lesson requirements for a specific lesson
+ * @param {string} lessonId - The ID of the lesson
+ * @returns {Promise<void>}
+ */
+export const deleteLessonRequirements = async (lessonId) => {
+  try {
+    console.log("Deleting lesson requirements for lesson:", lessonId);
+
+    // Validate lesson exists
+    const lessonRef = doc(db, "lessons", lessonId);
+    const lessonDoc = await getDoc(lessonRef);
+    if (!lessonDoc.exists()) {
+      throw new Error("Lesson not found");
+    }
+
+    // Delete requirements document
+    const requirementsRef = doc(db, "lessonRequirements", lessonId);
+    await deleteDoc(requirementsRef);
+
+    console.log(
+      "Lesson requirements deleted successfully for lesson:",
+      lessonId
+    );
+  } catch (error) {
+    console.error("Error in deleteLessonRequirements:", error);
+    throw new Error(`Failed to delete lesson requirements: ${error.message}`);
   }
 };
 
@@ -215,60 +339,60 @@ export const getLesson = async (lessonId) => {
 
 export const getLessonsByCourseAndModule = async (courseId, moduleId) => {
   try {
+    // Simplified query to avoid composite index issues
     const lessonsQuery = query(
       collection(db, "lessons"),
       where("courseId", "==", courseId),
       where("moduleId", "==", moduleId),
-      where("type", "==", "lesson")
+      orderBy("createdAt", "asc")
     );
     const snapshot = await getDocs(lessonsQuery);
-    const lessons = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    // Sort lessons by createdAt in memory
-    return lessons.sort((a, b) => {
-      const dateA = a.createdAt?.toDate?.() || new Date(0);
-      const dateB = b.createdAt?.toDate?.() || new Date(0);
-      return dateA - dateB;
-    });
+    const allLessons = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    // Filter for lessons type client-side
+    const lessons = allLessons.filter(lesson => lesson.type === "lesson" || !lesson.type);
+    return lessons;
   } catch (error) {
+    console.error("Error in getLessonsByCourseAndModule:", error);
     throw new Error("Failed to get lessons: " + error.message);
   }
 };
 
 export const getLessonsByCourse = async (courseId) => {
   try {
+    // Simplified query to avoid composite index issues
     const lessonsQuery = query(
       collection(db, "lessons"),
       where("courseId", "==", courseId),
-      where("type", "==", "lesson")
+      orderBy("createdAt", "asc")
     );
     const snapshot = await getDocs(lessonsQuery);
-    const lessons = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    // Sort lessons by createdAt in memory
-    return lessons.sort((a, b) => {
-      const dateA = a.createdAt?.toDate?.() || new Date(0);
-      const dateB = b.createdAt?.toDate?.() || new Date(0);
-      return dateA - dateB;
-    });
+    const allLessons = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    // Filter for lessons type client-side
+    const lessons = allLessons.filter(lesson => lesson.type === "lesson" || !lesson.type);
+    return lessons;
   } catch (error) {
+    console.error("Error in getLessonsByCourse:", error);
     throw new Error("Failed to get lessons: " + error.message);
   }
 };
 
 export const getAllLessons = async () => {
   try {
+    // Simplified query to avoid composite index requirement
     const lessonsQuery = query(
       collection(db, "lessons"),
-      where("type", "==", "lesson")
+      orderBy("createdAt", "desc")
     );
     const snapshot = await getDocs(lessonsQuery);
-    const lessons = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    // Sort lessons by createdAt in memory
-    return lessons.sort((a, b) => {
-      const dateA = a.createdAt?.toDate?.() || new Date(0);
-      const dateB = b.createdAt?.toDate?.() || new Date(0);
-      return dateA - dateB;
-    });
+    const allLessons = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    // Filter for lessons type client-side to avoid Firebase index requirement
+    const lessons = allLessons.filter(lesson => lesson.type === "lesson" || !lesson.type);
+    return lessons;
   } catch (error) {
+    console.error("Error in getAllLessons:", error);
     throw new Error("Failed to get all lessons: " + error.message);
   }
 };
@@ -343,7 +467,7 @@ export const getLessonsByModuleId = async (moduleId) => {
     const q = query(
       lessonsRef,
       where("moduleId", "==", moduleId),
-      orderBy("order")
+      orderBy("order", "asc")
     );
     const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));

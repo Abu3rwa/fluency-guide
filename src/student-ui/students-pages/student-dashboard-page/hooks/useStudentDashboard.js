@@ -1,26 +1,23 @@
 import { useState, useEffect, useCallback, useReducer } from "react";
-import { useUser } from "../../../../contexts/UserContext";
 import studentAchievementService from "../../../../services/student-services/studentAchievementService";
 import studentGoalsService from "../../../../services/student-services/studentGoalsService";
 import { getTodayStats } from "../../../../services/student-services/studentTodayStatsService";
-import studentAnalyticsService from "../../../../services/student-services/studentAnalyticsService";
 import studentCourseService from "../../../../services/student-services/studentCourseService";
 import studentRecentActivityService from "../../../../services/student-services/studentRecentActivityService";
-import studentProgressService from "../../../../services/student-services/studentProgressService";
-import studentLearningPathService from "../../../../services/student-services/studentLearningPathService";
-import errorLoggingService from "../../../../services/errorLoggingService";
+import studentVocabularyService from "../../../../services/student-services/studentVocabularyService";
+import { DEFAULT_VALUES } from "../constants/dashboardConstants";
 
-// Dashboard state reducer for better state management
+// Simplified dashboard state reducer
 const dashboardReducer = (state, action) => {
   switch (action.type) {
     case "SET_LOADING":
       return { ...state, loading: action.payload, error: null };
     case "SET_ERROR":
       return { ...state, loading: false, error: action.payload };
-    case "SET_DASHBOARD_DATA":
+    case "SET_DATA":
       return { ...state, ...action.payload, loading: false, error: null };
     case "UPDATE_SECTION":
-      return { ...state, [action.payload.section]: action.payload.data };
+      return { ...state, [action.section]: action.data };
     case "CLEAR_ERROR":
       return { ...state, error: null };
     default:
@@ -29,112 +26,98 @@ const dashboardReducer = (state, action) => {
 };
 
 const useStudentDashboard = (userId) => {
-  const [dashboardData, dispatch] = useReducer(dashboardReducer, {
-    user: null,
-    todayStats: null,
-    progressData: null,
-    courseProgress: null,
-    achievements: null,
-    goals: null,
-    recentActivities: null,
-    trendData: null,
-    vocabularyStats: null,
-    pronunciationStats: null,
-    learningPaths: null,
+  const [state, dispatch] = useReducer(dashboardReducer, {
+    todayStats: DEFAULT_VALUES.TODAY_STATS,
+    courseProgress: [],
+    achievements: [],
+    goals: [],
+    recentActivities: [],
+    vocabularyStats: DEFAULT_VALUES.VOCABULARY_STATS,
     loading: true,
     error: null,
   });
 
+  // Fetch all dashboard data
   const fetchDashboardData = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      dispatch({ type: "SET_ERROR", payload: "No user ID provided" });
+      return;
+    }
 
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      // Fetch all dashboard data in parallel with enhanced services
+      // Fetch core data in parallel
       const [
-        userAchievements,
-        userGoals,
-        todayStats,
-        courseProgress,
-        recentActivities,
-        analytics,
-        overallProgress,
-        learningPaths,
-      ] = await Promise.all([
-        studentAchievementService.getUserAchievements(userId),
-        studentGoalsService.getUserGoals(userId),
+        todayStatsData,
+        courseProgressData,
+        achievementsData,
+        goalsData,
+        recentActivitiesData,
+        vocabularyStatsData,
+      ] = await Promise.allSettled([
         getTodayStats(userId),
         studentCourseService.getUserEnrolledCourses(userId),
+        studentAchievementService.getUserAchievements(userId),
+        studentGoalsService.getUserGoals(userId),
         studentRecentActivityService.getUserRecentActivities(userId, 10),
-        studentAnalyticsService.getEnhancedDashboardAnalytics(userId),
-        studentProgressService.getOverallProgress(userId),
-        studentLearningPathService.getLearningPathsWithProgress(userId),
+        studentVocabularyService.getVocabularyStats(userId),
       ]);
 
-      // Use real data from services
-      const goals = userGoals || [];
-      const { studyTrends, vocabularyAnalytics, pronunciationAnalytics } =
-        analytics || {};
+      // Process results and handle failures gracefully
+      const dashboardData = {
+        todayStats: todayStatsData.status === 'fulfilled' 
+          ? todayStatsData.value || DEFAULT_VALUES.TODAY_STATS
+          : DEFAULT_VALUES.TODAY_STATS,
+        
+        courseProgress: courseProgressData.status === 'fulfilled' 
+          ? courseProgressData.value || []
+          : [],
+        
+        achievements: achievementsData.status === 'fulfilled' 
+          ? achievementsData.value || []
+          : [],
+        
+        goals: goalsData.status === 'fulfilled' 
+          ? (goalsData.value || []).filter(goal => goal && goal.status === 'active')
+          : [],
+        
+        recentActivities: recentActivitiesData.status === 'fulfilled' 
+          ? Array.isArray(recentActivitiesData.value) ? recentActivitiesData.value : []
+          : [],
+        
+        vocabularyStats: vocabularyStatsData.status === 'fulfilled' 
+          ? vocabularyStatsData.value || DEFAULT_VALUES.VOCABULARY_STATS
+          : DEFAULT_VALUES.VOCABULARY_STATS,
+      };
 
-      // Debug logging for recent activities
-      console.log("Dashboard - recentActivities raw:", recentActivities);
-      console.log(
-        "Dashboard - recentActivities type:",
-        typeof recentActivities
-      );
-      console.log(
-        "Dashboard - recentActivities isArray:",
-        Array.isArray(recentActivities)
-      );
+      dispatch({ type: "SET_DATA", payload: dashboardData });
 
-      // Ensure recentActivities is always an array
-      const safeRecentActivities = Array.isArray(recentActivities)
-        ? recentActivities
-        : [];
+      // Log any failed requests for debugging
+      const failedRequests = [
+        { name: 'todayStats', result: todayStatsData },
+        { name: 'courseProgress', result: courseProgressData },
+        { name: 'achievements', result: achievementsData },
+        { name: 'goals', result: goalsData },
+        { name: 'recentActivities', result: recentActivitiesData },
+        { name: 'vocabularyStats', result: vocabularyStatsData },
+      ].filter(req => req.result.status === 'rejected');
 
-      console.log("Dashboard - safeRecentActivities:", safeRecentActivities);
+      if (failedRequests.length > 0) {
+        console.warn('Some dashboard requests failed:', failedRequests.map(req => ({
+          name: req.name,
+          error: req.result.reason?.message || req.result.reason
+        })));
+      }
 
-      dispatch({
-        type: "SET_DASHBOARD_DATA",
-        payload: {
-          user: null, // Will be provided by useUser hook
-          todayStats: todayStats || {
-            studyTime: 0,
-            lessonsCompleted: 0,
-            vocabularyWords: 0,
-            pronunciationPractice: 0,
-          },
-          progressData: overallProgress,
-          courseProgress: courseProgress || [],
-          enrolledCoursesCount: courseProgress?.length || 0,
-          achievements: userAchievements || [],
-          goals: goals,
-          recentActivities: safeRecentActivities,
-          trendData: studyTrends || [],
-          vocabularyStats: vocabularyAnalytics || {},
-          pronunciationStats: pronunciationAnalytics || {},
-          overallProgress: overallProgress,
-          learningPaths: learningPaths || [],
-        },
-      });
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-
-      // Log error with context
-      errorLoggingService.logDashboardError(
-        error,
-        "fetchDashboardData",
-        userId
-      );
-
-      // Enhanced error handling with specific error messages
+      console.error("Dashboard data fetch error:", error);
+      
       let errorMessage = "Failed to load dashboard data";
       if (error.code === "permission-denied") {
         errorMessage = "You don't have permission to access this data";
       } else if (error.code === "unavailable") {
-        errorMessage =
-          "Service temporarily unavailable. Please try again later";
+        errorMessage = "Service temporarily unavailable. Please try again later";
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -143,135 +126,68 @@ const useStudentDashboard = (userId) => {
     }
   }, [userId]);
 
-  const fetchSectionData = useCallback(
-    async (section) => {
-      if (!userId) return;
+  // Refetch specific section
+  const refetchSection = useCallback(async (section) => {
+    if (!userId) return;
 
-      dispatch({ type: "SET_LOADING", payload: true });
+    try {
+      let sectionData = null;
 
-      try {
-        let sectionData = null;
-
-        switch (section) {
-          case "achievements":
-            sectionData = await studentAchievementService.getUserAchievements(
-              userId
-            );
-            break;
-          case "goals":
-            sectionData = await studentGoalsService.getUserGoals(userId);
-            break;
-          case "recentActivities":
-            sectionData =
-              await studentRecentActivityService.getUserRecentActivities(
-                userId,
-                10
-              );
-            break;
-          case "progress":
-            sectionData = await studentProgressService.getOverallProgress(
-              userId
-            );
-            break;
-          case "learningPaths":
-            sectionData =
-              await studentLearningPathService.getLearningPathsWithProgress(
-                userId
-              );
-            break;
-          case "todayStats":
-            sectionData = await getTodayStats(userId);
-            break;
-          case "courseProgress":
-            sectionData = await studentCourseService.getUserEnrolledCourses(
-              userId
-            );
-            break;
-          default:
-            throw new Error(`Unknown section: ${section}`);
-        }
-
-        if (sectionData) {
-          dispatch({
-            type: "UPDATE_SECTION",
-            payload: { section, data: sectionData },
-          });
-        }
-      } catch (error) {
-        console.error(`Error fetching ${section} data:`, error);
-
-        // Log error with context
-        errorLoggingService.logDashboardError(
-          error,
-          `fetchSectionData_${section}`,
-          userId
-        );
-
-        let errorMessage = `Failed to load ${section} data`;
-        if (error.code === "permission-denied") {
-          errorMessage = `You don't have permission to access ${section} data`;
-        } else if (error.code === "unavailable") {
-          errorMessage = `${section} service temporarily unavailable`;
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
-
-        dispatch({ type: "SET_ERROR", payload: errorMessage });
+      switch (section) {
+        case "todayStats":
+          sectionData = await getTodayStats(userId);
+          break;
+        case "courseProgress":
+          sectionData = await studentCourseService.getUserEnrolledCourses(userId);
+          break;
+        case "achievements":
+          sectionData = await studentAchievementService.getUserAchievements(userId);
+          break;
+        case "goals":
+          sectionData = await studentGoalsService.getUserGoals(userId);
+          break;
+        case "recentActivities":
+          sectionData = await studentRecentActivityService.getUserRecentActivities(userId, 10);
+          break;
+        case "vocabularyStats":
+          sectionData = await studentVocabularyService.getVocabularyStats(userId);
+          break;
+        default:
+          console.warn(`Unknown section: ${section}`);
+          return;
       }
-    },
-    [userId]
-  );
 
-  // Fetch data on mount and when userId changes
-  useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+      if (sectionData !== null) {
+        dispatch({
+          type: "UPDATE_SECTION",
+          section,
+          data: sectionData,
+        });
+      }
+    } catch (error) {
+      console.error(`Error refetching ${section}:`, error);
+    }
+  }, [userId]);
 
-  /**
-   * Calculate overall progress data from courses and achievements
-   * @param {Array} courses - User's enrolled courses
-   * @param {Array} achievements - User's achievements
-   * @returns {Object} Progress data
-   */
-  const calculateProgressData = (courses, achievements) => {
-    const totalLessons = courses.reduce(
-      (sum, course) => sum + (course.totalLessons || 0),
-      0
-    );
-    const completedLessons = courses.reduce(
-      (sum, course) => sum + (course.completedLessons || 0),
-      0
-    );
-    const totalCourses = courses.length;
-    const completedCourses = courses.filter(
-      (course) => course.progress === 100
-    ).length;
-    const averageScore =
-      courses.reduce((sum, course) => sum + (course.averageScore || 0), 0) /
-      Math.max(courses.length, 1);
-    const studyStreak = achievements.filter((ach) =>
-      ach.title?.includes("streak")
-    ).length;
-
-    return {
-      totalLessons,
-      completedLessons,
-      totalCourses,
-      completedCourses,
-      averageScore: Math.round(averageScore),
-      studyStreak,
-    };
-  };
-
-  // Clear error function
+  // Clear error
   const clearError = useCallback(() => {
     dispatch({ type: "CLEAR_ERROR" });
   }, []);
 
+  // Refetch all data
+  const refetch = useCallback(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  // Effect to fetch data on mount and user change
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
   return {
-    ...dashboardData,
-    refetch: fetchDashboardData,
-    refetchSection: fetchSectionData,
+    ...state,
+    refetch,
+    refetchSection,
     clearError,
   };
 };

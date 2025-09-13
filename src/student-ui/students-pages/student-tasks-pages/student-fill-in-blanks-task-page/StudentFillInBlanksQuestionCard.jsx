@@ -157,7 +157,7 @@ const StudentFillInBlanksQuestionCard = ({
         );
       }
       return (
-        <span key={`text-${i}`} dir="auto">
+        <span key={`text-${i}`} dir="ltr">
           {part}
         </span>
       );
@@ -190,7 +190,7 @@ const StudentFillInBlanksQuestionCard = ({
             lineHeight: isMobile ? 2 : 2.5,
             fontSize: isSmallScreen ? "1rem" : isMobile ? "1.1rem" : "1.25rem",
           }}
-          dir="auto"
+          dir="ltr"
         >
           {renderQuestionWithBlanks()}
         </Typography>

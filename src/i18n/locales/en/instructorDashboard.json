@@ -1,0 +1,163 @@
+{
+  "dashboard": {
+    "title": "Instructor Dashboard",
+    "subtitle": "Manage your sessions and track your progress",
+    "loading": "Loading dashboard data...",
+    "loadingData": "Loading dashboard data...",
+    "errorLoading": "Error loading dashboard data",
+    "authenticationTimeout": "Authentication timed out. Please refresh the page.",
+    "userNotAuthenticated": "User not authenticated. Please log in as an instructor.",
+    
+    "stats": {
+      "totalSessions": "Total Sessions",
+      "upcomingSessions": "Upcoming Sessions",
+      "completedSessions": "Completed Sessions",
+      "thisWeekEarnings": "This Week's Earnings",
+      "activeSessionTypes": "Active Types",
+      "thisMonthEarnings": "This Month's Earnings",
+      "averageRating": "Average Rating",
+      "responseTime": "Response Time",
+      "averageSessionPrice": "Avg. Session Price",
+      "successRate": "Success Rate",
+      "totalBookings": "Total Bookings",
+      "pendingBookings": "Pending Bookings",
+      "confirmedBookings": "Confirmed Bookings",
+      "completedBookings": "Completed Bookings",
+      "cancelledBookings": "Cancelled Bookings"
+    },
+    "tabs": {
+      "upcoming": "Upcoming",
+      "today": "Today",
+      "bookings": "Bookings",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "timeframes": {
+      "tomorrow": "Tomorrow",
+      "thisWeek": "This Week"
+    },
+    "sessions": {
+      "students": "students",
+      "bookedStudents": "Booked Students",
+      "unknownType": "Unknown Session Type",
+      "noSessions": "No sessions found",
+      "noSessionsDesc": "You don't have any sessions for this category yet",
+      "noUpcomingSessions": "No upcoming sessions",
+      "noUpcomingDesc": "You have no upcoming sessions scheduled",
+      "noBookings": "No bookings found",
+      "noBookingsDesc": "You don't have any bookings yet",
+      "urgentLabel": "Urgent",
+      "soonLabel": "Soon",
+      "enrolledStudents": "Enrolled Students",
+      "noBookingsYet": "No bookings yet for this session",
+      "bookings": "Bookings",
+      "studentName": "Student",
+      "phoneNumber": "Phone",
+      "sessionNotes": "Session Notes",
+      "pastScheduled": "Past Due",
+      "earningsInfo": "Earnings are calculated when bookings are marked as completed",
+      "completedInfo": "Mark confirmed bookings as completed to include them in earnings"
+    },
+    "actions": {
+      "cancelSession": "Cancel Session",
+      "manageTypes": "Manage Session Types",
+      "newSession": "New Session",
+      "activeTypes": "Active Types",
+      "addSession": "Add New Session",
+      "editSession": "Edit Session",
+      "viewDetails": "View Details",
+      "refresh": "Refresh",
+      "export": "Export Data",
+      "manageAvailability": "Manage Availability",
+      "markAsCompleted": "Mark as Completed",
+      "errorMarkingCompleted": "Error marking session as completed"
+    },
+    "cancelDialog": {
+      "title": "Cancel Session",
+      "description": "Please provide a reason for cancelling this session. Students will be notified.",
+      "reasonLabel": "Cancellation Reason",
+      "confirmCancel": "Confirm Cancellation",
+      "errorCancelling": "Error cancelling session"
+    },
+    "form": {
+      "addSession": "Add New Session",
+      "editSession": "Edit Session",
+      "sessionType": "Session Type",
+      "selectSessionType": "Select Session Type",
+      "title": "Session Title",
+      "titleEn": "Session Title (English)",
+      "titleAr": "Session Title (Arabic)",
+      "description": "Description",
+      "descriptionEn": "Description (English)",
+      "descriptionAr": "Description (Arabic)",
+      "date": "Date",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "timeZone": "Time Zone",
+      "maxStudents": "Max Students",
+      "price": "Price",
+      "currency": "Currency",
+      "notes": "Instructor Notes",
+      "save": "Save Session",
+      "cancel": "Cancel",
+      "validation": {
+        "titleRequired": "Session title is required",
+        "sessionTypeRequired": "Session type is required",
+        "dateRequired": "Date is required",
+        "startTimeRequired": "Start time is required",
+        "endTimeRequired": "End time is required",
+        "maxStudentsRequired": "Max students must be at least 1",
+        "priceRequired": "Price must be a positive number",
+        "invalidTimeRange": "End time must be after start time"
+      }
+    },
+    "availability": {
+      "title": "Manage Availability",
+      "subtitle": "Set your available time slots so students can book sessions with you."
+,
+      "manageTitle": "Manage Availability",
+      "conflictWarning": "Warning: Some selected time slots conflict with existing availability.",
+      "noSlotsSelected": "Please select at least one time slot",
+      "saveError": "Failed to save availability. Please try again.",
+      "clearError": "Failed to clear availability. Please try again.",
+      "recurringSlot": "Recurring Availability Pattern",
+      "availabilitySlot": "Availability",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "pattern": "Pattern",
+      "date": "Date",
+      "time": "Time",
+      "patterns": {
+        "recurring": "Recurring Pattern",
+        "oneTime": "One-Time",
+        "weeklyRecurring": "Weekly Recurring"
+      },
+      "recurringPattern": "Recurring Pattern",
+      "oneTime": "One-Time",
+      "weeklyRecurring": "Weekly Recurring",
+      "selectSlots": "Select available time slots for the week",
+      "save": "Save Availability",
+      "clearWeek": "Clear Week",
+      "currentWeek": "Current Week's Availability",
+      "noAvailability": "No Availability"
+    }
+  },
+  "booking": {
+    "bookingDate": "Booking Date",
+    "sessionDate": "Session Date",
+    "actions": {
+      "confirmBooking": "Confirm Booking",
+      "cancelBooking": "Cancel Booking",
+      "contactStudent": "Contact Student",
+      "viewDetails": "View Details",
+      "markCompleted": "Mark as Completed",
+      "markBookingCompleted": "Mark Booking as Completed"
+    }
+  },
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  }
+}

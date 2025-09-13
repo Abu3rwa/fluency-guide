@@ -17,7 +17,7 @@ import {
   orderBy,
   increment,
 } from "firebase/firestore";
-import { db } from "../../config/firebase";
+import { db } from "../../firebase";
 import { getAuth } from "firebase/auth";
 import vocabularyReviewIntegrationService from "./vocabularyReviewIntegrationService";
 import { updateTodayStats } from "./studentTodayStatsService";
@@ -120,15 +120,29 @@ function calculateFillInBlanksScore(task, userAnswers) {
 
 function calculateMultipleChoiceScore(task, userAnswers) {
   let earnedPoints = 0;
-  const totalPoints = task.questions.length;
   const questionResults = {};
 
   task.questions.forEach((question) => {
     const userAnswer = userAnswers[question.id];
-    const correctAnswer = question.correctAnswer;
-    const isCorrect = userAnswer === correctAnswer;
+    
+    // For multiple choice, find the correct answer from options array
+    let correctAnswer;
+    if (question.options && Array.isArray(question.options)) {
+      // Find the option that is marked as correct
+      const correctOption = question.options.find(option => option.isCorrect);
+      correctAnswer = correctOption ? correctOption.text : undefined;
+    } else {
+      // Fallback to existing correctAnswer property for compatibility
+      correctAnswer = question.correctAnswer;
+    }
+    
+    // Robust comparison handling string/number type mismatches and whitespace
+    const isCorrect = String(userAnswer || "").trim() === String(correctAnswer || "").trim();
     const pointsEarned = isCorrect ? 1 : 0;
     const timeSpent = 0; // This would need to be tracked per question
+
+    // Debug logging to help identify comparison issues
+    console.log(`Question ${question.id}: User="${userAnswer}" (${typeof userAnswer}) vs Correct="${correctAnswer}" (${typeof correctAnswer}) => ${isCorrect}`);
 
     questionResults[question.id] = {
       isCorrect,
@@ -141,13 +155,22 @@ function calculateMultipleChoiceScore(task, userAnswers) {
     }
   });
 
-  const score = Math.round((earnedPoints / totalPoints) * 100);
+  // Use task.totalPoints as definitive source per memory specifications
+  // Fall back to questions.length if totalPoints is not set or is 0
+  const effectiveTotalPoints = (task.totalPoints && task.totalPoints > 0) 
+    ? task.totalPoints 
+    : task.questions.length;
+  
+  const score = Math.round((earnedPoints / task.questions.length) * 100);
   const isPassed = score >= (task.passingScore || 70);
+
+  console.log(`Score calculation: ${earnedPoints} correct out of ${task.questions.length} questions = ${score}%`);
+  console.log(`Total points from task: ${task.totalPoints}, Using: ${effectiveTotalPoints}`);
 
   return {
     score,
     earnedPoints,
-    totalPoints,
+    totalPoints: effectiveTotalPoints,
     isPassed,
     questionResults,
   };
@@ -160,10 +183,59 @@ export async function submitTaskAttempt(
   timeSpent,
   finalScore
 ) {
+  console.log('submitTaskAttempt called:', {
+    taskId,
+    userAnswersCount: Object.keys(userAnswers || {}).length,
+    timeSpent,
+    finalScore,
+    timestamp: new Date().toISOString()
+  });
+  
   try {
     const auth = getAuth();
     const userId = auth.currentUser?.uid;
     if (!userId) throw new Error("User not authenticated");
+
+    // Prevent duplicate submissions by checking for recent attempts
+    const recentAttemptsQuery = query(
+      collection(db, TASK_ATTEMPTS_COLLECTION),
+      where("taskId", "==", taskId),
+      where("userId", "==", userId),
+      orderBy("submittedAt", "desc"),
+      limit(1)
+    );
+    
+    const recentAttempts = await getDocs(recentAttemptsQuery);
+    if (!recentAttempts.empty) {
+      const lastAttempt = recentAttempts.docs[0].data();
+      const lastSubmissionTime = lastAttempt.submittedAt?.toDate?.() || new Date(lastAttempt.submittedAt);
+      const timeDiff = Date.now() - lastSubmissionTime.getTime();
+      
+      // Prevent submissions within 30 seconds of each other (increased from 15 seconds)
+      if (timeDiff < 30000) {
+        console.log(`Duplicate submission prevented - last submission was ${Math.round(timeDiff/1000)} seconds ago`);
+        return {
+          id: recentAttempts.docs[0].id,
+          ...lastAttempt,
+          isDuplicate: true
+        };
+      }
+      
+      // Additional check: If the answers are identical and submitted within 2 minutes
+      if (timeDiff < 120000) {
+        const lastAnswersHash = JSON.stringify(lastAttempt.responses?.map(r => r.selectedAnswer).sort() || []);
+        const currentAnswersHash = JSON.stringify(Object.values(userAnswers).sort());
+        
+        if (lastAnswersHash === currentAnswersHash) {
+          console.log(`Duplicate submission prevented - identical answers within 2 minutes`);
+          return {
+            id: recentAttempts.docs[0].id,
+            ...lastAttempt,
+            isDuplicate: true
+          };
+        }
+      }
+    }
 
     // Get task details
     const task = await getTaskById(taskId);
@@ -218,6 +290,17 @@ export async function submitTaskAttempt(
       collection(db, TASK_ATTEMPTS_COLLECTION),
       attempt
     );
+    
+    console.log('Task attempt saved successfully:', {
+      attemptId: docRef.id,
+      taskId,
+      userId,
+      score: scoreData.score,
+      correctAnswers: scoreData.earnedPoints,
+      totalQuestions: task.questions.length,
+      responsesCount: responses.length,
+      timeSpent
+    });
 
     // Update user progress
     const userRef = doc(db, USERS_COLLECTION, userId);
@@ -434,8 +517,8 @@ async function awardAchievement(userId, achievementId) {
   }
 }
 
-// Get task attempts for a user
-export async function getTaskAttempts(taskId, userId) {
+// Get task attempts for a user and specific task
+export async function getTaskAttempts(userId, taskId) {
   try {
     const q = query(
       collection(db, TASK_ATTEMPTS_COLLECTION),
@@ -449,6 +532,11 @@ export async function getTaskAttempts(taskId, userId) {
     console.error("Error getting task attempts:", e);
     return [];
   }
+}
+
+// Get all task attempts for a user (legacy method)
+export async function getUserTaskAttempts(taskId, userId) {
+  return getTaskAttempts(userId, taskId);
 }
 
 // Get task progress for a user
@@ -578,6 +666,7 @@ const studentTaskService = {
   deleteTask,
   submitTaskAttempt,
   getTaskAttempts,
+  getUserTaskAttempts,
   getTaskProgress,
   getUserProgress,
   getTaskAnalytics,

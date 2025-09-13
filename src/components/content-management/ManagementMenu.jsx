@@ -6,6 +6,8 @@ import {
   Visibility as ViewIcon,
   Publish as PublishIcon,
   FileDownloadOff as UnpublishedIcon,
+  Add as AddIcon,
+  School as SchoolIcon,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +20,8 @@ const ManagementMenu = ({
   activeResource,
   setDeleteDialog,
   handlePublish,
+  openCreateLesson,
+  openUpdateLesson,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -64,6 +68,38 @@ const ManagementMenu = ({
         <ViewIcon sx={{ mr: 2, color: "info.main" }} />{" "}
         {t("management.actions.view")}
       </MenuItemComponent>
+      
+      {/* Lesson Management Options - Only show for courses */}
+      {activeResource === "course" && (
+        <>
+          <Divider />
+          <MenuItemComponent
+            onClick={() => {
+              openCreateLesson(menuItem?.id, "default-module");
+              handleMenuClose();
+            }}
+            aria-label={t("management.actions.createLesson")}
+            sx={{ py: 1.5 }}
+          >
+            <AddIcon sx={{ mr: 2, color: "success.main" }} />
+            {t("management.actions.createLesson")}
+          </MenuItemComponent>
+          <MenuItemComponent
+            onClick={() => {
+              // This would need to be implemented when we have lesson data
+              // For now, it's a placeholder
+              console.log("Edit lesson functionality to be implemented");
+              handleMenuClose();
+            }}
+            aria-label={t("management.actions.editLesson")}
+            sx={{ py: 1.5 }}
+          >
+            <SchoolIcon sx={{ mr: 2, color: "warning.main" }} />
+            {t("management.actions.editLesson")}
+          </MenuItemComponent>
+        </>
+      )}
+      
       <Divider />
       <MenuItemComponent
         onClick={() => {

@@ -317,24 +317,41 @@ export default function Dashboard() {
   };
 
   const loadingSteps = [
-    "Initializing dashboard...",
-    "Loading user statistics...",
-    "Fetching course data...",
-    "Loading enrollment information...",
-    "Preparing analytics...",
-    "Finalizing dashboard...",
+    t("dashboard.loadingSteps.0"),
+    t("dashboard.loadingSteps.1"),
+    t("dashboard.loadingSteps.2"),
+    t("dashboard.loadingSteps.3"),
+    t("dashboard.loadingSteps.4"),
+    t("dashboard.loadingSteps.5"),
   ];
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
-    { text: "User Management", icon: <PeopleIcon />, path: "/students" },
-    { text: "Course Management", icon: <SchoolIcon />, path: "/courses" },
-    { text: "Analytics", icon: <AnalyticsIcon />, path: "/analytics" },
-    { text: "Security", icon: <SecurityIcon />, path: "/settings" },
-    { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
+    { text: t("dashboard.menuItems.dashboard"), icon: <DashboardIcon />, path: "/dashboard" },
+    { text: t("dashboard.menuItems.userManagement"), icon: <PeopleIcon />, path: "/students" },
+    { text: t("dashboard.menuItems.courseManagement"), icon: <SchoolIcon />, path: "/courses" },
+    { text: t("dashboard.menuItems.analytics"), icon: <AnalyticsIcon />, path: "/analytics" },
+    { text: t("dashboard.menuItems.security"), icon: <SecurityIcon />, path: "/settings" },
+    { text: t("dashboard.menuItems.settings"), icon: <SettingsIcon />, path: "/settings" },
   ];
 
-  const fetchDashboardData = async () => {
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return "";
+    const date = timestamp.toDate();
+    const now = new Date();
+    const diff = now - date;
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return `${days} ${t("dashboard.time.day")}${days > 1 ? t("dashboard.time.days") : ""} ${t("dashboard.time.ago")}`;
+    if (hours > 0) return `${hours} ${t("dashboard.time.hour")}${hours > 1 ? t("dashboard.time.hours") : ""} ${t("dashboard.time.ago")}`;
+    if (minutes > 0) return `${minutes} ${t("dashboard.time.minute")}${minutes > 1 ? t("dashboard.time.minutes") : ""} ${t("dashboard.time.ago")}`;
+    return t("dashboard.time.justNow");
+  };
+
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -438,11 +455,11 @@ export default function Dashboard() {
       setLoading(false);
       setLoadingStep(0);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchDashboardData();
-  }, [user]);
+  }, [fetchDashboardData]);
 
   useEffect(() => {
     const fetchEnrollments = async () => {
@@ -509,22 +526,6 @@ export default function Dashboard() {
     }
   };
 
-  const formatTimestamp = (timestamp) => {
-    if (!timestamp) return "";
-    const date = timestamp.toDate();
-    const now = new Date();
-    const diff = now - date;
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-    if (minutes > 0) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-    return "Just now";
-  };
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -537,32 +538,32 @@ export default function Dashboard() {
 
   const statsData = [
     {
-      title: "Total Students",
+      title: t("dashboard.stats.totalStudents"),
       value: stats.totalStudents,
       icon: <PeopleIcon />,
       color: "primary",
-      subtitle: "Registered students",
+      subtitle: t("dashboard.stats.registeredStudents"),
     },
     {
-      title: "Active Courses",
+      title: t("dashboard.stats.activeCourses"),
       value: stats.activeCourses,
       icon: <SchoolIcon />,
       color: "success",
-      subtitle: "Currently running",
+      subtitle: t("dashboard.stats.currentlyRunning"),
     },
     {
-      title: "Pending Tasks",
+      title: t("dashboard.stats.pendingTasks"),
       value: stats.pendingTasks,
       icon: <AssignmentIcon />,
       color: "warning",
-      subtitle: "Awaiting completion",
+      subtitle: t("dashboard.stats.awaitingCompletion"),
     },
     {
-      title: "Completion Rate",
+      title: t("dashboard.stats.completionRate"),
       value: `${stats.completionRate}%`,
       icon: <TrendingUpIcon />,
       color: "secondary",
-      subtitle: "Overall success rate",
+      subtitle: t("dashboard.stats.overallSuccessRate"),
     },
   ];
 
@@ -574,7 +575,7 @@ export default function Dashboard() {
   // Define tab content with responsive considerations
   const tabs = [
     {
-      label: "Overview",
+      label: t("dashboard.tabs.overview"),
       content: (
         <Grid container spacing={isMobile ? 2 : 3}>
           {/* Course Progress */}
@@ -587,7 +588,7 @@ export default function Dashboard() {
               }}
             >
               <CardHeader
-                title="Current Course Progress"
+                title={t("dashboard.sections.currentCourseProgress")}
                 sx={{ pb: 1 }}
                 titleTypographyProps={{
                   variant: isMobile ? "h6" : "h5",
@@ -609,7 +610,7 @@ export default function Dashboard() {
               }}
             >
               <CardHeader
-                title="Recent Activity"
+                title={t("dashboard.sections.recentActivity")}
                 sx={{ pb: 1 }}
                 titleTypographyProps={{
                   variant: isMobile ? "h6" : "h5",
@@ -625,7 +626,7 @@ export default function Dashboard() {
           <Grid item xs={12}>
             <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
               <CardHeader
-                title="Student Performance Analytics"
+                title={t("dashboard.sections.studentPerformanceAnalytics")}
                 titleTypographyProps={{
                   variant: isMobile ? "h6" : "h5",
                   fontSize: isMobile ? "1rem" : "1.25rem",
@@ -640,7 +641,7 @@ export default function Dashboard() {
       ),
     },
     {
-      label: "Courses",
+      label: t("dashboard.tabs.courses"),
       content: (
         <ResourceManagementPanel
           resourceDefs={{ course: resourceDefs.course }}
@@ -651,7 +652,7 @@ export default function Dashboard() {
       ),
     },
     {
-      label: "Students",
+      label: t("dashboard.tabs.students"),
       content: (
         <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
           <CardContent sx={{ p: isMobile ? 1 : 0 }}>
@@ -661,11 +662,11 @@ export default function Dashboard() {
       ),
     },
     {
-      label: "Enrollments",
+      label: t("dashboard.tabs.enrollments"),
       content: (
         <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
           <CardHeader
-            title="Enrollment Management"
+            title={t("dashboard.sections.enrollmentManagement")}
             titleTypographyProps={{
               variant: isMobile ? "h6" : "h5",
               fontSize: isMobile ? "1rem" : "1.25rem",
@@ -682,11 +683,11 @@ export default function Dashboard() {
       ),
     },
     {
-      label: "Analytics",
+      label: t("dashboard.tabs.analytics"),
       content: (
         <Card sx={{ borderRadius: 2, boxShadow: theme.shadows[2] }}>
           <CardHeader
-            title="Analytics & Reports"
+            title={t("dashboard.sections.analyticsReports")}
             titleTypographyProps={{
               variant: isMobile ? "h6" : "h5",
               fontSize: isMobile ? "1rem" : "1.25rem",
@@ -699,7 +700,7 @@ export default function Dashboard() {
       ),
     },
     userData?.isAdmin && {
-      label: "Content Management",
+      label: t("dashboard.tabs.contentManagement"),
       content: (
         <ResourceManagementPanel
           resourceDefs={resourceDefs}
@@ -741,7 +742,7 @@ export default function Dashboard() {
               onClick={handleRetry}
               startIcon={<RefreshIcon />}
             >
-              Retry
+              {t("dashboard.actions.retry")}
             </Button>
           }
           sx={{ mb: 3 }}
@@ -753,7 +754,7 @@ export default function Dashboard() {
           onClick={handleRetry}
           startIcon={<RefreshIcon />}
         >
-          Reload Dashboard
+          {t("dashboard.actions.reloadDashboard")}
         </Button>
       </Box>
     );
@@ -767,7 +768,7 @@ export default function Dashboard() {
         backgroundColor: theme.palette.background.default,
       }}
     >
-      {loading && <CustomSpinner message="Refreshing data..." />}
+      {loading && <CustomSpinner message={t("dashboard.actions.refreshingData")} />}
       <Box
         sx={{
           opacity: loading ? 0.6 : 1,

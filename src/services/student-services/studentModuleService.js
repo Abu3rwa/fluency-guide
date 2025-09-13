@@ -26,7 +26,7 @@ export async function getModulesByCourse(courseId) {
     const q = query(
       collection(db, MODULES_COLLECTION),
       where("courseId", "==", courseId),
-      orderBy("order")
+      orderBy("order", "asc")
     );
     const snapshot = await getDocs(q);
     const modules = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));

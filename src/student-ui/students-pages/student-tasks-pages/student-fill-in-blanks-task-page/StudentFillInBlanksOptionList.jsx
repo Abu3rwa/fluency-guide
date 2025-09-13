@@ -24,6 +24,7 @@ const Option = ({
       onClick={() => onClick(name)}
       sx={{
         minHeight: buttonHeight,
+        minWidth: 250,
         px: isMobile ? 2 : 1.5,
         py: 1,
         border: `2px solid ${theme.palette.primary.main}`,

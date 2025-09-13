@@ -10,12 +10,26 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useLandingPage } from "../../contexts/LandingPageContext";
 import "./styles/showcaseTabsSection.css";
+
 const ShowcaseTabsSection = ({ t }) => {
   const [tabValue, setTabValue] = useState(0);
   const handleTabChange = (event, newValue) => setTabValue(newValue);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { showcaseContent } = useLandingPage();
+
+  // Use context data if available, otherwise fallback to translations
+  const title = showcaseContent?.title || t("landing.tabs.title");
+  const overviewText = showcaseContent?.overviewText || t("landing.tabs.overviewText");
+  const howItWorksText = showcaseContent?.howItWorksText || t("landing.tabs.howItWorksText");
+  const benefits = showcaseContent?.benefits || [
+    { label: t("landing.tabs.flexible"), color: "primary" },
+    { label: t("landing.tabs.accessible"), color: "secondary" },
+    { label: t("landing.tabs.engaging"), color: "success" },
+    { label: t("landing.tabs.personalized"), color: "info" },
+  ];
 
   return (
     <Box
@@ -31,7 +45,7 @@ const ShowcaseTabsSection = ({ t }) => {
             fontSize: { xs: "1.2rem", sm: "1.5rem", md: "2.125rem" },
           }}
         >
-          {t("landing.tabs.title")}
+          {title}
         </Typography>
         <Box
           display="flex"
@@ -73,7 +87,7 @@ const ShowcaseTabsSection = ({ t }) => {
             padding={2}
             sx={{ fontSize: { xs: "1rem", md: "1.1rem" } }}
           >
-            {t("landing.tabs.overviewText")}
+            {overviewText}
           </Typography>
         )}
         {tabValue === 1 && (
@@ -84,26 +98,14 @@ const ShowcaseTabsSection = ({ t }) => {
             flexWrap="wrap"
             sx={{ mt: { xs: 1, md: 2 } }}
           >
-            <Chip
-              label={t("landing.tabs.flexible")}
-              color="primary"
-              sx={{ fontSize: { xs: "0.9rem", md: "1rem" }, minWidth: 0 }}
-            />
-            <Chip
-              label={t("landing.tabs.accessible")}
-              color="secondary"
-              sx={{ fontSize: { xs: "0.9rem", md: "1rem" }, minWidth: 0 }}
-            />
-            <Chip
-              label={t("landing.tabs.engaging")}
-              color="success"
-              sx={{ fontSize: { xs: "0.9rem", md: "1rem" }, minWidth: 0 }}
-            />
-            <Chip
-              label={t("landing.tabs.personalized")}
-              color="info"
-              sx={{ fontSize: { xs: "0.9rem", md: "1rem" }, minWidth: 0 }}
-            />
+            {benefits.map((benefit, index) => (
+              <Chip
+                key={benefit.id || index}
+                label={benefit.label}
+                color={benefit.color}
+                sx={{ fontSize: { xs: "0.9rem", md: "1rem" }, minWidth: 0 }}
+              />
+            ))}
           </Box>
         )}
         {tabValue === 2 && (
@@ -112,7 +114,7 @@ const ShowcaseTabsSection = ({ t }) => {
             color="textSecondary"
             sx={{ fontSize: { xs: "1rem", md: "1.1rem" } }}
           >
-            {t("landing.tabs.howItWorksText")}
+            {howItWorksText}
           </Typography>
         )}
       </Container>

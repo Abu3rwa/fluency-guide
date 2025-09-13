@@ -87,7 +87,16 @@ export const formatTime = (seconds, format = "short") => {
  * @returns {string} Date string in YYYY-MM-DD format
  */
 export const getTimezoneAdjustedDate = (date = new Date()) => {
-  return date.toISOString().slice(0, 10);
+  // Validate input date
+  if (!date) return new Date().toISOString().slice(0, 10);
+  
+  // Convert to Date object if it isn't already
+  const d = date instanceof Date ? date : new Date(date);
+  
+  // Check if date is valid
+  if (isNaN(d.getTime())) return new Date().toISOString().slice(0, 10);
+  
+  return d.toISOString().slice(0, 10);
 };
 
 /**
@@ -97,7 +106,17 @@ export const getTimezoneAdjustedDate = (date = new Date()) => {
  * @returns {boolean} True if same day
  */
 export const isSameDay = (date1, date2) => {
-  return getTimezoneAdjustedDate(date1) === getTimezoneAdjustedDate(date2);
+  // Validate input dates
+  if (!date1 || !date2) return false;
+  
+  // Convert to Date objects if they aren't already
+  const d1 = date1 instanceof Date ? date1 : new Date(date1);
+  const d2 = date2 instanceof Date ? date2 : new Date(date2);
+  
+  // Check if dates are valid
+  if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return false;
+  
+  return getTimezoneAdjustedDate(d1) === getTimezoneAdjustedDate(d2);
 };
 
 /**

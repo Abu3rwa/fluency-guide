@@ -1,0 +1,72 @@
+{
+  "topInstructors": {
+    "header": {
+      "title": "تعرف على أفضل مدرسينا",
+      "subtitle": "تعلم من مدرسين ذوي خبرة ومؤهلين يسعون بشغف لمساعدتك على النجاح.",
+      "verified": "جميع المدرسين معتمدون ومفحوصو الخلفية"
+    },
+    "card": {
+      "experience": "الخبرة",
+      "specialties": "التخصصات",
+      "subjects": "المواد",
+      "availableSlots": "حصة متاحة هذا الأسبوع",
+      "noAvailableSlots": "لا توجد حصص متاحة هذا الأسبوع",
+      "weeklyAvailability": "التوفر هذا الأسبوع",
+      "highAvailability": "عالي",
+      "mediumAvailability": "متوسط",
+      "lowAvailability": "محدود",
+      "nextAvailable": "التالي: {{time}}",
+      "noSlotsAvailable": "لا توجد حصص متاحة",
+      "viewAndBook": "عرض وحجز"
+    },
+    "actions": {
+      "viewAll": "عرض جميع المدرسين"
+    },
+    "states": {
+      "loading": "جاري تحميل المدرسين...",
+      "error": "خطأ في تحميل المدرسين",
+      "noInstructors": "لا يوجد مدرسون متاحون في الوقت الحالي"
+    },
+    "defaults": {
+      "unknownInstructor": "مدرس غير معروف",
+      "generalTutoring": "تدريس عام",
+      "defaultSubject": "اللغة الإنجليزية",
+      "newInstructor": "مدرس جديد",
+      "noDescription": "مدرس ذو خبرة جاهز لمساعدتك في تحقيق أهدافك التعليمية."
+    }
+  },
+  "availability": {
+    "management": {
+      "manageTitle": "إدارة التوفر",
+      "selectSlots": "اختر الفترات الزمنية المتاحة للأسبوع",
+      "recurringPattern": "نمط التكرار",
+      "oneTime": "مرة واحدة",
+      "weeklyRecurring": "تكرار أسبوعي"
+    },
+    "validation": {
+      "noSlotsSelected": "يرجى تحديد فترة زمنية واحدة على الأقل"
+    },
+    "messages": {
+      "saveError": "فشل في حفظ التوفر. يرجى المحاولة مرة أخرى.",
+      "clearError": "فشل في مسح التوفر. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "timeSlots": {
+    "selection": {
+      "selectDate": "اختر تاريخًا",
+      "availableSlots": "{{count}} فترة متاحة",
+      "multiSelectHint": "انقر على عدة فترات زمنية لتحديدها",
+      "selectedCount": "المحدد: {{count}} فترة زمنية"
+    },
+    "status": {
+      "booked": "محجوز بالفعل",
+      "unavailable": "غير متاح",
+      "available": "متاح"
+    },
+    "legend": {
+      "available": "متاح",
+      "booked": "محجوز",
+      "unavailable": "غير متاح"
+    }
+  }
+}

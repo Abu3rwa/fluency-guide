@@ -1,17 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   Typography,
   Button,
   List,
   ListItem,
-  Skeleton,
-  Fade,
 } from "@mui/material";
 import { useCustomTheme } from "../../../../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
 
-const MAX_HEIGHT = 96; // px, adjust for ~3 lines
+const MAX_HEIGHT = 200;
 
 const StudentCourseDetailOverviewSection = ({ course, loading }) => {
   const { theme } = useCustomTheme();
@@ -19,120 +17,130 @@ const StudentCourseDetailOverviewSection = ({ course, loading }) => {
   const [expanded, setExpanded] = useState(false);
   const contentRef = useRef(null);
 
+  useEffect(() => {
+    if (contentRef.current) {
+      const contentHeight = contentRef.current.scrollHeight;
+      if (contentHeight <= MAX_HEIGHT) {
+        setExpanded(true);
+      }
+    }
+  }, [course]);
+
   if (loading) {
     return (
-      <Skeleton
-        variant="rectangular"
-        height={100}
-        sx={{ borderRadius: theme.shape.borderRadius, mb: 3 }}
-      />
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" fontWeight={600} gutterBottom>
+          {t("studentCourseDetails.overview.title")}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Loading overview...
+        </Typography>
+      </Box>
     );
   }
   if (!course) return null;
 
   return (
-    <Fade in timeout={600}>
+    <Box
+      sx={{
+        mb: 3,
+        bgcolor: theme.palette.background.paper,
+        borderRadius: theme.shape.borderRadius,
+        p: { xs: 2, md: 3 },
+        position: "relative",
+      }}
+      aria-label="Course overview section"
+    >
+      <Typography variant="h6" fontWeight={600} gutterBottom>
+        {t("studentCourseDetails.overview.title")}
+      </Typography>
       <Box
+        ref={contentRef}
         sx={{
-          mb: 3,
-          bgcolor: theme.palette.background.paper,
-          borderRadius: theme.shape.borderRadius,
-          p: { xs: 2, md: 3 },
+          maxHeight: expanded ? "none" : `${MAX_HEIGHT}px`,
+          overflow: "hidden",
           position: "relative",
+          transition: "max-height 0.3s",
         }}
-        aria-label="Course overview section"
       >
-        <Typography variant="h6" fontWeight={600} gutterBottom>
-          {t("studentCourseDetails.overview.title")}
-        </Typography>
-        <Box
-          ref={contentRef}
+        <Typography
+          variant="body1"
+          gutterBottom
           sx={{
-            maxHeight: expanded ? "none" : `${MAX_HEIGHT}px`,
-            overflow: "hidden",
-            position: "relative",
-            transition: "max-height 0.3s",
+            fontFamily: theme.typography.body1.fontFamily,
+            fontSize: theme.typography.body1.fontSize,
           }}
         >
-          <Typography
-            variant="body1"
-            gutterBottom
-            sx={{
-              fontFamily: theme.typography.body1.fontFamily,
-              fontSize: theme.typography.body1.fontSize,
-            }}
-          >
-            {course.shortDescription}
-          </Typography>
-          {Array.isArray(course.objectives) && course.objectives.length > 0 && (
+          {course.shortDescription}
+        </Typography>
+        {Array.isArray(course.objectives) && course.objectives.length > 0 && (
+          <>
+            <Typography
+              variant="h3"
+              gutterBottom
+              color="primary"
+              sx={{
+                color: theme.palette.text.primary,
+                fontSize: theme.typography.h3.fontSize,
+                fontFamily: "Inter",
+              }}
+            >
+              {t("studentCourseDetails.overview.objectives")}
+            </Typography>
+            <List dense>
+              {course.objectives.map((obj, idx) => (
+                <ListItem key={idx} sx={{ pl: 0 }}>
+                  {obj}
+                </ListItem>
+              ))}
+            </List>
+          </>
+        )}
+        {Array.isArray(course.whatYouWillLearn) &&
+          course.whatYouWillLearn.length > 0 && (
             <>
-              <Typography
-                variant="h3"
-                gutterBottom
-                color="primary"
-                sx={{
-                  color: theme.palette.text.primary,
-                  fontSize: theme.typography.h3.fontSize,
-                  fontFamily: "Inter",
-                }}
-              >
-                {t("studentCourseDetails.overview.objectives")}
+              <Typography variant="subtitle1" fontWeight={500} gutterBottom>
+                {t("studentCourseDetails.overview.whatYouWillLearn")}
               </Typography>
               <List dense>
-                {course.objectives.map((obj, idx) => (
+                {course.whatYouWillLearn.map((item, idx) => (
                   <ListItem key={idx} sx={{ pl: 0 }}>
-                    {obj}
+                    {item}
                   </ListItem>
                 ))}
               </List>
             </>
           )}
-          {Array.isArray(course.whatYouWillLearn) &&
-            course.whatYouWillLearn.length > 0 && (
-              <>
-                <Typography variant="subtitle1" fontWeight={500} gutterBottom>
-                  {t("studentCourseDetails.overview.whatYouWillLearn")}
-                </Typography>
-                <List dense>
-                  {course.whatYouWillLearn.map((item, idx) => (
-                    <ListItem key={idx} sx={{ pl: 0 }}>
-                      {item}
-                    </ListItem>
-                  ))}
-                </List>
-              </>
-            )}
-          {!expanded && (
-            <Box
-              sx={{
-                position: "absolute",
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 40,
-                background: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, ${theme.palette.background.paper} 100%)`,
-                pointerEvents: "none",
-              }}
-            />
-          )}
-        </Box>
-        <Button
-          variant="text"
-          color="primary"
-          sx={{
-            mt: 1,
-            fontFamily: theme.typography.body2.fontFamily,
-            fontSize: theme.typography.body2.fontSize,
-          }}
-          onClick={() => setExpanded((prev) => !prev)}
-          aria-expanded={expanded}
-        >
-          {expanded
-            ? t("studentCourseDetails.overview.viewLess")
-            : t("studentCourseDetails.overview.viewMore")}
-        </Button>
+        {!expanded && (
+          <Box
+            sx={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 40,
+              background: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, ${theme.palette.background.paper} 100%)`,
+              pointerEvents: "none",
+            }}
+          />
+        )}
       </Box>
-    </Fade>
+      <Button
+        variant="text"
+        color="primary"
+        sx={{
+          mt: 1,
+          fontFamily: theme.typography.body2.fontFamily,
+          fontSize: theme.typography.body2.fontSize,
+        }}
+        onClick={() => setExpanded((prev) => !prev)}
+        aria-expanded={expanded}
+      >
+        {expanded
+          ? t("studentCourseDetails.overview.showLess")
+          : t("studentCourseDetails.overview.showMore")}
+      </Button>
+    </Box>
   );
 };
 

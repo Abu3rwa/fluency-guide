@@ -19,6 +19,8 @@ import {
   VideoLibrary as VideoLibraryIcon,
   LibraryBooks as LibraryBooksIcon,
   AccountBalance as AccountBalanceIcon,
+  EventAvailable as CalendarIcon,
+  BookOnline as BookSessionIcon,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next"; // <-- Add this import
 import { ROUTES } from "../../routes/constants";
@@ -65,6 +67,18 @@ export const getMenuItems = (user, userData, t) => {
         description: t("menu.performanceReports", "Performance Reports"),
       },
       {
+        text: t("menu.sessions", "Sessions"),
+        icon: <CalendarIcon />,
+        path: ROUTES.ADMIN_SESSION_TYPES,
+        description: t("menu.sessionManagement", "Private Session Management"),
+      },
+      {
+        text: t("menu.instructors", "Instructors"),
+        icon: <SchoolIcon />,
+        path: ROUTES.ADMIN_INSTRUCTOR_MANAGEMENT,
+        description: t("menu.instructorManagement", "Manage Instructor Roles & Performance"),
+      },
+      {
         text: t("menu.settings", "Settings"),
         icon: <SettingsIcon />,
         path: "/settings",
@@ -88,7 +102,7 @@ export const getMenuItems = (user, userData, t) => {
       {
         text: t("menu.myCourses", "My Courses"),
         icon: <SchoolIcon />,
-        path: "/courses",
+        path: ROUTES.STUDENT_COURSES,
         description: t("menu.enrolledCourses", "Enrolled Courses"),
       },
       {
@@ -126,6 +140,12 @@ export const getMenuItems = (user, userData, t) => {
         icon: <NotificationsIcon />,
         path: "/notifications",
         description: t("menu.systemNotifications", "System Notifications"),
+      },
+      {
+        text: t("menu.bookSession", "Book Session"),
+        icon: <BookSessionIcon />,
+        path: ROUTES.STUDENT_BOOKING,
+        description: t("menu.bookPrivateSession", "Book Private Session"),
       },
       {
         text: t("menu.profile", "Profile"),

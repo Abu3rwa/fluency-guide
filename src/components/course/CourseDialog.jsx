@@ -125,14 +125,115 @@ const CourseDialog = ({
 
   useEffect(() => {
     if (open && mode === "edit" && initialData) {
-      setFormData(initialData);
+      // Properly format initial data for editing
+      const formattedData = {
+        title: initialData.title || "",
+        description: initialData.description || "",
+        shortDescription: initialData.shortDescription || "",
+        category: initialData.category || "",
+        level: initialData.level || "",
+        thumbnail: initialData.thumbnail || null,
+        introVideo: initialData.introVideo || null,
+        instructor: initialData.instructor || "",
+        instructorBio: initialData.instructorBio || "",
+        language: initialData.language || "english",
+        prerequisites: Array.isArray(initialData.prerequisites) ? initialData.prerequisites : [],
+        objectives: Array.isArray(initialData.objectives) ? initialData.objectives : [],
+        duration: initialData.duration?.toString() || "",
+        totalLessons: initialData.totalLessons || 0,
+        totalQuizzes: initialData.totalQuizzes || 0,
+        totalAssignments: initialData.totalAssignments || 0,
+        maxStudents: initialData.maxStudents?.toString() || "",
+        startDate: initialData.startDate ? new Date(initialData.startDate).toISOString().split('T')[0] : "",
+        endDate: initialData.endDate ? new Date(initialData.endDate).toISOString().split('T')[0] : "",
+        schedule: initialData.schedule || "",
+        format: initialData.format || "self-paced",
+        price: initialData.price?.toString() || "",
+        discount: initialData.discount?.toString() || "",
+        pricingModel: initialData.pricingModel || "one-time",
+        currency: initialData.currency || "USD",
+        discountEndDate: initialData.discountEndDate ? new Date(initialData.discountEndDate).toISOString().split('T')[0] : "",
+        earlyBirdPrice: initialData.earlyBirdPrice?.toString() || "",
+        earlyBirdEndDate: initialData.earlyBirdEndDate ? new Date(initialData.earlyBirdEndDate).toISOString().split('T')[0] : "",
+        status: initialData.status || "draft",
+        seoTitle: initialData.seoTitle || initialData.title || "",
+        metaDescription: initialData.metaDescription || initialData.shortDescription || "",
+        tags: Array.isArray(initialData.tags) ? initialData.tags : [],
+        featured: Boolean(initialData.featured),
+        certificateIncluded: Boolean(initialData.certificateIncluded),
+        certificateTemplate: initialData.certificateTemplate || "standard",
+        accessDuration: initialData.accessDuration || "lifetime",
+        requirements: Array.isArray(initialData.requirements) ? initialData.requirements : [],
+        targetAudience: Array.isArray(initialData.targetAudience) ? initialData.targetAudience : [],
+        whatYouWillLearn: Array.isArray(initialData.whatYouWillLearn) ? initialData.whatYouWillLearn : [],
+        courseMaterials: Array.isArray(initialData.courseMaterials) ? initialData.courseMaterials : [],
+        support: {
+          email: initialData.support?.email || "",
+          hours: initialData.support?.hours || "",
+          responseTime: initialData.support?.responseTime || "",
+        },
+      };
+      setFormData(formattedData);
+      // Reset step to first when editing
+      setActiveStep(0);
     } else if (open && mode === "create") {
+      // Reset form data for create mode
+      setFormData({
+        title: "",
+        description: "",
+        shortDescription: "",
+        category: "",
+        level: "",
+        thumbnail: null,
+        introVideo: null,
+        instructor: "",
+        instructorBio: "",
+        language: "english",
+        prerequisites: [],
+        objectives: [],
+        duration: "",
+        totalLessons: 0,
+        totalQuizzes: 0,
+        totalAssignments: 0,
+        maxStudents: "",
+        startDate: "",
+        endDate: "",
+        schedule: "",
+        format: "self-paced",
+        price: "",
+        discount: "",
+        pricingModel: "one-time",
+        currency: "USD",
+        discountEndDate: "",
+        earlyBirdPrice: "",
+        earlyBirdEndDate: "",
+        status: "draft",
+        seoTitle: "",
+        metaDescription: "",
+        tags: [],
+        featured: false,
+        certificateIncluded: false,
+        certificateTemplate: "standard",
+        accessDuration: "lifetime",
+        requirements: [],
+        targetAudience: [],
+        whatYouWillLearn: [],
+        courseMaterials: [],
+        support: {
+          email: "",
+          hours: "",
+          responseTime: "",
+        },
+      });
+      setActiveStep(0);
       // Load draft if exists
       const draft = courseService.getDraft();
       if (draft) {
         setFormData(draft);
       }
     }
+    // Clear errors when dialog opens
+    setErrors({});
   }, [open, mode, initialData]);
 
   const handleChange = (e) => {
@@ -481,9 +582,28 @@ const CourseDialog = ({
                   />
                 </Button>
                 {formData.thumbnail && (
-                  <Typography variant="body2" color="text.secondary">
-                    {formData.thumbnail.name}
-                  </Typography>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    {typeof formData.thumbnail === 'string' ? (
+                      <>
+                        <Typography variant="body2" color="text.secondary">
+                          {t("courseDialog.media.currentThumbnail")}
+                        </Typography>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<PreviewIcon />}
+                          onClick={() => window.open(formData.thumbnail, '_blank')}
+                          aria-label={t("courseDialog.media.viewThumbnail")}
+                        >
+                          {t("courseDialog.actions.view")}
+                        </Button>
+                      </>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        {formData.thumbnail.name}
+                      </Typography>
+                    )}
+                  </Box>
                 )}
               </Box>
             </Grid>
@@ -502,9 +622,28 @@ const CourseDialog = ({
                   />
                 </Button>
                 {formData.introVideo && (
-                  <Typography variant="body2" color="text.secondary">
-                    {formData.introVideo.name}
-                  </Typography>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    {typeof formData.introVideo === 'string' ? (
+                      <>
+                        <Typography variant="body2" color="text.secondary">
+                          {t("courseDialog.media.currentIntroVideo")}
+                        </Typography>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<PreviewIcon />}
+                          onClick={() => window.open(formData.introVideo, '_blank')}
+                          aria-label={t("courseDialog.media.viewIntroVideo")}
+                        >
+                          {t("courseDialog.actions.view")}
+                        </Button>
+                      </>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        {formData.introVideo.name}
+                      </Typography>
+                    )}
+                  </Box>
                 )}
               </Box>
             </Grid>

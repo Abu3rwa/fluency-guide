@@ -17,3 +17,96 @@ body,
   padding: 4px !important;
   border-radius: 14px !important;
 }
+
+/* Arabic Font Variables */
+:root {
+  /* Arabic Fonts */
+  --font-tajawal: "Tajawal", sans-serif;
+  --font-cairo: "Cairo", sans-serif;
+  --font-alexandria: "Alexandria", sans-serif;
+  --font-amiri: "Amiri", serif;
+  --font-noto-serif: "Noto Serif", serif;
+  --font-dm-serif: "DM Serif Text", serif;
+  --font-roboto: "Roboto", sans-serif;
+
+  /* Font Weights */
+  --font-light: 300;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
+}
+
+/* Utility Classes for Arabic Fonts */
+.font-tajawal {
+  font-family: var(--font-tajawal);
+}
+
+.font-cairo {
+  font-family: var(--font-cairo);
+}
+
+.font-alexandria {
+  font-family: var(--font-alexandria);
+}
+
+.font-amiri {
+  font-family: var(--font-amiri);
+}
+
+.font-noto-serif {
+  font-family: var(--font-noto-serif);
+}
+
+.font-dm-serif {
+  font-family: var(--font-dm-serif);
+}
+
+/* RTL Support for Arabic Text */
+[dir="rtl"] {
+  font-family: var(--font-tajawal);
+}
+
+/* Responsive font sizes for Arabic text */
+@media (max-width: 768px) {
+  .font-tajawal,
+  .font-cairo,
+  .font-alexandria,
+  .font-amiri,
+  .font-noto-serif,
+  .font-dm-serif {
+    font-size: 0.9em;
+  }
+}
+
+/* Arabic Text Direction */
+.arabic-text {
+  direction: rtl;
+  text-align: right;
+}
+
+.arabic-text-center {
+  direction: rtl;
+  text-align: center;
+}
+
+.arabic-text-left {
+  direction: rtl;
+  text-align: left;
+}
+
+/* English Text Direction */
+.english-text {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Mixed Content */
+.mixed-content {
+  unicode-bidi: bidi-override;
+}
+.answer-option{
+  width: 300px;
+}

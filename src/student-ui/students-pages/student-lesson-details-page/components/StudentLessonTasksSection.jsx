@@ -224,13 +224,13 @@ const StudentLessonTasksSection = ({ lessonId }) => {
           margin: 0,
         }}
       >
-        {tasks.map((task) => (
+        {tasks.map((task, index) => (
           <Grid
             item
             xs={12}
             sm={6}
             md={4}
-            key={task.taskId}
+            key={task.id || task.taskId || `task-${index}`}
             sx={{
               // Ensure proper spacing on mobile
               padding: { xs: 0.5, sm: 1 },

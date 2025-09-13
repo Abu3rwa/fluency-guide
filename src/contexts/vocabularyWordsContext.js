@@ -4,6 +4,9 @@ import studentVocabularyService from "../services/student-services/studentVocabu
 
 const VocabularyWordsContext = createContext();
 
+// Request deduplication cache
+const requestCache = new Map();
+
 export const VocabularyWordsProvider = ({ children }) => {
   const { currentUser } = useAuth();
   const userId = currentUser?.uid;
@@ -27,37 +30,49 @@ export const VocabularyWordsProvider = ({ children }) => {
     }
   }, [userId]);
 
-  // Fetch vocabulary words
+  // Fetch vocabulary words with deduplication
   const fetchVocabularyWords = useCallback(
     async (filters = {}) => {
-      console.log("🔄 fetchVocabularyWords called with userId:", userId, "filters:", filters);
+      // Create a cache key for request deduplication
+      const cacheKey = `${userId}-${JSON.stringify(filters)}`;
       
       if (!userId) {
-        console.log("❌ No userId provided, skipping fetch");
         return;
+      }
+
+      // Check if a request with the same parameters is already in progress
+      if (requestCache.has(cacheKey)) {
+        return requestCache.get(cacheKey);
       }
 
       setLoading((prev) => ({ ...prev, words: true }));
       setError((prev) => ({ ...prev, words: null }));
 
-      try {
-        console.log("📞 Calling studentVocabularyService.getVocabularyWords...");
-        const words = await studentVocabularyService.getVocabularyWords({
-          ...filters,
-          userId,
-        });
-        console.log("📝 Received words from service:", words.length);
-        console.log("📖 Sample word:", words[0]);
-        setVocabularyWords(words);
-        setCurrentWordIndex(0);
-        console.log("✅ Vocabulary words updated in state");
-      } catch (err) {
-        console.error("❌ Error fetching vocabulary words:", err);
-        setError((prev) => ({ ...prev, words: err.message }));
-      } finally {
-        setLoading((prev) => ({ ...prev, words: false }));
-        console.log("🏁 Loading finished");
-      }
+      // Create and cache the request promise
+      const requestPromise = (async () => {
+        try {
+           const words = await studentVocabularyService.getVocabularyWords({
+             ...filters,
+             userId,
+           });
+           setVocabularyWords(words);
+           setCurrentWordIndex(0);
+           return words;
+        } catch (err) {
+          console.error("❌ Error fetching vocabulary words:", err);
+          setError((prev) => ({ ...prev, words: err.message }));
+          throw err;
+        } finally {
+           setLoading((prev) => ({ ...prev, words: false }));
+           // Remove from cache after completion
+           requestCache.delete(cacheKey);
+         }
+      })();
+
+      // Cache the promise
+      requestCache.set(cacheKey, requestPromise);
+      
+      return requestPromise;
     },
     [userId]
   );

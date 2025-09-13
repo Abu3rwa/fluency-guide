@@ -1,26 +1,33 @@
 import React from "react";
 import {
   Box,
-  Button,
-  Divider,
-  IconButton,
   Typography,
-  useMediaQuery,
-  ThemeProvider,
-  useTheme,
   Paper,
   Avatar,
   Chip,
 } from "@mui/material";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
+import {
+  School as CourseIcon,
+} from "@mui/icons-material";
 
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import StarIcon from "@mui/icons-material/Star";
-import GroupIcon from "@mui/icons-material/Group";
-import CourseIcon from "@mui/icons-material/School";
+// Import utilities and constants
+import { DASHBOARD_CONFIG } from "../constants/dashboardConstants";
+import {
+  getInitials,
+  getStreakText,
+  getBestStreakText,
+  getPointsText,
+  getTodayStudyText,
+  getTotalStudyText,
+  getCoursesText,
+} from "../utils/studentDashboardUtils";
+import {
+  getHeaderStyles,
+  getHeaderBackgroundStyles,
+  getProfileCardStyles,
+  getAvatarStyles,
+  getMobileChipStyles,
+} from "../styles/studentDashboardStyles";
 
 const StudentDashboardHeader = ({
   user,
@@ -28,131 +35,97 @@ const StudentDashboardHeader = ({
   avatar,
   preferences,
   mode,
+  theme,
   isMobile,
   onEditProfile,
   onSettings,
   onLogout,
   toggleTheme,
 }) => {
-  // Helper for initials fallback
-  const getInitials = (name) => {
-    if (!name) return "?";
-    const parts = name.split(" ");
-    return parts.length > 1
-      ? parts[0][0].toUpperCase() + parts[1][0].toUpperCase()
-      : parts[0][0].toUpperCase();
-  };
-
-  const theme = useTheme();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
-
-  // Design colors
-  const headerBg =
-    theme.palette.mode === "dark"
-      ? theme.palette.success.dark
-      : theme.palette.success.main;
-
   return (
-    <Box
-      sx={{
-        position: "relative",
-        pb: { xs: 10, sm: 12 },
-        minHeight: { xs: 260, sm: 320 },
-      }}
-    >
+    <Box sx={getHeaderStyles(theme)}>
       {/* Colored background */}
-      <Box
-        sx={{
-          bgcolor: theme.palette.background.paper,
-          height: { xs: 140, sm: 180 },
-          borderRadius: "0 0 16px 16px",
-        }}
-      />
+      <Box sx={getHeaderBackgroundStyles(theme)} />
 
       {/* Profile Card */}
-      <Paper
-        elevation={1}
-        sx={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          mx: "auto",
-          top: { xs: 70, sm: 100 },
-          padding: { xs: 1, sm: 1 },
-          width: { xs: "90%", sm: 400 },
-          borderRadius: 4,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          zIndex: 2,
-        }}
-      >
+      <Paper elevation={1} sx={getProfileCardStyles(theme)}>
         <Avatar
-          src={user?.profileImage || user?.photoURL}
+          src={avatar}
           sx={{
-            width: 80,
-            height: 80,
-            mb: 2,
-            bgcolor: theme.palette.primary.main,
+            ...getAvatarStyles(theme),
+            width: { xs: DASHBOARD_CONFIG.PROFILE_CARD.AVATAR_SIZE.MOBILE, sm: DASHBOARD_CONFIG.PROFILE_CARD.AVATAR_SIZE.DESKTOP },
+            height: { xs: DASHBOARD_CONFIG.PROFILE_CARD.AVATAR_SIZE.MOBILE, sm: DASHBOARD_CONFIG.PROFILE_CARD.AVATAR_SIZE.DESKTOP },
           }}
         >
           {getInitials(displayName)}
         </Avatar>
+        
         <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>
           {displayName}
         </Typography>
+        
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
           {user?.role || "Student"}
         </Typography>
+        
         {user?.bio && (
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{ mb: 2, textAlign: "center" }}
+            sx={{ mb: 2, textAlign: "center", px: 1 }}
           >
             {user.bio}
           </Typography>
         )}
+        
         <Box
           display="flex"
-          gap={1}
+          gap={{ xs: 0.5, sm: 1 }}
           mb={2}
           flexWrap="wrap"
           justifyContent="center"
+          sx={{
+            // Better mobile layout for chips
+            "@media (max-width: 600px)": {
+              maxWidth: "100%",
+              px: 1,
+            },
+          }}
         >
           <Chip
             icon={<CourseIcon />}
-            label={`${user?.enrolledCoursesCount ?? 0} Courses`}
-            sx={{ fontWeight: 500 }}
+            label={getCoursesText(user?.enrolledCoursesCount)}
+            sx={{ 
+              ...getMobileChipStyles(theme),
+              fontWeight: 500,
+            }}
           />
-
           <Chip
-            label={`🔥 ${user?.currentStreak ?? 0}d Streak`}
+            label={getStreakText(user?.currentStreak)}
             color="warning"
+            sx={getMobileChipStyles(theme)}
           />
           <Chip
-            label={`🏆 ${user?.longestStreak ?? 0}d Best`}
+            label={getBestStreakText(user?.longestStreak)}
             color="success"
+            sx={getMobileChipStyles(theme)}
           />
-          <Chip label={`⭐ ${user?.totalPoints ?? 0} Points`} color="primary" />
+          <Chip 
+            label={getPointsText(user?.totalPoints)} 
+            color="primary"
+            sx={getMobileChipStyles(theme)}
+          />
           <Chip
-            label={`⏰ ${user?.todayStudyMinutes ?? 0}m Today`}
+            label={getTodayStudyText(user?.todayStudyMinutes)}
             color="info"
+            sx={getMobileChipStyles(theme)}
           />
           <Chip
-            label={`⏳ ${user?.totalStudyMinutes ?? 0}m Total`}
+            label={getTotalStudyText(user?.totalStudyMinutes)}
             color="default"
+            sx={getMobileChipStyles(theme)}
           />
         </Box>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          transformOrigin={{ vertical: "top", horizontal: "right" }}
-        ></Menu>
       </Paper>
     </Box>
   );

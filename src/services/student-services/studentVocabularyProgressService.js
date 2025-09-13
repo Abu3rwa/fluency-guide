@@ -453,6 +453,62 @@ const studentVocabularyProgressService = {
       throw error;
     }
   },
+
+  // Add a word to student progress from lesson vocabulary
+  async addWordToProgress(userId, wordId, metadata = {}) {
+    try {
+      // Check if progress already exists
+      const existingProgress = await this.getWordProgress(userId, wordId);
+      
+      if (existingProgress) {
+        // If progress exists, just update metadata
+        const progressRef = doc(db, PROGRESS_COLLECTION, existingProgress.id);
+        await updateDoc(progressRef, {
+          ...metadata,
+          lastViewed: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        
+        return {
+          id: existingProgress.id,
+          alreadyExists: true,
+          updated: true
+        };
+      } else {
+        // Create new progress record
+        const newProgress = {
+          userId,
+          wordId,
+          status: "new",
+          lastViewed: serverTimestamp(),
+          lastReviewed: null,
+          reviewCount: 0,
+          timesViewed: 0,
+          timesCorrect: 0,
+          timesIncorrect: 0,
+          isFavorite: false,
+          ...metadata, // Include lesson source info
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        };
+
+        const docRef = await addDoc(
+          collection(db, PROGRESS_COLLECTION),
+          newProgress
+        );
+        
+        return {
+          id: docRef.id,
+          alreadyExists: false,
+          created: true,
+          ...newProgress
+        };
+      }
+    } catch (error) {
+      console.error("Error adding word to progress:", error);
+      throw error;
+    }
+  },
 };
 
 export default studentVocabularyProgressService;

@@ -8,13 +8,88 @@
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
     <meta name="theme-color" content="#000000" />
+
+    <!-- Dynamic language support with fallbacks -->
+    <title id="page-title">
+      Sudanglish - Master English with Real Conversations
+    </title>
     <meta
       name="description"
-      content="Fluency Guide - Your Language Learning Platform"
+      id="page-description"
+      content="Learn English through interactive videos, quizzes, and real conversations with other learners. Practice speaking with actual people and improve your English skills naturally."
     />
     <meta
+      name="keywords"
+      content="English learning, real conversations, videos, quizzes, learners, online courses, language learning, تعلم اللغة الإنجليزية, محادثات حقيقية, فيديوهات, اختبارات, متعلمين"
+    />
+
+    <!-- Language-specific meta tags -->
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="ar_SA" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Dynamic Open Graph tags -->
+    <meta
+      property="og:title"
+      id="og-title"
+      content="Sudanglish - Master English with Real Conversations"
+    />
+    <meta
+      property="og:description"
+      id="og-description"
+      content="Learn English through interactive videos, quizzes, and real conversations with other learners. Practice speaking with actual people and improve your English skills naturally."
+    />
+    <meta property="og:image" content="%PUBLIC_URL%/images/og-image.jpg" />
+    <meta property="og:url" content="https://yourdomain.com" />
+    <meta property="og:type" content="website" />
+
+    <!-- Dynamic Twitter Card tags -->
+    <meta
+      name="twitter:title"
+      id="twitter-title"
+      content="Sudanglish - Master English with Real Conversations"
+    />
+    <meta
+      name="twitter:description"
+      id="twitter-description"
+      content="Learn English through interactive videos, quizzes, and real conversations with other learners..."
+    />
+    <meta name="twitter:image" content="%PUBLIC_URL%/images/og-image.jpg" />
+
+    <!-- Language-specific structured data -->
+    <script type="application/ld+json" id="structured-data">
+      {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "Sudanglish",
+        "alternateName": "سودانجليش",
+        "description": "Interactive English learning platform with real conversations, videos, and quizzes",
+        "description_ar": "منصة تعليم اللغة الإنجليزية التفاعلية مع المحادثات الحقيقية والفيديوهات والاختبارات",
+        "url": "https://yourdomain.com",
+        "logo": "https://yourdomain.com/images/logo.png",
+        "sameAs": [
+          "https://facebook.com/sudanglish",
+          "https://twitter.com/sudanglish"
+        ],
+        "inLanguage": ["en", "ar"],
+        "availableLanguage": [
+          {
+            "@type": "Language",
+            "name": "English",
+            "alternateName": "en"
+          },
+          {
+            "@type": "Language",
+            "name": "العربية",
+            "alternateName": "ar"
+          }
+        ]
+      }
+    </script>
+
+    <meta
       http-equiv="Content-Security-Policy"
-      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://www.gstatic.com blob: data:;"
+      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.firebaseapp.com https://*.firebase.com https://*.googleapis.com https://accounts.google.com https://apis.google.com https://www.gstatic.com blob: data:;"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
@@ -41,10 +116,105 @@
       href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@200..1000&family=DM+Serif+Text&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <title>EFG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@200..1000&family=DM+Serif+Text&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Sudanglish</title>
+
+    <!-- Language detection and meta tag update script -->
+    <script>
+      (function () {
+        // Get current language from localStorage or default to 'ar'
+        const currentLang = localStorage.getItem("i18nextLng") || "ar";
+
+        // Language-specific content
+        const content = {
+          en: {
+            title: "Sudanglish - Master English with Real Conversations",
+            description:
+              "Learn English through interactive videos, quizzes, and real conversations with other learners. Practice speaking with actual people and improve your English skills naturally.",
+            ogDescription:
+              "Learn English through interactive videos, quizzes, and real conversations with other learners. Practice speaking with actual people and improve your English skills naturally.",
+            twitterDescription:
+              "Learn English through interactive videos, quizzes, and real conversations with other learners. Practice speaking with actual people and improve your English skills naturally.",
+          },
+          ar: {
+            title: "سودانجليش - أتقن اللغة الإنجليزية بالمحادثات الحقيقية",
+            description:
+              "تعلم اللغة الإنجليزية من خلال الفيديوهات التفاعلية والاختبارات والمحادثات الحقيقية مع متعلمين آخرين. تدرب على التحدث مع أشخاص حقيقيين وحسن مهاراتك في اللغة الإنجليزية بشكل طبيعي.",
+            ogDescription:
+              "تعلم اللغة الإنجليزية من خلال الفيديوهات التفاعلية والاختبارات والمحادثات الحقيقية مع متعلمين آخرين. تدرب على التحدث مع أشخاص حقيقيين وحسن مهاراتك في اللغة الإنجليزية بشكل طبيعي.",
+            twitterDescription:
+              "تعلم اللغة الإنجليزية من خلال الفيديوهات التفاعلية والاختبارات والمحادثات الحقيقية مع متعلمين آخرين. تدرب على التحدث مع أشخاص حقيقيين وحسن مهاراتك في اللغة الإنجليزية بشكل طبيعي.",
+          },
+        };
+
+        // Update meta tags based on current language
+        function updateMetaTags() {
+          const lang = localStorage.getItem("i18nextLng") || "ar";
+          const langContent = content[lang] || content.ar;
+
+          // Update title
+          document.title = langContent.title;
+          const titleElement = document.getElementById("page-title");
+          if (titleElement) titleElement.textContent = langContent.title;
+
+          // Update description
+          const descMeta = document.querySelector('meta[name="description"]');
+          if (descMeta)
+            descMeta.setAttribute("content", langContent.description);
+
+          const descElement = document.getElementById("page-description");
+          if (descElement)
+            descElement.setAttribute("content", langContent.description);
+
+          // Update Open Graph tags
+          const ogTitle = document.getElementById("og-title");
+          if (ogTitle) ogTitle.setAttribute("content", langContent.title);
+
+          const ogDesc = document.getElementById("og-description");
+          if (ogDesc) ogDesc.setAttribute("content", langContent.ogDescription);
+
+          // Update Twitter Card tags
+          const twitterTitle = document.getElementById("twitter-title");
+          if (twitterTitle)
+            twitterTitle.setAttribute("content", langContent.title);
+
+          const twitterDesc = document.getElementById("twitter-description");
+          if (twitterDesc)
+            twitterDesc.setAttribute("content", langContent.twitterDescription);
+
+          // Update HTML lang attribute
+          document.documentElement.lang = lang;
+
+          // Update og:locale
+          const ogLocale = lang === "ar" ? "ar_SA" : "en_US";
+          const ogLocaleMeta = document.querySelector(
+            'meta[property="og:locale"]'
+          );
+          if (ogLocaleMeta) ogLocaleMeta.setAttribute("content", ogLocale);
+        }
+
+        // Update meta tags on page load
+        updateMetaTags();
+
+        // Listen for language changes
+        window.addEventListener("storage", function (e) {
+          if (e.key === "i18nextLng") {
+            updateMetaTags();
+          }
+        });
+
+        // Expose function for manual updates
+        window.updatePageMetaTags = updateMetaTags;
+      })();
+    </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- <noscript>You need to enable JavaScript to run this app.</noscript> -->
     <div id="root"></div>
   </body>
 </html>

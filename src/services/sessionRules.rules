@@ -1,0 +1,263 @@
+// sessionRules.rules - Firestore security rule functions for session management
+// These functions should be copied and integrated into firestore.rules
+
+// Session types validation (admin-created, instructor-selected)
+function isSessionTypeValid() {
+  return request.resource.data.keys().hasAll(['name', 'duration', 'price', 'currency', 'active', 'createdAt']) &&
+         request.resource.data.name is string &&
+         request.resource.data.name.size() > 0 &&
+         request.resource.data.name.size() <= 100 &&
+         request.resource.data.duration is int &&
+         request.resource.data.duration > 0 &&
+         request.resource.data.duration <= 300 && // Max 5 hours
+         request.resource.data.price is number &&
+         request.resource.data.price >= 0 &&
+         request.resource.data.currency is string &&
+         request.resource.data.currency in ['USD', 'EUR', 'GBP', 'LYD'] &&
+         request.resource.data.active is bool &&
+         request.resource.data.createdAt is timestamp;
+}
+
+// Sessions validation (instructor-managed)
+function isSessionValid() {
+  return request.resource.data.keys().hasAll(['instructorId', 'sessionTypeId', 'date', 'startTime', 'endTime', 'status', 'maxStudents']) &&
+         request.resource.data.instructorId is string &&
+         request.resource.data.instructorId.size() > 0 &&
+         request.resource.data.sessionTypeId is string &&
+         request.resource.data.sessionTypeId.size() > 0 &&
+         request.resource.data.date is timestamp &&
+         request.resource.data.startTime is timestamp &&
+         request.resource.data.endTime is timestamp &&
+         request.resource.data.startTime < request.resource.data.endTime &&
+         request.resource.data.status is string &&
+         request.resource.data.status in ['scheduled', 'active', 'completed', 'cancelled'] &&
+         request.resource.data.maxStudents is int &&
+         request.resource.data.maxStudents > 0 &&
+         request.resource.data.maxStudents <= 10; // Reasonable limit
+}
+
+// Availability validation (instructor-managed)
+function isAvailabilityValid() {
+  return request.resource.data.keys().hasAll(['instructorId', 'date', 'startTime', 'endTime', 'isRecurring', 'isActive']) &&
+         request.resource.data.instructorId is string &&
+         request.resource.data.instructorId.size() > 0 &&
+         request.resource.data.date is timestamp &&
+         request.resource.data.startTime is timestamp &&
+         request.resource.data.endTime is timestamp &&
+         request.resource.data.startTime < request.resource.data.endTime &&
+         request.resource.data.isRecurring is bool &&
+         request.resource.data.isActive is bool &&
+         // If recurring, must have additional fields
+         (!request.resource.data.isRecurring || 
+          (request.resource.data.keys().hasAll(['patternType', 'daysOfWeek']) &&
+           request.resource.data.patternType is string &&
+           request.resource.data.patternType in ['weekly', 'daily'] &&
+           request.resource.data.daysOfWeek is list));
+}
+
+// Bookings validation (student-initiated)
+function isBookingValid() {
+  return request.resource.data.keys().hasAll(['userId', 'sessionId', 'instructorId', 'sessionTypeId', 'status', 'bookingDate', 'scheduledDate', 'phoneNumber']) &&
+         request.resource.data.userId is string &&
+         request.resource.data.userId.size() > 0 &&
+         request.resource.data.sessionId is string &&
+         request.resource.data.sessionId.size() > 0 &&
+         request.resource.data.instructorId is string &&
+         request.resource.data.instructorId.size() > 0 &&
+         request.resource.data.sessionTypeId is string &&
+         request.resource.data.sessionTypeId.size() > 0 &&
+         request.resource.data.status is string &&
+         request.resource.data.status in ['pending', 'confirmed', 'completed', 'cancelled'] &&
+         request.resource.data.bookingDate is timestamp &&
+         request.resource.data.scheduledDate is timestamp &&
+         request.resource.data.phoneNumber is string &&
+         request.resource.data.phoneNumber.size() >= 10 &&
+         request.resource.data.phoneNumber.size() <= 20 &&
+         // Ensure booking is at least 1 day in advance
+         request.resource.data.scheduledDate > request.time + duration.value(24, 'h');
+}
+
+// Notifications validation (system-generated)
+function isNotificationValid() {
+  return request.resource.data.keys().hasAll(['userId', 'type', 'message', 'status', 'createdAt']) &&
+         request.resource.data.userId is string &&
+         request.resource.data.userId.size() > 0 &&
+         request.resource.data.type is string &&
+         request.resource.data.type in ['booking_confirmation', 'session_reminder', 'session_cancelled', 'session_completed'] &&
+         request.resource.data.message is string &&
+         request.resource.data.message.size() > 0 &&
+         request.resource.data.message.size() <= 1000 &&
+         request.resource.data.status is string &&
+         request.resource.data.status in ['pending', 'sent', 'failed'] &&
+         request.resource.data.createdAt is timestamp;
+}
+
+// User role checking helpers
+function isAdmin() {
+  return request.auth != null && 
+         request.auth.uid != null &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+}
+
+function isInstructor() {
+  return request.auth != null && 
+         request.auth.uid != null &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'instructor';
+}
+
+function isStudent() {
+  return request.auth != null && 
+         request.auth.uid != null &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'student';
+}
+
+function isAuthenticated() {
+  return request.auth != null && request.auth.uid != null;
+}
+
+// Ownership checking helpers
+function isResourceOwner(resourceId) {
+  return request.auth != null && request.auth.uid == resourceId;
+}
+
+function isInstructorOfSession() {
+  return request.auth != null && 
+         request.auth.uid == request.resource.data.instructorId;
+}
+
+function isStudentOfBooking() {
+  return request.auth != null && 
+         request.auth.uid == request.resource.data.userId;
+}
+
+// Advanced booking validation
+function isValidBookingAdvance() {
+  // Ensure booking is at least 1 day in advance (Libya timezone UTC+2)
+  let libyaTime = request.time + duration.value(2, 'h');
+  let scheduledTime = request.resource.data.scheduledDate;
+  return scheduledTime > libyaTime + duration.value(24, 'h');
+}
+
+function isSessionTimeValid() {
+  // Validate session time slots (30 minute intervals from 8 AM to 8 PM Libya time)
+  let sessionStart = request.resource.data.startTime;
+  let sessionEnd = request.resource.data.endTime;
+  
+  // Convert to Libya time (UTC+2)
+  let libyaStart = sessionStart + duration.value(2, 'h');
+  let libyaEnd = sessionEnd + duration.value(2, 'h');
+  
+  // Extract hour and minute
+  let startHour = libyaStart.toMillis() / 1000 / 60 / 60 % 24;
+  let endHour = libyaEnd.toMillis() / 1000 / 60 / 60 % 24;
+  
+  // Session must be between 8 AM and 8 PM Libya time
+  return startHour >= 8 && endHour <= 20 && sessionStart < sessionEnd;
+}
+
+// Data size and format validation
+function isValidPhoneNumber(phone) {
+  return phone is string && 
+         phone.size() >= 10 && 
+         phone.size() <= 20 &&
+         phone.matches('^[+]?[0-9-\\s]+$');
+}
+
+function isValidCurrency(currency) {
+  return currency is string && 
+         currency in ['USD', 'EUR', 'GBP', 'LYD'];
+}
+
+function isValidSessionStatus(status) {
+  return status is string && 
+         status in ['scheduled', 'active', 'completed', 'cancelled'];
+}
+
+function isValidBookingStatus(status) {
+  return status is string && 
+         status in ['pending', 'confirmed', 'completed', 'cancelled'];
+}
+
+function isValidNotificationStatus(status) {
+  return status is string && 
+         status in ['pending', 'sent', 'failed'];
+}
+
+function isValidNotificationType(type) {
+  return type is string && 
+         type in ['booking_confirmation', 'session_reminder', 'session_cancelled', 'session_completed'];
+}
+
+// Enhanced validation with business logic
+function isSessionTypeValidWithBusiness() {
+  return isSessionTypeValid() &&
+         // Additional business validation
+         request.resource.data.duration % 30 == 0 && // Must be 30-minute intervals
+         request.resource.data.price > 0; // Price must be positive
+}
+
+function isBookingValidWithBusiness() {
+  return isBookingValid() &&
+         isValidBookingAdvance() &&
+         isValidPhoneNumber(request.resource.data.phoneNumber) &&
+         isValidBookingStatus(request.resource.data.status);
+}
+
+function isSessionValidWithBusiness() {
+  return isSessionValid() &&
+         isSessionTimeValid() &&
+         isValidSessionStatus(request.resource.data.status);
+}
+
+/*
+USAGE INSTRUCTIONS:
+1. Copy the validation functions above into your firestore.rules file
+2. Use these functions in your security rules like this:
+
+rules_version = '2';
+service cloud.firestore {
+  database {
+    document {
+      // Session Types Collection (Admin only)
+      match /sessionTypes/{typeId} {
+        allow read: if isAuthenticated();
+        allow create, update, delete: if isAdmin() && isSessionTypeValidWithBusiness();
+      }
+      
+      // Sessions Collection (Instructor managed)
+      match /sessions/{sessionId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isInstructor() && isInstructorOfSession() && isSessionValidWithBusiness();
+        allow delete: if isAdmin() || (isInstructor() && isInstructorOfSession());
+      }
+      
+      // Availability Collection (Instructor managed)
+      match /availability/{availabilityId} {
+        allow read: if isAuthenticated();
+        allow create, update, delete: if isInstructor() && 
+          request.auth.uid == request.resource.data.instructorId && 
+          isAvailabilityValid();
+      }
+      
+      // Bookings Collection (Student initiated, Instructor confirmed)
+      match /bookings/{bookingId} {
+        allow read: if isAuthenticated() && 
+          (isStudentOfBooking() || isInstructorOfSession() || isAdmin());
+        allow create: if isStudent() && isStudentOfBooking() && isBookingValidWithBusiness();
+        allow update: if (isInstructor() && isInstructorOfSession()) || 
+          (isStudent() && isStudentOfBooking()) || isAdmin();
+        allow delete: if isAdmin();
+      }
+      
+      // Notifications Collection (System managed)
+      match /notifications/{notificationId} {
+        allow read: if isAuthenticated() && 
+          (request.auth.uid == resource.data.userId || isAdmin());
+        allow create: if isAdmin() && isNotificationValid();
+        allow update: if isAdmin();
+        allow delete: if isAdmin();
+      }
+    }
+  }
+}
+*/

@@ -13,6 +13,10 @@ import {
   Dashboard as DashboardIcon,
   Logout as LogoutIcon,
   Person as PersonIcon,
+  School as SchoolIcon,
+  Settings as SettingsIcon,
+  CalendarToday as CalendarIcon,
+  Article as ArticleIcon,
 } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
 import { ROUTES } from "../../routes/constants";
@@ -35,7 +39,12 @@ const UserMenu = ({
       </div>
     );
   }
+  
   const avatarLetter = currentUser?.email?.[0]?.toUpperCase() || "";
+  
+  // Check if user is instructor (either via isInstructor flag or role)
+  const isInstructor = currentUser?.isInstructor || currentUser?.role === 'instructor';
+  
   return (
     <>
       <Box
@@ -81,13 +90,77 @@ const UserMenu = ({
             <ListItemText>{t("navigation.dashboard")}</ListItemText>
           </MenuItem>
         )}
-        <Divider />
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <LogoutIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>{t("auth.logout")}</ListItemText>
-        </MenuItem>
+        
+        {/* Session Management for Admin */}
+        {isAdmin && (
+          <>
+            <MenuItem
+              onClick={() => {
+                navigate(ROUTES.ADMIN_SESSION_DASHBOARD);
+                handleUserMenuClose();
+              }}
+            >
+              <ListItemIcon>
+                <CalendarIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>{t("navigation.sessionManagement", "Session Management")}</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigate(ROUTES.ADMIN_INSTRUCTOR_MANAGEMENT);
+                handleUserMenuClose();
+              }}
+            >
+              <ListItemIcon>
+                <SchoolIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>{t("navigation.instructorManagement", "Instructor Management")}</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigate(ROUTES.ADMIN_TERMS_MANAGEMENT);
+                handleUserMenuClose();
+              }}
+            >
+              <ListItemIcon>
+                <ArticleIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>{t("navigation.termsManagement", "Terms Management")}</ListItemText>
+            </MenuItem>
+          </>
+        )}
+        
+        {/* Instructor Dashboard */}
+        {isInstructor && (
+          <MenuItem
+            onClick={() => {
+              navigate(ROUTES.INSTRUCTOR_DASHBOARD);
+              handleUserMenuClose();
+            }}
+          >
+            <ListItemIcon>
+              <SchoolIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{t("navigation.instructorDashboard", "Instructor Dashboard")}</ListItemText>
+          </MenuItem>
+        )}
+        
+        {/* Instructor Profile */}
+        {isInstructor && (
+          <MenuItem
+            onClick={() => {
+              navigate(ROUTES.INSTRUCTOR_PROFILE);
+              handleUserMenuClose();
+            }}
+          >
+            <ListItemIcon>
+              <PersonIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{t("navigation.instructorProfile", "Instructor Profile")}</ListItemText>
+          </MenuItem>
+        )}
+        
+        {/* Student Dashboard */}
         <MenuItem
           onClick={() => {
             navigate(`/student/dashboard/${currentUser.uid}`);
@@ -95,10 +168,21 @@ const UserMenu = ({
           }}
         >
           <ListItemIcon>
-            <PersonIcon fontSize="small" />
+            <DashboardIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>{t("navigation.profile")}</ListItemText>
+          <ListItemText>{t("navigation.studentDashboard", "Student Dashboard")}</ListItemText>
         </MenuItem>
+        
+        <Divider />
+        
+        {/* Logout */}
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>{t("auth.logout")}</ListItemText>
+        </MenuItem>
+        
       </Menu>
     </>
   );

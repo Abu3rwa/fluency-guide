@@ -1,295 +1,158 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import {
-  Box,
+import React, { useState } from "react";
+import { 
+  Box, 
+  Typography, 
   Container,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardHeader,
-  Button,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Alert,
-  Snackbar,
-  CircularProgress,
-  Menu,
-  Divider,
-  TextField,
-  Skeleton,
+  Paper,
+  Fade,
+  Slide,
+  useMediaQuery
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Visibility as ViewIcon,
-  MoreVert as MoreVertIcon,
-  School as SchoolIcon,
-  TrendingUp as TrendingUpIcon,
-  Search as SearchIcon,
-  Refresh as RefreshIcon,
-  CheckCircle as CheckIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
-import courseService from "../services/courseService";
+import { useCustomTheme } from "../contexts/ThemeContext";
 import CourseDialog from "../components/course/CourseDialog";
-import { useTranslation } from "react-i18next";
+import CreateLessonForm from "../components/CreateLessonForm";
 import ManagementSearchBar from "../components/content-management/ManagementSearchBar";
 import ManagementTable from "../components/content-management/ManagementTable";
-import ManagementStats from "../components/content-management/ManagementStats";
 import ManagementMenu from "../components/content-management/ManagementMenu";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 import PaymentsTable from "../components/PaymentsTable";
 import CenteredLoader from "../components/CenteredLoader";
-import { useAuth } from "../contexts/AuthContext";
+import useManagementDashboard from "./management-dashboard/hooks/useManagementDashboard";
+
 const ManagementDashboard = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
-  const { user, userData } = useAuth();
-  const { t } = useTranslation();
+  const { mode } = useCustomTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const {
+    loading,
+    submitting,
+    menuAnchor,
+    menuItem,
+    deleteDialog,
+    setDeleteDialog,
+    dialogConfig,
+    searchQuery,
+    setSearchQuery,
+    filterStatus,
+    setFilterStatus,
+    sortBy,
+    setSortBy,
+    sortOrder,
+    setSortOrder,
+    handleMenuOpen,
+    handleMenuClose,
+    openDialog,
+    closeDialog,
+    handleDialogSubmit,
+    handlePublish,
+    handleDeleteConfirm,
+    getStatusColor,
+    filteredData,
+    resourceDefs,
+    activeResource,
+    courses,
+  } = useManagementDashboard();
 
-  // Core States
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
+  // Lesson form states
+  const [createLessonOpen, setCreateLessonOpen] = useState(false);
+  const [updateLessonOpen, setUpdateLessonOpen] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState(null);
 
-  // Data States
-  const [courses, setCourses] = useState([]);
-  const [stats, setStats] = useState({
-    totalCourses: 0,
-    activeCourses: 0,
-    totalLessons: 0,
-    totalModules: 0,
-    totalTasks: 0,
-    completionRate: 0,
-  });
-
-  // UI States
-  const [menuAnchor, setMenuAnchor] = useState(null);
-  const [menuItem, setMenuItem] = useState(null);
-  const [deleteDialog, setDeleteDialog] = useState({
-    open: false,
-    type: "",
-    item: null,
-  });
-  const [dialogConfig, setDialogConfig] = useState({
-    open: false,
-    mode: "create",
-    type: "course",
-    formData: {},
-  });
-
-  // Filter & Sort States
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [sortOrder, setSortOrder] = useState("desc");
-
-  const initialForms = {
-    course: {
-      title: "",
-      description: "",
-      category: "",
-      level: "beginner",
-      price: "",
-      status: "draft",
-    },
-  };
-
-  const resourceApi = {
-    course: {
-      ...courseService,
-      create: courseService.createCourse,
-      delete: courseService.deleteCourse,
-    },
-  };
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
+  // Lesson handling functions
+  const handleCreateLesson = async (lessonData) => {
     try {
-      const coursesData = await resourceApi.course.getAllCourses();
-
-      setCourses(coursesData || []);
-
-      const activeCourses = (coursesData || []).filter(
-        (c) => c.status === "active"
-      ).length;
-
-      setStats({
-        totalCourses: (coursesData || []).length,
-        activeCourses,
-        totalLessons: 0,
-        totalModules: 0,
-        totalTasks: 0,
-        completionRate:
-          (coursesData || []).length > 0
-            ? Math.round((activeCourses / (coursesData || []).length) * 100)
-            : 0,
-      });
+      // Implementation for creating lesson
+      console.log("Creating lesson:", lessonData);
+      resetLessonForms();
     } catch (error) {
-      console.error("Failed to load data:", error);
-    } finally {
-      setLoading(false);
+      console.error("Error creating lesson:", error);
     }
-  }, [t]);
+  };
 
-  useEffect(() => {
-    if (userData && !userData.isAdmin) {
-      navigate("/dashboard");
-    } else if (userData) {
-      fetchData();
-    }
-  }, [user, userData, navigate, fetchData]);
-
-  const handleMenuOpen = useCallback((event, item) => {
-    setMenuAnchor(event.currentTarget);
-    setMenuItem(item);
-  }, []);
-
-  const handleMenuClose = useCallback(() => {
-    setMenuAnchor(null);
-    setMenuItem(null);
-  }, []);
-
-  const openDialog = useCallback((type, mode = "create", item = null) => {
-    setDialogConfig({
-      open: true,
-      type,
-      mode,
-      formData: item || initialForms[type],
-    });
-    handleMenuClose();
-  }, []);
-
-  const closeDialog = useCallback(() => {
-    setDialogConfig((prev) => ({ ...prev, open: false }));
-  }, []);
-
-  const handleDialogSubmit = useCallback(
-    async (courseData) => {
-      const { type, mode } = dialogConfig;
-      setSubmitting(true);
-
-      try {
-        if (mode === "create") {
-          await resourceApi[type].create(courseData);
-        } else {
-          await resourceApi[type].updateCourse(
-            dialogConfig.formData.id,
-            courseData
-          );
-        }
-        closeDialog();
-        fetchData();
-      } catch (error) {
-        console.error(`Failed to save ${type}:`, error);
-      } finally {
-        setSubmitting(false);
+  const handleUpdateLesson = async (lessonData) => {
+    try {
+      // Get the lesson ID from the selected lesson
+      const lessonId = selectedLesson?.id;
+      if (!lessonId) {
+        throw new Error("Lesson ID is required for updates");
       }
-    },
-    [dialogConfig, fetchData, closeDialog, t]
-  );
 
-  const handlePublish = async (course) => {
-    try {
-      const courseRef = doc(db, "courses", course.id);
-      await updateDoc(courseRef, {
-        published: !course.published,
-      });
-      fetchData();
+      console.log("Updating lesson with ID:", lessonId);
+      console.log("Update data:", lessonData);
+
+      // Import and use the updateLesson service
+      const { updateLesson } = await import("../services/lessonService");
+      const updatedLesson = await updateLesson(lessonId, lessonData);
+
+      console.log("Lesson updated successfully:", updatedLesson);
+      resetLessonForms();
+
+      // Optionally refresh the data or show success message
+      return updatedLesson;
     } catch (error) {
-      console.error("Failed to update course status:", error);
-      setError("Failed to update course status");
+      console.error("Error updating lesson:", error);
+      throw error; // Re-throw to let the form handle the error
     }
   };
 
-  const handleDeleteConfirm = useCallback(async () => {
-    const { type, item } = deleteDialog;
-    setSubmitting(true);
-
-    try {
-      await resourceApi[type].delete(item.id);
-
-      setDeleteDialog({ open: false, type: "", item: null });
-      fetchData();
-    } catch (error) {
-      console.error(`Failed to delete ${type}:`, error);
-    } finally {
-      setSubmitting(false);
-    }
-  }, [deleteDialog, fetchData, t]);
-
-  const getStatusColor = useCallback((status) => {
-    return (
-      {
-        active: "success",
-        published: "success",
-        draft: "warning",
-        archived: "error",
-      }[status] || "default"
-    );
-  }, []);
-
-  const filteredData = useMemo(() => {
-    const data = courses;
-
-    let filteredData = data.filter(
-      (item) =>
-        item.title?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (filterStatus === "all" || item.status === filterStatus)
-    );
-
-    return filteredData.sort((a, b) => {
-      const aVal = a[sortBy] || "";
-      const bVal = b[sortBy] || "";
-      return sortOrder === "asc"
-        ? String(aVal).localeCompare(bVal)
-        : String(bVal).localeCompare(aVal);
-    });
-  }, [courses, searchQuery, filterStatus, sortBy, sortOrder]);
-
-  const resourceDefs = {
-    course: {
-      singular: t("management.resources.course"),
-      plural: t("management.resources.courses"),
-      data: courses,
-      columns: [
-        { id: "title", label: t("management.columns.title") },
-        { id: "category", label: t("management.columns.category") },
-        { id: "level", label: t("management.columns.level") },
-        { id: "status", label: t("management.columns.status") },
-        {
-          id: "enrolledStudents",
-          label: t("management.columns.students"),
-          render: (item) => item.enrolledStudents || 0,
-        },
-      ],
-    },
+  const resetLessonForms = () => {
+    setCreateLessonOpen(false);
+    setUpdateLessonOpen(false);
+    setSelectedLesson(null);
   };
 
-  const activeResource = "course";
+  const openCreateLesson = (courseId, moduleId) => {
+    setSelectedLesson({ courseId, moduleId });
+    setCreateLessonOpen(true);
+  };
+
+  const openUpdateLesson = (lesson) => {
+    setSelectedLesson(lesson);
+    setUpdateLessonOpen(true);
+  };
 
   if (loading) {
     return (
-      <CenteredLoader
-        type="skeleton"
-        message="Loading management dashboard..."
-        skeletonCount={5}
-        skeletonHeight={24}
-        minHeight="400px"
-        fullScreen={true}
-      />
+      <Box
+        sx={{
+          minHeight: "100vh",
+          backgroundColor: theme.palette.background.default,
+          background: mode === "dark"
+            ? `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.grey[900]} 100%)`
+            : `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.grey[50]} 100%)`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: { xs: 2, md: 4 }
+        }}
+      >
+        <Container maxWidth="xl">
+          <Fade in={loading}>
+            <Paper 
+              elevation={6}
+              sx={{
+                p: { xs: 3, md: 4 },
+                borderRadius: 3,
+                background: mode === "dark"
+                  ? `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[800]} 100%)`
+                  : `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[50]} 100%)`,
+                textAlign: "center"
+              }}
+            >
+              <CenteredLoader
+                type="skeleton"
+                message="Loading management dashboard..."
+                skeletonCount={5}
+                skeletonHeight={24}
+                minHeight="400px"
+                fullScreen={false}
+              />
+            </Paper>
+          </Fade>
+        </Container>
+      </Box>
     );
   }
 
@@ -297,41 +160,159 @@ const ManagementDashboard = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundColor: "background.default",
-        py: { xs: 2, md: 3 },
+        backgroundColor: theme.palette.background.default,
+        background: mode === "dark"
+          ? `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.grey[900]} 100%)`
+          : `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.grey[50]} 100%)`,
       }}
     >
-      <Box sx={{ px: { xs: 2, md: 4 } }}>
-        <ManagementSearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          filterStatus={filterStatus}
-          setFilterStatus={setFilterStatus}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-        />
+      <Container
+        maxWidth="xl"
+        sx={{
+          pt: { xs: 2, sm: 3, md: 4 },
+          pb: { xs: 2, sm: 3, md: 4 },
+          px: { xs: 1, sm: 2, md: 3 },
+        }}
+      >
+        {/* Dashboard Header */}
+        <Fade in timeout={600}>
+          <Paper
+            elevation={6}
+            sx={{
+              mb: { xs: 3, md: 4 },
+              p: { xs: 2, sm: 3, md: 4 },
+              background: mode === "dark"
+                ? `linear-gradient(135deg, ${theme.palette.grey[800]} 0%, ${theme.palette.grey[700]} 100%)`
+                : `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[50]} 100%)`,
+              borderRadius: 3,
+              position: "relative",
+              overflow: "hidden",
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: mode === "dark"
+                  ? `linear-gradient(90deg, ${theme.palette.primary.light} 0%, ${theme.palette.secondary.light} 100%)`
+                  : `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+              }
+            }}
+          >
+            <Typography 
+              variant={isMobile ? "h5" : "h4"} 
+              component="h1"
+              sx={{
+                fontWeight: 'bold',
+                background: mode === "dark"
+                  ? `linear-gradient(45deg, ${theme.palette.primary.light}, ${theme.palette.secondary.light})`
+                  : `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                backgroundClip: 'text',
+                textFillColor: 'transparent',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textAlign: isMobile ? 'center' : 'left'
+              }}
+            >
+              Management Dashboard
+            </Typography>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                mt: 1,
+                color: theme.palette.text.secondary,
+                textAlign: isMobile ? 'center' : 'left'
+              }}
+            >
+              Manage courses, lessons, and track platform activity
+            </Typography>
+          </Paper>
+        </Fade>
 
-        <ManagementTable
-          resourceDefs={resourceDefs}
-          activeResource={activeResource}
-          openDialog={openDialog}
-          filteredData={filteredData}
-          handleMenuOpen={handleMenuOpen}
-          getStatusColor={getStatusColor}
-          courses={courses}
-          loading={loading}
-        />
-        {/* Payments Table for Admins */}
-        <Box sx={{ mt: 6 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Pending Payments
-          </Typography>
-          <PaymentsTable />
-        </Box>
-      </Box>
+        {/* Search Bar Section */}
+        <Slide direction="up" in timeout={800}>
+          <Paper
+            elevation={4}
+            sx={{
+              mb: { xs: 3, md: 4 },
+              borderRadius: 3,
+              overflow: "hidden",
+              background: mode === "dark" ? theme.palette.grey[800] : theme.palette.background.paper,
+            }}
+          >
+            <Box sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
+              <ManagementSearchBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                filterStatus={filterStatus}
+                setFilterStatus={setFilterStatus}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+              />
+            </Box>
+          </Paper>
+        </Slide>
 
+        {/* Main Content Table */}
+        <Slide direction="up" in timeout={1000}>
+          <Paper
+            elevation={4}
+            sx={{
+              mb: { xs: 3, md: 4 },
+              borderRadius: 3,
+              overflow: "hidden",
+              background: mode === "dark" ? theme.palette.grey[800] : theme.palette.background.paper,
+            }}
+          >
+            <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+              <ManagementTable
+                resourceDefs={resourceDefs}
+                activeResource={activeResource}
+                openDialog={openDialog}
+                filteredData={filteredData}
+                handleMenuOpen={handleMenuOpen}
+                getStatusColor={getStatusColor}
+                courses={courses}
+                loading={loading}
+              />
+            </Box>
+          </Paper>
+        </Slide>
+
+        {/* Payments Section */}
+        <Slide direction="up" in timeout={1200}>
+          <Paper
+            elevation={4}
+            sx={{
+              borderRadius: 3,
+              overflow: "hidden",
+              background: mode === "dark" ? theme.palette.grey[800] : theme.palette.background.paper,
+            }}
+          >
+            <Box sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  mb: 3,
+                  fontWeight: 'bold',
+                  color: theme.palette.primary.main,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}
+              >
+                💳 Pending Payments
+              </Typography>
+              <PaymentsTable />
+            </Box>
+          </Paper>
+        </Slide>
+      </Container>
+
+      {/* Dialogs and Menus */}
       <ManagementMenu
         menuAnchor={menuAnchor}
         menuItem={menuItem}
@@ -340,15 +321,27 @@ const ManagementDashboard = () => {
         activeResource={activeResource}
         setDeleteDialog={setDeleteDialog}
         handlePublish={handlePublish}
+        openCreateLesson={openCreateLesson}
+        openUpdateLesson={openUpdateLesson}
       />
 
       <CourseDialog
         open={dialogConfig.open}
         onClose={closeDialog}
         mode={dialogConfig.mode}
-        courseData={dialogConfig.formData}
+        initialData={dialogConfig.formData}
         onSave={handleDialogSubmit}
         loading={submitting}
+      />
+
+      <CreateLessonForm
+        open={createLessonOpen}
+        onClose={resetLessonForms}
+        onSubmit={handleCreateLesson}
+        courseId={selectedLesson?.courseId}
+        moduleId={selectedLesson?.moduleId}
+        dialogTitle="Create New Lesson"
+        submitLabel="Create Lesson"
       />
 
       <DeleteConfirmationDialog

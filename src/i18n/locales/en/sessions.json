@@ -1,0 +1,72 @@
+{
+  "topInstructors": {
+    "header": {
+      "title": "Meet Our Top Instructors",
+      "subtitle": "Learn from experienced, qualified instructors who are passionate about helping you succeed.",
+      "verified": "All instructors are verified and background-checked"
+    },
+    "card": {
+      "experience": "Experience",
+      "specialties": "Specialties",
+      "subjects": "Subjects",
+      "availableSlots": "slots available this week",
+      "noAvailableSlots": "No slots available this week",
+      "weeklyAvailability": "This week availability",
+      "highAvailability": "High",
+      "mediumAvailability": "Medium",
+      "lowAvailability": "Limited",
+      "nextAvailable": "Next: {{time}}",
+      "noSlotsAvailable": "No Slots Available",
+      "viewAndBook": "View & Book"
+    },
+    "actions": {
+      "viewAll": "View All Instructors"
+    },
+    "states": {
+      "loading": "Loading instructors...",
+      "error": "Error loading instructors",
+      "noInstructors": "No instructors available at the moment"
+    },
+    "defaults": {
+      "unknownInstructor": "Unknown Instructor",
+      "generalTutoring": "General Tutoring",
+      "defaultSubject": "English",
+      "newInstructor": "New Instructor",
+      "noDescription": "Experienced instructor ready to help you achieve your learning goals."
+    }
+  },
+  "availability": {
+    "management": {
+      "manageTitle": "Manage Availability",
+      "selectSlots": "Select Available Time Slots for Week",
+      "recurringPattern": "Recurring pattern",
+      "oneTime": "One-time",
+      "weeklyRecurring": "Weekly Recurring"
+    },
+    "validation": {
+      "noSlotsSelected": "Please select at least one time slot"
+    },
+    "messages": {
+      "saveError": "Failed to save availability. Please try again.",
+      "clearError": "Failed to clear availability. Please try again."
+    }
+  },
+  "timeSlots": {
+    "selection": {
+      "selectDate": "Select a date",
+      "availableSlots": "{{count}} available slots",
+      "multiSelectHint": "Click multiple time slots to select them",
+      "selectedCount": "Selected: {{count}} time slots"
+    },
+    "status": {
+      "booked": "Already booked",
+      "unavailable": "Not available",
+      "available": "Available"
+    },
+    "legend": {
+      "available": "Available",
+      "booked": "Booked",
+      "unavailable": "Unavailable"
+    }
+  }
+}

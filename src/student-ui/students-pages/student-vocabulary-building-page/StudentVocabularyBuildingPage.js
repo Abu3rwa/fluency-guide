@@ -23,10 +23,10 @@ import { useStudyTimer } from "../../../hooks/useStudyTimer";
 import StudyMotivationDialog from "../../../components/StudyMotivationDialog";
 import VocabularyErrorBoundary from "../../../shared/components/VocabularyErrorBoundary";
 import VocabularyReviewIntegration from "../../../shared/components/VocabularyReviewIntegration";
-import useKeyboardNavigation from "./hooks/useKeyboardNavigation";
 import { useTranslation } from "react-i18next";
+import StudentLessonVocabularyIntegration from "./components/StudentLessonVocabularyIntegration";
 
-const StudentVocabularyBuildingPage = React.memo(() => {
+const StudentVocabularyBuildingPage = React.memo(({ lessonId, lessonTitle, showLessonIntegration = false }) => {
   useStudyTimer();
   const { currentUser } = useAuth();
   const { t } = useTranslation();
@@ -73,6 +73,10 @@ const StudentVocabularyBuildingPage = React.memo(() => {
   const [showMotivationDialog, setShowMotivationDialog] = useState(false);
   const [showPronunciationDialog, setShowPronunciationDialog] = useState(false);
   const [selectedWord, setSelectedWord] = useState(null);
+
+  // State for lesson integration
+  const [showLessonSection, setShowLessonSection] = useState(showLessonIntegration);
+  const [lessonVocabularyData, setLessonVocabularyData] = useState(null);
 
   // Combined loading and error states
   const loading = useMemo(
@@ -188,23 +192,28 @@ const StudentVocabularyBuildingPage = React.memo(() => {
     setShowPronunciationDialog(false);
   }, []);
 
-  // Keyboard navigation
-  useKeyboardNavigation({
-    onNext: goToNextWord,
-    onPrevious: goToPreviousWord,
-    onRandom: setRandomWord,
-    onFirst: goToFirstWord,
-    onLast: goToLastWord,
-    onPronunciation: () => currentWord && handlePronunciationClick(currentWord),
-    onToggleSearch: () => setIsSearchExpanded(!isSearchExpanded),
-    onMarkAsLearned: () => currentWord && handleMarkAsLearned(currentWord.id),
-    onMarkAsDifficult: () =>
-      currentWord && handleMarkAsDifficult(currentWord.id),
-    onToggleFavorite: () => currentWord && handleToggleFavorite(currentWord.id),
-    canGoNext: navigationState.canGoNext,
-    canGoPrevious: navigationState.canGoPrevious,
-    enabled: true,
-  });
+  // Lesson integration handlers
+  const handleLessonVocabularyUpdate = useCallback((vocabularyData) => {
+    setLessonVocabularyData(vocabularyData);
+    // Refresh vocabulary context if lesson vocabulary was processed
+    if (vocabularyData.wordsFound?.length > 0) {
+      fetchVocabularyWords({ forceRefresh: true });
+    }
+  }, [fetchVocabularyWords]);
+
+  const handleLessonComplete = useCallback((result) => {
+    if (result.success) {
+      // Show success message or update UI as needed
+      console.log('Lesson completed successfully:', result);
+      // Refresh vocabulary data
+      fetchVocabularyWords({ forceRefresh: true });
+    }
+  }, [fetchVocabularyWords]);
+
+  const toggleLessonSection = useCallback(() => {
+    setShowLessonSection(!showLessonSection);
+  }, [showLessonSection]);
+
 
   // Initial data loading
   useEffect(() => {
@@ -277,6 +286,20 @@ const StudentVocabularyBuildingPage = React.memo(() => {
         />
 
         <Container maxWidth="lg" sx={{ py: 3 }}>
+          {/* Lesson Integration Section */}
+          {(showLessonIntegration && lessonId) && (
+            <Box sx={{ mb: 4 }}>
+              <StudentLessonVocabularyIntegration
+                lessonId={lessonId}
+                lessonTitle={lessonTitle}
+                showLessonCompletion={true}
+                showVocabularyWords={false} // We'll handle vocabulary display below
+                onLessonComplete={handleLessonComplete}
+                onVocabularyUpdate={handleLessonVocabularyUpdate}
+                compact={false}
+              />
+            </Box>
+          )}
           {currentWord ? (
             <Box
               sx={{
@@ -324,6 +347,30 @@ const StudentVocabularyBuildingPage = React.memo(() => {
 
           {/* Progress Section */}
           <StudentVocabularyProgressSection />
+
+          {/* Lesson Vocabulary Summary */}
+          {lessonVocabularyData && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                {t('student.dashboard.vocabulary.lessonVocabulary')}
+              </Typography>
+              <Alert severity="info" sx={{ mb: 2 }}>
+                <Typography variant="body2">
+                  {t('student.dashboard.vocabulary.wordsFound', { 
+                    count: lessonVocabularyData.wordsFound?.length || 0 
+                  })}
+                  {lessonVocabularyData.wordsNotFound?.length > 0 && (
+                    <span>
+                      {' • '}
+                      {t('student.dashboard.vocabulary.wordsNotFound', { 
+                        count: lessonVocabularyData.wordsNotFound.length 
+                      })}
+                    </span>
+                  )}
+                </Typography>
+              </Alert>
+            </Box>
+          )}
 
           {/* Personalized Review Integration */}
           <VocabularyReviewIntegration />

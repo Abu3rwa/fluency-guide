@@ -36,6 +36,11 @@ import {
   Stack,
   Fade,
   Zoom,
+  Switch,
+  FormControlLabel,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -46,14 +51,24 @@ import {
   Close as CloseIcon,
   Visibility as VisibilityIcon,
   Edit as EditIcon,
+  ExpandMore as ExpandMoreIcon,
+  CheckCircle as CheckCircleIcon,
+  Assignment as AssignmentIcon,
+  VideoLibrary as VideoLibraryIcon,
+  Book as BookIcon,
 } from "@mui/icons-material";
-import { createLesson } from "../services/lessonService";
+import {
+  createLesson,
+  createLessonRequirements,
+  updateLessonRequirements,
+} from "../services/lessonService";
+import { getLessonRequirements } from "../services/student-services/studentLessonProgressService";
 import { useHybridStorage } from "../services/hybridStorageService";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useCustomTheme } from "../contexts/ThemeContext";
 
-const steps = ["Basic Info", "Content", "Media", "Review"];
+const steps = ["Basic Info", "Content", "Media", "Requirements", "Review"];
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -73,10 +88,10 @@ const CreateLessonForm = ({
   onClose,
   onSubmit,
   initialData = {},
-  submitLabel,
-  dialogTitle,
   courseId,
   moduleId,
+  dialogTitle = "Create New Lesson",
+  submitLabel = "Create Lesson",
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -84,6 +99,129 @@ const CreateLessonForm = ({
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [previewMode, setPreviewMode] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // Initialize form data
+  const [formData, setFormData] = useState({
+    courseId: courseId || initialData.courseId || "",
+    moduleId: moduleId || initialData.moduleId || "",
+    title: initialData.title || "",
+    description: initialData.description || "",
+    content: initialData.content || "",
+    duration: initialData.duration || "",
+    objectives: initialData.objectives || [],
+    resources: initialData.resources || [],
+    order: initialData.order || 0,
+    video: initialData.video || null,
+    audio: initialData.audio || null,
+    image: initialData.image || null,
+    materials: initialData.materials || [],
+    type: initialData.type || "lesson",
+    status: initialData.status || "draft",
+    vocabulary: initialData.vocabulary || [],
+    grammarFocus: initialData.grammarFocus || [],
+    skills: initialData.skills || [],
+    assessment: initialData.assessment || "",
+    keyActivities: initialData.keyActivities || [],
+    createdAt: initialData.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  // Update form data when initialData changes (for editing)
+  useEffect(() => {
+    if (open && initialData.id) {
+      setFormData({
+        courseId: courseId || initialData.courseId || "",
+        moduleId: moduleId || initialData.moduleId || "",
+        title: initialData.title || "",
+        description: initialData.description || "",
+        content: initialData.content || "",
+        duration: initialData.duration || "",
+        objectives: initialData.objectives || [],
+        resources: initialData.resources || [],
+        order: initialData.order || 0,
+        video: initialData.video || null,
+        audio: initialData.audio || null,
+        image: initialData.image || null,
+        materials: initialData.materials || [],
+        type: initialData.type || "lesson",
+        status: initialData.status || "draft",
+        vocabulary: initialData.vocabulary || [],
+        grammarFocus: initialData.grammarFocus || [],
+        skills: initialData.skills || [],
+        assessment: initialData.assessment || "",
+        keyActivities: initialData.keyActivities || [],
+        createdAt: initialData.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    }
+  }, [open, initialData, courseId, moduleId]);
+
+  // Reset form when dialog opens/closes for new lessons
+  useEffect(() => {
+    if (!open && !initialData.id) {
+      setActiveStep(0);
+      setFormData({
+        courseId: courseId || "",
+        moduleId: moduleId || "",
+        title: "",
+        description: "",
+        content: "",
+        duration: "",
+        objectives: [],
+        resources: [],
+        order: 0,
+        video: null,
+        audio: null,
+        image: null,
+        materials: [],
+        type: "lesson",
+        status: "draft",
+        vocabulary: [],
+        grammarFocus: [],
+        skills: [],
+        assessment: "",
+        keyActivities: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+      setErrors({});
+      setError(null);
+      setPreviewMode(false);
+    }
+  }, [open, courseId, moduleId, initialData.id]);
+
+  // Handle draft saving
+  const handleSaveDraft = () => {
+    const draftKey = `lessonDraft_${courseId}_${moduleId}`;
+    if (window.confirm(t("createLessonForm.saveDraftConfirmation"))) {
+      localStorage.setItem(draftKey, JSON.stringify(formData));
+    } else {
+      localStorage.removeItem(draftKey);
+    }
+  };
+
+  // Load draft if exists
+  useEffect(() => {
+    if (open) {
+      const draftKey = `lessonDraft_${courseId}_${moduleId}`;
+      const savedDraft = localStorage.getItem(draftKey);
+      if (savedDraft) {
+        try {
+          const parsedDraft = JSON.parse(savedDraft);
+          setFormData(parsedDraft);
+        } catch (error) {
+          console.error("Error loading draft:", error);
+          localStorage.removeItem(draftKey);
+        }
+      }
+    }
+  }, [open, courseId, moduleId]);
 
   const {
     uploadFile,
@@ -94,194 +232,6 @@ const CreateLessonForm = ({
     signInToGoogleDrive,
   } = useHybridStorage();
 
-  // Example English lesson default values
-  const defaultLesson = {
-    courseId: courseId || initialData.courseId || "eng101",
-    moduleId: moduleId || initialData.moduleId || "mod1",
-    title: initialData.title || "Greetings and Introductions",
-    description:
-      initialData.description ||
-      "Learn how to greet people and introduce yourself in English.",
-    content:
-      initialData.content ||
-      "<p>In this lesson, you will learn common greetings, how to introduce yourself, and ask for someone's name.</p>",
-    duration: initialData.duration || "1",
-    objectives: initialData.objectives || [
-      "Use basic greetings in English",
-      "Introduce yourself and others",
-      "Ask and answer questions about names",
-    ],
-    resources: initialData.resources || [
-      {
-        type: "link",
-        label: "Greetings Video",
-        url: "https://www.youtube.com/watch?v=english_greetings",
-      },
-      {
-        type: "link",
-        label: "Printable Worksheet",
-        url: "https://example.com/greetings-worksheet.pdf",
-      },
-    ],
-    order: initialData.order || 1,
-    video: initialData.video || null,
-    audio: initialData.audio || null,
-    image: initialData.image || null,
-    materials: initialData.materials || [],
-    type: initialData.type || "lesson",
-    status: initialData.status || "draft",
-    vocabulary: initialData.vocabulary || [
-      "hello",
-      "good morning",
-      "my name is",
-      "nice to meet you",
-    ],
-    grammarFocus: initialData.grammarFocus || [
-      "Present Simple",
-      "Subject Pronouns",
-    ],
-    skills: initialData.skills || ["Speaking", "Listening"],
-    assessment:
-      initialData.assessment ||
-      "Complete the dialogue and introduce yourself to a partner.",
-    keyActivities: initialData.keyActivities || [
-      "Role-play greetings",
-      "Listening to dialogues",
-      "Worksheet completion",
-    ],
-    createdAt: initialData.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  const [formData, setFormData] = useState(() => defaultLesson);
-  const [activeStep, setActiveStep] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [previewMode, setPreviewMode] = useState(false);
-
-  // Only update formData when dialog opens or initialData actually changes
-  const prevInitialData = useRef();
-  useEffect(() => {
-    if (open) {
-      const prev = JSON.stringify(prevInitialData.current);
-      const next = JSON.stringify(initialData);
-      if (prev !== next) {
-        // If editing an existing lesson, use the initialData directly
-        if (initialData.id) {
-          setFormData({
-            courseId: courseId || initialData.courseId || "",
-            moduleId: moduleId || initialData.moduleId || "",
-            title: initialData.title || "",
-            description: initialData.description || "",
-            content: initialData.content || "",
-            duration: initialData.duration || "",
-            objectives: initialData.objectives || [],
-            resources: initialData.resources || [],
-            order: initialData.order || 0,
-            video: initialData.video || null,
-            audio: initialData.audio || null,
-            image: initialData.image || null,
-            materials: initialData.materials || [],
-            type: initialData.type || "lesson",
-            status: initialData.status || "draft",
-            vocabulary: initialData.vocabulary || [],
-            grammarFocus: initialData.grammarFocus || [],
-            skills: initialData.skills || [],
-            assessment: initialData.assessment || "",
-            keyActivities: initialData.keyActivities || [],
-            createdAt: initialData.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          });
-        } else {
-          // If creating a new lesson, check for draft first
-          const draft = localStorage.getItem("lessonDraft");
-          if (draft) {
-            try {
-              setFormData(JSON.parse(draft));
-            } catch (e) {
-              // If draft is corrupted, use default values
-              setFormData({
-                courseId: courseId || initialData.courseId || "",
-                moduleId: moduleId || initialData.moduleId || "",
-                title: initialData.title || "",
-                description: initialData.description || "",
-                content: initialData.content || "",
-                duration: initialData.duration || "",
-                objectives: initialData.objectives || [],
-                resources: initialData.resources || [],
-                order: initialData.order || 0,
-                video: initialData.video || null,
-                audio: initialData.audio || null,
-                image: initialData.image || null,
-                materials: initialData.materials || [],
-                type: initialData.type || "lesson",
-                status: initialData.status || "draft",
-                vocabulary: initialData.vocabulary || [],
-                grammarFocus: initialData.grammarFocus || [],
-                skills: initialData.skills || [],
-                assessment: initialData.assessment || "",
-                keyActivities: initialData.keyActivities || [],
-                createdAt: initialData.createdAt || new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              });
-            }
-          } else {
-            // No draft, use default values
-            setFormData({
-              courseId: courseId || initialData.courseId || "",
-              moduleId: moduleId || initialData.moduleId || "",
-              title: initialData.title || "",
-              description: initialData.description || "",
-              content: initialData.content || "",
-              duration: initialData.duration || "",
-              objectives: initialData.objectives || [],
-              resources: initialData.resources || [],
-              order: initialData.order || 0,
-              video: initialData.video || null,
-              audio: initialData.audio || null,
-              image: initialData.image || null,
-              materials: initialData.materials || [],
-              type: initialData.type || "lesson",
-              status: initialData.status || "draft",
-              vocabulary: initialData.vocabulary || [],
-              grammarFocus: initialData.grammarFocus || [],
-              skills: initialData.skills || [],
-              assessment: initialData.assessment || "",
-              keyActivities: initialData.keyActivities || [],
-              createdAt: initialData.createdAt || new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            });
-          }
-        }
-        prevInitialData.current = initialData;
-      }
-    }
-  }, [open, initialData, courseId, moduleId]);
-
-  // Ensure arrays are initialized
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      vocabulary: prev.vocabulary || [],
-      grammarFocus: prev.grammarFocus || [],
-      skills: prev.skills || [],
-      keyActivities: prev.keyActivities || [],
-      resources: prev.resources || [],
-      objectives: prev.objectives || [],
-      materials: prev.materials || [],
-    }));
-  }, []);
-
-  // Persist formData to localStorage on every change
-  useEffect(() => {
-    if (open) {
-      const draftKey = initialData.id
-        ? `lessonDraft_${initialData.id}`
-        : "lessonDraft";
-      localStorage.setItem(draftKey, JSON.stringify(formData));
-    }
-  }, [formData, open, initialData.id]);
-
-  const [errors, setErrors] = useState({});
   const [newObjective, setNewObjective] = useState("");
   const [newResource, setNewResource] = useState({
     type: "link",
@@ -295,6 +245,21 @@ const CreateLessonForm = ({
   const [newGrammarFocus, setNewGrammarFocus] = useState("");
   const [newSkill, setNewSkill] = useState("");
   const [newActivity, setNewActivity] = useState("");
+
+  // Lesson Requirements State
+  const [requirementsEnabled, setRequirementsEnabled] = useState(false);
+  const [requirements, setRequirements] = useState({
+    requiredTasks: [],
+    minimumScore: 70,
+    requiredContent: [],
+    requiredTimeSpent: 0, // minutes
+    requireVideoCompletion: false,
+    requireAudioCompletion: false,
+    requireReadingCompletion: false,
+    requireTaskCompletion: false,
+  });
+  const [newTask, setNewTask] = useState("");
+  const [newContent, setNewContent] = useState("");
 
   const handleChange = (field) => (event) => {
     setFormData((prev) => ({
@@ -498,38 +463,143 @@ const CreateLessonForm = ({
     }));
   };
 
+  // Requirements Handlers
+  const handleRequirementsToggle = (event) => {
+    setRequirementsEnabled(event.target.checked);
+  };
+
+  const handleRequirementsChange = (field) => (event) => {
+    setRequirements((prev) => ({
+      ...prev,
+      [field]: event.target.value,
+    }));
+  };
+
+  const handleRequirementsSwitch = (field) => (event) => {
+    setRequirements((prev) => ({
+      ...prev,
+      [field]: event.target.checked,
+    }));
+  };
+
+  const handleAddTask = () => {
+    if (newTask.trim()) {
+      setRequirements((prev) => ({
+        ...prev,
+        requiredTasks: [...prev.requiredTasks, newTask.trim()],
+      }));
+      setNewTask("");
+    }
+  };
+
+  const handleRemoveTask = (index) => {
+    setRequirements((prev) => ({
+      ...prev,
+      requiredTasks: prev.requiredTasks.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleAddContent = () => {
+    if (newContent.trim()) {
+      setRequirements((prev) => ({
+        ...prev,
+        requiredContent: [...prev.requiredContent, newContent.trim()],
+      }));
+      setNewContent("");
+    }
+  };
+
+  const handleRemoveContent = (index) => {
+    setRequirements((prev) => ({
+      ...prev,
+      requiredContent: prev.requiredContent.filter((_, i) => i !== index),
+    }));
+  };
+
   const validateStep = () => {
     const newErrors = {};
+    console.log("Validating step:", activeStep);
+    console.log("Form data:", formData);
+
     switch (activeStep) {
       case 0:
-        if (!formData.title)
-          newErrors.title = t("createLessonForm.titleRequired");
-        if (!formData.description)
-          newErrors.description = t("createLessonForm.descriptionRequired");
-        if (!formData.duration)
-          newErrors.duration = t("createLessonForm.durationRequired");
+        if (!formData.title) {
+          newErrors.title =
+            t("createLessonForm.titleRequired") || "Title is required";
+          console.log("Validation error: Title is required");
+        }
+        if (!formData.description) {
+          newErrors.description =
+            t("createLessonForm.descriptionRequired") ||
+            "Description is required";
+          console.log("Validation error: Description is required");
+        }
+        if (!formData.duration) {
+          newErrors.duration =
+            t("createLessonForm.durationRequired") || "Duration is required";
+          console.log("Validation error: Duration is required");
+        }
         break;
       case 1:
-        if (!formData.content)
-          newErrors.content = t("createLessonForm.contentRequired");
+        if (!formData.content) {
+          newErrors.content =
+            t("createLessonForm.contentRequired") || "Content is required";
+          console.log("Validation error: Content is required");
+        }
         if (formData.objectives.length === 0) {
-          newErrors.objectives = t(
-            "createLessonForm.atLeastOneObjectiveRequired"
-          );
+          newErrors.objectives =
+            t("createLessonForm.atLeastOneObjectiveRequired") ||
+            "At least one objective is required";
+          console.log("Validation error: At least one objective is required");
         } else if (formData.objectives.some((o) => o.trim() === "")) {
-          newErrors.objectives = t(
-            "createLessonForm.emptyObjectivesNotAllowed"
-          );
+          newErrors.objectives =
+            t("createLessonForm.emptyObjectivesNotAllowed") ||
+            "Empty objectives are not allowed";
+          console.log("Validation error: Empty objectives found");
         }
         break;
       case 2:
         // Optional media validation if needed
+        console.log("Step 2 validation passed (media is optional)");
+        break;
+      case 3:
+        // Requirements validation - optional step
+        if (requirementsEnabled) {
+          if (
+            requirements.requiredTasks.length === 0 &&
+            requirements.requiredContent.length === 0 &&
+            !requirements.requireVideoCompletion &&
+            !requirements.requireAudioCompletion &&
+            !requirements.requireReadingCompletion &&
+            !requirements.requireTaskCompletion
+          ) {
+            newErrors.requirements =
+              t("createLessonForm.atLeastOneRequirementRequired") ||
+              "At least one requirement is required";
+            console.log(
+              "Validation error: At least one requirement is required"
+            );
+          }
+        } else {
+          console.log(
+            "Requirements validation skipped (requirements disabled)"
+          );
+        }
+        break;
+      case 4:
+        // Review step - no validation needed
+        console.log("Step 4 validation passed (review step)");
         break;
       default:
+        console.log("Unknown step:", activeStep);
         break;
     }
+
+    console.log("Validation errors:", newErrors);
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const isValid = Object.keys(newErrors).length === 0;
+    console.log("Validation result:", isValid);
+    return isValid;
   };
 
   const handleNext = () => {
@@ -543,60 +613,180 @@ const CreateLessonForm = ({
   };
 
   const handleSubmit = async () => {
-    if (!validateStep()) return;
+    if (!validateStep()) {
+      setError(t("createLessonForm.pleaseFixErrors"));
+      return;
+    }
+
+    setLoading(true);
+    setError(null); // Clear any previous errors
+
     try {
-      setLoading(true);
       if (!formData.courseId || !formData.moduleId) {
-        throw new Error(t("createLessonForm.courseIdRequired"));
+        const error =
+          t("createLessonForm.courseIdRequired") ||
+          "Course ID and Module ID are required";
+        console.error("Missing courseId or moduleId:", {
+          courseId: formData.courseId,
+          moduleId: formData.moduleId,
+        });
+        throw new Error(error);
       }
-      const lessonData = {
-        ...formData,
-        duration: parseInt(formData.duration) || 0,
-        order: parseInt(formData.order) || 0,
-        objectives: formData.objectives.filter((obj) => obj.trim() !== ""),
-        resources: formData.resources.filter((res) => res.label && res.url),
-        videoUrl: formData.video?.url || "",
-        audioUrl: formData.audio?.url || "",
-        coverImageUrl: formData.image?.url || "",
-        materials: (formData.materials || []).map((material) => ({
-          name: material.name,
-          url: material.url,
-          type: material.type,
-        })),
-        updatedAt: new Date().toISOString(),
-      };
-      await onSubmit(lessonData);
-      // Clear draft only after success
-      const draftKey = initialData.id
-        ? `lessonDraft_${initialData.id}`
-        : "lessonDraft";
-      localStorage.removeItem(draftKey);
+
+      // Check if this is an update operation
+      const isUpdate = initialData && initialData.id;
+
+      if (isUpdate) {
+        // Update existing lesson
+        console.log("=== UPDATING EXISTING LESSON ===");
+        console.log("Lesson ID:", initialData.id);
+        console.log("Update data:", formData);
+
+        const updateData = {
+          ...formData,
+          id: initialData.id,
+          duration: parseInt(formData.duration) || 0,
+          order: parseInt(formData.order) || 0,
+          objectives: formData.objectives.filter((obj) => obj.trim() !== ""),
+          resources: formData.resources.filter((res) => res.label && res.url),
+          videoUrl: formData.video?.url || "",
+          audioUrl: formData.audio?.url || "",
+          coverImageUrl: formData.image?.url || "",
+          materials: (formData.materials || []).map((material) => ({
+            name: material.name,
+            url: material.url,
+            type: material.type,
+          })),
+          updatedAt: new Date().toISOString(),
+        };
+
+        // Call the onSubmit function (which should be handleUpdateLesson)
+        const updatedLesson = await onSubmit(updateData);
+
+        if (updatedLesson) {
+          console.log("Lesson updated successfully:", updatedLesson);
+
+          // Handle lesson requirements for updates
+          if (requirementsEnabled) {
+            try {
+              await updateLessonRequirements(initialData.id, requirements);
+            } catch (requirementsError) {
+              console.error(
+                "Error updating lesson requirements:",
+                requirementsError
+              );
+              setError(
+                "Error updating lesson requirements: " +
+                  requirementsError.message
+              );
+            }
+          } else {
+            // Disable requirements if they were enabled before
+            try {
+              await updateLessonRequirements(initialData.id, {
+                enabled: false,
+              });
+            } catch (requirementsError) {
+              console.error(
+                "Error disabling lesson requirements:",
+                requirementsError
+              );
+              setError(
+                "Error disabling lesson requirements: " +
+                  requirementsError.message
+              );
+            }
+          }
+
+          onClose();
+        } else {
+          throw new Error("Lesson update failed - no response from server");
+        }
+      } else {
+        // Create new lesson
+        console.log("=== CREATING NEW LESSON ===");
+        console.log("Create data:", formData);
+
+        const lessonData = {
+          ...formData,
+          duration: parseInt(formData.duration) || 0,
+          order: parseInt(formData.order) || 0,
+          objectives: formData.objectives.filter((obj) => obj.trim() !== ""),
+          resources: formData.resources.filter((res) => res.label && res.url),
+          videoUrl: formData.video?.url || "",
+          audioUrl: formData.audio?.url || "",
+          coverImageUrl: formData.image?.url || "",
+          materials: (formData.materials || []).map((material) => ({
+            name: material.name,
+            url: material.url,
+            type: material.type,
+          })),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        // Call the onSubmit function (which should be handleCreateLesson)
+        const createdLesson = await onSubmit(lessonData);
+
+        if (createdLesson) {
+          console.log("Lesson created successfully:", createdLesson);
+
+          // Handle lesson requirements for new lessons
+          if (requirementsEnabled) {
+            try {
+              await createLessonRequirements(createdLesson.id, requirements);
+            } catch (requirementsError) {
+              console.error(
+                "Error creating lesson requirements:",
+                requirementsError
+              );
+              setError(
+                "Error creating lesson requirements: " +
+                  requirementsError.message
+              );
+            }
+          }
+
+          onClose();
+        } else {
+          throw new Error("Lesson creation failed - no response from server");
+        }
+      }
     } catch (err) {
+      console.error("=== ERROR IN HANDLE SUBMIT ===");
+      console.error("Error details:", err);
+      console.error("Error message:", err.message);
+      console.error("Error stack:", err.stack);
       setError(err.message || t("createLessonForm.errorSaving"));
     } finally {
+      console.log("Setting loading to false");
       setLoading(false);
+      console.log("=== HANDLE SUBMIT FINISHED ===");
     }
   };
 
   const handleClose = () => {
-    if (Object.values(formData).some((value) => value !== "")) {
+    // Check if there are unsaved changes (but only if not called after successful save)
+    const hasUnsavedChanges = Object.values(formData).some((value) => {
+      if (Array.isArray(value)) return value.length > 0;
+      if (typeof value === "object" && value !== null)
+        return Object.keys(value).length > 0;
+      return value !== "" && value !== null && value !== undefined;
+    });
+
+    if (hasUnsavedChanges && !loading) {
       if (
         window.confirm(
           "You have unsaved changes. Do you want to save them as a draft?"
         )
       ) {
-        const draftKey = initialData.id
-          ? `lessonDraft_${initialData.id}`
-          : "lessonDraft";
-        localStorage.setItem(draftKey, JSON.stringify(formData));
+        handleSaveDraft();
       } else {
         // Clear draft if user doesn't want to save
-        const draftKey = initialData.id
-          ? `lessonDraft_${initialData.id}`
-          : "lessonDraft";
-        localStorage.removeItem(draftKey);
+        handleSaveDraft();
       }
     }
+
     // Reset form state
     setActiveStep(0);
     setErrors({});
@@ -635,6 +825,49 @@ const CreateLessonForm = ({
             <Chip key={index} label={word} />
           ))}
         </Box>
+
+        {requirementsEnabled && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              {t(
+                "createLessonForm.lessonRequirementsTitle",
+                "Lesson Completion Requirements"
+              )}
+            </Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+              {requirements.requiredTasks.map((task, index) => (
+                <Chip
+                  key={index}
+                  label={task}
+                  icon={<AssignmentIcon />}
+                  color="primary"
+                />
+              ))}
+              {requirements.requiredContent.map((content, index) => (
+                <Chip
+                  key={index}
+                  label={content}
+                  icon={<BookIcon />}
+                  color="secondary"
+                />
+              ))}
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {t("createLessonForm.minimumScoreLabel", "Minimum Score")}:{" "}
+              {requirements.minimumScore}%
+            </Typography>
+            {requirements.requiredTimeSpent > 0 && (
+              <Typography variant="body2" color="text.secondary">
+                {t(
+                  "createLessonForm.requiredTimeSpentLabel",
+                  "Required Time Spent"
+                )}
+                : {requirements.requiredTimeSpent} minutes
+              </Typography>
+            )}
+          </>
+        )}
       </Paper>
     </Box>
   );
@@ -1589,6 +1822,373 @@ const CreateLessonForm = ({
 
       case 3:
         return (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  borderRadius: customTheme.shape.borderRadius * 2,
+                  bgcolor: customTheme.palette.background.paper,
+                  boxShadow: customTheme.shadows[2],
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{
+                    color: customTheme.palette.text.primary,
+                    fontWeight: 600,
+                    fontSize: { xs: "1rem", sm: "1.1rem" },
+                    mb: 2,
+                  }}
+                >
+                  {t(
+                    "createLessonForm.lessonRequirementsTitle",
+                    "Lesson Completion Requirements"
+                  )}
+                </Typography>
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={requirementsEnabled}
+                      onChange={handleRequirementsToggle}
+                      color="primary"
+                    />
+                  }
+                  label={t(
+                    "createLessonForm.enableRequirements",
+                    "Enable completion requirements"
+                  )}
+                  sx={{ mb: 2 }}
+                />
+
+                {requirementsEnabled && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography
+                      variant="subtitle1"
+                      gutterBottom
+                      sx={{
+                        color: customTheme.palette.text.primary,
+                        fontWeight: 600,
+                        fontSize: { xs: "0.9rem", sm: "1rem" },
+                      }}
+                    >
+                      {t(
+                        "createLessonForm.requiredTasksLabel",
+                        "Required Tasks"
+                      )}
+                    </Typography>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={1}
+                      sx={{ mb: 2 }}
+                    >
+                      <TextField
+                        fullWidth
+                        size="small"
+                        placeholder={t(
+                          "createLessonForm.addTaskPlaceholder",
+                          "Add required task"
+                        )}
+                        value={newTask}
+                        onChange={(e) => setNewTask(e.target.value)}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: customTheme.shape.borderRadius,
+                            bgcolor: customTheme.palette.background.paper,
+                            "&:hover": {
+                              bgcolor: customTheme.palette.action.hover,
+                            },
+                            "&.Mui-focused": {
+                              bgcolor: customTheme.palette.background.paper,
+                              boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                            },
+                          },
+                        }}
+                      />
+                      <Button
+                        variant="contained"
+                        onClick={handleAddTask}
+                        startIcon={<AddIcon />}
+                        size="small"
+                        sx={{
+                          borderRadius: customTheme.shape.borderRadius,
+                          bgcolor: customTheme.palette.primary.main,
+                          color: customTheme.palette.primary.contrastText,
+                          "&:hover": {
+                            bgcolor: customTheme.palette.primary.dark,
+                          },
+                          minWidth: { xs: "auto", sm: 100 },
+                        }}
+                      >
+                        {t("createLessonForm.addButton")}
+                      </Button>
+                    </Stack>
+                    <Box
+                      sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}
+                    >
+                      {requirements.requiredTasks.map((task, index) => (
+                        <Chip
+                          key={index}
+                          label={task}
+                          onDelete={() => handleRemoveTask(index)}
+                          icon={<AssignmentIcon />}
+                          sx={{
+                            borderRadius: customTheme.shape.borderRadius,
+                            bgcolor: customTheme.palette.primary.light + "20",
+                            color: customTheme.palette.primary.main,
+                            "& .MuiChip-deleteIcon": {
+                              color: customTheme.palette.primary.main,
+                              "&:hover": {
+                                color: customTheme.palette.primary.dark,
+                              },
+                            },
+                          }}
+                        />
+                      ))}
+                    </Box>
+
+                    <Typography
+                      variant="subtitle1"
+                      gutterBottom
+                      sx={{
+                        color: customTheme.palette.text.primary,
+                        fontWeight: 600,
+                        fontSize: { xs: "0.9rem", sm: "1rem" },
+                      }}
+                    >
+                      {t(
+                        "createLessonForm.requiredContentLabel",
+                        "Required Content"
+                      )}
+                    </Typography>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={1}
+                      sx={{ mb: 2 }}
+                    >
+                      <TextField
+                        fullWidth
+                        size="small"
+                        placeholder={t(
+                          "createLessonForm.addContentPlaceholder",
+                          "Add required content"
+                        )}
+                        value={newContent}
+                        onChange={(e) => setNewContent(e.target.value)}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: customTheme.shape.borderRadius,
+                            bgcolor: customTheme.palette.background.paper,
+                            "&:hover": {
+                              bgcolor: customTheme.palette.action.hover,
+                            },
+                            "&.Mui-focused": {
+                              bgcolor: customTheme.palette.background.paper,
+                              boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                            },
+                          },
+                        }}
+                      />
+                      <Button
+                        variant="contained"
+                        onClick={handleAddContent}
+                        startIcon={<AddIcon />}
+                        size="small"
+                        sx={{
+                          borderRadius: customTheme.shape.borderRadius,
+                          bgcolor: customTheme.palette.secondary.main,
+                          color: customTheme.palette.secondary.contrastText,
+                          "&:hover": {
+                            bgcolor: customTheme.palette.secondary.dark,
+                          },
+                          minWidth: { xs: "auto", sm: 100 },
+                        }}
+                      >
+                        {t("createLessonForm.addButton")}
+                      </Button>
+                    </Stack>
+                    <Box
+                      sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}
+                    >
+                      {requirements.requiredContent.map((content, index) => (
+                        <Chip
+                          key={index}
+                          label={content}
+                          onDelete={() => handleRemoveContent(index)}
+                          icon={<BookIcon />}
+                          sx={{
+                            borderRadius: customTheme.shape.borderRadius,
+                            bgcolor: customTheme.palette.secondary.light + "20",
+                            color: customTheme.palette.secondary.main,
+                            "& .MuiChip-deleteIcon": {
+                              color: customTheme.palette.secondary.main,
+                              "&:hover": {
+                                color: customTheme.palette.secondary.dark,
+                              },
+                            },
+                          }}
+                        />
+                      ))}
+                    </Box>
+
+                    <Typography
+                      variant="subtitle1"
+                      gutterBottom
+                      sx={{
+                        color: customTheme.palette.text.primary,
+                        fontWeight: 600,
+                        fontSize: { xs: "0.9rem", sm: "1rem" },
+                      }}
+                    >
+                      {t(
+                        "createLessonForm.completionOptionsLabel",
+                        "Completion Options"
+                      )}
+                    </Typography>
+
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={requirements.requireVideoCompletion}
+                              onChange={handleRequirementsSwitch(
+                                "requireVideoCompletion"
+                              )}
+                              color="primary"
+                            />
+                          }
+                          label={t(
+                            "createLessonForm.requireVideoCompletion",
+                            "Require video completion"
+                          )}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={requirements.requireAudioCompletion}
+                              onChange={handleRequirementsSwitch(
+                                "requireAudioCompletion"
+                              )}
+                              color="primary"
+                            />
+                          }
+                          label={t(
+                            "createLessonForm.requireAudioCompletion",
+                            "Require audio completion"
+                          )}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={requirements.requireReadingCompletion}
+                              onChange={handleRequirementsSwitch(
+                                "requireReadingCompletion"
+                              )}
+                              color="primary"
+                            />
+                          }
+                          label={t(
+                            "createLessonForm.requireReadingCompletion",
+                            "Require reading completion"
+                          )}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={requirements.requireTaskCompletion}
+                              onChange={handleRequirementsSwitch(
+                                "requireTaskCompletion"
+                              )}
+                              color="primary"
+                            />
+                          }
+                          label={t(
+                            "createLessonForm.requireTaskCompletion",
+                            "Require task completion"
+                          )}
+                        />
+                      </Grid>
+                    </Grid>
+
+                    <Box sx={{ mt: 2 }}>
+                      <TextField
+                        fullWidth
+                        label={t(
+                          "createLessonForm.minimumScoreLabel",
+                          "Minimum Score (%)"
+                        )}
+                        type="number"
+                        value={requirements.minimumScore}
+                        onChange={handleRequirementsChange("minimumScore")}
+                        inputProps={{ min: 0, max: 100 }}
+                        size="small"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: customTheme.shape.borderRadius,
+                            bgcolor: customTheme.palette.background.paper,
+                            "&:hover": {
+                              bgcolor: customTheme.palette.action.hover,
+                            },
+                            "&.Mui-focused": {
+                              bgcolor: customTheme.palette.background.paper,
+                              boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                            },
+                          },
+                        }}
+                      />
+                    </Box>
+
+                    <Box sx={{ mt: 2 }}>
+                      <TextField
+                        fullWidth
+                        label={t(
+                          "createLessonForm.requiredTimeSpentLabel",
+                          "Required Time Spent (minutes)"
+                        )}
+                        type="number"
+                        value={requirements.requiredTimeSpent}
+                        onChange={handleRequirementsChange("requiredTimeSpent")}
+                        inputProps={{ min: 0 }}
+                        size="small"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: customTheme.shape.borderRadius,
+                            bgcolor: customTheme.palette.background.paper,
+                            "&:hover": {
+                              bgcolor: customTheme.palette.action.hover,
+                            },
+                            "&.Mui-focused": {
+                              bgcolor: customTheme.palette.background.paper,
+                              boxShadow: `0 0 0 2px ${customTheme.palette.primary.light}`,
+                            },
+                          },
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                )}
+
+                {errors.requirements && (
+                  <Alert severity="error" sx={{ mt: 2 }}>
+                    {errors.requirements}
+                  </Alert>
+                )}
+              </Paper>
+            </Grid>
+          </Grid>
+        );
+
+      case 4:
+        return (
           <Box
             sx={{
               p: { xs: 1, sm: 2 },
@@ -1889,7 +2489,7 @@ const CreateLessonForm = ({
       }}
     >
       <DialogTitle>
-        {initialData && initialData.id ? "Edit Lesson" : "Create New Lesson"}
+        {dialogTitle || t("createLessonForm.createNewLesson")}
       </DialogTitle>
       <DialogContent>
         {previewMode ? (
@@ -1915,7 +2515,7 @@ const CreateLessonForm = ({
             onClick={handleBack}
             sx={{ mr: 1 }}
           >
-            Back
+            {t("createLessonForm.back")}
           </Button>
           <Box sx={{ flex: "1 1 auto" }} />
           {activeStep === steps.length - 1 ? (
@@ -1924,12 +2524,15 @@ const CreateLessonForm = ({
               onClick={handleSubmit}
               color="primary"
               disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} /> : null}
             >
-              {loading ? "Saving..." : "Create Lesson"}
+              {loading
+                ? t("createLessonForm.saving")
+                : submitLabel || t("createLessonForm.createLesson")}
             </Button>
           ) : (
             <Button variant="contained" onClick={handleNext} color="primary">
-              Next
+              {t("createLessonForm.next")}
             </Button>
           )}
         </DialogActions>

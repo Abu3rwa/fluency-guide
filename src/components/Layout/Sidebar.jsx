@@ -1,4 +1,5 @@
 import React from "react";
+import ThemeToggle from "./ThemeToggle";
 import {
   Box,
   List,
@@ -24,17 +25,20 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
 
-const Sidebar = () => {
+const Sidebar = ({ menuItems: propMenuItems }) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { user, userData } = useAuth();
   const isAdmin = userData?.isAdmin;
   const theme = useTheme();
 
-  // Define menu items based on user role
-  const menuItems = isAdmin
-    ? [
+  // Use provided menuItems or define based on user role
+  const getDefaultMenuItems = () => {
+    if (isAdmin) {
+      return [
         {
           text: "Dashboard",
           icon: <DashboardIcon />,
@@ -71,9 +75,9 @@ const Sidebar = () => {
           path: "/settings",
           description: "Platform Settings",
         },
-      ]
-    : user
-    ? [
+      ];
+    } else if (user) {
+      return [
         {
           text: "Dashboard",
           icon: <DashboardIcon />,
@@ -98,12 +102,13 @@ const Sidebar = () => {
           path: "/settings",
           description: "Account Settings",
         },
-      ]
-    : [
+      ];
+    } else {
+      return [
         {
           text: "Courses",
           icon: <SchoolIcon />,
-          path: "/courses",
+          path: "/student/courses",
           description: "Explore Courses",
         },
         {
@@ -119,6 +124,10 @@ const Sidebar = () => {
           description: "Contact Us",
         },
       ];
+    }
+  };
+
+  const sidebarMenuItems = propMenuItems || getDefaultMenuItems();
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -190,7 +199,7 @@ const Sidebar = () => {
 
       {/* Navigation Menu */}
       <List sx={{ flexGrow: 1, px: 1 }}>
-        {menuItems.map((item) => (
+        {sidebarMenuItems.map((item) => (
           <ListItem
             button
             key={item.text}
@@ -252,6 +261,9 @@ const Sidebar = () => {
 
       {/* Footer */}
       <Box sx={{ p: theme.spacing(2) }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <ThemeToggle ariaLabel={t("header.toggleTheme")} />
+        </Box>
         <Typography
           variant="caption"
           sx={{

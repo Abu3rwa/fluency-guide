@@ -1,58 +1,96 @@
-import React, { useState, useEffect } from "react";
-import { Box, useMediaQuery } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import React from "react";
+import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
 import { useCustomTheme } from "../contexts/ThemeContext";
+import { useRTL } from "../utils/rtlUtils";
+import { LandingPageProvider } from "../contexts/LandingPageContext";
+import { useMetaTags } from "../hooks/useMetaTags";
 import CustomSpinner from "../components/CustomSpinner";
 
+// Temporarily disable lazy loading to debug webpack issue
 import HeroSection from "./landing/HeroSection";
+import StatisticsBanner from "./landing/StatisticsBanner";
 import FeaturesSection from "./landing/FeaturesSection";
-import ShowcaseTabsSection from "./landing/ShowcaseTabsSection";
-import TestimonialsSection from "./landing/TestimonialsSection";
-import FAQSection from "./landing/FAQSection";
-import ContactSection from "./landing/ContactSection";
-import LandingFooter from "./landing/LandingFooter";
 import CoursesSection from "./landing/components/CoursesSection";
-// css styles imports
-import "./landing/styles/heroSection.css";
+import PrivateSessionsSection from "./landing/PrivateSessionsSection";
+import SessionTypesSection from "./landing/SessionTypesSection";
+import TopInstructorsSection from "./landing/TopInstructorsSection";
+import TestimonialsSection from "./landing/TestimonialsSection";
+import ContactSection from "./landing/ContactSection";
 
-const Landing = () => {
-  const { t, i18n } = useTranslation();
-  const { theme } = useCustomTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+// Loading fallback component
+const SectionLoader = ({ message = "Loading..." }) => (
+  <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+    <CustomSpinner 
+      message={message} 
+      size={40} 
+      showMessage={false} 
+      overlay={false} 
+    />
+  </Box>
+);
+
+function Landing() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <CustomSpinner />;
-  }
+  // Use multiple namespaces for different landing page sections
+  const { t } = useTranslation(); // Default namespace for common translations
+  const { t: tAuth } = useTranslation('auth'); // Auth namespace for authentication related content
+  const { t: tCourses } = useTranslation('courses'); // Courses namespace for course related content
+  const { t: tSessions } = useTranslation('sessions'); // Sessions namespace for instructor content
+  const { i18n } = useTranslation();
+  const theme = useTheme();
+  const { mode } = useCustomTheme();
+  const isRTL = useRTL();
+  
+  // Update meta tags for landing page
+  useMetaTags();
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        minHeight: "100vh",
-        maxWidth: "100vw",
-        overflowX: "hidden",
-      }}
-    >
-      <HeroSection t={t} theme={theme} />
-      <CoursesSection t={t} />
+    <LandingPageProvider>
+      <Box 
+        sx={{ 
+          width: "100%", 
+          bgcolor: "background.default",
+          minHeight: "100vh",
+        }}
+      >
+        {/* Hero Section - Auth related (login/signup buttons) */}
+        <HeroSection
+          isRTL={isRTL}
+          t={t}
+          tAuth={tAuth}
+          navigate={navigate}
+          theme={theme}
+        />
 
-      <FeaturesSection t={t} />
+        {/* Statistics Banner */}
+        <StatisticsBanner t={t} />
 
-      <ShowcaseTabsSection t={t} />
-      {/* <TestimonialsSection t={t} /> */}
-      <FAQSection t={t} />
-      <ContactSection t={t} />
-      <LandingFooter t={t} />
-    </Box>
+        {/* Features Section */}
+        <FeaturesSection t={t} isRTL={isRTL} />
+
+        {/* Courses Section */}
+        <CoursesSection />
+
+        {/* Private Sessions Section */}
+        <PrivateSessionsSection t={t} isRTL={isRTL} />
+
+        {/* Session Types Section */}
+        <SessionTypesSection isRTL={isRTL} />
+
+        {/* Top Instructors Section - Sessions namespace */}
+        <TopInstructorsSection t={t} tSessions={tSessions} isRTL={isRTL} />
+
+        {/* Testimonials Section */}
+        {/* <TestimonialsSection t={t} isRTL={isRTL} /> */}
+
+        {/* Contact Section */}
+        <ContactSection t={t} isRTL={isRTL} />
+      </Box>
+    </LandingPageProvider>
   );
-};
+}
 
 export default Landing;

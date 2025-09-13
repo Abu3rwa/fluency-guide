@@ -1,12 +1,9 @@
-import "./studentStatsCharts.css";
-import React from "react";
-import { Box, Paper, Typography, Grid, LinearProgress } from "@mui/material";
+ import { Box, Paper, Typography, Grid, LinearProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material/styles";
 
 const StatCard = ({ title, value = 0, total = 1, color }) => {
   const percentage = (value / total) * 100;
-
   return (
     <Paper
       elevation={0}

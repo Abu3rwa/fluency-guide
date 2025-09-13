@@ -5,7 +5,9 @@
       "view": "View",
       "unpublish": "Unpublish",
       "publish": "Publish",
-      "delete": "Delete"
+      "delete": "Delete",
+      "createLesson": "Create Lesson",
+      "editLesson": "Edit Lesson"
     },
     "resources": {
       "course": "Course",
@@ -21,75 +23,138 @@
     "delete": {
       "confirmTitle": "Confirm Deletion",
       "confirmMessage": "Are you sure you want to delete this {{type}}: {{name}}?"
+    },
+    "search": {
+      "placeholder": "Search...",
+      "noResults": "No results found",
+      "clearSearch": "Clear Search"
+    },
+    "filters": {
+      "title": "Filters",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "published": "Published",
+      "draft": "Draft",
+      "archived": "Archived",
+      "clearFilters": "Clear Filters",
+      "applyFilters": "Apply Filters"
+    },
+    "sort": {
+      "title": "Sort by",
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "name": "Name",
+      "date": "Date",
+      "status": "Status",
+      "relevance": "Relevance"
+    },
+    "table": {
+      "noData": "No data available",
+      "loading": "Loading...",
+      "error": "Error loading data",
+      "refresh": "Refresh",
+      "rowsPerPage": "Rows per page",
+      "of": "of",
+      "showing": "Showing",
+      "entries": "entries"
     }
   },
-
   "cancel": "Cancel",
   "navigation": {
     "home": "Home",
     "courses": "Courses",
     "pricing": "Pricing",
-    "contact": "Contact",
+    "contact": "Contact Us",
     "dashboard": "Dashboard",
-    "profile": "Profile"
+    "profile": "Profile",
+    "instructorProfile": "Instructor Profile",
+    "studentProfile": "Student Profile",
+    "instructorDashboard": "Instructor Dashboard",
+    "studentDashboard": "Student Dashboard",
+    "instructorManagement": "Instructor Management",
+    "sessionManagement": "Session Management",
+    "termsManagement": "Terms Management",
+    "menu": "Menu"
   },
   "header": {
     "toggleTheme": "Toggle Theme",
-    "goHome": "Go to Home"
+    "goHome": "Go Home",
+    "openDrawer": "Open Menu"
   },
   "language": {
     "changeLanguage": "Language",
     "en": "English",
-    "ar": "العربية"
-  },
-  "auth": {
-    "login": "Login",
-    "logout": "Logout",
-    "welcomeBack": "Welcome Back",
-    "joinUs": "Join Us",
-    "signInSubtitle": "Sign in to continue your learning journey",
-    "createAccountSubtitle": "Create your account and start learning",
-    "fullName": "Full Name",
-    "emailAddress": "Email Address",
-    "password": "Password",
-    "confirmPassword": "Confirm Password",
-    "signIn": "Sign In",
-    "createAccount": "Create Account",
-    "forgotPassword": "Forgot Password?",
-    "forgotPasswordComingSoon": "Forgot password functionality coming soon!",
-    "or": "or",
-    "continueWithGoogle": "Continue with Google",
-    "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?",
-    "signUp": "Sign Up",
-    "loginSuccess": "Login successful! Redirecting...",
-    "signupSuccess": "Account created! You can now sign in.",
-    "googleSuccess": "Google sign-in successful! Redirecting...",
-    "googleFailed": "Google sign-in failed"
+    "ar": "Arabic"
   },
   "landing": {
+    "bookingIntegration": {
+      "redirectingToProfile": "Opening profile..."
+    },
+    "instructors": {
+      "sectionTitle": "Our Expert Instructors",
+      "sectionSubtitle": "Meet the professionals who will guide you on your learning journey",
+      "bookWith": "Book with {{name}}",
+      "viewAllInstructors": "View all instructors ({{count}})",
+      "noInstructorsAvailable": "No instructors available at the moment",
+      "loadingInstructors": "Loading our expert instructors..."
+    },
+    "sessionTypes": {
+      "sectionTitle": "Choose Your Learning Path",
+      "sectionSubtitle": "Explore our comprehensive range of learning sessions tailored to your needs",
+      "exploreAll": "Explore all private sessions",
+      "noSessionsAvailable": "No private sessions available at the moment",
+      "loadingSessions": "Loading available sessions..."
+    },
+    "stats": {
+      "activeStudents": "Active Students",
+      "expertInstructors": "Expert Instructors",
+      "sessionTypes": "Private Sessions",
+      "courses": "Available Courses",
+      "satisfaction": "Student Satisfaction",
+      "graduates": "Successful Graduates",
+      "hoursSupport": "Hours of Support",
+      "successRate": "Success Rate",
+      "impactTitle": "Our Impact in Numbers",
+      "impactSubtitle": "Discover the key achievements that define our success story",
+      "joinThousands": "Join thousands of successful learners worldwide"
+    },
     "hero": {
       "title": "Master English with",
       "titleHighlight": "Interactive Learning",
-      "subtitle": "Experience personalized English learning with AI-powered conversations, pronunciation practice, and adaptive lessons designed for your success.",
+      "subtitle": "Experience personalized English learning with AI-powered conversations, pronunciation coaching, and adaptive lessons designed for your success.",
       "startLearning": "Start Learning",
-      "watchDemo": "Watch Demo"
+      "continueLearning": "Continue Learning",
+      "welcomeBack": "Welcome back, {{name}}!",
+      "loading": "Loading...",
+      "watchDemo": "Watch Demo",
+      "demoVideo": {
+        "title": "Platform Demo",
+        "caption": "See how our interactive learning platform helps you master English",
+        "error": "Failed to load video",
+        "errorHelp": "Please check your internet connection and try again"
+      }
     },
     "courseCard": {
-      "loginOrSignUp": "Login or Sign Up",
+      "loginOrSignUp": "Login or sign up",
+      "viewCourse": "View Course",
       "startLearning": "Start Learning",
-      "enroll": "Enroll",
+      "enroll": "Enroll Now",
       "enrollmentPending": "Enrollment Pending",
       "enrollmentRejected": "Enrollment Rejected",
       "free": "Free",
       "by": "By",
       "featured": "Featured",
-      "percentOff": "{{percent}}% off"
+      "percentOff": "{{percent}}% Off",
+      "lessons": "Lessons",
+      "certificate": "Certificate"
     },
     "courses": {
       "title": "Explore Our Courses",
       "noCoursesFound": "No courses found.",
-      "carouselLabel": "Featured Courses Carousel",
+      "carouselLabel": "Featured courses carousel",
+      "subtitle": "Explore our comprehensive range of courses designed to help you achieve your language goals",
+      "viewAllCourses": "Browse All Courses",
       "categories": {
         "all": "All",
         "foundation": "Foundation",
@@ -99,33 +164,74 @@
       },
       "cta": {
         "signUpNow": "Sign Up Now",
-        "joinThousands": "Join thousands of learners – Sign up for free!",
+        "joinThousands": "Join thousands of learners—sign up for free!",
         "continueLearning": "Continue Learning",
         "continueJourney": "Continue your learning journey!",
         "enrollNow": "Enroll Now",
-        "readyToLearn": "Ready to start learning? Enroll in a course!",
+        "readyToLearn": "Ready to start learning? Enroll in a course now!",
         "browseAllCourses": "Browse All Courses",
         "exploreCatalog": "Explore our full course catalog."
       }
     },
     "features": {
       "title": "Why Choose Our Platform?",
+      "subtitle": "Discover how our innovative features make learning English effective and enjoyable",
       "items": {
         "interactiveLearning": {
           "title": "Interactive Learning",
-          "description": "Engage with AI-powered conversations and interactive exercises that adapt to your learning style."
+          "description": "Engage with AI-powered conversations and interactive exercises that adapt to your learning style.",
+          "benefit1": "Personalized conversation scenarios",
+          "benefit2": "Instant feedback and corrections",
+          "benefit3": "Adaptive difficulty levels"
         },
         "speakingPractice": {
           "title": "Speaking Practice",
-          "description": "Improve your pronunciation with real-time feedback and voice recognition technology."
+          "description": "Improve your pronunciation with instant feedback and voice recognition technology.",
+          "benefit1": "Native speaker pronunciation guides",
+          "benefit2": "Speech recognition exercises",
+          "benefit3": "Accent improvement tools"
         },
         "fastProgress": {
           "title": "Fast Progress",
-          "description": "Track your improvement with detailed analytics and personalized learning paths."
+          "description": "Track your improvement with detailed analytics and personalized learning paths.",
+          "benefit1": "Weekly progress reports",
+          "benefit2": "Skill mastery tracking",
+          "benefit3": "Performance insights"
         },
         "smartLearning": {
           "title": "Smart Learning",
-          "description": "AI-driven content that adjusts to your pace and focuses on areas that need improvement."
+          "description": "AI-powered content adapts to your pace and focuses on areas for improvement.",
+          "benefit1": "Personalized study plans",
+          "benefit2": "Adaptive learning paths",
+          "benefit3": "Focus on weak points"
+        },
+        "personalizedContent": {
+          "title": "Personalized Content",
+          "description": "Learn with content tailored to your interests and goals.",
+          "benefit1": "Industry-specific vocabulary",
+          "benefit2": "Cultural context learning",
+          "benefit3": "Interest-based materials"
+        },
+        "communityLearning": {
+          "title": "Community Learning",
+          "description": "Connect with fellow learners and practice together.",
+          "benefit1": "Language exchange partners",
+          "benefit2": "Discussion forums",
+          "benefit3": "Group practice sessions"
+        },
+        "progressTracking": {
+          "title": "Progress Tracking",
+          "description": "Monitor your learning journey with comprehensive analytics.",
+          "benefit1": "Detailed progress graphs",
+          "benefit2": "Skill assessment reports",
+          "benefit3": "Learning streak tracking"
+        },
+        "achievements": {
+          "title": "Achievements & Rewards",
+          "description": "Stay motivated with gamified learning experiences.",
+          "benefit1": "Skill badges and certificates",
+          "benefit2": "Learning milestones",
+          "benefit3": "Performance-based rewards"
         }
       }
     },
@@ -134,20 +240,26 @@
       "overview": "Overview",
       "benefits": "Benefits",
       "howItWorks": "How It Works",
-      "overviewText": "Our comprehensive English learning platform combines modern technology with proven teaching methods to deliver an exceptional learning experience."
+      "overviewText": "Our comprehensive English learning platform combines cutting-edge technology with proven teaching methods to deliver an exceptional learning experience.",
+      "flexible": "Flexible",
+      "accessible": "Accessible",
+      "engaging": "Engaging",
+      "personalized": "Personalized",
+      "howItWorksText": "Our platform uses advanced AI technology to provide personalized learning experiences. Start with a quick assessment, and our smart system will create a custom learning path that adapts to your progress and preferences."
     },
     "testimonials": {
       "title": "What Our Students Say",
+      "verifiedStudent": "Verified Student",
       "items": {
         "sarah": {
           "name": "Sarah Johnson",
           "role": "Business Professional",
-          "quote": "This platform transformed my English skills in just 3 months. The interactive lessons and AI feedback made learning enjoyable and effective."
+          "quote": "This platform transformed my English skills in just 3 months. The interactive lessons and AI feedback made learning fun and effective."
         },
         "miguel": {
           "name": "Miguel Rodriguez",
           "role": "University Student",
-          "quote": "The pronunciation practice feature helped me gain confidence in speaking English. I can now participate actively in class discussions."
+          "quote": "The pronunciation coaching feature helped me gain confidence in speaking English. I can now actively participate in class discussions."
         },
         "aisha": {
           "name": "Aisha Patel",
@@ -158,45 +270,119 @@
     },
     "faq": {
       "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions about our platform and learning process",
+      "searchPlaceholder": "Search questions...",
+      "noResults": "No matching questions found",
+      "clearSearch": "Clear Search",
       "items": "FAQ Items",
-      "answer1": "Our platform is suitable for learners of all levels, from complete beginners to advanced speakers looking to refine their skills.",
-      "answer2": "You can start seeing improvements in your speaking confidence within the first few weeks, with significant progress typically visible after 2-3 months of consistent practice.",
-      "answer3": "Yes, our mobile app allows you to learn on-the-go with full synchronization across all your devices.",
-      "answer4": "We offer various subscription plans including monthly, quarterly, and annual options. You can also try our free trial to explore the platform.",
-      "answer5": "Absolutely! Our AI tutor provides personalized feedback on pronunciation, grammar, and vocabulary usage in real-time.",
+      "answer1": "Our platform is suitable for learners of all levels, from absolute beginners to advanced speakers looking to refine their skills.",
+      "answer2": "You can start seeing improvement in your speaking confidence within the first few weeks, with significant progress typically after 2-3 months of consistent practice.",
+      "answer3": "Yes, our mobile app allows you to learn on the go with full synchronization across all your devices.",
+      "answer4": "We offer various subscription plans, including monthly, quarterly, and annual options. You can also try our free trial to explore the platform.",
+      "answer5": "Absolutely! Our AI tutor provides personalized feedback on your pronunciation, grammar, and vocabulary in real-time.",
       "answer6": "Our curriculum covers business English, academic English, conversational skills, and test preparation (IELTS, TOEFL, etc.).",
       "answer7": "Yes, you can pause your subscription at any time and resume when you're ready to continue learning.",
-      "answer8": "We provide 24/7 customer support through chat, email, and video calls with our learning specialists.",
+      "answer8": "We provide 24/7 customer support via chat, email, and video calls with our learning specialists.",
       "answer9": "Yes, you'll receive a certificate of completion for each course and level you successfully finish.",
-      "answer10": "Our platform uses advanced speech recognition and natural language processing to provide accurate, personalized feedback on your progress."
+      "answer10": "Our platform uses advanced speech recognition and natural language processing technology to provide accurate, personalized feedback on your progress."
     },
     "contact": {
       "title": "Get in Touch",
+      "subtitle": "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
       "name": "Name",
       "email": "Email",
+      "phone": "Phone",
+      "location": "Location",
       "message": "Message",
-      "messageTooltip": "Tell us how we can help you",
-      "send": "Send Message"
+      "messageTooltip": "Let us know how we can help",
+      "socialMedia": "Social Media",
+      "followUs": "Follow Us",
+      "whatsapp": "WhatsApp",
+      "whatsappMessage": "WhatsApp Message",
+      "whatsappMessageTooltip": "Enter a WhatsApp message to connect",
+      "whatsappMessagePlaceholder": "Enter WhatsApp message to connect",
+      "whatsappMessageHelperText": "Enter a WhatsApp message to connect",
+      "whatsappMessageHelperText2": "Enter a WhatsApp message to connect",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully! We'll get back to you soon.",
+      "errors": {
+        "nameRequired": "Name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "messageRequired": "Message is required"
+      }
     },
     "footer": {
       "copyright": "© 2024 English Learning Platform. All rights reserved."
+    },
+    "bookingIntegration": {
+      "quickBook": "Quick Book",
+      "selectInstructor": "Select This Instructor",
+      "selectSessionType": "Select This Session Type",
+      "redirectingToBooking": "Redirecting to booking interface...",
+      "bookingUnavailable": "Booking is temporarily unavailable"
     }
   },
-
+  "sessionTypes": {
+    "title": "Available Session Types",
+    "subtitle": "Choose from our diverse range of specialized tutoring sessions",
+    "loading": "Loading session types...",
+    "featured": "Featured",
+    "new": "New",
+    "minutes": "minutes",
+    "bookNow": "Book Now"
+  },
+  "free": "Free",
   "faq": {
     "question1": "What level of English do I need to start?",
     "question2": "How quickly will I see results?",
     "question3": "Can I learn on my mobile device?",
     "question4": "What are the pricing options?",
-    "question5": "Do you provide personalized feedback?",
+    "question5": "Do you offer personalized feedback?",
     "question6": "What topics do you cover?",
     "question7": "Can I pause my subscription?",
-    "question8": "What support do you offer?",
+    "question8": "What support do you provide?",
     "question9": "Do I get certificates?",
     "question10": "How does the AI feedback work?"
   },
   "coursePayment": "Course Payment",
-  "course": "Course",
+  "results": {
+    "timeLimit": "Time Limit",
+    "totalPoints": "Total Points",
+    "yourScore": "Your Score",
+    "statistics": "Statistics",
+    "questionsAnswered": "Questions Answered",
+    "timeSpent": "Time Spent",
+    "difficulty": "Difficulty",
+    "passingScore": "Passing Score",
+    "status": "Status",
+    "passed": "PASSED",
+    "failed": "FAILED",
+    "excellent": "Excellent!",
+    "goodJob": "Good Job!",
+    "keepTrying": "Keep Trying!",
+    "needMorePractice": "Need More Practice",
+    "tryAgain": "Try Again",
+    "finish": "Finish",
+    "noDataTitle": "Results Not Available",
+    "noDataMessage": "No results data found. Please complete the task first."
+  },
+  "error": {
+    "title": "Oops! Something went wrong.",
+    "message": "We're sorry, but the application encountered an error. Please try again.",
+    "help": "If the problem persists, please contact support."
+  },
+  "course": {
+    "title": "Course",
+    "startsOn": "Starts on",
+    "endsOn": "Ends on",
+    "endedOn": "Ended on",
+    "comingSoon": "Coming Soon",
+    "ongoingCourse": "Ongoing Course",
+    "noLongerAvailable": "No longer available",
+    "enrollAnytime": "Enroll anytime"
+  },
   "price": "Price",
   "bankTransferDetails": "Bank Transfer Details",
   "bankName": "Bank Name",
@@ -204,15 +390,18 @@
   "accountNumber": "Account Number",
   "branch": "Branch",
   "important": "Important",
-  "includeNameAndCourse": "Please include your name and course title in the transfer reference",
+  "includeNameAndCourse": "Please include your name and the course title in the transfer reference",
+  "bankTransfer": {
+    "note": "Please include your name and course title when making the bank transfer."
+  },
   "referenceNumber": "Reference Number",
-  "enterReferenceNumber": "Enter your transfer reference number",
+  "enterReferenceNumber": "Enter transfer reference number",
   "uploadPaymentReceipt": "Upload Payment Receipt",
   "chooseReceiptFile": "Choose receipt file",
-  "acceptedFormats": "Accepted formats: JPG, PNG, PDF (max 5MB)",
+  "acceptedFormats": "Accepted formats: JPG, PNG, PDF (Max 5MB)",
   "submitPayment": "Submit Payment",
   "submitting": "Submitting...",
-  "paymentSubmittedSuccessfully": "Payment Submitted Successfully!",
+  "paymentSubmittedSuccessfully": "Payment submitted successfully!",
   "enrollmentReviewed": "Your enrollment will be reviewed shortly.",
   "thisReceiptHasAlreadyBeenUploaded": "This receipt has already been uploaded.",
   "duplicateWarningTitle": "Potential Duplicate Detected",
@@ -220,6 +409,52 @@
   "viewExistingPayment": "View Existing Payment",
   "analyzingReceipt": "Analyzing receipt...",
   "receiptAnalysis": "Receipt Analysis",
+  "paymentMethod": {
+    "title": "Payment Method",
+    "online": "Online Bank Transfer",
+    "inPerson": "In-Person Payment",
+    "onlineDesc": "Pay online and upload receipt",
+    "inPersonDesc": "Pay in person - admin will process",
+    "inPersonNote": "Please contact the admin to arrange in-person payment. Your registration will be processed once payment is confirmed."
+  },
+  "receipt": {
+    "upload": "Upload Receipt",
+    "preview": "Receipt Preview",
+    "previewAlt": "Receipt Preview",
+    "clickToUpload": "Click to upload receipt or drag and drop",
+    "supportedFormats": "Supports PNG, JPG, JPEG",
+    "adminWillUpload": "Admin will upload receipt"
+  },
+  "payment": {
+    "successOnline": "Payment submitted successfully! Your enrollment will be reviewed shortly.",
+    "successInPerson": "Registration submitted successfully! Please complete payment in person as discussed.",
+    "submitPayment": "Submit Payment",
+    "submitRegistration": "Submit Registration",
+    "inPersonNote": "Important:",
+    "inPersonInstructions": "Please bring your reference number when making the in-person payment. The admin will upload the receipt on your behalf."
+  },
+  "validation": {
+    "referenceRequired": "Please enter the reference number.",
+    "receiptRequired": "Please upload a receipt image or check 'Admin will upload receipt'.",
+    "nameRequired": "Please enter your name.",
+    "phoneRequired": "Please enter your WhatsApp number.",
+    "genderRequired": "Please select your gender.",
+    "ageRequired": "Please enter a valid age (9-99)."
+  },
+  "userInfo": {
+    "title": "Personal Information",
+    "name": "Full Name",
+    "namePlaceholder": "Enter your full name",
+    "phone": "Phone/WhatsApp Number",
+    "phonePlaceholder": "e.g., +249123456789",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "age": "Age",
+    "agePlaceholder": "Enter your age",
+    "note": "Note",
+    "noteText": "This information is required for course enrollment and will be used for communication purposes."
+  },
   "quality": "Quality",
   "confidence": "Confidence",
   "extractedInformation": "Extracted Information",
@@ -227,6 +462,24 @@
   "amount": "Amount",
   "date": "Date",
   "studentCourseDetails": {
+    "moduleList": {
+      "title": "Course Modules",
+      "showAll": "Show All Modules",
+      "showLess": "Show Less",
+      "lessons": "Lessons",
+      "progressBar": "Module progress bar",
+      "markAllComplete": "Mark All as Complete",
+      "markAllIncomplete": "Mark All as Incomplete",
+      "markComplete": "Mark as Complete",
+      "markIncomplete": "Mark as Incomplete",
+      "noModules": "No modules available.",
+      "noLessons": "No lessons in this module.",
+      "unit": "Unit",
+      "preview": "Preview",
+      "locked": "🔒 Locked",
+      "minutes": "min",
+      "enrollToUnlock": "Enroll to Unlock"
+    },
     "page": {
       "viewMaterials": "View Materials",
       "supportFaq": "Support & FAQ",
@@ -242,22 +495,8 @@
       "role": "Role",
       "enrollNow": "Enroll Now",
       "startLearning": "Start Learning",
-      "enrollmentPending": "Your enrollment is under review",
-      "enrollmentRejected": "Your enrollment was rejected"
-    },
-    "moduleList": {
-      "title": "Course Modules",
-      "showAll": "Show All Modules",
-      "showLess": "Show Less",
-      "lessons": "lessons",
-      "progressBar": "Module progress bar",
-      "markAllComplete": "Mark all as complete",
-      "markAllIncomplete": "Mark all as incomplete",
-      "markComplete": "Mark as complete",
-      "markIncomplete": "Mark as incomplete",
-      "noModules": "No modules available.",
-      "noLessons": "No lessons in this module.",
-      "complete": "complete"
+      "enrollmentPending": "Your enrollment is pending review",
+      "enrollmentRejected": "Your enrollment has been rejected"
     },
     "overview": {
       "title": "Course Overview",
@@ -275,15 +514,15 @@
       "markAsCompleted": "Mark as Completed",
       "lessonCompleted": "Lesson completed successfully",
       "undo": "Undo",
-      "noContent": "No course content is available at the moment."
+      "noContent": "No course content available at the moment."
     },
     "reviews": {
       "title": "Course Reviews",
       "summary": "{{avg}} out of 5 stars ({{count}} reviews)",
       "noReviews": "No reviews yet. Be the first to review this course!",
-      "student": "A Student",
+      "student": "Student",
       "addEdit": "Add/Edit Review",
-      "loginToReview": "Login to review",
+      "loginToReview": "Login to Review",
       "submitTitle": "Submit Your Review",
       "yourReview": "Your Review",
       "cancel": "Cancel",
@@ -308,15 +547,19 @@
       "email": "Support Email",
       "hours": "Support Hours",
       "responseTime": "Average Response Time",
-      "faq": "Frequently Asked Questions",
+      "faq": "FAQ",
       "close": "Close"
     }
   },
   "common": {
+    "retry": "Retry",
+    "reload": "Reload Page",
+    "reportBug": "Report Bug",
     "back": "Back",
     "close": "Close",
     "cancel": "Cancel",
     "save": "Save",
+    "saving": "Saving...",
     "edit": "Edit",
     "delete": "Delete",
     "confirm": "Confirm",
@@ -328,12 +571,30 @@
     "error": "Error",
     "success": "Success",
     "warning": "Warning",
-    "info": "Information",
+    "info": "Info",
     "preview": "Preview",
     "create": "Create",
-    "clearDraft": "Clear Draft"
+    "clearDraft": "Clear Draft",
+    "hr": "hr",
+    "user": "User",
+    "all": "All",
+    "free": "Free",
+    "paid": "Paid",
+    "minutes": "minutes",
+    "update": "Update",
+    "remove": "Remove",
+    "clearFilters": "Clear Filters",
+    "noResults": "No results found",
+    "tryDifferentFilters": "Try adjusting your search or filters",
+    "refresh": "Refresh",
+    "settings": "Settings",
+    "help": "Help",
+    "pause": "Pause",
+    "resume": "Resume"
   },
   "tasks": {
+    "loadingTask": "Loading task...",
+    "submissionError": "Failed to submit quiz. Please try again.",
     "infoTitle": "Task Information",
     "infoContent": "This task will help you practice and improve your skills. Read the instructions carefully and take your time to answer each question.",
     "settingsTitle": "Task Settings",
@@ -351,7 +612,7 @@
     "correct": "Correct",
     "incorrect": "Incorrect",
     "attempts": "Attempts",
-    "remaining": "Remaining",
+    "remaining": "remaining",
     "completed": "Completed",
     "incomplete": "Incomplete",
     "resumeQuizTitle": "Resume Quiz?",
@@ -359,24 +620,24 @@
     "startOver": "Start Over",
     "resume": "Resume",
     "quizPaused": "Quiz Paused",
-    "pauseMessage": "Quiz is paused. Click the resume button to return.",
+    "pauseMessage": "The quiz is paused. Click the resume button to return.",
     "taskNotFound": "Task not found",
     "noQuestions": "No questions available",
     "thirtySecondsWarning": "Only 30 seconds remaining!",
     "connectionRestored": "Connection restored",
-    "connectionLost": "Connection lost. Your progress is saved locally.",
+    "connectionLost": "Connection lost. Your progress has been saved locally.",
     "noInternetConnection": "No internet connection. Please check your connection and try again.",
     "failedToLoadTask": "Failed to load task. Please try again.",
     "failedToSaveProgress": "Failed to save progress locally",
     "quizSubmittedSuccessfully": "Quiz submitted successfully!",
-    "submissionFailed": "Failed to submit quiz. Your results are saved locally.",
-    "noInternetSubmission": "No internet connection. Your results are saved locally and will be submitted when connection is restored.",
+    "submissionFailed": "Quiz submission failed. Your results have been saved locally.",
+    "noInternetSubmission": "No internet connection. Your results have been saved locally and will be submitted when connection is restored.",
     "invalidQuestionFormat": "Invalid question format. Please contact support.",
     "keyboardShortcuts": "Keyboard Shortcuts:",
-    "navigateQuestions": "← → Navigate questions",
-    "selectBlanks": "1-9 Select blanks",
-    "pauseResume": "Space Pause/Resume",
-    "clearSelection": "Esc Clear selection",
+    "navigateQuestions": "← → to navigate questions",
+    "selectBlanks": "1-9 to select blanks",
+    "pauseResume": "Space to pause/resume",
+    "clearSelection": "Esc to clear selection",
     "questionOf": "Question {{current}} of {{total}}",
     "blankSelected": "Blank {{index}} selected",
     "tapBlankSpace": "Tap a blank space, then tap an option to fill it",
@@ -384,22 +645,27 @@
     "gotIt": "Got it",
     "availableOptions": "Available Options",
     "selectAnOption": "Select an option",
-    "allOptionsUsed": "All options have been used!",
-    "clickFilledBlanks": "Click on filled blanks to remove and reuse options",
+    "allOptionsUsed": "All options used!",
+    "clickFilledBlanks": "Click filled blanks to remove and reuse options",
     "clickOptionToFill": "Click an option to fill the selected blank",
-    "tapBlankFirst": "Tap a blank space first, then tap an option",
-    "clickBlankFirst": "Click a blank space first, then click an option",
+    "tapBlankFirst": "Tap a blank first, then tap an option",
+    "clickBlankFirst": "Click a blank first, then click an option",
     "selectCorrectAnswer": "Select the correct answer:",
-    "selectOption": "Select option",
+    "selectOption": "Select an option",
     "correctAnswer": "Correct!",
-    "correctAnswerMessage": "Great job! You selected the right answer.",
+    "correctAnswerMessage": "Great job! You selected the correct answer.",
     "incorrectAnswer": "Incorrect",
     "incorrectAnswerMessage": "That's not quite right. Keep trying!",
     "explanation": "Explanation",
-    "autoAdvancing": "Auto-advancing to next question...",
+    "autoAdvancing": "Auto-advancing to the next question...",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
     "form": {
       "createMultipleChoiceQuiz": "Create Multiple Choice Quiz",
-      "description": "Design interactive multiple choice quizzes with single or multiple correct answers",
+      "description": "Design interactive multiple-choice quizzes with single or multiple correct answers",
       "basicInformation": "Basic Information",
       "title": "Title *",
       "difficulty": "Difficulty",
@@ -431,19 +697,19 @@
       "addOption": "Add Option",
       "option": "Option",
       "checkAllCorrect": "Check all correct answers",
-      "selectOneCorrect": "Select the one correct answer",
-      "explanation": "Explanation (Optional)",
+      "selectOneCorrect": "Select the single correct answer",
+      "explanation": "Explanation (optional)",
       "explanationPlaceholder": "Explain why this is the correct answer...",
       "preview": "Preview",
-      "scoringAndMetadata": "Scoring & Metadata",
+      "scoringAndMetadata": "Scoring and Metadata",
       "pointsPerQuestion": "Points per Question",
       "totalPoints": "Total Points",
       "courseId": "Course ID",
       "optional": "Optional",
-      "publishImmediately": "Publish immediately",
+      "publishImmediately": "Publish Immediately",
       "creating": "Creating...",
       "createQuiz": "Create Quiz",
-      "validationError": "Please fill in all questions, options, and mark at least one correct answer for each question.",
+      "validationError": "Please fill out all questions and options, and select at least one correct answer for each question.",
       "createSuccess": "Multiple choice quiz created successfully!",
       "createError": "Failed to create quiz. Please try again.",
       "multipleChoice": "Multiple Choice",
@@ -458,15 +724,15 @@
       "saving": "Saving draft...",
       "saveError": "Failed to save draft",
       "savedJustNow": "Draft saved just now",
-      "savedMinutesAgo": "Draft saved {{count}} minute ago",
+      "savedMinutesAgo": "Draft saved a minute ago",
       "savedMinutesAgo_plural": "Draft saved {{count}} minutes ago",
       "savedAt": "Draft saved at {{time}}",
-      "justNow": "just now",
-      "minutesAgo": "{{count}} minute ago",
+      "justNow": "Just now",
+      "minutesAgo": "A minute ago",
       "minutesAgo_plural": "{{count}} minutes ago",
-      "hoursAgo": "{{count}} hour ago",
+      "hoursAgo": "An hour ago",
       "hoursAgo_plural": "{{count}} hours ago",
-      "daysAgo": "{{count}} day ago",
+      "daysAgo": "A day ago",
       "daysAgo_plural": "{{count}} days ago",
       "status": "Draft Status",
       "unsavedChanges": "Unsaved changes",
@@ -476,22 +742,22 @@
       "saveNow": "Save Now",
       "clearDraft": "Clear Draft",
       "storageError": "Storage Error",
-      "quotaExceeded": "Storage space is full. Please clear some drafts or browser data.",
+      "quotaExceeded": "Storage quota exceeded. Please clear some drafts or browser data.",
       "loadError": "Failed to load saved draft",
       "initError": "Failed to initialize draft system",
       "unknownError": "An unknown error occurred"
     }
   },
-
   "lessonDetails": {
-    "notFound": "Lesson not found",
+    "notFound": "Lesson Not Found",
     "error": "Error loading lesson",
     "errorHelp": "Please try refreshing the page or contact support if the problem persists.",
+    "enrollmentRequired": "This lesson requires enrollment. Please enroll in the course to access this content.",
     "empty": "No lesson data available",
     "emptyHelp": "This lesson may not be available or may have been removed.",
     "noMedia": "No media available for this lesson",
-    "videoPlayer": "Video player",
-    "audioPlayer": "Audio player",
+    "videoPlayer": "Video Player",
+    "audioPlayer": "Audio Player",
     "video": "Video",
     "audio": "Audio",
     "noContent": "No content available for this lesson",
@@ -499,7 +765,7 @@
     "objectives": "Learning Objectives",
     "noObjectives": "No learning objectives available",
     "progress": "Your Progress",
-    "progressBar": "Progress bar",
+    "progressBar": "Progress Bar",
     "noProgress": "No progress data available",
     "markComplete": "Mark as Complete",
     "completed": "Completed",
@@ -509,18 +775,18 @@
     "startOver": "Start Over",
     "resume": "Resume",
     "quizPaused": "Quiz Paused",
-    "pauseMessage": "Quiz is paused. Click the resume button to return.",
+    "pauseMessage": "The quiz is paused. Click the resume button to return.",
     "taskNotFound": "Task not found",
     "noQuestions": "No questions available",
     "thirtySecondsWarning": "Only 30 seconds remaining!",
-    "fillInBlanks": "Fill in the blanks",
-    "multipleChoice": "Multiple choice",
-    "trueFalse": "True or false",
-    "shortAnswer": "Short answer",
+    "fillInBlanks": "Fill in the Blanks",
+    "multipleChoice": "Multiple Choice",
+    "trueFalse": "True or False",
+    "shortAnswer": "Short Answer",
     "matching": "Matching",
     "ordering": "Ordering",
-    "dragAndDrop": "Drag and drop",
-    "taskType": "Task type",
+    "dragAndDrop": "Drag and Drop",
+    "taskType": "Task Type",
     "startQuiz": "Start Quiz",
     "retake": "Retake",
     "needMorePractice": "Need more practice",
@@ -551,7 +817,7 @@
     "createModuleError": "Failed to create module",
     "selectLessonFirst": "Please select a lesson first",
     "createTaskError": "Failed to create task",
-    "selectTaskFirst": "Please select a task",
+    "selectTaskFirst": "Please select a task first",
     "updateTaskError": "Failed to update task",
     "deleteLessonError": "Failed to delete lesson. Please try again.",
     "backToCourses": "Back to Courses",
@@ -561,9 +827,9 @@
     "analytics": "Analytics",
     "createNewModule": "Create New Module",
     "noModulesYet": "No modules yet",
-    "createFirstModule": "Create First Module",
-    "selectModule": "Select Module",
-    "selectLesson": "Select Lesson",
+    "createFirstModule": "Create the first module",
+    "selectModule": "Select a module",
+    "selectLesson": "Select a lesson",
     "tasksForLesson": "Tasks ({{count}} for this lesson)",
     "createTask": "Create Task",
     "progress": "Progress",
@@ -624,33 +890,261 @@
     "share": {
       "title": "Share Course",
       "description": "Share this course with others via email",
-      "emailLabel": "Email Address",
-      "button": "Send Invitation"
+      "emailLabel": "Email address",
+      "button": "Send Invite"
     }
   },
   "createLessonForm": {
     "lessonTitleLabel": "Lesson Title",
     "descriptionLabel": "Description",
-    "durationLabel": "Duration (minutes)",
+    "durationLabel": "Duration (in minutes)",
     "orderLabel": "Order",
-    "lessonSequenceInCourse": "Lesson sequence in course",
+    "lessonSequenceInCourse": "Lesson sequence in the course",
     "vocabularyLabel": "Vocabulary Words",
-    "addVocabularyWordPlaceholder": "Add vocabulary word",
+    "addVocabularyWordPlaceholder": "Add a vocabulary word",
     "addButton": "Add",
     "grammarFocusLabel": "Grammar Focus",
-    "addGrammarPointPlaceholder": "Add grammar point",
+    "addGrammarPointPlaceholder": "Add a grammar point",
     "skillsLabel": "Skills",
-    "addSkillPlaceholder": "Add skill",
+    "addSkillPlaceholder": "Add a skill",
     "assessmentLabel": "Assessment",
     "keyActivitiesLabel": "Key Activities",
-    "addActivityPlaceholder": "Add activity"
+    "addActivityPlaceholder": "Add an activity",
+    "contentLabel": "Lesson Content",
+    "learningObjectivesLabel": "Learning Objectives",
+    "addLearningObjectivePlaceholder": "Add a learning objective",
+    "resourcesLabel": "Resources",
+    "addResourcePlaceholder": "Add a resource",
+    "addResourceUrlPlaceholder": "Resource URL",
+    "videoLabel": "Video",
+    "uploadVideoButton": "Upload Video",
+    "audioLabel": "Audio",
+    "uploadAudioButton": "Upload Audio",
+    "imageLabel": "Image",
+    "uploadImageButton": "Upload Image",
+    "courseMaterialsLabel": "Course Materials",
+    "uploadPdfMaterialsButton": "Upload PDF Materials",
+    "uploadedMaterialsLabel": "Uploaded Materials",
+    "minutes": "minutes",
+    "lessonRequirementsTitle": "Lesson Completion Requirements",
+    "enableRequirements": "Enable completion requirements",
+    "requiredTasksLabel": "Required Tasks",
+    "addTaskPlaceholder": "Add a required task",
+    "requiredContentLabel": "Required Content",
+    "addContentPlaceholder": "Add required content",
+    "completionOptionsLabel": "Completion Options",
+    "requireVideoCompletion": "Require video completion",
+    "requireAudioCompletion": "Require audio completion",
+    "requireReadingCompletion": "Require reading completion",
+    "requireTaskCompletion": "Require task completion",
+    "minimumScoreLabel": "Minimum Score (%)",
+    "requiredTimeSpentLabel": "Required Time Spent (minutes)",
+    "titleRequired": "Title is required",
+    "descriptionRequired": "Description is required",
+    "durationRequired": "Duration is required",
+    "contentRequired": "Content is required",
+    "atLeastOneObjectiveRequired": "At least one learning objective is required",
+    "emptyObjectivesNotAllowed": "Empty objectives are not allowed",
+    "atLeastOneRequirementRequired": "At least one requirement must be enabled",
+    "courseIdRequired": "Course ID is required",
+    "errorSaving": "Error saving lesson",
+    "createLesson": "Create Lesson",
+    "updateLesson": "Update Lesson",
+    "createNewLesson": "Create New Lesson",
+    "editLesson": "Edit Lesson",
+    "saving": "Saving...",
+    "next": "Next",
+    "back": "Back"
+  },
+  "courseDialog": {
+    "title": "Course Details",
+    "createTitle": "Create New Course",
+    "editTitle": "Edit Course",
+    "basicInfo": "Basic Info",
+    "titlePlaceholder": "Enter course title",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter course description",
+    "category": "Category",
+    "categoryPlaceholder": "Select a category",
+    "level": "Level",
+    "levelPlaceholder": "Select a level",
+    "price": "Price",
+    "pricePlaceholder": "Enter price",
+    "duration": "Duration",
+    "durationPlaceholder": "Enter duration in hours",
+    "image": "Course Image",
+    "imagePlaceholder": "Upload course image",
+    "status": "Status",
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived",
+    "steps": {
+      "basicInfo": "Basic Info",
+      "content": "Content",
+      "pricing": "Pricing",
+      "publishing": "Publishing"
+    },
+    "titles": {
+      "createNewCourse": "Create New Course",
+      "editCourse": "Edit Course"
+    },
+    "fields": {
+      "courseTitle": "Course Title",
+      "shortDescription": "Short Description",
+      "fullDescription": "Full Description",
+      "category": "Category",
+      "level": "Level",
+      "instructorName": "Instructor Name",
+      "instructorBio": "Instructor Bio",
+      "courseDuration": "Course Duration (in hours)",
+      "maximumStudents": "Maximum Students",
+      "totalLessons": "Total Lessons",
+      "totalQuizzes": "Total Quizzes",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "courseFormat": "Course Format",
+      "schedule": "Schedule",
+      "price": "Price",
+      "discount": "Discount (%)",
+      "earlyBirdPrice": "Early Bird Price",
+      "earlyBirdEndDate": "Early Bird End Date",
+      "discountEndDate": "Discount End Date",
+      "pricingModel": "Pricing Model",
+      "status": "Status",
+      "seoTitle": "SEO Title",
+      "metaDescription": "Meta Description",
+      "language": "Course Language",
+      "featureThisCourse": "Feature this course",
+      "includeCertificate": "Include certificate",
+      "certificateTemplate": "Certificate Template",
+      "accessDuration": "Access Duration"
+    },
+    "helpText": {
+      "shortDescription": "A brief summary of your course (max 150 characters)",
+      "seoTitle": "A title for search engines (max 60 characters)",
+      "metaDescription": "A description for search engines (max 160 characters)"
+    },
+    "categories": {
+      "grammar": "Grammar",
+      "vocabulary": "Vocabulary",
+      "pronunciation": "Pronunciation",
+      "conversation": "Conversation",
+      "writing": "Writing",
+      "reading": "Reading",
+      "listening": "Listening",
+      "business": "Business English",
+      "exam": "Exam Preparation"
+    },
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "actions": {
+      "save": "Save Course",
+      "cancel": "Cancel",
+      "delete": "Delete Course",
+      "publish": "Publish Course",
+      "unpublish": "Unpublish Course",
+      "uploadThumbnail": "Upload Thumbnail",
+      "uploadIntroVideo": "Upload Intro Video",
+      "back": "Back",
+      "next": "Next",
+      "add": "Add",
+      "createCourse": "Create Course",
+      "saving": "Saving...",
+      "view": "View"
+    },
+    "sections": {
+      "prerequisites": "Prerequisites",
+      "learningObjectives": "Learning Objectives",
+      "courseTags": "Course Tags"
+    },
+    "placeholders": {
+      "addPrerequisite": "Add a prerequisite...",
+      "addLearningObjective": "Add a learning objective...",
+      "addTag": "Add a tag...",
+      "scheduleExample": "e.g., Mon & Wed 7:00 PM - 8:30 PM"
+    },
+    "formats": {
+      "selfPaced": "Self-Paced",
+      "scheduled": "Scheduled"
+    },
+    "pricingModels": {
+      "free": "Free",
+      "oneTime": "One-Time",
+      "subscription": "Subscription"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "languages": {
+      "english": "English",
+      "spanish": "Spanish",
+      "french": "French",
+      "german": "German"
+    },
+    "certificateTemplates": {
+      "standard": "Standard",
+      "premium": "Premium",
+      "custom": "Custom"
+    },
+    "accessDurations": {
+      "lifetime": "Lifetime Access",
+      "sixMonths": "6 Months",
+      "oneYear": "1 Year",
+      "twoYears": "2 Years"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required",
+      "categoryRequired": "Category is required",
+      "levelRequired": "Level is required",
+      "priceRequired": "Price is required",
+      "durationRequired": "Duration is required",
+      "prerequisitesFilled": "All prerequisites must be filled",
+      "objectivesFilled": "All objectives must be filled",
+      "discountRange": "Discount must be between 0 and 100",
+      "statusRequired": "Status is required"
+    },
+    "confirm": {
+      "unsavedChanges": "You have unsaved changes. Do you want to save as a draft?"
+    },
+    "preview": {
+      "courseTitle": "Course Title Preview",
+      "courseDescription": "The course description will appear here...",
+      "level": "Level",
+      "category": "Category"
+    },
+    "media": {
+      "currentThumbnail": "Current thumbnail uploaded",
+      "currentIntroVideo": "Current intro video uploaded",
+      "viewThumbnail": "View Thumbnail",
+      "viewIntroVideo": "View Intro Video"
+    },
+    "success": {
+      "created": "Course created successfully",
+      "updated": "Course updated successfully",
+      "deleted": "Course deleted successfully",
+      "published": "Course published successfully",
+      "unpublished": "Course unpublished successfully"
+    },
+    "error": {
+      "create": "Failed to create course",
+      "update": "Failed to update course",
+      "delete": "Failed to delete course",
+      "publish": "Failed to publish course",
+      "unpublish": "Failed to unpublish course"
+    }
   },
   "lessonManagement": {
     "searchLessons": "Search lessons...",
     "filter": "Filter",
     "sort": "Sort",
     "status": {
-      "all": "All Status",
+      "all": "All Statuses",
       "published": "Published",
       "draft": "Draft",
       "archived": "Archived"
@@ -676,7 +1170,7 @@
       "delete": "Delete",
       "more": "More",
       "publish": "Publish",
-      "draft": "Mark as Draft",
+      "draft": "Set as Draft",
       "archive": "Archive"
     }
   },
@@ -722,11 +1216,1828 @@
     "contactUs": "Contact Us",
     "help": "Help",
     "helpCenter": "Help Center",
-    "exploreCourses": "Explore Courses"
+    "exploreCourses": "Explore Courses",
+    "sessions": "Sessions",
+    "sessionManagement": "Private Session Management",
+    "instructors": "Instructors",
+    "instructorManagement": "Manage Instructor Roles & Performance",
+    "bookSession": "Book a Session",
+    "bookPrivateSession": "Book a Private Session"
+  },
+  "dashboard": {
+    "adminTitle": "Admin Dashboard",
+    "loadingSteps": [
+      "Initializing dashboard...",
+      "Loading user statistics...",
+      "Fetching course data...",
+      "Loading enrollment information...",
+      "Setting up analytics...",
+      "Finalizing dashboard..."
+    ],
+    "menuItems": {
+      "dashboard": "Dashboard",
+      "userManagement": "User Management",
+      "courseManagement": "Course Management",
+      "analytics": "Analytics",
+      "security": "Security",
+      "settings": "Settings"
+    },
+    "stats": {
+      "totalStudents": "Total Students",
+      "activeCourses": "Active Courses",
+      "pendingTasks": "Pending Tasks",
+      "completionRate": "Completion Rate",
+      "registeredStudents": "Registered Students",
+      "currentlyRunning": "Currently Running",
+      "awaitingCompletion": "Awaiting Completion",
+      "overallSuccessRate": "Overall Success Rate"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "courses": "Courses",
+      "students": "Students",
+      "enrollments": "Enrollments",
+      "analytics": "Analytics",
+      "contentManagement": "Content Management"
+    },
+    "sections": {
+      "currentCourseProgress": "Current Course Progress",
+      "recentActivity": "Recent Activity",
+      "studentPerformanceAnalytics": "Student Performance Analytics",
+      "enrollmentManagement": "Enrollment Management",
+      "analyticsReports": "Analytics & Reports"
+    },
+    "actions": {
+      "retry": "Retry",
+      "reloadDashboard": "Reload Dashboard",
+      "refreshingData": "Refreshing data..."
+    },
+    "errors": {
+      "failedToLoadData": "Failed to load data. Please try again.",
+      "errorLoadingData": "Error loading data"
+    },
+    "loading": {
+      "noCoursesFound": "No courses found.",
+      "viewAllCourses": "View all courses"
+    },
+    "time": {
+      "day": "day",
+      "days": "days",
+      "hour": "hour",
+      "hours": "hours",
+      "minute": "minute",
+      "minutes": "minutes",
+      "ago": "ago",
+      "justNow": "Just now"
+    }
+  },
+  "student": {
+    "dashboard": {
+      "title": "Student Dashboard",
+      "welcome": "Welcome back, {{name}}!",
+      "loading": {
+        "dashboard": "Setting up your personalized dashboard...",
+        "components": "Loading dashboard components...",
+        "skeleton": "Loading content...",
+        "progress": "Loading your progress...",
+        "courses": "Loading your courses...",
+        "vocabulary": "Loading vocabulary data...",
+        "activities": "Loading recent activities..."
+      },
+      "errors": {
+        "noUserData": "No user data found.",
+        "loadingError": "Failed to load dashboard data",
+        "permissionDenied": "You do not have permission to access this data",
+        "serviceUnavailable": "Service is temporarily unavailable. Please try again later"
+      },
+      "profile": {
+        "user": "Student",
+        "courses": "Courses",
+        "streak": "Streak",
+        "bestStreak": "Best",
+        "points": "Points",
+        "todayMinutes": "Today",
+        "totalMinutes": "Total"
+      },
+      "progress": {
+        "title": "Daily Learning Progress",
+        "todayProgress": "Today's Progress",
+        "studyTime": "Study Time",
+        "lessonsCompleted": "Lessons Completed",
+        "vocabularyWords": "Vocabulary Words",
+        "pronunciationPractice": "Pronunciation Practice",
+        "complete": "Complete",
+        "completed": "Completed",
+        "minutes": "m",
+        "hours": "h",
+        "lessons": "lessons",
+        "words": "words",
+        "exercises": "exercises",
+        "activeGoals": "Active Goals"
+      },
+      "courses": {
+        "title": "My Courses",
+        "noCourses": "You haven't enrolled in any courses yet",
+        "browseCourses": "Browse Courses",
+        "completed": "Completed",
+        "continue": "Continue",
+        "start": "Start",
+        "review": "Review",
+        "viewAll": "View all"
+      },
+      "vocabulary": {
+        "title": "Vocabulary Progress",
+        "totalWords": "Total Words",
+        "mastered": "Mastered",
+        "todayWords": "Today's Words",
+        "streakDays": "Streak Days",
+        "masteryProgress": "Mastery Progress",
+        "startReview": "Start Review",
+        "viewAll": "View all vocabulary",
+        "dueForReview": "Due for Review",
+        "noReviewNeeded": "No review needed",
+        "weeklyGoal": "Weekly Goal",
+        "words": "words",
+        "accuracy": "Accuracy",
+        "nextReview": "Next Review",
+        "now": "Now",
+        "tomorrow": "Tomorrow",
+        "reviewPrompt": "You have {{count}} {{item}} due for review. Regular review sessions help reinforce your learning.",
+        "reviewItem": "item for review",
+        "lessonVocabulary": "Lesson Vocabulary",
+        "wordsFound": "word found",
+        "wordsNotFound": "word not found",
+        "wordsProcessed": "words",
+        "viewVocabulary": "View Vocabulary"
+      },
+      "activities": {
+        "title": "Recent Activities",
+        "noActivities": "No recent activities to show",
+        "startLearning": "Start learning to see your progress here!",
+        "viewAll": "View all activities",
+        "timeAgo": {
+          "justNow": "Just now",
+          "minutesAgo": "A minute ago",
+          "minutesAgo_plural": "{{count}} minutes ago",
+          "hoursAgo": "An hour ago",
+          "hoursAgo_plural": "{{count}} hours ago",
+          "daysAgo": "A day ago",
+          "daysAgo_plural": "{{count}} days ago"
+        }
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "pinnedActions": "Pinned Actions",
+        "totalActions": "Total Actions",
+        "editProfile": {
+          "name": "Edit Profile",
+          "tooltip": "Edit your profile information"
+        },
+        "settings": {
+          "name": "Settings",
+          "tooltip": "Go to settings"
+        },
+        "myCourses": {
+          "name": "My Courses",
+          "tooltip": "View your enrolled courses"
+        },
+        "myAchievements": {
+          "name": "My Achievements",
+          "tooltip": "View your achievements"
+        },
+        "myVocabulary": {
+          "name": "My Vocabulary",
+          "tooltip": "Review your vocabulary"
+        },
+        "logout": {
+          "name": "Logout",
+          "tooltip": "Log out of your account"
+        },
+        "pinToFavorites": "Pin to Favorites",
+        "unpinFromFavorites": "Unpin from Favorites",
+        "pinAction": "Pin {{action}}",
+        "unpinAction": "Unpin {{action}}"
+      },
+      "lessonCompletion": {
+        "checking": "Checking lesson progress",
+        "completed": "Completed",
+        "tasksPassed": "task passed",
+        "progress": "Progress",
+        "totalTasks": "Total Tasks",
+        "attempted": "Attempted",
+        "passed": "Passed",
+        "completeLesson": "Complete Lesson",
+        "completing": "Completing...",
+        "refresh": "Refresh",
+        "requirementsNotMet": "Complete and pass {{required}} tasks to finish this lesson ({{passed}} passed)"
+      },
+      "accessibility": {
+        "skipToMain": "Skip to main content",
+        "statusUpdates": "Status updates",
+        "importantAnnouncements": "Important announcements",
+        "dashboardUpdating": "Dashboard is updating...",
+        "editProfile": "Edit Profile"
+      },
+      "constants": {
+        "quickActions": {
+          "editProfile": {
+            "name": "Edit Profile",
+            "tooltip": "Edit your profile information",
+            "ariaLabel": "Edit Profile"
+          },
+          "settings": {
+            "name": "Settings",
+            "tooltip": "Go to settings",
+            "ariaLabel": "Settings",
+            "route": "/settings"
+          },
+          "myCourses": {
+            "name": "My Courses",
+            "tooltip": "View your enrolled courses",
+            "ariaLabel": "My Courses",
+            "route": "/student/courses"
+          },
+          "myAchievements": {
+            "name": "My Achievements",
+            "tooltip": "View your achievements",
+            "ariaLabel": "My Achievements",
+            "route": "/achievements"
+          },
+          "myVocabulary": {
+            "name": "My Vocabulary",
+            "tooltip": "Review your vocabulary",
+            "ariaLabel": "My Vocabulary",
+            "route": "/student/vocabulary"
+          },
+          "logout": {
+            "name": "Logout",
+            "tooltip": "Log out of your account",
+            "ariaLabel": "Logout",
+            "color": "error"
+          }
+        },
+        "loading": {
+          "dashboard": "Loading dashboard...",
+          "components": "Loading components..."
+        },
+        "errors": {
+          "noUserData": "No user data found.",
+          "loadingError": "Failed to load dashboard data",
+          "permissionDenied": "You do not have permission to access this data",
+          "serviceUnavailable": "Service is temporarily unavailable. Please try again later"
+        },
+        "activityTypes": {
+          "vocabularyPractice": "vocabulary_practice",
+          "lessonCompleted": "lesson_completed",
+          "quizCompleted": "quiz_completed",
+          "achievementUnlocked": "achievement_unlocked"
+        },
+        "activityRoutes": {
+          "vocabularyPractice": "/student/vocabulary",
+          "lessonCompleted": "/student/courses",
+          "quizCompleted": "/student/courses",
+          "achievementUnlocked": "/student/achievements",
+          "activities": "/student/activities",
+          "default": "/student/dashboard"
+        }
+      }
+    },
+    "sessions": {
+      "days": {
+        "sunday": "Sunday",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday"
+      },
+      "availability": {
+        "title": "Manage Availability",
+        "manageTitle": "Manage Availability",
+        "conflictWarning": "Warning: You cannot select overlapping time slots. Please choose non-conflicting times.",
+        "recurringPattern": "Recurring Pattern",
+        "oneTime": "One-Time",
+        "weeklyRecurring": "Weekly Recurring",
+        "selectSlots": "Select available time slots for the week",
+        "selectedSlots": "Selected Slots",
+        "save": "Save Availability",
+        "clearWeek": "Clear Week",
+        "clearSelection": "Clear Selection",
+        "currentWeek": "Current Week's Availability",
+        "noAvailability": "No Availability",
+        "simpleDesc": "Select your available time slots. Click on time slots to toggle availability."
+      },
+      "calendar": {
+        "weeklySchedule": "Weekly Schedule",
+        "dailySchedule": "Daily Schedule",
+        "previousWeek": "Previous Week",
+        "nextWeek": "Next Week",
+        "backToWeek": "Back to Week",
+        "time": "Time",
+        "booked": "Booked",
+        "dayView": "Day",
+        "weekView": "Week",
+        "todaySchedule": "Today's Schedule",
+        "swipeHint": "Swipe left/right to navigate between days",
+        "noSlotsAvailable": "No slots available",
+        "noSlotsMessage": "No sessions scheduled for this day.",
+        "findNextAvailable": "Find Next Available",
+        "nextAvailable": "Next Available",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "tapToBook": "Tap to book this slot",
+        "alreadyBooked": "This slot is already booked",
+        "selected": "Selected",
+        "instructor": "Instructor",
+        "sessionType": "Session Type",
+        "status": "Status",
+        "book": "Book",
+        "quickBook": "Quick Book",
+        "noAvailableSlots": "No available slots for this date."
+      },
+      "timeSlots": {
+        "selectDate": "Select a date"
+      },
+      "datePicker": {
+        "selectDate": "Select a date",
+        "selected": "Selected"
+      },
+      "admin": {
+        "sessionTypeManagement": "Session Type Management",
+        "addSessionType": "Add Session Type",
+        "searchSessionTypes": "Search Private Sessions",
+        "sessionType": "Session Type",
+        "duration": "Duration",
+        "price": "Price",
+        "status": "Status",
+        "actions": "Actions",
+        "minutes": "minutes",
+        "active": "Active",
+        "inactive": "Inactive",
+        "noSessionTypesFound": "No private sessions found. Add private sessions to get started.",
+        "editSessionType": "Edit Session Type",
+        "addNewSessionType": "Add New Session Type",
+        "sessionTypeName": "Session Type Name",
+        "sessionTypeNameEn": "Session Type Name (English)",
+        "sessionTypeNameAr": "Session Type Name (Arabic)",
+        "durationMinutes": "Duration (in minutes)",
+        "priceLabel": "Price",
+        "currency": "Currency",
+        "description": "Description",
+        "descriptionEn": "Description (English)",
+        "descriptionAr": "Description (Arabic)",
+        "deactivate": "Deactivate",
+        "activate": "Activate",
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "createSessionType": "Create Session Type",
+        "noDescription": "No description provided",
+        "sessionTypeDescription": "Manage different types of private sessions offered by instructors. Define prices, durations, and availability for each session type."
+      },
+      "overview": {
+        "title": "Sessions Overview",
+        "subtitle": "Monitor and manage all private sessions",
+        "loading": "Loading session data...",
+        "errorLoading": "Error loading sessions overview",
+        "totalSessions": "Total Sessions",
+        "activeSessions": "Active Sessions",
+        "totalInstructors": "Total Instructors",
+        "revenue": "Revenue",
+        "export": "Export",
+        "allSessions": "All Sessions",
+        "pendingBookings": "Pending Bookings",
+        "issues": "Issues",
+        "status": "Status",
+        "allStatuses": "All Statuses",
+        "upcoming": "Upcoming",
+        "instructor": "Instructor",
+        "allInstructors": "All Instructors",
+        "session": "Session",
+        "dateTime": "Date & Time",
+        "students": "Students",
+        "actions": "Actions",
+        "viewDetails": "View Details",
+        "edit": "Edit",
+        "notify": "Notify Students",
+        "sessionDetails": "Session Details",
+        "sessionType": "Session Type"
+      },
+      "analytics": {
+        "title": "Sessions Analytics",
+        "loading": "Loading analytics data...",
+        "dateRange": "Date Range",
+        "last7Days": "Last 7 Days",
+        "last30Days": "Last 30 Days",
+        "last90Days": "Last 90 Days",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "thisYear": "This Year",
+        "export": "Export Report",
+        "totalSessions": "Total Sessions",
+        "completionRate": "Completion Rate",
+        "totalRevenue": "Total Revenue",
+        "cancellationRate": "Cancellation Rate",
+        "topInstructors": "Top Instructors",
+        "topSessionTypes": "Top Private Sessions",
+        "instructor": "Instructor",
+        "sessions": "Sessions",
+        "revenue": "Revenue",
+        "sessionType": "Session Type",
+        "count": "Count",
+        "percentage": "Percentage",
+        "instructorPerformance": "Instructor Performance",
+        "completed": "Completed"
+      },
+      "performance": {
+        "title": "Instructor Performance",
+        "loading": "Loading performance data...",
+        "timeRange": "Time Range",
+        "last7Days": "Last 7 Days",
+        "last30Days": "Last 30 Days",
+        "last90Days": "Last 90 Days",
+        "thisMonth": "This Month",
+        "thisYear": "This Year",
+        "totalSessions": "Total Sessions",
+        "revenue": "Revenue",
+        "completionRate": "Completion Rate",
+        "viewDetails": "View Details",
+        "rate": "Rate",
+        "ratings": "Ratings",
+        "performanceMetrics": "Performance Metrics",
+        "punctuality": "Punctuality",
+        "recentSessions": "Recent Sessions",
+        "date": "Date",
+        "type": "Type",
+        "status": "Status",
+        "rateInstructor": "Rate Instructor",
+        "rating": "Rating",
+        "comment": "Comment",
+        "commentPlaceholder": "Share your feedback about this instructor...",
+        "submitRating": "Submit Rating",
+        "noInstructors": "No instructors found",
+        "status": {
+          "excellent": "Excellent",
+          "good": "Good",
+          "fair": "Fair",
+          "needsImprovement": "Needs Improvement"
+        }
+      },
+      "disputes": {
+        "title": "Session Disputes",
+        "subtitle": "Manage and resolve session-related disputes",
+        "loading": "Loading disputes...",
+        "dispute": "Dispute",
+        "parties": "Parties",
+        "sessionDate": "Session Date",
+        "amount": "Amount",
+        "priority": "Priority",
+        "status": "Status",
+        "actions": "Actions",
+        "viewDetails": "View Details",
+        "disputeDetails": "Dispute Details",
+        "disputeInfo": "Dispute Information",
+        "sessionInfo": "Session Information",
+        "type": "Type",
+        "description": "Description",
+        "sessionType": "Session Type",
+        "student": "Student",
+        "instructor": "Instructor",
+        "reportedAt": "Reported At",
+        "resolution": "Resolution",
+        "resolutionType": "Resolution Type",
+        "resolutionNotes": "Resolution Notes",
+        "resolutionPlaceholder": "Describe the resolution and actions taken...",
+        "resolveDispute": "Resolve Dispute",
+        "resolvedTitle": "Dispute Resolved",
+        "resolvedBy": "Resolved by",
+        "resolvedAt": "Resolved at",
+        "noDisputes": "No disputes found",
+        "noDisputesDesc": "All sessions are running smoothly!",
+        "types": {
+          "no_show": "No-Show",
+          "quality_concern": "Quality Concern",
+          "refund_request": "Refund Request"
+        },
+        "statuses": {
+          "pending": "Pending",
+          "in_review": "In Review",
+          "resolved": "Resolved"
+        },
+        "priorities": {
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low"
+        },
+        "resolutionTypes": {
+          "full_refund": "Full Refund",
+          "partial_refund": "Partial Refund",
+          "reschedule": "Reschedule Session",
+          "no_action": "No Action Required",
+          "additional_session": "Additional Session"
+        }
+      },
+      "booking": {
+        "title": "Book a Private Session",
+        "subtitle": "Choose an instructor, date, and time for your private session.",
+        "pageDescription": "Choose from our qualified instructors and book a personalized English learning session that fits your schedule.",
+        "selectInstructor": "Select Instructor",
+        "selectSessionType": "Select Session Type",
+        "selectDateTime": "Select Date & Time",
+        "confirmBooking": "Confirm Booking",
+        "searchInstructors": "Search for instructors",
+        "resetFilters": "Reset Filters",
+        "noInstructorsFound": "No instructors found with the current filters",
+        "browseInstructors": "Browse Instructors",
+        "bookingProcess": "Booking Process",
+        "availableInstructors": "Available Instructors",
+        "viewAll": "View All",
+        "languageFilter": "Language",
+        "allLanguages": "All Languages",
+        "specialtyFilter": "Specialty",
+        "allSpecialties": "All Specialties",
+        "loading": "Loading instructors...",
+        "selectDate": "Select Date",
+        "availableTimeSlots": "Available Time Slots",
+        "noAvailableSlots": "No available slots for the selected date.",
+        "dateTime": "Date & Time",
+        "whatsappNumber": "WhatsApp Number",
+        "phoneNumber": "Phone Number",
+        "phoneHelperText": "We'll use this number to send WhatsApp notifications",
+        "guestNotice": "You can book as a guest! For a better experience and to track your bookings, consider signing up.",
+        "summary": "Summary",
+        "instructor": "Instructor",
+        "sessionType": "Session Type",
+        "date": "Date",
+        "time": "Time",
+        "price": "Price",
+        "back": "Back",
+        "next": "Next",
+        "confirmBookingButton": "Confirm Booking",
+        "bookingConfirmDialog": "Confirm Booking",
+        "bookingSuccessDialog": "Booking Successful",
+        "errorDialog": "Error",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "ok": "OK",
+        "book": "Book",
+        "stepInfo": "Step {{step}} of 4",
+        "step2Info": "Choose a session type",
+        "step3Info": "Choose a date and time",
+        "step4Info": "Confirm your booking",
+        "bookingSuccess": "Your booking has been successfully submitted! An admin will confirm via WhatsApp shortly.",
+        "phoneRequired": "Please provide your phone number for WhatsApp notifications",
+        "bookingError": "Error submitting booking: {{error}}",
+        "phoneNumberRequired": "Please provide your WhatsApp number",
+        "currency": "{{price}} {{currency}} / {{duration}} min",
+        "hourlyRate": "{{rate}} {{currency}} / hour",
+        "noDescription": "No description provided",
+        "active": "Active",
+        "booked": "Booked",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "upcomingSessions": "Upcoming Sessions",
+        "loadingSessions": "Loading sessions...",
+        "noUpcomingSessions": "No upcoming sessions available right now",
+        "viewAllInstructors": "View all instructors ({{count}})"
+      },
+      "dashboard": {
+        "title": "Instructor Dashboard",
+        "subtitle": "Manage your sessions and track your progress",
+        "totalSessions": "Total Sessions",
+        "upcomingSessions": "Upcoming Sessions",
+        "completedSessions": "Completed Sessions",
+        "thisWeekEarnings": "This Week's Earnings",
+        "upcoming": "Upcoming",
+        "today": "Today",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "tomorrow": "Tomorrow",
+        "thisWeek": "This Week",
+        "students": "students",
+        "bookedStudents": "Booked Students",
+        "unknownType": "Unknown Session Type",
+        "noSessions": "No sessions found",
+        "noSessionsDesc": "You don't have any sessions for this category yet",
+        "cancelSession": "Cancel Session",
+        "cancelSessionTitle": "Cancel Session",
+        "cancelSessionDesc": "Please provide a reason for cancelling this session. Students will be notified.",
+        "cancellationReason": "Cancellation Reason",
+        "confirmCancel": "Confirm Cancellation",
+        "errorLoading": "Error loading dashboard data",
+        "errorCancelling": "Error cancelling session",
+        "urgent": "Urgent",
+        "soon": "Soon",
+        "enrolledStudents": "Enrolled Students",
+        "noBookingsYet": "No bookings yet for this session",
+        "noUpcomingSessions": "No upcoming sessions",
+        "noUpcomingSessionsDesc": "You have no upcoming sessions scheduled"
+      },
+      "status": {
+        "scheduled": "Scheduled",
+        "active": "Active",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "history": {
+        "earningsOverview": "Earnings Overview",
+        "totalEarnings": "Total Earnings",
+        "thisMonthEarnings": "This Month",
+        "thisWeekEarnings": "This Week",
+        "completedSessions": "Completed Sessions",
+        "sessionHistory": "Session History",
+        "exportData": "Export Data",
+        "filters": "Filters",
+        "status": "Status",
+        "dateRange": "Date Range",
+        "sessionType": "Session Type",
+        "allStatuses": "All Statuses",
+        "allTime": "All Time",
+        "thisWeek": "This Week",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "last3Months": "Last 3 Months",
+        "allTypes": "All Types",
+        "date": "Date",
+        "time": "Time",
+        "students": "Students",
+        "earnings": "Earnings",
+        "actions": "Actions",
+        "viewDetails": "View Details",
+        "rowsPerPage": "Rows per page",
+        "noSessions": "No sessions found",
+        "noSessionsDesc": "There are no sessions matching your current filters"
+      },
+      "modification": {
+        "cancelSession": "Cancel Session",
+        "rescheduleSession": "Reschedule Session",
+        "editSession": "Edit Session",
+        "cancellationWarning": "This will cancel the session for {{count}} enrolled student(s). They will be notified automatically.",
+        "affectedStudents": "Affected Students",
+        "cancellationReason": "Cancellation Reason",
+        "cancellationReasonHelp": "Provide a reason for cancelling this session",
+        "cancellationReasonRequired": "Cancellation reason is required",
+        "sessionTiming": "Session Timing",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "capacity": "Capacity",
+        "maxStudents": "Max Students",
+        "currentBookings": "Current bookings: {{count}}",
+        "notes": "Session Notes",
+        "notesPlaceholder": "Add any special notes for this session...",
+        "sessionType": "Session Type",
+        "currentTime": "Current Time",
+        "editDetails": "Edit Details",
+        "reviewChanges": "Review Changes",
+        "validationErrors": "Please fix the following issues:",
+        "pastTimeError": "Session time cannot be in the past",
+        "timeOrderError": "Start time must be before end time",
+        "capacityError": "Cannot reduce capacity below current bookings ({{current}}/{{new}})",
+        "goBackToEdit": "Go Back to Edit",
+        "goBack": "Go Back",
+        "confirmCancellation": "Confirm Cancellation",
+        "saveChanges": "Save Changes",
+        "updateError": "Error updating session"
+      },
+      "dashboard": {
+        "manageTypes": "Manage Private Sessions",
+        "newSession": "New Session",
+        "activeTypes": "Active Types"
+      }
+    }
+  },
+  "admin": {
+    "sessions": {
+      "admin": {
+        "sessionTypeManagement": "Session Type Management",
+        "addSessionType": "Add Session Type",
+        "searchSessionTypes": "Search Private Sessions",
+        "sessionType": "Session Type",
+        "duration": "Duration",
+        "price": "Price",
+        "status": "Status",
+        "actions": "Actions",
+        "minutes": "minutes",
+        "active": "Active",
+        "inactive": "Inactive",
+        "noSessionTypesFound": "No private sessions found. Add private sessions to get started.",
+        "editSessionType": "Edit Session Type",
+        "addNewSessionType": "Add New Session Type",
+        "sessionTypeName": "Session Type Name",
+        "sessionTypeNameEn": "Session Type Name (English)",
+        "sessionTypeNameAr": "Session Type Name (Arabic)",
+        "durationMinutes": "Duration (in minutes)",
+        "priceLabel": "Price",
+        "currency": "Currency",
+        "description": "Description",
+        "descriptionEn": "Description (English)",
+        "descriptionAr": "Description (Arabic)",
+        "deactivate": "Deactivate",
+        "activate": "Activate",
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "createSessionType": "Create Session Type",
+        "noDescription": "No description provided",
+        "sessionTypeDescription": "Manage different types of private sessions offered by instructors. Define prices, durations, and availability for each session type."
+      }
+    },
+    "instructors": {
+      "title": "Instructor Management",
+      "subtitle": "Manage instructor roles, permissions, and performance metrics for private session bookings.",
+      "totalInstructors": "Total Instructors",
+      "activeInstructors": "Active Instructors",
+      "pendingSetup": "Pending Setup",
+      "totalUsers": "Total Users",
+      "roleManagement": "Role Management",
+      "performanceMetrics": "Performance Metrics",
+      "errorLoading": "Error loading instructor data",
+      "errorCreating": "Error creating instructor",
+      "errorUpdating": "Error updating instructor",
+      "errorDeleting": "Error removing instructor",
+      "errorRoleChange": "Error changing user role"
+    }
+  },
+  "privateSessions": {
+    "title": "Private Tutoring Sessions",
+    "subtitle": "Book personalized sessions with expert tutors in any subject",
+    "features": {
+      "oneOnOne": "One-on-One Sessions",
+      "oneOnOneDesc": "Personalized learning with dedicated instructor attention",
+      "flexible": "Flexible Scheduling",
+      "flexibleDesc": "Book sessions that fit your schedule",
+      "customized": "Customized Learning",
+      "customizedDesc": "Lessons designed based on your needs and goals",
+      "allSubjects": "All Subjects Covered",
+      "allSubjectsDesc": "Math, Physics, Chemistry, Coding, Languages, and more"
+    },
+    "stats": {
+      "sessions": "Completed Session",
+      "instructors": "Expert Instructors",
+      "tutors": "Expert Tutors",
+      "rating": "Average Rating"
+    },
+    "cta": {
+      "title": "Ready to start your learning journey?",
+      "description": "Choose from our qualified instructors and book your first session today.",
+      "bookNow": "Book a Session",
+      "viewInstructors": "View Instructors"
+    }
+  },
+  "topInstructors": {
+    "title": "Meet Our Expert Instructors",
+    "subtitle": "Learn from experienced, qualified instructors who are passionate about helping you succeed.",
+    "verified": "All instructors are certified and background-checked",
+    "specialties": "Specialties",
+    "subjects": "Subjects",
+    "languages": "Languages",
+    "experience": "Experience",
+    "hourlyRate": "Hourly Rate",
+    "rating": "Rating",
+    "reviews": "reviews",
+    "availableSlots": "available slot this week",
+    "noAvailableSlots": "No available slots this week",
+    "bookSession": "Book a Session",
+    "viewProfile": "View Profile",
+    "viewAll": "View all instructors",
+    "noInstructors": "No instructors are available at the moment",
+    "createSample": "Create sample instructor data to see how the instructors section works",
+    "loading": "Loading instructors...",
+    "error": "Error loading instructors",
+    "viewAndBook": "View & Book",
+    "noSlotsAvailable": "No available slots",
+    "newInstructor": "New Instructor",
+    "noDescription": "An experienced instructor ready to help you achieve your learning goals.",
+    "unknownInstructor": "Unknown Instructor",
+    "generalTutoring": "General Tutoring",
+    "defaultSubject": "English",
+    "weeklyAvailability": "This week availability",
+    "highAvailability": "High",
+    "mediumAvailability": "Medium",
+    "lowAvailability": "Limited",
+    "nextAvailable": "Next: {{time}}"
+  },
+  "instructors": {
+    "showcase": {
+      "title": "Meet Our Instructors",
+      "subtitle": "Browse our qualified instructors and find the perfect match for your learning needs. Each instructor brings unique expertise and teaching style to help you achieve your English learning goals.",
+      "search": "Search Instructors",
+      "searchPlaceholder": "Search by name, language, or specialty",
+      "searchTerm": "Search",
+      "language": "Language",
+      "allLanguages": "All Languages",
+      "specialty": "Specialty",
+      "allSpecialties": "All Specialties",
+      "reset": "Reset Filters",
+      "resetFilters": "Reset All Filters",
+      "loading": "Loading instructors...",
+      "error": "Error loading instructors",
+      "noInstructors": "No instructors found matching your criteria",
+      "tryDifferent": "Try adjusting your filters or search terms",
+      "resultsCount": "Showing {{count}} of {{total}} instructors",
+      "generalTutoring": "General Tutoring",
+      "defaultSubject": "English",
+      "newInstructor": "New Instructor",
+      "noDescription": "Experienced instructor ready to help you achieve your learning goals.",
+      "unknownInstructor": "Unknown Instructor"
+    }
+  },
+  "sessionTypes": {
+    "title": "Available Private Sessions",
+    "subtitle": "Choose from our diverse range of specialized tutoring sessions",
+    "duration": "Duration",
+    "price": "Price",
+    "minutes": "minutes",
+    "bookNow": "Book Now",
+    "viewDetails": "View Details",
+    "noSessionTypes": "No private sessions available",
+    "loading": "Loading private sessions...",
+    "error": "Error loading private sessions",
+    "popular": "Popular",
+    "new": "New",
+    "featured": "Featured",
+    "bestValue": "Best Value",
+    "recommended": "Recommended"
+  },
+  "rating": {
+    "clickToRate": "Click to Rate",
+    "loginRequired": "Please log in to rate this instructor",
+    "dialogTitle": "Rate this Instructor",
+    "howWasExperience": "How was your experience with this instructor?",
+    "selectRating": "Select a rating",
+    "terrible": "Terrible",
+    "bad": "Bad",
+    "poor": "Poor",
+    "fair": "Fair",
+    "average": "Average",
+    "good": "Good",
+    "veryGood": "Very Good",
+    "excellent": "Excellent",
+    "outstanding": "Outstanding",
+    "perfect": "Perfect",
+    "writeReview": "Write a review (optional)",
+    "reviewPlaceholder": "Share your experience to help other students...",
+    "ratingRequired": "Please select a rating",
+    "submitError": "Failed to submit rating. Please try again.",
+    "submitting": "Submitting...",
+    "submitRating": "Submit Rating"
+  },
+  "sessions": {
+    "shared": {
+      "sessionHistory": "Session History",
+      "noPastSessions": "No past sessions found.",
+      "date": "Date",
+      "time": "Time",
+      "instructor": "Instructor",
+      "sessionType": "Session Type",
+      "status": "Status",
+      "rating": "Rating",
+      "actions": "Actions",
+      "rateSession": "Rate Session",
+      "na": "N/A",
+      "rateYourSession": "Rate Your Session",
+      "yourRating": "Your rating:",
+      "yourReview": "Your Review",
+      "submitRating": "Submit Rating",
+      "cancel": "Cancel",
+      "selectSessionType": "Select Session Type",
+      "unnamedSessionType": "Unnamed Session Type",
+      "sessionCard": {
+        "full": "Full",
+        "minutes": "min",
+        "selected": "Selected",
+        "selectSession": "Select Session",
+        "notAvailable": "Not Available",
+        "session": "Session"
+      },
+      "dateTime": {
+        "selectDate": "Select a date",
+        "selected": "Selected"
+      },
+      "timeSlots": {
+        "selectDate": "Select a date",
+        "multiSelectHint": "Click multiple time slots to select them",
+        "selectedCount": "Selected: {{count}} time slot"
+      },
+      "booking": {
+        "confirmation": {
+          "title": "Booking Confirmation",
+          "thankYou": "Thank you for your booking!",
+          "details": "Booking Details",
+          "confirmationNumber": "Confirmation Number",
+          "nextSteps": "Next Steps",
+          "willContact": "We will contact you via WhatsApp to confirm your session.",
+          "prepareFor": "Please prepare for your session by having any required materials ready.",
+          "close": "Close",
+          "dateTime": "Date & Time",
+          "back": "Back"
+        }
+      }
+    },
+    "booking": {
+      "title": "Book a Private Session",
+      "subtitle": "Choose an instructor, date, and time for your private session.",
+      "pageDescription": "Choose from our qualified instructors and book a personalized learning session that fits your schedule.",
+      "tabs": {
+        "sessionTypes": "Session Types",
+        "instructors": "Instructors"
+      },
+      "search": {
+        "placeholder": "Search session types or instructors...",
+        "noResults": "No session types match your search",
+        "tryAdjusting": "Try adjusting your search terms",
+        "clearSearch": "Clear Search"
+      },
+      "sessionTypes": {
+        "noSessionTypes": "No session types available",
+        "instructorsHaventCreated": "Instructors haven't created any session types yet",
+        "unnamedSession": "Unnamed Session",
+        "professionalSession": "Professional Session",
+        "bookNow": "Book Now",
+        "min": "min"
+      },
+      "instructors": {
+        "sessionTypesCount": "session types"
+      },
+      "dialog": {
+        "title": "Book a session:",
+        "sessionDetails": "Session Details",
+        "duration": "Duration",
+        "price": "Price",
+        "selectDate": "Select Date",
+        "selectTime": "Select Time",
+        "contactInformation": "Contact Information",
+        "fullName": "Full Name",
+        "email": "Email",
+        "whatsappPhone": "WhatsApp Phone Number",
+        "phoneHelper": "We will contact you via WhatsApp to confirm your booking",
+        "phonePlaceholder": "+218 91 234 5678",
+        "bookingSummary": "Booking Summary",
+        "dateTimeLabel": "Date & Time:",
+        "contactLabel": "Contact:",
+        "totalLabel": "Total:",
+        "confirmBooking": "Confirm Booking",
+        "submitting": "Submitting...",
+        "session": "Session"
+      },
+      "validation": {
+        "dateTimeRequired": "Please select a date and time",
+        "nameRequired": "Name is required",
+        "emailRequired": "Email is required",
+        "phoneRequired": "Phone is required"
+      },
+      "messages": {
+        "bookingSubmitted": "Booking submitted! We will contact you via WhatsApp.",
+        "errorSubmitting": "Error submitting booking"
+      },
+      "quickDialog": {
+        "selectSession": "Select a session type",
+        "loadingSessions": "Loading available sessions..."
+      },
+      "terms": {
+        "modal": {
+          "title": "Private Session Terms of Service"
+        },
+        "sessions": {
+          "terms": {
+            "agreeTo": "I agree to the",
+            "termsOfService": "Terms of Service",
+            "and": "and",
+            "privacyPolicy": "Privacy Policy",
+            "required": "You must agree to the terms to continue."
+          }
+        }
+      },
+      "availability": {
+        "high": "High availability",
+        "medium": "Limited slots", 
+        "low": "Few slots left",
+        "none": "Fully booked",
+        "unknown": "Check availability",
+        "thisWeek": "This week",
+        "slots": "slots",
+        "slotsAvailable": "{{available}} of {{total}} slots available",
+        "nextSlot": "Next: {{time}}",
+        "nextAvailable": "Next available: {{time}}"
+      },
+      "timeSlots": {
+        "selectDate": "Select a date",
+        "multiSelectHint": "Click multiple time slots to select them", 
+        "selectedCount": "Selected: {{count}} time slots",
+        "availableSlots": "{{count}} available slots",
+        "available": "Available",
+        "booked": "Already booked", 
+        "unavailable": "Not available",
+        "legend": {
+          "available": "Available",
+          "booked": "Booked",
+          "unavailable": "Unavailable"
+        }
+      },
+      "shared": {
+        "instructor": "Instructor",
+        "date": "Date"
+      }
+    },
+    "instructor": {
+      "dashboard": {
+        "title": "Instructor Dashboard",
+        "subtitle": "Manage your sessions and track your progress",
+        "loading": "Loading dashboard data...",
+        "loadingData": "Loading dashboard data...",
+        "errorLoading": "Error loading dashboard data",
+        "authenticationTimeout": "Authentication timed out. Please refresh the page.",
+        "userNotAuthenticated": "User not authenticated. Please log in as an instructor.",
+        "availability": {
+          "title": "Manage Availability",
+          "subtitle": "Set your available time slots so students can book sessions with you."
+        },
+        "stats": {
+          "totalSessions": "Total Sessions",
+          "upcomingSessions": "Upcoming Sessions",
+          "completedSessions": "Completed Sessions",
+          "thisWeekEarnings": "This Week's Earnings",
+          "activeSessionTypes": "Active Types",
+          "thisMonthEarnings": "This Month's Earnings",
+          "averageRating": "Average Rating",
+          "responseTime": "Response Time",
+          "averageSessionPrice": "Avg. Session Price",
+          "successRate": "Success Rate",
+          "totalBookings": "Total Bookings"
+        },
+        "tabs": {
+          "upcoming": "Upcoming",
+          "today": "Today",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        },
+        "timeframes": {
+          "tomorrow": "Tomorrow",
+          "thisWeek": "This Week"
+        },
+        "sessions": {
+          "students": "students",
+          "bookedStudents": "Booked Students",
+          "unknownType": "Unknown Session Type",
+          "noSessions": "No sessions found",
+          "noSessionsDesc": "You don't have any sessions for this category yet",
+          "noUpcomingSessions": "No upcoming sessions",
+          "noUpcomingDesc": "You have no upcoming sessions scheduled",
+          "urgentLabel": "Urgent",
+          "soonLabel": "Soon",
+          "enrolledStudents": "Enrolled Students",
+          "noBookingsYet": "No bookings yet for this session",
+          "bookings": "Bookings",
+          "studentName": "Student Name",
+          "phoneNumber": "Phone Number",
+          "sessionNotes": "Session Notes"
+        },
+        "actions": {
+          "cancelSession": "Cancel Session",
+          "manageTypes": "Manage Session Types",
+          "newSession": "New Session",
+          "activeTypes": "Active Types",
+          "addSession": "Add New Session",
+          "editSession": "Edit Session",
+          "viewDetails": "View Details",
+          "refresh": "Refresh",
+          "export": "Export Data",
+          "manageAvailability": "Manage Availability"
+        },
+        "cancelDialog": {
+          "title": "Cancel Session",
+          "description": "Please provide a reason for cancelling this session. Students will be notified.",
+          "reasonLabel": "Cancellation Reason",
+          "confirmCancel": "Confirm Cancellation",
+          "errorCancelling": "Error cancelling session"
+        },
+        "form": {
+          "addSession": "Add New Session",
+          "editSession": "Edit Session",
+          "sessionType": "Session Type",
+          "selectSessionType": "Select Session Type",
+          "title": "Session Title",
+          "titleEn": "Session Title (English)",
+          "titleAr": "Session Title (Arabic)",
+          "description": "Description",
+          "descriptionEn": "Description (English)",
+          "descriptionAr": "Description (Arabic)",
+          "date": "Date",
+          "startTime": "Start Time",
+          "endTime": "End Time",
+          "timeZone": "Time Zone",
+          "maxStudents": "Max Students",
+          "price": "Price",
+          "currency": "Currency",
+          "notes": "Instructor Notes",
+          "save": "Save Session",
+          "cancel": "Cancel",
+          "validation": {
+            "titleRequired": "Session title is required",
+            "sessionTypeRequired": "Session type is required",
+            "dateRequired": "Date is required",
+            "startTimeRequired": "Start time is required",
+            "endTimeRequired": "End time is required",
+            "maxStudentsRequired": "Max students must be at least 1",
+            "priceRequired": "Price must be a positive number",
+            "invalidTimeRange": "End time must be after start time"
+          }
+        }
+      },
+      "availability": {
+        "title": "Manage Availability",
+        "manageTitle": "Manage Availability",
+        "conflictWarning": "Warning: Some selected time slots conflict with existing availability.",
+        "noSlotsSelected": "Please select at least one time slot",
+        "saveError": "Failed to save availability. Please try again.",
+        "clearError": "Failed to clear availability. Please try again.",
+        "recurringSlot": "Recurring Availability Pattern",
+        "availabilitySlot": "Availability",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "pattern": "Pattern",
+        "date": "Date",
+        "time": "Time",
+        "patterns": {
+          "recurring": "Recurring Pattern",
+          "oneTime": "One-Time",
+          "weeklyRecurring": "Weekly Recurring"
+        },
+        "recurringPattern": "Recurring Pattern",
+        "oneTime": "One-Time",
+        "weeklyRecurring": "Weekly Recurring",
+        "selectSlots": "Select available time slots for the week",
+        "save": "Save Availability",
+        "clearWeek": "Clear Week",
+        "currentWeek": "Current Week's Availability",
+        "noAvailability": "No Availability"
+      },
+      "sessionTypes": {
+        "management": "Session Type Management",
+        "add": "Add Session Type",
+        "search": "Search Session Types",
+        "table": {
+          "sessionType": "Session Type",
+          "duration": "Duration",
+          "price": "Price",
+          "status": "Status",
+          "actions": "Actions",
+          "minutes": "minutes",
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "noSessionTypesFound": "No session types found. Add session types to get started.",
+        "form": {
+          "edit": "Edit Session Type",
+          "add": "Add New Session Type",
+          "nameLabel": "Session Type Name",
+          "nameEn": "Session Type Name (English)",
+          "nameAr": "Session Type Name (Arabic)",
+          "duration": "Duration (in minutes)",
+          "price": "Price",
+          "currency": "Currency",
+          "description": "Description",
+          "descriptionEn": "Description (English)",
+          "descriptionAr": "Description (Arabic)",
+          "noDescription": "No description provided",
+          "nameRequired": "Session type name is required in at least one language",
+          "descriptionRequired": "Description is recommended in at least one language",
+          "durationRequired": "Duration must be between 15 and 180 minutes",
+          "priceRequired": "Price must be a positive number",
+          "actions": {
+            "deactivate": "Deactivate",
+            "activate": "Activate",
+            "cancel": "Cancel",
+            "saveChanges": "Save Changes",
+            "create": "Create Session Type"
+          }
+        },
+        "description": "Manage different types of private sessions offered by instructors. Define prices, durations, and availability for each session type."
+      },
+      "availability": {
+        "title": "Manage Availability",
+        "recurring": "Recurring",
+        "recurringAvailability": "Recurring Availability",
+        "recurringPattern": "Recurrence Pattern",
+        "patterns": {
+          "none": "None",
+          "daily": "Daily",
+          "weekly": "Weekly",
+          "monthly": "Monthly"
+        },
+        "dailyRepeat": "Your availability will repeat every day",
+        "weeklyRepeat": "Your availability will repeat every week",
+        "monthlyRepeat": "Your availability will repeat every month",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "add": "Add",
+        "edit": "Edit",
+        "update": "Update",
+        "previousWeek": "Previous Week",
+        "nextWeek": "Next Week"
+      },
+      "calendar": {
+        "weeklySchedule": "Weekly Schedule",
+        "dailySchedule": "Daily Schedule",
+        "navigation": {
+          "previousWeek": "Previous Week",
+          "nextWeek": "Next Week",
+          "backToWeek": "Back to Week"
+        },
+        "views": {
+          "day": "Day",
+          "week": "Week"
+        },
+        "schedule": {
+          "today": "Today's Schedule",
+          "time": "Time",
+          "booked": "Booked",
+          "available": "Available",
+          "unavailable": "Unavailable"
+        },
+        "interactions": {
+          "swipeHint": "Swipe left/right to navigate between days",
+          "tapToBook": "Tap to book this slot",
+          "alreadyBooked": "This slot is already booked",
+          "selected": "Selected"
+        },
+        "slots": {
+          "noSlotsAvailable": "No slots available",
+          "noSlotsMessage": "No sessions scheduled for this day.",
+          "findNextAvailable": "Find Next Available",
+          "nextAvailable": "Next Available",
+          "noAvailableSlots": "No available slots for this date."
+        },
+        "booking": {
+          "instructor": "Instructor",
+          "sessionType": "Session Type",
+          "status": "Status",
+          "book": "Book",
+          "quickBook": "Quick Book"
+        }
+      }
+    },
+    "datePicker": {
+      "selectDate": "Select Date",
+      "selected": "Selected"
+    },
+    "admin": {
+      "dashboard": {
+        "title": "Admin Sessions Dashboard",
+        "subtitle": "Monitor and manage all private sessions",
+        "loading": "Loading session data...",
+        "errorLoading": "Error loading sessions overview",
+        "tabs": {
+          "overview": "Overview",
+          "analytics": "Analytics",
+          "performance": "Performance",
+          "bookingQueue": "Booking Queue"
+        },
+        "overview": {
+          "totalSessions": "Total Sessions",
+          "activeSessions": "Active Sessions",
+          "totalInstructors": "Total Instructors",
+          "revenue": "Revenue",
+          "export": "Export",
+          "allSessions": "All Sessions",
+          "pendingBookings": "Pending Bookings",
+          "issues": "Issues",
+          "totalEarnings": "Total Earnings"
+        },
+        "filters": {
+          "status": "Status",
+          "allStatuses": "All Statuses",
+          "upcoming": "Upcoming",
+          "instructor": "Instructor",
+          "allInstructors": "All Instructors"
+        },
+        "table": {
+          "session": "Session",
+          "dateTime": "Date & Time",
+          "students": "Students",
+          "actions": "Actions",
+          "viewDetails": "View Details",
+          "edit": "Edit",
+          "notify": "Notify Students"
+        },
+        "sessionDetails": "Session Details"
+      },
+      "analytics": {
+        "title": "Sessions Analytics",
+        "loading": "Loading analytics data...",
+        "dateRange": {
+          "label": "Date Range",
+          "last7Days": "Last 7 Days",
+          "last30Days": "Last 30 Days",
+          "last90Days": "Last 90 Days",
+          "thisMonth": "This Month",
+          "lastMonth": "Last Month",
+          "thisYear": "This Year"
+        },
+        "export": "Export Report",
+        "metrics": {
+          "totalSessions": "Total Sessions",
+          "completionRate": "Completion Rate",
+          "totalRevenue": "Total Revenue",
+          "cancellationRate": "Cancellation Rate"
+        },
+        "charts": {
+          "topInstructors": "Top Instructors",
+          "topSessionTypes": "Top Session Types",
+          "instructorPerformance": "Instructor Performance"
+        },
+        "table": {
+          "instructor": "Instructor",
+          "sessions": "Sessions",
+          "revenue": "Revenue",
+          "sessionType": "Session Type",
+          "count": "Count",
+          "percentage": "Percentage",
+          "completed": "Completed"
+        }
+      },
+      "performance": {
+        "title": "Instructor Performance",
+        "loading": "Loading performance data...",
+        "timeRange": {
+          "label": "Time Range",
+          "last7Days": "Last 7 Days",
+          "last30Days": "Last 30 Days",
+          "last90Days": "Last 90 Days",
+          "thisMonth": "This Month",
+          "thisYear": "This Year"
+        },
+        "metrics": {
+          "totalSessions": "Total Sessions",
+          "revenue": "Revenue",
+          "completionRate": "Completion Rate",
+          "punctuality": "Punctuality"
+        },
+        "actions": {
+          "viewDetails": "View Details",
+          "rateInstructor": "Rate Instructor"
+        },
+        "rating": {
+          "rate": "Rate",
+          "ratings": "Ratings",
+          "rating": "Rating",
+          "comment": "Comment",
+          "commentPlaceholder": "Share your feedback about this instructor...",
+          "submitRating": "Submit Rating"
+        },
+        "sessions": {
+          "recent": "Recent Sessions",
+          "date": "Date",
+          "type": "Type",
+          "status": "Status"
+        },
+        "status": {
+          "excellent": "Excellent",
+          "good": "Good",
+          "fair": "Fair",
+          "needsImprovement": "Needs Improvement"
+        },
+        "noInstructors": "No instructors found"
+      },
+      "disputes": {
+        "title": "Session Disputes",
+        "subtitle": "Manage and resolve session-related disputes",
+        "loading": "Loading disputes...",
+        "table": {
+          "dispute": "Dispute",
+          "parties": "Parties",
+          "sessionDate": "Session Date",
+          "amount": "Amount",
+          "priority": "Priority",
+          "status": "Status",
+          "actions": "Actions",
+          "viewDetails": "View Details"
+        },
+        "details": {
+          "disputeDetails": "Dispute Details",
+          "disputeInfo": "Dispute Information",
+          "sessionInfo": "Session Information",
+          "type": "Type",
+          "description": "Description",
+          "sessionType": "Session Type",
+          "student": "Student",
+          "instructor": "Instructor",
+          "reportedAt": "Reported At"
+        },
+        "resolution": {
+          "title": "Resolution",
+          "type": "Resolution Type",
+          "notes": "Resolution Notes",
+          "placeholder": "Describe the resolution and actions taken...",
+          "resolve": "Resolve Dispute",
+          "resolved": "Dispute Resolved",
+          "resolvedBy": "Resolved by",
+          "resolvedAt": "Resolved at"
+        },
+        "empty": {
+          "noDisputes": "No disputes found",
+          "noDisputesDesc": "All sessions are running smoothly!"
+        },
+        "types": {
+          "noShow": "No-Show",
+          "qualityConcern": "Quality Concern",
+          "refundRequest": "Refund Request"
+        },
+        "statuses": {
+          "pending": "Pending",
+          "inReview": "In Review",
+          "resolved": "Resolved"
+        },
+        "priorities": {
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low"
+        },
+        "resolutionTypes": {
+          "fullRefund": "Full Refund",
+          "partialRefund": "Partial Refund",
+          "reschedule": "Reschedule Session",
+          "noAction": "No Action Required",
+          "additionalSession": "Additional Session"
+        }
+      },
+      "instructors": {
+        "title": "Instructor Management",
+        "subtitle": "Manage instructor roles, permissions, and performance metrics for private session bookings.",
+        "stats": {
+          "totalInstructors": "Total Instructors",
+          "activeInstructors": "Active Instructors",
+          "pendingSetup": "Pending Setup",
+          "totalUsers": "Total Users"
+        },
+        "tabs": {
+          "roleManagement": "Role Management",
+          "performanceMetrics": "Performance Metrics"
+        },
+        "errors": {
+          "loading": "Error loading instructor data",
+          "creating": "Error creating instructor",
+          "updating": "Error updating instructor",
+          "deleting": "Error removing instructor",
+          "roleChange": "Error changing user role"
+        }
+      }
+    },
+    "utils": {
+      "createSample": {
+        "title": "Quick Setup: Create Sample Session Types",
+        "description": "No session types found. Create sample session types for various subjects to get started with bookings.",
+        "loading": "Creating sample session types...",
+        "sampleInclude": "Sample session types include:",
+        "create": "Create Sample Session Types",
+        "successMessage": "Successfully created {{count}} sample session types!",
+        "errorMessage": "Failed to create sample session types. Please try again.",
+        "loginRequired": "You must be logged in to create session types"
+      }
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "booked": "Booked"
+    },
+    "modification": {
+      "cancel": "Cancel Session",
+      "reschedule": "Reschedule Session",
+      "edit": "Edit Session",
+      "warning": "This will cancel the session for {{count}} enrolled student(s). They will be notified automatically.",
+      "affectedStudents": "Affected Students",
+      "reason": {
+        "label": "Cancellation Reason",
+        "help": "Provide a reason for cancelling this session",
+        "required": "Cancellation reason is required"
+      },
+      "timing": {
+        "sessionTiming": "Session Timing",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "currentTime": "Current Time"
+      },
+      "capacity": {
+        "label": "Capacity",
+        "maxStudents": "Max Students",
+        "currentBookings": "Current bookings: {{count}}"
+      },
+      "notes": {
+        "label": "Session Notes",
+        "placeholder": "Add any special notes for this session..."
+      },
+      "validation": {
+        "errors": "Please fix the following issues:",
+        "pastTime": "Session time cannot be in the past",
+        "timeOrder": "Start time must be before end time",
+        "capacity": "Cannot reduce capacity below current bookings ({{current}}/{{new}})"
+      },
+      "actions": {
+        "editDetails": "Edit Details",
+        "reviewChanges": "Review Changes",
+        "goBackToEdit": "Go Back to Edit",
+        "goBack": "Go Back",
+        "confirmCancellation": "Confirm Cancellation",
+        "saveChanges": "Save Changes"
+      },
+      "errors": {
+        "update": "Error updating session"
+      }
+    },
+    "history": {
+      "earnings": {
+        "overview": "Earnings Overview",
+        "total": "Total Earnings",
+        "thisMonth": "This Month",
+        "thisWeek": "This Week"
+      },
+      "sessions": {
+        "completed": "Completed Sessions",
+        "history": "Session History"
+      },
+      "export": "Export Data",
+      "filters": {
+        "title": "Filters",
+        "status": "Status",
+        "dateRange": "Date Range",
+        "sessionType": "Session Type",
+        "allStatuses": "All Statuses",
+        "allTime": "All Time",
+        "thisWeek": "This Week",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "last3Months": "Last 3 Months",
+        "allTypes": "All Types"
+      },
+      "table": {
+        "date": "Date",
+        "time": "Time",
+        "students": "Students",
+        "earnings": "Earnings",
+        "actions": "Actions",
+        "viewDetails": "View Details",
+        "rowsPerPage": "Rows per page"
+      },
+      "empty": {
+        "noSessions": "No sessions found",
+        "noSessionsDesc": "There are no sessions matching your current filters"
+      }
+    }
+  },
+  "instructor": {
+    "profile": {
+      "title": "Instructor Profile",
+      "editProfile": "Edit Profile",
+      "about": "About",
+      "sessionTypes": "Available Session Types",
+      "tabs": {
+        "profile": "Profile",
+        "availability": "Availability"
+      },
+      "bio": "Bio",
+      "noBio": "No bio provided",
+      "qualifications": "Qualifications",
+      "noQualifications": "No qualifications listed",
+      "qualificationNumber": "Qualification {{number}}",
+      "addQualification": "Add Qualification",
+      "hourlyRate": "Hourly Rate",
+      "currency": "Currency",
+      "subjectsTaught": "Subjects Taught",
+      "noSubjects": "No subjects listed",
+      "subjectNumber": "Subject {{number}}",
+      "subjectPlaceholder": "e.g., Math, Physics, English",
+      "addSubject": "Add Subject",
+      "teachingSpecialties": "Teaching Specialties",
+      "noSpecialties": "No specialties listed",
+      "specialtyNumber": "Specialty {{number}}",
+      "specialtyPlaceholder": "e.g., Advanced Topics, Exam Prep",
+      "addSpecialty": "Add Specialty",
+      "saveChanges": "Save Changes",
+      "reviews": "Reviews",
+      "selected": "Selected",
+      "viewProfile": "View Profile"
+    }
+  },
+  "lessonDetails": {
+    "notFound": "Lesson Not Found",
+    "error": "Error loading lesson",
+    "errorHelp": "Please try refreshing the page or contact support if the problem persists.",
+    "enrollmentRequired": "This lesson requires enrollment. Please enroll in the course to access this content.",
+    "empty": "No lesson data available",
+    "emptyHelp": "This lesson may not be available or may have been removed.",
+    "noMedia": "No media available for this lesson",
+    "videoPlayer": "Video Player",
+    "audioPlayer": "Audio Player",
+    "video": "Video",
+    "audio": "Audio",
+    "noContent": "No content available for this lesson",
+    "contentSection": "Lesson Content",
+    "objectives": "Learning Objectives",
+    "noObjectives": "No learning objectives available",
+    "progress": "Your Progress",
+    "progressBar": "Progress Bar",
+    "noProgress": "No progress data available",
+    "markComplete": "Mark as Complete",
+    "completed": "Completed",
+    "incomplete": "Incomplete",
+    "minutes": "minutes",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "addBookmark": "Add to Bookmarks",
+    "removeBookmark": "Remove from Bookmarks",
+    "share": "Share",
+    "tasks": "Tasks",
+    "grammarFocus": "Grammar Focus",
+    "skills": "Skills",
+    "resources": "Resources",
+    "noResources": "No resources available",
+    "resource": "Resource",
+    "fillInBlanks": "Fill in the Blanks",
+    "multipleChoice": "Multiple Choice",
+    "trueFalse": "True or False",
+    "shortAnswer": "Short Answer",
+    "matching": "Matching",
+    "ordering": "Ordering",
+    "dragAndDrop": "Drag and Drop",
+    "startQuiz": "Start Quiz",
+    "tasksError": "Error loading tasks",
+    "bookmarked": "Bookmarked",
+    "bookmarkRemoved": "Bookmark removed",
+    "errorBookmarking": "Error bookmarking",
+    "shareTitle": "Share this lesson",
+    "shareText": "Check out this awesome lesson:",
+    "linkCopied": "Link copied",
+    "errorSharing": "Error sharing"
+  },
+  "sessionTypes": {
+    "exploreAll": "Explore All Session Types",
+    "title": "Available Session Types",
+    "subtitle": "Choose from our diverse range of specialized tutoring sessions",
+    "loading": "Loading session types...",
+    "featured": "Featured",
+    "new": "New",
+    "popular": "Popular",
+    "bestValue": "Best Value",
+    "minutes": "minutes",
+    "bookNow": "Book Now",
+    "noDescription": "A professional tutoring session"
+  },
+  "enrollment": {
+    "title": "Unlock Full Course Access",
+    "description": "Get access to all {{count}} lessons, assignments, and certificates.",
+    "benefits": {
+      "fullAccess": "Full Access",
+      "resources": "Resources",
+      "certificate": "Certificate",
+      "lifetime": "Lifetime"
+    },
+    "price": {
+      "free": "Free",
+      "oneTime": "One-Time Payment",
+      "currency": "SDG"
+    },
+    "buttons": {
+      "enrollNow": "Enroll Now - {{price}} {{currency}}",
+      "continueBrowsing": "Continue Browsing"
+    }
+  },
+  "studentCourseDetails": {
+    "overview": {
+      "showMore": "Show More",
+      "title": "Course Overview",
+      "objectives": "Learning Objectives",
+      "whatYouWillLearn": "What You Will Learn"
+    },
+    "page": {
+      "viewMaterials": "View Materials",
+      "supportFaq": "Support & FAQ"
+    },
+    "header": {
+      "introAriaLabel": "Course introduction video",
+      "role": "Role",
+      "enrollNow": "Enroll Now"
+    },
+    "moduleList": {
+      "title": "Course Modules",
+      "unit": "Unit",
+      "lessons": "Lessons",
+      "progressBar": "Module progress bar",
+      "minutes": "min",
+      "noLessons": "No lessons in this module",
+      "showAll": "Show All Modules"
+    },
+    "progressStats": {
+      "title": "Your Progress",
+      "lessons": "Lessons Completed"
+    },
+    "reviews": {
+      "title": "Course Reviews",
+      "noReviews": "No reviews yet. Be the first to review this course",
+      "addEdit": "Add/Edit Review",
+      "submitTitle": "Submit Your Review",
+      "yourReview": "Your Review",
+      "cancel": "Cancel",
+      "submit": "Submit Review"
+    },
+    "materialsDialog": {
+      "title": "Course Materials",
+      "close": "Close"
+    },
+    "instructorInfo": {
+      "title": "Instructor Information",
+      "support": "Instructor Support",
+      "email": "Email",
+      "hours": "Support Hours",
+      "responseTime": "Response Time"
+    },
+    "supportDialog": {
+      "title": "Course Support",
+      "contactSupport": "Contact Support",
+      "email": "Support Email",
+      "hours": "Support Hours",
+      "responseTime": "Average Response Time",
+      "close": "Close"
+    }
+  },
+  "common": {
+    "user": "User",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "all": "All",
+    "free": "Free",
+    "paid": "Paid",
+    "clearFilters": "Clear Filters",
+    "noResults": "No results found",
+    "tryDifferentFilters": "Try adjusting your search or filters",
+    "refresh": "Refresh",
+    "close": "Close",
+    "saving": "Saving...",
+    "clearing": "Clearing...",
+    "hr": "hr"
+  },
+  "app": {
+    "title": "Online Education"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "welcomeBack": "Welcome back",
+    "joinUs": "Join Us",
+    "signInSubtitle": "Sign in to continue your learning journey",
+    "createAccountSubtitle": "Create your account and start learning",
+    "fullName": "Full Name",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordComingSoon": "Password recovery feature is coming soon!",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "signUp": "Sign Up",
+    "loginSuccess": "Login successful! Redirecting...",
+    "signupSuccess": "Account created! You can now log in.",
+    "googleSuccess": "Google sign-in successful! Redirecting...",
+    "googleFailed": "Google sign-in failed",
+    "signInToAccess": "Sign in to access features",
+    "signInPrompt": "Sign in to access your account",
+    "errors": {
+      "popupClosed": "Login popup was closed. Please try again.",
+      "popupBlocked": "Popup was blocked by your browser. Please allow popups and try again.",
+      "popupCancelled": "Another login window is already open.",
+      "networkError": "Network error. Please check your internet connection.",
+      "internalError": "Internal authentication error. Please try again later.",
+      "unauthorizedDomain": "This domain is not authorized for Google sign-in.",
+      "operationNotAllowed": "Google sign-in is not enabled. Please contact support.",
+      "invalidApiKey": "Authentication configuration error. Please contact support."
+    },
+    "loading": {
+      "signingIn": "Signing you in...",
+      "creatingAccount": "Creating your account...",
+      "authenticating": "Authenticating with Google...",
+      "initializing": "Initializing app...",
+      "loadingContent": "Loading content..."
+    }
   },
   "vocabulary": {
-    "title": "Vocabulary Building",
-    "showFavorites": "Show Favorites Only",
+    "title": "Vocabulary Builder",
+    "loading": "Loading vocabulary...",
+    "noWords": "No vocabulary words available",
+    "error": {
+      "title": "Something went wrong",
+      "message": "We encountered an error while loading the vocabulary page. Please try again.",
+      "help": "If the problem persists, please contact support."
+    },
+    "showFavorites": "Show favorites only",
     "searchPlaceholder": "Search vocabulary words...",
     "favoritesOnly": "Favorites Only",
     "dailyGoal": "Daily Learning Goal",
@@ -762,30 +3073,353 @@
     "difficult": "Difficult",
     "new": "New",
     "examples": "Examples",
-    "markedAsDifficult": "Marked as Difficult",
-    "markAsDifficult": "Mark as Difficult",
-    "alreadyLearned": "Already Learned",
-    "markAsLearned": "Mark as Learned",
+    "markedAsDifficult": "Marked as difficult",
+    "markAsDifficult": "Mark as difficult",
+    "alreadyLearned": "Already learned",
+    "markAsLearned": "Mark as learned",
     "reviewedTimes": "Reviewed {{count}} times",
-    "error": {
-      "title": "Something went wrong",
-      "message": "We encountered an error while loading the vocabulary page. Please try again.",
-      "help": "If the problem persists, please contact support."
-    },
-    "goalCompletedTitle": "Goal Completed! 🎉",
+    "goalCompletedTitle": "Goal Complete! 🎉",
     "congratulations": "Congratulations!",
     "goalCompletedMessage": "You've successfully completed your daily vocabulary goal!",
     "goalAchievement": "{{current}}/{{target}} words learned",
     "goalAchievementDescription": "You've learned {{count}} new vocabulary words today!",
-    "keepGoing": "Keep up the great work! Consistency is the key to language mastery.",
+    "keepGoing": "Keep up the great work! Consistency is key to mastering a language.",
     "continueLearning": "Continue Learning",
     "setNewGoal": "Set New Goal",
-    "motivationalTitle": "You're Doing Great!",
+    "motivationalTitle": "You're doing great!",
     "learningTip": "Every word you learn brings you closer to fluency",
     "consistencyMessage": "Remember: Consistency beats perfection. Keep learning a little bit every day!",
     "pronunciation": "Pronunciation Practice",
     "speed": "Speed",
     "noAudioAvailable": "No audio pronunciation available for this word",
-    "noWords": "No vocabulary words available"
+    "lessonIntegration": {
+      "title": "Lesson Integration",
+      "description": "This page integrates your vocabulary learning with lesson completion tracking. Complete lesson tasks to unlock vocabulary progress and track your learning journey."
+    }
+  },
+  "admin": {
+    "adminAccess": "Admin Access",
+    "sessionManagement": "Session Management Dashboard",
+    "sessionSubtitle": "Monitor and manage all sessions, bookings, and instructors",
+    "totalSessions": "Total Sessions",
+    "totalBookings": "Total Bookings",
+    "totalEarnings": "Total Earnings",
+    "averageRating": "Average Rating",
+    "export": "Export Data",
+    "errorLoading": "Failed to load dashboard data"
+  },
+  "user": {
+    "adminRole": "Admin"
+  },
+  "common": {
+    "hr": "hr",
+    "close": "Close",
+    "saving": "Saving...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "lastUpdated": "Last updated",
+    "user": "User"
+  },
+  "sessions": {
+    "availability": {
+      "unknown": "Check availability",
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "booked": "Booked",
+      "pending": "Pending",
+      "nextAvailable": "Next available",
+      "slotsAvailable": "{{count}} slots available",
+      "noAvailability": "No availability",
+      "checkAvailability": "Check availability"
+    },
+    "shared": {
+      "sessionHistory": "Session History",
+      "noPastSessions": "No past sessions found.",
+      "date": "Date",
+      "time": "Time",
+      "instructor": "Instructor",
+      "sessionType": "Session Type",
+      "status": "Status",
+      "rating": "Rating",
+      "actions": "Actions",
+      "rateSession": "Rate Session",
+      "na": "N/A",
+      "rateYourSession": "Rate Your Session",
+      "yourRating": "Your rating:",
+      "yourReview": "Your Review",
+      "submitRating": "Submit Rating",
+      "cancel": "Cancel",
+      "selectSessionType": "Select Session Type",
+      "unnamedSessionType": "Unnamed Session Type",
+      "sessionCard": {
+        "full": "Full",
+        "minutes": "min",
+        "selected": "Selected",
+        "selectSession": "Select Session",
+        "notAvailable": "Not Available",
+        "session": "Session"
+      },
+      "dateTime": {
+        "selectDate": "Select a date",
+        "selected": "Selected"
+      },
+      "timeSlots": {
+        "selectDate": "Select a date",
+        "multiSelectHint": "Click multiple time slots to select them",
+        "selectedCount": "Selected: {{count}} time slot"
+      },
+      "booking": {
+        "confirmation": {
+          "title": "Booking Confirmation",
+          "thankYou": "Thank you for your booking!",
+          "details": "Booking Details",
+          "confirmationNumber": "Confirmation Number",
+          "nextSteps": "Next Steps",
+          "willContact": "We will contact you via WhatsApp to confirm your session.",
+          "prepareFor": "Please prepare for your session by having any required materials ready.",
+          "close": "Close",
+          "dateTime": "Date & Time",
+          "back": "Back"
+        }
+      }
+    },
+    "booking": {
+      "title": "Book a Private Session",
+      "subtitle": "Choose an instructor, date, and time for your private session.",
+      "pageDescription": "Choose from our qualified instructors and book a personalized learning session that fits your schedule.",
+      "tabs": {
+        "sessionTypes": "Session Types",
+        "instructors": "Instructors"
+      },
+      "search": {
+        "placeholder": "Search session types or instructors...",
+        "noResults": "No session types match your search",
+        "tryAdjusting": "Try adjusting your search terms",
+        "clearSearch": "Clear Search"
+      },
+      "sessionTypes": {
+        "noSessionTypes": "No session types available",
+        "instructorsHaventCreated": "Instructors haven't created any session types yet",
+        "unnamedSession": "Unnamed Session",
+        "professionalSession": "Professional Session", 
+        "bookNow": "Book Now",
+        "fullyBooked": "Fully Booked",
+        "noDescription": "Professional tutoring session",
+        "minutes": "minutes",
+        "min": "min"
+      },
+      "instructors": {
+        "sessionTypesCount": "session types"
+      },
+      "dialog": {
+        "title": "Book a session:",
+        "sessionDetails": "Session Details",
+        "duration": "Duration",
+        "price": "Price",
+        "selectDate": "Select Date",
+        "selectTime": "Select Time",
+        "contactInformation": "Contact Information",
+        "fullName": "Full Name",
+        "email": "Email",
+        "whatsappPhone": "WhatsApp Phone Number",
+        "phoneHelper": "We will contact you via WhatsApp to confirm your booking",
+        "phonePlaceholder": "+218 91 234 5678",
+        "bookingSummary": "Booking Summary",
+        "dateTimeLabel": "Date & Time:",
+        "contactLabel": "Contact:",
+        "totalLabel": "Total:",
+        "confirmBooking": "Confirm Booking",
+        "submitting": "Submitting...",
+        "session": "Session"
+      },
+      "validation": {
+        "dateTimeRequired": "Please select a date and time",
+        "nameRequired": "Name is required",
+        "emailRequired": "Email is required",
+        "phoneRequired": "Phone is required"
+      },
+      "messages": {
+        "bookingSubmitted": "Booking submitted! We will contact you via WhatsApp.",
+        "errorSubmitting": "Error submitting booking"
+      },
+      "quickDialog": {
+        "selectSession": "Select a session type",
+        "loadingSessions": "Loading available sessions..."
+      },
+      "terms": {
+        "modal": {
+          "title": "Private Session Terms of Service",
+          "acknowledge": "I have read and understand the terms",
+          "loading": "Loading terms...",
+          "errorLoading": "Error loading terms. Please contact support."
+        },
+        "admin": {
+          "noTermsYet": "No terms have been created yet. Click \"Create Terms\" to get started.",
+           "createTerms": "Create Terms",
+          "editTerms": "Edit Terms",
+          "manageTerms": "Manage Terms",
+          "termsEditor": "Terms Content Editor",
+          "contentPlaceholder": "Enter terms and conditions content here...",
+          "saveSuccess": "Terms saved successfully",
+          "saveError": "Error saving terms",
+          "loadError": "Error loading terms for editing",
+          "confirmDelete": "Are you sure you want to delete these terms?",
+          "deleteSuccess": "Terms deleted successfully",
+          "deleteError": "Error deleting terms"
+        },
+        "agreement": {
+          "agreeTo": "I agree to the",
+          "termsOfService": "Terms of Service",
+          "and": "and",
+          "privacyPolicy": "Privacy Policy",
+          "required": "You must agree to the terms to proceed.",
+          "viewTerms": "View Terms",
+          "acceptTerms": "Accept Terms"
+        }
+      }
+    },
+    "instructor": {
+      "dashboard": {
+        "title": "Instructor Dashboard",
+        "subtitle": "Manage your sessions and track your progress",
+        "loading": "Loading dashboard data...",
+        "loadingData": "Loading dashboard data...",
+        "errorLoading": "Error loading dashboard data",
+        "authenticationTimeout": "Authentication timed out. Please refresh the page.",
+        "userNotAuthenticated": "User not authenticated. Please log in as an instructor.",
+        "availability": {
+          "title": "Manage Availability",
+          "subtitle": "Set your available time slots so students can book sessions with you."
+        },
+        "stats": {
+          "totalSessions": "Total Sessions",
+          "upcomingSessions": "Upcoming Sessions",
+          "completedSessions": "Completed Sessions",
+          "thisWeekEarnings": "This Week's Earnings",
+          "activeSessionTypes": "Active Types",
+          "thisMonthEarnings": "This Month's Earnings",
+          "averageRating": "Average Rating",
+          "responseTime": "Response Time",
+          "averageSessionPrice": "Avg. Session Price",
+          "successRate": "Success Rate",
+          "totalBookings": "Total Bookings"
+        },
+        "tabs": {
+          "upcoming": "Upcoming",
+          "today": "Today",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        },
+        "timeframes": {
+          "tomorrow": "Tomorrow",
+          "thisWeek": "This Week"
+        },
+        "sessions": {
+          "students": "students",
+          "bookedStudents": "Booked Students",
+          "unknownType": "Unknown Session Type",
+          "noSessions": "No sessions found",
+          "noSessionsDesc": "You don't have any sessions for this category yet",
+          "noUpcomingSessions": "No upcoming sessions",
+          "noUpcomingDesc": "You have no upcoming sessions scheduled",
+          "urgentLabel": "Urgent",
+          "soonLabel": "Soon",
+          "enrolledStudents": "Enrolled Students",
+          "noBookingsYet": "No bookings yet for this session",
+          "bookings": "Bookings",
+          "studentName": "Student",
+          "phoneNumber": "Phone",
+          "sessionNotes": "Session Notes",
+          "pastScheduled": "Past Due"
+        },
+        "actions": {
+          "cancelSession": "Cancel Session",
+          "manageTypes": "Manage Session Types",
+          "newSession": "New Session",
+          "activeTypes": "Active Types",
+          "addSession": "Add New Session",
+          "editSession": "Edit Session",
+          "viewDetails": "View Details",
+          "refresh": "Refresh",
+          "export": "Export Data",
+          "manageAvailability": "Manage Availability",
+          "markAsCompleted": "Mark as Completed",
+          "errorMarkingCompleted": "Error marking session as completed"
+        },
+        "cancelDialog": {
+          "title": "Cancel Session",
+          "description": "Please provide a reason for cancelling this session. Students will be notified.",
+          "reasonLabel": "Cancellation Reason",
+          "confirmCancel": "Confirm Cancellation",
+          "errorCancelling": "Error cancelling session"
+        },
+        "form": {
+          "addSession": "Add New Session",
+          "editSession": "Edit Session",
+          "sessionType": "Session Type",
+          "selectSessionType": "Select Session Type",
+          "title": "Session Title",
+          "titleEn": "Session Title (English)",
+          "titleAr": "Session Title (Arabic)",
+          "description": "Description",
+          "descriptionEn": "Description (English)",
+          "descriptionAr": "Description (Arabic)",
+          "date": "Date",
+          "startTime": "Start Time",
+          "endTime": "End Time",
+          "timeZone": "Time Zone",
+          "maxStudents": "Max Students",
+          "price": "Price",
+          "currency": "Currency",
+          "notes": "Instructor Notes",
+          "save": "Save Session",
+          "cancel": "Cancel",
+          "validation": {
+            "titleRequired": "Session title is required",
+            "sessionTypeRequired": "Session type is required",
+            "dateRequired": "Date is required",
+            "startTimeRequired": "Start time is required",
+            "endTimeRequired": "End time is required",
+            "maxStudentsRequired": "Max students must be at least 1",
+            "priceRequired": "Price must be a positive number",
+            "invalidTimeRange": "End time must be after start time"
+          }
+        }
+      },
+      "availability": {
+        "title": "Manage Availability",
+        "manageTitle": "Manage Availability",
+        "conflictWarning": "Warning: Some selected time slots conflict with existing availability.",
+        "noSlotsSelected": "Please select at least one time slot",
+        "saveError": "Failed to save availability. Please try again.",
+        "clearError": "Failed to clear availability. Please try again.",
+        "recurringSlot": "Recurring Availability Pattern",
+        "availabilitySlot": "Availability",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "pattern": "Pattern",
+        "date": "Date",
+        "time": "Time",
+        "patterns": {
+          "recurring": "Recurring Pattern",
+          "oneTime": "One-Time",
+          "weeklyRecurring": "Weekly Recurring"
+        },
+        "recurringPattern": "Recurring Pattern",
+        "oneTime": "One-Time",
+        "weeklyRecurring": "Weekly Recurring",
+        "selectSlots": "Select available time slots for the week",
+        "save": "Save Availability",
+        "clearWeek": "Clear Week",
+        "currentWeek": "Current Week's Availability",
+        "noAvailability": "No Availability"
+      }
+    }
   }
 }

@@ -22,12 +22,15 @@ import { VocabularyWordsProvider } from "./vocabularyWordsContext";
 import { VocabularyProgressProvider } from "./vocabularyProgressContext";
 import { VocabularyGoalsProvider } from "./vocabularyGoalsContext";
 import { StudyTimeProvider } from "./StudyTimeContext";
+import { LandingPageProvider } from "./LandingPageContext";
 
 // Core providers that are always needed
 const CoreProviders = ({ children }) => (
   <AuthProvider>
     <UserProvider>
-      <ThemeProvider>{children}</ThemeProvider>
+      <ThemeProvider>
+        <LandingPageProvider>{children}</LandingPageProvider>
+      </ThemeProvider>
     </UserProvider>
   </AuthProvider>
 );

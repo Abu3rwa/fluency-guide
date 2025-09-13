@@ -20,7 +20,7 @@ const StudentTrueFalseQuestionCard = ({ question }) => {
           component="h2"
           gutterBottom
           sx={{ fontWeight: 500, textAlign: "center", mb: 2 }}
-          dir="auto"
+          dir="ltr"
         >
           {question.text}
         </Typography>
@@ -28,7 +28,7 @@ const StudentTrueFalseQuestionCard = ({ question }) => {
           variant="body2"
           color="text.secondary"
           sx={{ textAlign: "center", fontStyle: "italic" }}
-          dir="auto"
+          dir="ltr"
         >
           Is this statement true or false?
         </Typography>

@@ -219,4 +219,31 @@ export const enrollmentService = {
       throw error;
     }
   },
+
+  // Get enrollment by student and course
+  getEnrollmentByStudentAndCourse: async (studentId, courseId) => {
+    try {
+      const enrollmentsRef = collection(db, COLLECTION_NAME);
+      const q = query(
+        enrollmentsRef,
+        where("studentId", "==", studentId),
+        where("courseId", "==", courseId)
+      );
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        return null;
+      }
+
+      const enrollment = {
+        id: snapshot.docs[0].id,
+        ...snapshot.docs[0].data(),
+      };
+
+      return enrollment;
+    } catch (error) {
+      console.error("Error fetching enrollment by student and course:", error);
+      throw error;
+    }
+  },
 };

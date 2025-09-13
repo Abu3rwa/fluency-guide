@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../firebase";
-import { storage } from "../config/firebase";
+import { storage } from "../firebase";
 import moduleService from "./moduleService";
 
 const COURSE_DRAFT_KEY = "course_draft";
@@ -165,10 +165,7 @@ const courseService = {
           ...courseData,
         };
       });
-      console.log(
-        "Courses with IDs:",
-        courses.map((c) => ({ id: c.id, title: c.title }))
-      );
+      
       return courses;
     } catch (error) {
       throw new Error(`Failed to fetch courses: ${error.message}`);
@@ -227,13 +224,11 @@ const courseService = {
   // Get a course by ID
   async getCourseById(courseId) {
     try {
-      console.log("Fetching course with ID:", courseId);
-      const docRef = doc(db, "courses", courseId);
+       const docRef = doc(db, "courses", courseId);
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) {
-        console.log("Course not found:", courseId);
-        throw new Error("Course not found");
+         throw new Error("Course not found");
       }
 
       const data = docSnap.data();

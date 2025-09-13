@@ -26,7 +26,7 @@ const StudentTrueFalseAnswerButtons = ({
         startIcon={<ThumbUpIcon />}
         onClick={() => onAnswer(true)}
         disabled={disabled}
-        sx={{ minWidth: 120 }}
+        sx={{ minWidth: 250 }}
         dir="auto"
       >
         True
@@ -37,7 +37,7 @@ const StudentTrueFalseAnswerButtons = ({
         startIcon={<ThumbDownIcon />}
         onClick={() => onAnswer(false)}
         disabled={disabled}
-        sx={{ minWidth: 120 }}
+        sx={{ minWidth: 250 }}
         dir="auto"
       >
         False

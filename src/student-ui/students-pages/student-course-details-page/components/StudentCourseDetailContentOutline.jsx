@@ -19,6 +19,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useCustomTheme } from "../../../../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
+import { studentCoursePreviewService } from "../../../../services/student-services/studentCoursePreviewService";
 
 const StudentCourseDetailContentOutline = ({
   modules,
@@ -27,6 +28,10 @@ const StudentCourseDetailContentOutline = ({
   onLessonUndo,
   user,
   loading,
+  accessLevel = "enrolled",
+  previewLessons = 0,
+  onLessonClick,
+  isEnrolled = true,
 }) => {
   const { theme } = useCustomTheme();
   const { t } = useTranslation();
@@ -110,48 +115,104 @@ const StudentCourseDetailContentOutline = ({
                 {mod.description}
               </Typography>
               <List dense>
-                {(lessonsByModule[mod.id] || []).map((lesson) => {
+                {(lessonsByModule[mod.id] || []).map((lesson, index) => {
                   const completed =
                     Array.isArray(lesson.completedBy) &&
                     userId &&
                     lesson.completedBy.includes(userId);
+
+                  // Check if lesson is available based on enrollment status using the preview service
+                  const isPreviewable =
+                    studentCoursePreviewService.isLessonPreviewable(
+                      lesson.lessonIndex || index,
+                      lesson.moduleIndex || mod.index || 0,
+                      lesson.lessonIndexInModule || index
+                    );
+                  const isLocked = !isEnrolled && !isPreviewable;
+
                   return (
                     <ListItem
                       key={lesson.id || lesson.title}
-                      sx={{ pl: 2 }}
+                      sx={{
+                        pl: 2,
+                        cursor: isLocked ? "not-allowed" : "pointer",
+                        opacity: isLocked ? 0.6 : 1,
+                      }}
                       divider
+                      onClick={() => {
+                        if (isLocked && onLessonClick) {
+                          onLessonClick(lesson, index);
+                        }
+                      }}
                     >
-                      <ListItemText primary={lesson.title} />
-                      <ListItemSecondaryAction>
-                        <Fade
-                          in={animatingLessonId === lesson.id}
-                          timeout={800}
-                        >
-                          <CheckCircleIcon
-                            color="success"
+                      <ListItemText
+                        primary={
+                          <Box
                             sx={{
-                              mr: 1,
-                              visibility:
-                                animatingLessonId === lesson.id
-                                  ? "visible"
-                                  : "hidden",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
                             }}
-                          />
-                        </Fade>
-                        <Checkbox
-                          edge="end"
-                          checked={completed}
-                          disabled={completed}
-                          onChange={() => handleComplete(lesson)}
-                          inputProps={{
-                            "aria-label": t(
-                              "studentCourseDetails.contentOutline.markAsCompleted",
-                              { lesson: lesson.title }
-                            ),
-                          }}
-                          color="primary"
-                          sx={{ width: 32, height: 32 }}
-                        />
+                          >
+                            {lesson.title}
+                            {isPreviewable && (
+                              <Typography
+                                variant="caption"
+                                color="primary"
+                                fontWeight={600}
+                              >
+                                PREVIEW
+                              </Typography>
+                            )}
+                            {isLocked && (
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
+                                🔒 LOCKED
+                              </Typography>
+                            )}
+                          </Box>
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        {isLocked ? (
+                          <Typography variant="caption" color="text.secondary">
+                            Enroll to unlock
+                          </Typography>
+                        ) : (
+                          <>
+                            <Fade
+                              in={animatingLessonId === lesson.id}
+                              timeout={800}
+                            >
+                              <CheckCircleIcon
+                                color="success"
+                                sx={{
+                                  mr: 1,
+                                  visibility:
+                                    animatingLessonId === lesson.id
+                                      ? "visible"
+                                      : "hidden",
+                                }}
+                              />
+                            </Fade>
+                            <Checkbox
+                              edge="end"
+                              checked={completed}
+                              disabled={completed || isPreviewable}
+                              onChange={() => handleComplete(lesson)}
+                              inputProps={{
+                                "aria-label": t(
+                                  "studentCourseDetails.contentOutline.markAsCompleted",
+                                  { lesson: lesson.title }
+                                ),
+                              }}
+                              color="primary"
+                              sx={{ width: 32, height: 32 }}
+                            />
+                          </>
+                        )}
                       </ListItemSecondaryAction>
                     </ListItem>
                   );

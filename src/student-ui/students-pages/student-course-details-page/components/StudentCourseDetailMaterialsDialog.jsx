@@ -10,7 +10,6 @@ import {
   ListItemText,
   Link,
   Skeleton,
-  Fade,
 } from "@mui/material";
 import { useCustomTheme } from "../../../../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
@@ -23,37 +22,37 @@ const StudentCourseDetailMaterialsDialog = ({
 }) => {
   const { theme } = useCustomTheme();
   const { t } = useTranslation();
-  if (loading) {
-    return (
-      <Skeleton
-        variant="rectangular"
-        height={180}
-        sx={{ borderRadius: theme.shape.borderRadius, mb: 3 }}
-      />
-    );
-  }
   return (
-    <Fade in={open} timeout={400}>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        fullWidth
-        maxWidth="sm"
-        aria-labelledby="materials-dialog-title"
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      aria-labelledby="materials-dialog-title"
+      TransitionProps={{
+        timeout: 400,
+      }}
+    >
+      <DialogTitle
+        id="materials-dialog-title"
+        sx={{
+          bgcolor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+        }}
       >
-        <DialogTitle
-          id="materials-dialog-title"
-          sx={{
-            bgcolor: theme.palette.background.paper,
-            color: theme.palette.text.primary,
-          }}
-        >
-          {t("studentCourseDetails.materialsDialog.title")}
-        </DialogTitle>
-        <DialogContent
-          dividers
-          sx={{ bgcolor: theme.palette.background.default }}
-        >
+        {t("studentCourseDetails.materialsDialog.title")}
+      </DialogTitle>
+      <DialogContent
+        dividers
+        sx={{ bgcolor: theme.palette.background.default }}
+      >
+        {loading ? (
+          <Skeleton
+            variant="rectangular"
+            height={180}
+            sx={{ borderRadius: theme.shape.borderRadius, mb: 3 }}
+          />
+        ) : (
           <List>
             {materials.length === 0 && (
               <ListItem>
@@ -84,14 +83,14 @@ const StudentCourseDetailMaterialsDialog = ({
               </ListItem>
             ))}
           </List>
-        </DialogContent>
-        <DialogActions sx={{ bgcolor: theme.palette.background.paper }}>
-          <Button onClick={onClose} color="primary">
-            {t("studentCourseDetails.materialsDialog.close")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Fade>
+        )}
+      </DialogContent>
+      <DialogActions sx={{ bgcolor: theme.palette.background.paper }}>
+        <Button onClick={onClose} color="primary">
+          {t("studentCourseDetails.materialsDialog.close")}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

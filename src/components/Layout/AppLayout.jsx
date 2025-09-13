@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import Header from "./Header";
 import { useTheme } from "@mui/material/styles";
@@ -45,24 +42,15 @@ const AppLayout = ({ children }) => {
       />
 
       <Box
+        component="main"
         sx={{
-          minHeight: "100vh",
+          minHeight: "calc(100vh - 64px)",
           backgroundColor: theme.palette.background.default,
-          display: "flex",
-          flexDirection: "row",
+          width: "100%",
+          pt: 2,
         }}
       >
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            minHeight: "calc(100vh - 64px)",
-            backgroundColor: theme.palette.background.default,
-            width: "100%",
-          }}
-        >
-          {children}
-        </Box>
+        {children}
       </Box>
     </Box>
   );
