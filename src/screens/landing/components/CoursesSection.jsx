@@ -71,7 +71,7 @@ const CoursesSection = () => {
 
   // Enhanced categories with better mobile support
   const categories = useMemo(() => [
-    { label: tCourses("listing.category") + " - " + t("common.all"), value: "all", icon: "🎯" },
+    { label: tCourses("navigation.allCourses", "All Courses"), value: "all", icon: "🎯" },
     { label: t("landing.courses.categories.foundation"), value: "foundation", icon: "📚" },
     { label: t("landing.courses.categories.business"), value: "business", icon: "💼" },
     { label: t("landing.courses.categories.conversation"), value: "conversation", icon: "💬" },
@@ -151,13 +151,8 @@ const CoursesSection = () => {
       // Date-based visibility logic
       const courseStatus = getCourseStatus(course);
       
-      // If user is admin, show all courses
-      if (user && (user.role === 'admin' || user.isAdmin)) {
-        return true;
-      }
-      
-      // For regular users, hide ended courses
-      return courseStatus !== 'ended';
+      // Show all courses to everyone (click restrictions are handled in LandingCourseCard)
+      return true;
     });
   }, [courses, selectedCategory, user]);
 // if (filteredCourses.length==0){return;}
@@ -228,24 +223,7 @@ const CoursesSection = () => {
               {tCourses("listing.title", "Explore Our Courses")}
             </Typography>
 
-            <Typography
-              variant="h6"
-              color="text.secondary"
-              sx={{
-                maxWidth: {
-                  xs: "100%",
-                  md: isLarge ? "700px" : "600px",
-                  lg: "800px"
-                },
-                mx: "auto",
-                fontSize: { xs: "1rem", md: "1.1rem" },
-                lineHeight: 1.6,
-                // Better text alignment for larger screens
-                textAlign: { xs: "center", md: "center" },
-              }}
-            >
-              {tCourses("listing.subtitle", "Discover our comprehensive course library")}
-            </Typography>
+             
           </Box>
         </Fade>
 

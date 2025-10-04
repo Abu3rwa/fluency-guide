@@ -10,6 +10,7 @@ import {
   alpha,
   Chip,
   Divider,
+  Collapse,
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
@@ -21,6 +22,8 @@ import {
   Analytics as AnalyticsIcon,
   Build as ManagementIcon,
   Person as PersonIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -199,63 +202,15 @@ const Sidebar = ({ menuItems: propMenuItems }) => {
 
       {/* Navigation Menu */}
       <List sx={{ flexGrow: 1, px: 1 }}>
-        {sidebarMenuItems.map((item) => (
-          <ListItem
-            button
-            key={item.text}
-            onClick={() => handleNavigation(item.path)}
-            selected={location.pathname === item.path}
-            sx={{
-              mx: 0.5,
-              borderRadius: 2,
-              mb: 0.5,
-              flexDirection: "column",
-              alignItems: "flex-start",
-              py: 1.5,
-              "&.Mui-selected": {
-                background: alpha(theme.palette.primary.main, 0.1),
-                "&:hover": {
-                  background: alpha(theme.palette.primary.main, 0.15),
-                },
-              },
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-              <ListItemIcon
-                sx={{
-                  color:
-                    location.pathname === item.path
-                      ? theme.palette.primary.main
-                      : theme.palette.text.secondary,
-                  minWidth: 40,
-                }}
-              >
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  fontWeight: location.pathname === item.path ? 600 : 400,
-                  color:
-                    location.pathname === item.path
-                      ? theme.palette.primary.main
-                      : theme.palette.text.primary,
-                  fontSize: "0.9rem",
-                }}
-              />
-            </Box>
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                ml: 5,
-                fontSize: "0.75rem",
-                lineHeight: 1.2,
-              }}
-            >
-              {item.description}
-            </Typography>
-          </ListItem>
+        {sidebarMenuItems.map((item, index) => (
+          <MenuItemComponent 
+            key={item.text} 
+            item={item} 
+            location={location} 
+            theme={theme} 
+            navigate={navigate} 
+            index={index} 
+          />
         ))}
       </List>
 
@@ -280,3 +235,173 @@ const Sidebar = ({ menuItems: propMenuItems }) => {
 };
 
 export default Sidebar;
+
+const MenuItemComponent = ({ item, location, theme, navigate, index }) => {
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    if (item.items) {
+      setOpen(!open);
+    } else if (item.path) {
+      navigate(item.path);
+    }
+  };
+
+  const isActive = location.pathname === item.path;
+  
+  // Check if any sub-item is active
+  const isSubItemActive = item.items && item.items.some(subItem => location.pathname === subItem.path);
+
+  if (item.items) {
+    return (
+      <>
+        <ListItem
+          button
+          onClick={handleClick}
+          sx={{
+            mx: 0.5,
+            borderRadius: 2,
+            mb: 0.5,
+            flexDirection: "column",
+            alignItems: "flex-start",
+            py: 1.5,
+            backgroundColor: isSubItemActive ? alpha(theme.palette.primary.main, 0.1) : 'transparent',
+            "&:hover": {
+              backgroundColor: alpha(theme.palette.primary.main, 0.15),
+            },
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+            <ListItemIcon
+              sx={{
+                color: isSubItemActive ? theme.palette.primary.main : theme.palette.text.secondary,
+                minWidth: 40,
+              }}
+            >
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={item.text}
+              primaryTypographyProps={{
+                fontWeight: isSubItemActive ? 600 : 400,
+                color: isSubItemActive ? theme.palette.primary.main : theme.palette.text.primary,
+                fontSize: "0.9rem",
+              }}
+            />
+            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </Box>
+          <Typography
+            variant="caption"
+            sx={{
+              color: theme.palette.text.secondary,
+              ml: 5,
+              fontSize: "0.75rem",
+              lineHeight: 1.2,
+            }}
+          >
+            {item.description}
+          </Typography>
+        </ListItem>
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {item.items.map((subItem, subIndex) => {
+              const isSubActive = location.pathname === subItem.path;
+              return (
+                <ListItem
+                  button
+                  key={subItem.text}
+                  onClick={() => navigate(subItem.path)}
+                  sx={{
+                    pl: 4,
+                    py: 1,
+                    borderRadius: 2,
+                    mx: 0.5,
+                    mb: 0.5,
+                    backgroundColor: isSubActive ? alpha(theme.palette.primary.main, 0.1) : 'transparent',
+                    "&:hover": {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={subItem.text}
+                    primaryTypographyProps={{
+                      fontWeight: isSubActive ? 600 : 400,
+                      color: isSubActive ? theme.palette.primary.main : theme.palette.text.primary,
+                      fontSize: "0.85rem",
+                    }}
+                    secondary={subItem.description}
+                    secondaryTypographyProps={{
+                      variant: "caption",
+                      color: theme.palette.text.secondary,
+                      fontSize: "0.7rem",
+                    }}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
+        </Collapse>
+      </>
+    );
+  }
+
+  return (
+    <ListItem
+      button
+      key={item.text}
+      onClick={handleClick}
+      selected={isActive}
+      sx={{
+        mx: 0.5,
+        borderRadius: 2,
+        mb: 0.5,
+        flexDirection: "column",
+        alignItems: "flex-start",
+        py: 1.5,
+        "&.Mui-selected": {
+          background: alpha(theme.palette.primary.main, 0.1),
+          "&:hover": {
+            background: alpha(theme.palette.primary.main, 0.15),
+          },
+        },
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+        <ListItemIcon
+          sx={{
+            color:
+              location.pathname === item.path
+                ? theme.palette.primary.main
+                : theme.palette.text.secondary,
+            minWidth: 40,
+          }}
+        >
+          {item.icon}
+        </ListItemIcon>
+        <ListItemText
+          primary={item.text}
+          primaryTypographyProps={{
+            fontWeight: location.pathname === item.path ? 600 : 400,
+            color:
+              location.pathname === item.path
+                ? theme.palette.primary.main
+                : theme.palette.text.primary,
+            fontSize: "0.9rem",
+          }}
+        />
+      </Box>
+      <Typography
+        variant="caption"
+        sx={{
+          color: theme.palette.text.secondary,
+          ml: 5,
+          fontSize: "0.75rem",
+          lineHeight: 1.2,
+        }}
+      >
+        {item.description}
+      </Typography>
+    </ListItem>
+  );
+};

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   List,
@@ -11,6 +11,8 @@ import {
   Fade,
   Alert,
   Tooltip,
+  Collapse,
+  alpha,
 } from "@mui/material";
 import {
   ExitToApp as ExitToAppIcon,
@@ -18,6 +20,8 @@ import {
   Translate as LanguageIcon,
   AccountCircle as AccountIcon,
   Security as SecurityIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
@@ -151,76 +155,86 @@ const MobileDrawerContent = ({
                 <React.Fragment key={`${item.text}-${index}`}>
                   {showDivider && <Divider sx={{ my: 1, mx: 1 }} />}
                   
-                  <ListItem disablePadding sx={{ mb: 0.5 }}>
-                    <Tooltip title={item.description || item.text} placement="right">
-                      <ListItemButton
-                        onClick={() => handleNavigation(item.path)}
-                        selected={isActive}
-                        disabled={!item.path}
-                        sx={{
-                          borderRadius: 2,
-                          mx: 1,
-                          transition: "all 0.2s ease-in-out",
-                          "&.Mui-selected": {
-                            backgroundColor: theme.palette.primary.main,
-                            color: theme.palette.primary.contrastText,
-                            "&:hover": { backgroundColor: theme.palette.primary.dark },
-                            boxShadow: `0 2px 8px ${theme.palette.primary.main}40`,
-                          },
-                          "&:hover": {
-                            backgroundColor: isActive ? theme.palette.primary.dark : theme.palette.action.hover,
-                            transform: "translateX(4px)",
-                          },
-                          "&.Mui-disabled": { opacity: 0.6 },
-                          py: 1.5,
-                          px: 2,
-                        }}
-                      >
-                        <ListItemIcon
+                  {item.items ? (
+                    // Render dropdown menu for items with sub-items
+                    <DropdownMenuItem 
+                      item={item} 
+                      theme={theme} 
+                      handleNavigation={handleNavigation} 
+                      isActiveRoute={isActiveRoute}
+                    />
+                  ) : (
+                    // Render regular menu item for items without sub-items
+                    <ListItem disablePadding sx={{ mb: 0.5 }}>
+                      <Tooltip title={item.description || item.text} placement="right">
+                        <ListItemButton
+                          onClick={() => handleNavigation(item.path)}
+                          selected={isActive}
                           sx={{
-                            color: isActive ? theme.palette.primary.contrastText : theme.palette.text.secondary,
-                            minWidth: 40,
-                            transition: "color 0.2s ease-in-out",
+                            borderRadius: 2,
+                            transition: "all 0.2s ease-in-out",
+                            backgroundColor: isActive
+                              ? theme.palette.primary.main
+                              : "transparent",
+                            color: isActive
+                              ? theme.palette.primary.contrastText
+                              : theme.palette.text.primary,
+                            "&:hover": {
+                              backgroundColor: isActive
+                                ? alpha(theme.palette.primary.main, 0.9)
+                                : theme.palette.action.hover,
+                              transform: "translateX(4px)",
+                            },
                           }}
                         >
-                          {item.icon}
-                        </ListItemIcon>
-                        <ListItemText
-                          sx={{ margin: 0 }}
-                          primary={
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                color: isActive ? theme.palette.primary.contrastText : theme.palette.text.primary,
-                                fontWeight: isActive ? 600 : 500,
-                                fontSize: "0.875rem",
-                                transition: "color 0.2s ease-in-out",
-                              }}
-                            >
-                              {item.text}
-                            </Typography>
-                          }
-                          secondary={
-                            item.description && (
+                          <ListItemIcon
+                            sx={{
+                              color: isActive
+                                ? theme.palette.primary.contrastText
+                                : theme.palette.text.secondary,
+                              minWidth: 40,
+                              transition: "color 0.2s ease-in-out",
+                            }}
+                          >
+                            {item.icon}
+                          </ListItemIcon>
+                          <ListItemText
+                            sx={{ margin: 0 }}
+                            primary={
                               <Typography
-                                variant="caption"
+                                variant="body2"
                                 sx={{
-                                  color: isActive ? `${theme.palette.primary.contrastText}CC` : theme.palette.text.secondary,
-                                  fontSize: "0.7rem",
-                                  lineHeight: 1.2,
-                                  mt: 0.25,
-                                  display: "block",
+                                  color: isActive ? theme.palette.primary.contrastText : theme.palette.text.primary,
+                                  fontWeight: isActive ? 600 : 500,
+                                  fontSize: "0.875rem",
                                   transition: "color 0.2s ease-in-out",
                                 }}
                               >
-                                {item.description}
+                                {item.text}
                               </Typography>
-                            )
-                          }
-                        />
-                      </ListItemButton>
-                    </Tooltip>
-                  </ListItem>
+                            }
+                            secondary={
+                              item.description && (
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: isActive ? `${theme.palette.primary.contrastText}CC` : theme.palette.text.secondary,
+                                    fontSize: "0.7rem",
+                                    lineHeight: 1.2,
+                                    mt: 0.25,
+                                    display: "block",
+                                    transition: "color 0.2s ease-in-out",
+                                  }}
+                                >
+                                  {item.description}
+                                </Typography>
+                              )
+                            }
+                          />
+                        </ListItemButton>
+                      </Tooltip>
+                    </ListItem>
+                  )}
                 </React.Fragment>
               );
             })
@@ -369,3 +383,152 @@ const MobileDrawerContent = ({
 };
 
 export default MobileDrawerContent;
+
+// Add the DropdownMenuItem component before the export
+const DropdownMenuItem = ({ item, theme, handleNavigation, isActiveRoute }) => {
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
+  // Check if any sub-item is active
+  const isSubItemActive = item.items && item.items.some(subItem => isActiveRoute(subItem.path));
+
+  return (
+    <>
+      <ListItem disablePadding sx={{ mb: 0.5 }}>
+        <Tooltip title={item.description || item.text} placement="right">
+          <ListItemButton
+            onClick={handleClick}
+            sx={{
+              borderRadius: 2,
+              transition: "all 0.2s ease-in-out",
+              backgroundColor: isSubItemActive
+                ? theme.palette.primary.main
+                : "transparent",
+              color: isSubItemActive
+                ? theme.palette.primary.contrastText
+                : theme.palette.text.primary,
+              "&:hover": {
+                backgroundColor: isSubItemActive
+                  ? alpha(theme.palette.primary.main, 0.9)
+                  : theme.palette.action.hover,
+                transform: "translateX(4px)",
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                color: isSubItemActive
+                  ? theme.palette.primary.contrastText
+                  : theme.palette.text.secondary,
+                minWidth: 40,
+                transition: "color 0.2s ease-in-out",
+              }}
+            >
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText
+              sx={{ margin: 0 }}
+              primary={
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: isSubItemActive ? theme.palette.primary.contrastText : theme.palette.text.primary,
+                    fontWeight: isSubItemActive ? 600 : 500,
+                    fontSize: "0.875rem",
+                    transition: "color 0.2s ease-in-out",
+                  }}
+                >
+                  {item.text}
+                </Typography>
+              }
+              secondary={
+                item.description && (
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: isSubItemActive ? `${theme.palette.primary.contrastText}CC` : theme.palette.text.secondary,
+                      fontSize: "0.7rem",
+                      lineHeight: 1.2,
+                      mt: 0.25,
+                      display: "block",
+                      transition: "color 0.2s ease-in-out",
+                    }}
+                  >
+                    {item.description}
+                  </Typography>
+                )
+              }
+            />
+            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </ListItemButton>
+        </Tooltip>
+      </ListItem>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {item.items.map((subItem, subIndex) => {
+            const isSubActive = isActiveRoute(subItem.path);
+            return (
+              <ListItem
+                key={subItem.text}
+                disablePadding
+                sx={{ pl: 4, mb: 0.5 }}
+              >
+                <ListItemButton
+                  onClick={() => handleNavigation(subItem.path)}
+                  sx={{
+                    borderRadius: 2,
+                    transition: "all 0.2s ease-in-out",
+                    backgroundColor: isSubActive
+                      ? alpha(theme.palette.primary.main, 0.2)
+                      : "transparent",
+                    "&:hover": {
+                      backgroundColor: isSubActive
+                        ? alpha(theme.palette.primary.main, 0.3)
+                        : theme.palette.action.hover,
+                      transform: "translateX(4px)",
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: isSubActive 
+                            ? theme.palette.primary.main 
+                            : theme.palette.text.primary,
+                          fontWeight: isSubActive ? 600 : 400,
+                          fontSize: "0.8rem",
+                        }}
+                      >
+                        {subItem.text}
+                      </Typography>
+                    }
+                    secondary={
+                      subItem.description && (
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: theme.palette.text.secondary,
+                            fontSize: "0.65rem",
+                            lineHeight: 1.2,
+                            display: "block",
+                          }}
+                        >
+                          {subItem.description}
+                        </Typography>
+                      )
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Collapse>
+    </>
+  );
+};

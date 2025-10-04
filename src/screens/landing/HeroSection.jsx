@@ -42,16 +42,7 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
         pb: { xs: 8, md: 8 },
         flexDirection: "column",
         overflow: "hidden",
-        backgroundImage:
-          heroContent?.backgroundImage && heroContent.backgroundImage !== ""
-            ? `url(${heroContent.backgroundImage})`
-            : `linear-gradient(135deg, 
-                ${theme.palette.primary.main} 0%, 
-                ${theme.palette.secondary.main} 50%, 
-                ${theme.palette.primary.dark} 100%)`,
-        backgroundAttachment: "fixed",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        bgcolor: "background.default",
         "&::before": {
           content: '""',
           position: "absolute",
@@ -59,20 +50,79 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: `linear-gradient(135deg,
-            rgba(124, 58, 237, 0.4) 0%,
-            rgba(245, 158, 66, 0.3) 50%,
-            rgba(0, 0, 0, 0.2) 100%)`,
-          zIndex: 1,
+          background: (theme) =>
+            `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+          opacity: 0.05,
+          zIndex: 0,
         },
       }}
     >
+      {/* Floating decorative elements */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "5%",
+          width: { xs: 40, md: 60 },
+          height: { xs: 40, md: 60 },
+          borderRadius: "50%",
+          background: (theme) => theme.palette.primary.main,
+          opacity: 0.1,
+          animation: "float 6s ease-in-out infinite",
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          top: "20%",
+          right: "10%",
+          width: { xs: 30, md: 50 },
+          height: { xs: 30, md: 50 },
+          borderRadius: "50%",
+          background: (theme) => theme.palette.secondary.main,
+          opacity: 0.1,
+          animation: "float 8s ease-in-out infinite",
+          animationDelay: "1s",
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: "15%",
+          left: "10%",
+          width: { xs: 25, md: 40 },
+          height: { xs: 25, md: 40 },
+          borderRadius: "50%",
+          background: (theme) => theme.palette.primary.main,
+          opacity: 0.1,
+          animation: "float 7s ease-in-out infinite",
+          animationDelay: "2s",
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: "25%",
+          right: "15%",
+          width: { xs: 35, md: 55 },
+          height: { xs: 35, md: 55 },
+          borderRadius: "50%",
+          background: (theme) => theme.palette.secondary.main,
+          opacity: 0.1,
+          animation: "float 9s ease-in-out infinite",
+          animationDelay: "0.5s",
+          zIndex: 0,
+        }}
+      />
       {/* Content with enhanced styling */}
       <Fade in timeout={1000}>
         {isHeroLoading ? (
           <Box
             sx={{
-              color: "#fff",
+              color: "text.primary",
               textAlign: "center",
               zIndex: 2,
               py: { xs: 6, md: 0 },
@@ -80,13 +130,23 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
               position: "relative",
               maxWidth: { md: "800px" },
               width: "100%",
+              "@keyframes float": {
+                "0%": {
+                  transform: "translateY(0) translateX(0)",
+                },
+                "50%": {
+                  transform: "translateY(-20px) translateX(10px)",
+                },
+                "100%": {
+                  transform: "translateY(0) translateX(0)",
+                },
+              },
             }}
           >
-            <Box
+            <Typography
+              variant="h1"
               sx={{
-                background: `linear-gradient(135deg, #fff 0%, ${theme.palette.secondary.light} 100%)`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+                color: "text.primary",
                 mb: { xs: 4, md: 3 },
                 fontSize: {
                   xs: "2.8rem",
@@ -97,6 +157,7 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                 fontWeight: 800,
                 lineHeight: { xs: 1.2, md: 1.1 },
                 letterSpacing: "-0.02em",
+                textShadow: "0 4px 8px rgba(0,0,0,0.3)",
                 animation: "pulse 2s infinite",
                 "@keyframes pulse": {
                   "0%": { opacity: 0.6 },
@@ -106,7 +167,7 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
               }}
             >
               {t("landing.hero.loading", "Loading amazing content...")}
-            </Box>
+            </Typography>
             <Box
               sx={{
                 display: "flex",
@@ -122,7 +183,7 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                     width: 8,
                     height: 8,
                     borderRadius: "50%",
-                    bgcolor: "rgba(255, 255, 255, 0.7)",
+                    bgcolor: "text.primary",
                     animation: `bounce 1.4s infinite ${i * 0.2}s`,
                     "@keyframes bounce": {
                       "0%, 80%, 100%": { transform: "scale(0)" },
@@ -136,7 +197,7 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
         ) : (
           <Box
             sx={{
-              color: "#fff",
+              color: "text.primary",
               textAlign: { xs: "center", md: isRTL ? "right" : "left" },
               display: "flex",
               flexDirection: "column",
@@ -153,7 +214,7 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
               width: "100%",
             }}
           >
-            <Typography
+            <GradientText
               variant="h1"
               sx={{
                 mb: { xs: 4, md: 3 },
@@ -165,46 +226,30 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                   lg: "5rem",
                 },
                 fontWeight: 800,
-                background: `linear-gradient(135deg, #fff 0%, ${theme.palette.secondary.light} 100%)`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
                 lineHeight: { xs: 1.2, md: 1.1 },
                 letterSpacing: "-0.02em",
-                textShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                textShadow: "0 4px 8px rgba(0,0,0,0.3)",
               }}
             >
-              {safeHeroContent?.title || t("landing.hero.title")}{" "}
-              <Box
-                component="span"
-                sx={{
-                  background: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.light} 100%)`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  fontWeight: 900,
-                }}
-              >
-                {safeHeroContent?.titleHighlight ||
-                  t("landing.hero.titleHighlight")}
-              </Box>
-            </Typography>
-            <Typography
-              variant="h5"
+              {safeHeroContent?.title || t("landing.hero.title")}
+            </GradientText>
+            <GradientText
+              variant="h3"
               sx={{
                 mb: { xs: 5, md: 6 },
                 textAlign: "center",
                 fontWeight: 500,
-                color: "#ffffff", // light purple
                 maxWidth: { xs: "100%", md: "90%" },
                 whiteSpace: "pre-line",
                 wordBreak: "break-word",
                 fontSize: { xs: "1.2rem", sm: "1.3rem", md: "1.5rem" },
                 lineHeight: { xs: 1.5, md: 1.6 },
-                textShadow: "0 2px 4px rgba(183, 0, 255, 0.36)",
+                textShadow: "0 2px 4px rgba(0,0,0,0.3)",
                 px: { xs: 1, md: 0 },
               }}
             >
               {safeHeroContent?.subtitle || t("landing.hero.subtitle")}
-            </Typography>
+            </GradientText>
 
             {/* Welcome message for logged-in users */}
             {currentUser && (
@@ -213,10 +258,10 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                 sx={{
                   mb: 2,
                   textAlign: "center",
-                  color: "rgba(255, 255, 255, 0.8)",
+                  color: "text.secondary",
                   fontSize: { xs: "0.9rem", md: "1rem" },
                   fontStyle: "italic",
-                  textShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.3)",
                 }}
               >
                 {t("landing.hero.welcomeBack", {
@@ -226,6 +271,18 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
               </Typography>
             )}
 
+            {/* Divider for visual separation */}
+            <Box
+              sx={{
+                width: { xs: "60%", md: "40%" },
+                height: "2px",
+                background: (theme) =>
+                  `linear-gradient(90deg, transparent, ${theme.palette.primary.main}, transparent)`,
+                my: { xs: 3, md: 4 },
+                mx: "auto",
+              }}
+            />
+
             <Box
               sx={{
                 display: "flex",
@@ -234,7 +291,7 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                 flexDirection: { xs: "column", sm: "row" },
                 width: { xs: "100%", sm: "auto" },
                 alignItems: { xs: "stretch", sm: "center" },
-                mt: { xs: 4, md: 2 },
+                mt: { xs: 2, md: 2 },
               }}
             >
               <Button
@@ -243,9 +300,9 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                 onClick={handleStartLearning}
                 disabled={loading}
                 sx={{
-                  px: { xs: 4, md: 5 },
+                  px: { xs: 4, md: 6 },
                   py: { xs: 2.5, md: 2 },
-                  fontSize: { xs: "1.2rem", md: "1.2rem" },
+                  fontSize: { xs: "1.2rem", md: "1.3rem" },
                   borderRadius: { xs: "16px", md: "50px" },
                   fontWeight: 700,
                   background: currentUser
@@ -261,14 +318,14 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                   },
                   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                   width: { xs: "100%", sm: "auto" },
-                  minWidth: { xs: "100%", sm: "200px" },
+                  minWidth: { xs: "100%", sm: "220px" },
                   height: { xs: "56px", md: "auto" },
                   textTransform: "none",
                   letterSpacing: "0.5px",
                   "&:hover": {
                     transform: {
-                      xs: "translateY(-2px) scale(1.01)",
-                      md: "translateY(-4px) scale(1.02)",
+                      xs: "translateY(-2px) scale(1.02)",
+                      md: "translateY(-4px) scale(1.03)",
                     },
                     boxShadow: {
                       xs: currentUser
@@ -313,24 +370,24 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                 size="large"
                 onClick={() => setOpen(true)}
                 sx={{
-                  px: { xs: 4, md: 5 },
+                  px: { xs: 4, md: 6 },
                   py: { xs: 2.5, md: 2 },
-                  fontSize: { xs: "1.2rem", md: "1.2rem" },
+                  fontSize: { xs: "1.2rem", md: "1.3rem" },
                   borderRadius: { xs: "16px", md: "50px" },
                   fontWeight: 700,
-                  border: {
-                    xs: "3px solid rgba(255, 255, 255, 0.4)",
-                    md: "2px solid rgba(255, 255, 255, 0.3)",
-                  },
-                  color: "#fff",
+                  border: (theme) => ({
+                    xs: `3px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'}`,
+                    md: `2px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)'}`,
+                  }),
+                  color: "text.primary",
                   backdropFilter: "blur(20px)",
-                  background: {
-                    xs: "rgba(255, 255, 255, 0.15)",
-                    md: "rgba(255, 255, 255, 0.1)",
-                  },
+                  background: (theme) => ({
+                    xs: theme.palette.mode === 'dark' ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.03)",
+                    md: theme.palette.mode === 'dark' ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)",
+                  }),
                   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                   width: { xs: "100%", sm: "auto" },
-                  minWidth: { xs: "100%", sm: "200px" },
+                  minWidth: { xs: "100%", sm: "220px" },
                   height: { xs: "56px", md: "auto" },
                   display: "flex",
                   flexDirection: isRTL ? "row-reverse" : "row",
@@ -339,27 +396,33 @@ const HeroSection = ({ isRTL, t, tAuth, navigate, theme }) => {
                   textTransform: "none",
                   letterSpacing: "0.5px",
                   justifyContent: "center",
-                  boxShadow: {
-                    xs: `0 8px 24px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1)`,
+                  boxShadow: (theme) => ({
+                    xs: theme.palette.mode === 'dark' 
+                      ? `0 8px 24px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2)` 
+                      : `0 8px 24px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05)`,
                     md: "none",
-                  },
+                  }),
                   "&:hover": {
-                    background: {
-                      xs: "rgba(255, 255, 255, 0.25)",
-                      md: "rgba(255, 255, 255, 0.2)",
-                    },
-                    borderColor: {
-                      xs: "rgba(255, 255, 255, 0.7)",
-                      md: "rgba(255, 255, 255, 0.6)",
-                    },
+                    background: (theme) => ({
+                      xs: theme.palette.mode === 'dark' ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)",
+                      md: theme.palette.mode === 'dark' ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.03)",
+                    }),
+                    borderColor: (theme) => ({
+                      xs: theme.palette.mode === 'dark' ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.3)",
+                      md: theme.palette.mode === 'dark' ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.25)",
+                    }),
                     transform: {
-                      xs: "translateY(-2px) scale(1.01)",
+                      xs: "translateY(-2px) scale(1.02)",
                       md: "translateY(-2px)",
                     },
-                    boxShadow: {
-                      xs: `0 12px 32px rgba(255, 255, 255, 0.3), 0 6px 16px rgba(0, 0, 0, 0.15)`,
-                      md: "0 8px 32px rgba(255, 255, 255, 0.2)",
-                    },
+                    boxShadow: (theme) => ({
+                      xs: theme.palette.mode === 'dark' 
+                        ? `0 12px 32px rgba(255, 255, 255, 0.15), 0 6px 16px rgba(0, 0, 0, 0.25)` 
+                        : `0 12px 32px rgba(0, 0, 0, 0.15), 0 6px 16px rgba(0, 0, 0, 0.1)`,
+                      md: theme.palette.mode === 'dark' 
+                        ? "0 8px 32px rgba(255, 255, 255, 0.1)" 
+                        : "0 8px 32px rgba(0, 0, 0, 0.1)",
+                    }),
                   },
                   "&:active": {
                     transform: {

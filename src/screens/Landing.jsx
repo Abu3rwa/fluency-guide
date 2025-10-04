@@ -14,11 +14,9 @@ import HeroSection from "./landing/HeroSection";
 import StatisticsBanner from "./landing/StatisticsBanner";
 import FeaturesSection from "./landing/FeaturesSection";
 import CoursesSection from "./landing/components/CoursesSection";
-import PrivateSessionsSection from "./landing/PrivateSessionsSection";
-import SessionTypesSection from "./landing/SessionTypesSection";
-import TopInstructorsSection from "./landing/TopInstructorsSection";
 import TestimonialsSection from "./landing/TestimonialsSection";
 import ContactSection from "./landing/ContactSection";
+import BlogSection from "./landing/BlogSection"; // Import the new BlogSection
 
 // Loading fallback component
 const SectionLoader = ({ message = "Loading..." }) => (
@@ -38,7 +36,6 @@ function Landing() {
   const { t } = useTranslation(); // Default namespace for common translations
   const { t: tAuth } = useTranslation('auth'); // Auth namespace for authentication related content
   const { t: tCourses } = useTranslation('courses'); // Courses namespace for course related content
-  const { t: tSessions } = useTranslation('sessions'); // Sessions namespace for instructor content
   const { i18n } = useTranslation();
   const theme = useTheme();
   const { mode } = useCustomTheme();
@@ -66,7 +63,7 @@ function Landing() {
         />
 
         {/* Statistics Banner */}
-        <StatisticsBanner t={t} />
+        {/* <StatisticsBanner t={t} /> */}
 
         {/* Features Section */}
         <FeaturesSection t={t} isRTL={isRTL} />
@@ -74,14 +71,8 @@ function Landing() {
         {/* Courses Section */}
         <CoursesSection />
 
-        {/* Private Sessions Section */}
-        <PrivateSessionsSection t={t} isRTL={isRTL} />
-
-        {/* Session Types Section */}
-        <SessionTypesSection isRTL={isRTL} />
-
-        {/* Top Instructors Section - Sessions namespace */}
-        <TopInstructorsSection t={t} tSessions={tSessions} isRTL={isRTL} />
+        {/* Blog Section - Show latest blog posts */}
+        <BlogSection />
 
         {/* Testimonials Section */}
         {/* <TestimonialsSection t={t} isRTL={isRTL} /> */}

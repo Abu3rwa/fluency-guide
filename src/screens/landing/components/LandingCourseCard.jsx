@@ -304,9 +304,24 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
 
   // Calculate actual course statistics
   const getCourseStats = () => {
+    // Format duration - course duration is stored in hours
+    let formattedDuration = "N/A";
+    if (course.duration) {
+      const hoursSuffix = tCourses("common.hoursSuffix", "h");
+      if (typeof course.duration === 'number') {
+        // Duration is a number representing hours - add space between number and suffix
+        formattedDuration = `${course.duration} ${hoursSuffix}`;
+      } else if (typeof course.duration === 'string') {
+        // If already a string, check if it needs hours suffix
+        const duration = course.duration.toString();
+        const hasHoursSuffix = duration.includes('h') || duration.includes('ساعة') || duration.includes('س');
+        formattedDuration = hasHoursSuffix ? duration : `${duration} ${hoursSuffix}`;
+      }
+    }
+    
     const stats = {
       lessons: tCourses("card.lessons", "{{count}} lessons", { count: course.totalLessons || 0 }),
-      duration: course.duration || tCourses("common.noData", "N/A"),
+      duration: formattedDuration !== "N/A" ? formattedDuration : tCourses("common.noData", "N/A"),
       students: tCourses("card.students", "{{count}} students", { count: course.maxStudents || 0 }),
       rating: course.rating || null,
     };
@@ -319,7 +334,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
   const formatPrice = () => {
     if (course.price === 0) {
       return {
-        displayPrice: t("landing.courseCard.free"),
+        displayPrice: tCourses("card.free", "Free"),
         originalPrice: null,
       };
     }
@@ -341,6 +356,22 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
     };
   };
 
+  // Check if course should be clickable
+  const isClickable = () => {
+    // If course has ended and user is not admin, make it non-clickable
+    if (courseStatus === 'ended' && (!user || (user.role !== 'admin' && !user.isAdmin))) {
+      return false;
+    }
+    return true;
+  };
+
+  // Handle card click
+  const handleCardClick = () => {
+    if (isClickable()) {
+      navigate(ROUTES.STUDENT_COURSE_DETAILS.replace(":id", course.id));
+    }
+  };
+
   const priceInfo = formatPrice();
 
   return (
@@ -351,23 +382,22 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
           width: "100%",
           maxWidth: 340,
           transition: "all 0.5s ease",
-          transform: isHovered ? "translateY(-8px)" : "translateY(0)",
-          cursor: "pointer",
+          transform: isHovered && isClickable() ? "translateY(-8px)" : "translateY(0)",
+          cursor: isClickable() ? "pointer" : "default",
+          opacity: !isClickable() ? 0.7 : 1,
         }}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => isClickable() && setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={() =>
-          navigate(ROUTES.STUDENT_COURSE_DETAILS.replace(":id", course.id))
-        }
+        onClick={handleCardClick}
       >
         {/* Course Status Badge */}
         {courseStatus !== 'available' && (
           <Box
             sx={{
               position: "absolute",
-              top: course.featured || course.discount ? 60 : 16,
-              left: isRTL ? "auto" : 16,
-              right: isRTL ? 16 : "auto",
+              top: 3,
+              left: isRTL ? "auto" : 3,
+              right: isRTL ? 3 : "auto",
               zIndex: 20,
               background: `linear-gradient(45deg, ${
                 getThemeColor(statusInfo.color).main
@@ -390,54 +420,14 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
           </Box>
         )}
 
-        {/* Featured Badge */}
-        {course.featured && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 16,
-              left: isRTL ? "auto" : 16,
-              right: isRTL ? 16 : "auto",
-              zIndex: 20,
-              background: `linear-gradient(45deg, ${
-                getThemeColor("warning").main
-              }, ${getThemeColor("warning").dark})`,
-              color: "white",
-              px: 2,
-              py: 0.75,
-              borderRadius: 2,
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              boxShadow: 3,
-              animation: "pulse 2s infinite",
-              direction: isRTL ? "rtl" : "ltr",
-              "@keyframes pulse": {
-                "0%, 100%": { opacity: 1 },
-                "50%": { opacity: 0.8 },
-              },
-            }}
-          >
-            <StarIcon 
-              sx={{ 
-                fontSize: 12,
-                transform: 'none' // Non-directional icon
-              }} 
-            />
-            {t("landing.courseCard.featured")}
-          </Box>
-        )}
-
         {/* Discount Badge */}
         {course.discount && course.discount > 0 && (
           <Box
             sx={{
               position: "absolute",
-              top: 16,
-              right: isRTL ? "auto" : 16,
-              left: isRTL ? 16 : "auto",
+              top: courseStatus !== 'available' ? 3 : 3,
+              right: isRTL ? "auto" : 3,
+              left: isRTL ? 3 : "auto",
               zIndex: 20,
               background: `linear-gradient(45deg, ${
                 getThemeColor("error").main
@@ -451,7 +441,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
               boxShadow: 3,
             }}
           >
-            {t("landing.courseCard.percentOff", { percent: course.discount })}
+            {tCourses("card.percentOff", "{{percent}}% off", { percent: course.discount })}
           </Box>
         )}
 
@@ -460,7 +450,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
             width: "100%",
             minHeight: 420,
             position: "relative",
-            boxShadow: isHovered ? 8 : 2,
+            boxShadow: isHovered && isClickable() ? 8 : 2,
             transition: "all 0.3s ease",
             borderRadius: 3,
             overflow: "hidden",
@@ -471,7 +461,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
               left: 0,
               right: 0,
               bottom: 0,
-              background: isHovered
+              background: isHovered && isClickable()
                 ? `linear-gradient(45deg, ${getThemeColor("primary").main}20, ${
                     getThemeColor("secondary").main
                   }20)`
@@ -491,7 +481,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
               sx={{
                 objectFit: "cover",
                 transition: "all 0.7s ease",
-                transform: isHovered ? "scale(1.1)" : "scale(1)",
+                transform: isHovered && isClickable() ? "scale(1.1)" : "scale(1)",
               }}
               onLoad={() => setImageLoaded(true)}
             />
@@ -513,7 +503,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
             )}
 
             {/* Overlay Content */}
-            <Fade in={isHovered} timeout={300}>
+            <Fade in={isHovered && isClickable()} timeout={300}>
               <Box
                 sx={{
                   position: "absolute",
@@ -618,7 +608,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 transition: "color 0.3s ease",
-                color: isHovered ? "primary.main" : "text.primary",
+                color: isHovered && isClickable() ? "primary.main" : "text.primary",
               }}
             >
               {course.title}
@@ -647,7 +637,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
               color="text.secondary"
               sx={{ mb: 2, fontWeight: 500, display: "block" }}
             >
-              {t("landing.courseCard.by")} {course.instructor}
+              {tCourses("card.by", "By")} {course.instructor}
             </Typography>
 
             {/* Tags */}
@@ -680,7 +670,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
               )}
               {course.certificateIncluded && (
                 <Chip
-                  label={t("landing.courseCard.certificate")}
+                  label={tCourses("card.certificate", "Certificate")}
                   size="small"
                   icon={
                     <SchoolIcon 
@@ -721,6 +711,20 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
                   </Typography>
                 </Box>
               )}
+              {courseStats.duration && courseStats.duration !== "N/A" && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <AccessTimeIcon 
+                    sx={{ 
+                      fontSize: 16, 
+                      color: "text.secondary",
+                      transform: 'none' // Non-directional icon
+                    }} 
+                  />
+                  <Typography variant="caption" color="text.secondary">
+                    {courseStats.duration}
+                  </Typography>
+                </Box>
+              )}
               {courseStats.students > 0 && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <PeopleIcon 
@@ -744,7 +748,7 @@ const LandingCourseCard = ({ course, courseStatus, enrollment, onSignUp }) => {
                   variant="h5"
                   sx={{ fontWeight: 700, color: "success.main" }}
                 >
-                  {t("landing.courseCard.free")}
+                  {tCourses("card.free", "Free")}
                 </Typography>
               ) : (
                 <>

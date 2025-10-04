@@ -1,48 +1,40 @@
 import React, { useState, useEffect, useCallback } from "react";
-import logoVideo from "../../assets/logoVideo.mp4";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "../../contexts/AuthContext";
-import { ROUTES } from "../../routes/constants";
-import { useCustomTheme } from "../../contexts/ThemeContext";
-import { useRTL, getDirectionalSpacing } from "../../utils/rtlUtils";
-import ThemeToggle from "./ThemeToggle";
-import LanguageSwitcher from "./LanguageSwitcher";
-import UserMenu from "./UserMenu";
 import {
   AppBar,
   Toolbar,
-  Box,
+  Typography,
   Button,
+  IconButton,
+  Box,
+  Tooltip,
   useTheme,
   useMediaQuery,
-  Stack,
-  IconButton,
-  Typography,
-  Container,
-  Fade,
-  Tooltip,
-  Badge,
-  Chip,
-  useScrollTrigger,
   Slide,
+  Stack,
+  Menu,
+  MenuItem,
+  ListItemText,
+  Container,
 } from "@mui/material";
-import { Menu as MenuIcon, Login as LoginIcon } from "@mui/icons-material";
-
-// Enhanced scroll behavior component
-const HideOnScroll = ({ children }) => {
-  const trigger = useScrollTrigger();
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-};
+import {
+  Menu as MenuIcon,
+  ExpandMore as ExpandMoreIcon,
+  Login as LoginIcon,
+} from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { ROUTES } from "../../routes/constants";
+import { useRTL, getDirectionalSpacing } from "../../utils/rtlUtils";
+import UserMenu from "./UserMenu";
+import ThemeToggle from "./ThemeToggle";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { HideOnScroll } from "./HideOnScroll";
 
 const Header = ({
   onDrawerToggle,
   showDrawerButton = false,
-  title,
+  title = "Sudanglish",
   showUserMenu = true,
   showThemeToggle = true,
   customActions = null,
@@ -223,58 +215,21 @@ const Header = ({
                       }
                     }}
                   >
-                    {/* Video Logo */}
-                    <Box
-                      style={{
-                        width: "200px",
-                        height: "60px",
-                        position: "relative",
-                        overflow: "hidden",
-                        borderRadius: "8px",
-                      }}
+                    <Typography
+                      variant="h5"
+                      component="h1"
                       sx={{
-                        width: { xs: "200px", sm: "200px", md: "200px" },
-                        height: { xs: "60px" },
-                        position: "relative",
+                        fontWeight: 700,
+                        color: theme.palette.text.primary,
+                        fontSize: { xs: "1.2rem", sm: "1.5rem", md: "1.8rem" },
+                        whiteSpace: "nowrap",
                         overflow: "hidden",
-                        borderRadius: "8px",
+                        textOverflow: "ellipsis",
+                        maxWidth: { sm: 200, md: 300 },
                       }}
                     >
-                      <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          // objectFit: "cover",
-                        }}
-                      >
-                        <source src={logoVideo} type="video/mp4" />
-                        {/* Fallback text */}
-                        {i18n.language === "ar" ? "سودانجلش" : "Sudanglish"}
-                      </video>
-                    </Box>
-
-                    {!isMobile && title && (
-                      <Typography
-                        variant="h6"
-                        component="span"
-                        sx={{
-                          fontWeight: 600,
-                          color: theme.palette.text.primary,
-                          fontSize: { sm: "1rem", md: "1.1rem" },
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: { sm: 200, md: 300 },
-                          ml: 1,
-                        }}
-                      >
-                        {title}
-                      </Typography>
-                    )}
+                      {title}
+                    </Typography>
                   </Box>
                 </Tooltip>
               )}
@@ -309,44 +264,50 @@ const Header = ({
                 >
                   {menuItems.map((item, index) => (
                     <Box component="li" key={item.text}>
-                      <Tooltip
-                        title={item.tooltip || item.text}
-                        placement="bottom"
-                      >
-                        <Button
-                          variant="text"
-                          color="inherit"
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: {
-                              xs: "0.8rem",
-                              sm: "0.875rem",
-                              md: "1rem",
-                            },
-                            color: theme.palette.text.primary,
-                            fontFamily: theme.typography.body1.fontFamily,
-                            px: { xs: 0.5, sm: 1, md: 1 },
-                            py: 0.5,
-                            borderRadius: 2,
-                            textTransform: "none",
-                            minWidth: "auto",
-                            whiteSpace: "nowrap",
-                            position: "relative",
-                            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                            minHeight: { xs: 44, sm: 36 },
-                            "&:hover": {
-                              backgroundColor: theme.palette.action.hover,
-                              transform: "translateY(-1px)",
-                            },
-                            "&:active": {
-                              transform: "translateY(0px)",
-                            },
-                          }}
-                          onClick={() => navigate(item.path)}
+                      {item.items ? (
+                        // Render dropdown menu for items with sub-items
+                        <DropdownMenu item={item} theme={theme} />
+                      ) : (
+                        // Render regular button for items without sub-items
+                        <Tooltip
+                          title={item.tooltip || item.text}
+                          placement="bottom"
                         >
-                          {item.text}
-                        </Button>
-                      </Tooltip>
+                          <Button
+                            variant="text"
+                            color="inherit"
+                            sx={{
+                              fontWeight: 500,
+                              fontSize: {
+                                xs: "0.8rem",
+                                sm: "0.875rem",
+                                md: "1rem",
+                              },
+                              color: theme.palette.text.primary,
+                              fontFamily: theme.typography.body1.fontFamily,
+                              px: { xs: 0.5, sm: 1, md: 1 },
+                              py: 0.5,
+                              borderRadius: 2,
+                              textTransform: "none",
+                              minWidth: "auto",
+                              whiteSpace: "nowrap",
+                              position: "relative",
+                              transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                              minHeight: { xs: 44, sm: 36 },
+                              "&:hover": {
+                                backgroundColor: theme.palette.action.hover,
+                                transform: "translateY(-1px)",
+                              },
+                              "&:active": {
+                                transform: "translateY(0px)",
+                              },
+                            }}
+                            onClick={() => navigate(item.path)}
+                          >
+                            {item.text}
+                          </Button>
+                        </Tooltip>
+                      )}
                     </Box>
                   ))}
                 </Stack>
@@ -403,32 +364,21 @@ const Header = ({
                       }
                     }}
                   >
-                    {/* Mobile Video Logo */}
-                    <Box
+                    <Typography
+                      variant="h6"
+                      component="h1"
                       sx={{
-                        width: { xs: "120px", sm: "150px" },
-                        height: { xs: "40px", sm: "50px" },
-                        position: "relative",
+                        fontWeight: 700,
+                        color: theme.palette.text.primary,
+                        fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                        whiteSpace: "nowrap",
                         overflow: "hidden",
-                        borderRadius: "8px",
+                        textOverflow: "ellipsis",
+                        maxWidth: { xs: 150, sm: 200 },
                       }}
                     >
-                      <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain",
-                        }}
-                      >
-                        <source src={logoVideo} type="video/mp4" />
-                        {/* Fallback text */}
-                        {i18n.language === "ar" ? "سودانجلش" : "Sudanglish"}
-                      </video>
-                    </Box>
+                      {title}
+                    </Typography>
                   </Box>
                 </Tooltip>
               )}
@@ -552,3 +502,104 @@ const Header = ({
 };
 
 export default Header;
+
+const DropdownMenu = ({ item, theme }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <>
+      <Tooltip title={item.tooltip || item.text} placement="bottom">
+        <Button
+          variant="text"
+          color="inherit"
+          sx={{
+            fontWeight: 500,
+            fontSize: {
+              xs: "0.8rem",
+              sm: "0.875rem",
+              md: "1rem",
+            },
+            color: theme.palette.text.primary,
+            fontFamily: theme.typography.body1.fontFamily,
+            px: { xs: 0.5, sm: 1, md: 1 },
+            py: 0.5,
+            borderRadius: 2,
+            textTransform: "none",
+            minWidth: "auto",
+            whiteSpace: "nowrap",
+            position: "relative",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            minHeight: { xs: 44, sm: 36 },
+            "&:hover": {
+              backgroundColor: theme.palette.action.hover,
+              transform: "translateY(-1px)",
+            },
+            "&:active": {
+              transform: "translateY(0px)",
+            },
+          }}
+          onClick={handleClick}
+          endIcon={<ExpandMoreIcon />}
+        >
+          {item.text}
+        </Button>
+      </Tooltip>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+        sx={{
+          "& .MuiPaper-root": {
+            position: "fixed",
+            zIndex: 1300,
+          },
+          // Desktop-specific fixes
+          "@media (min-width: 960px)": {
+            "& .MuiPaper-root": {
+              position: "fixed",
+              zIndex: 1300,
+              transformOrigin: "top left",
+            },
+          },
+        }}
+      >
+        {item.items.map((subItem, index) => (
+          <MenuItem
+            key={subItem.text}
+            onClick={() => {
+              navigate(subItem.path);
+              handleClose();
+            }}
+            sx={{ py: 1 }}
+          >
+            <ListItemText
+              primary={subItem.text}
+              secondary={subItem.description}
+              primaryTypographyProps={{
+                fontWeight: 500,
+              }}
+              secondaryTypographyProps={{
+                variant: "caption",
+                color: "text.secondary",
+              }}
+            />
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+};

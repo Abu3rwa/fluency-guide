@@ -279,14 +279,11 @@ export const statisticsService = {
     try {
       // Import services for real data
       const { getInstructors } = await import('./userService');
-      const { sessionTypeService } = await import('./sessionService');
-      
+       
       // Get real data from database
       const [allStats, instructors, sessionTypes] = await Promise.all([
-        statisticsService.getAllStatistics(),
-        getInstructors().catch(() => []), // Handle if no instructors exist
-        sessionTypeService.getPublicActive().catch(() => []) // Handle if no session types exist
-      ]);
+         getInstructors().catch(() => []), // Handle if no instructors exist
+       ]);
       
       // Count active instructors (those with instructor profiles)
       const activeInstructors = instructors.filter(instructor => 

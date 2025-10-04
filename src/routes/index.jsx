@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "./constants";
@@ -7,7 +6,6 @@ import CenteredLoader from "../components/CenteredLoader";
 import GlobalErrorBoundary from "../components/GlobalErrorBoundary";
 import StudentDashboardPage from "../student-ui/students-pages/student-dashboard-page/StudentDashboardPage";
 import StudentCourseDetailsPage from "../student-ui/students-pages/student-course-details-page/StudentCourseDetailsPage";
-import StudentCoursesPage from "../pages/student/StudentCoursesPage";
 import StudentLessonDetailsPage from "../student-ui/students-pages/student-lesson-details-page/StudentLessonDetailsPage";
 import StudentFillInBlanksTaskPage from "../student-ui/students-pages/student-tasks-pages/student-fill-in-blanks-task-page/StudentFillInBlanksTaskPage";
 import StudentMultipleChoiceTaskPage from "../student-ui/students-pages/student-tasks-pages/student-mutiple-choice-task-page/StudentMultipleChoiceTaskPage";
@@ -15,16 +13,12 @@ import StudentTrueFalseTaskPage from "../student-ui/students-pages/student-tasks
 import StudentTaskResultsPage from "../student-ui/students-pages/student-tasks-pages/components/StudentTaskResultsPage";
 import StudentVocabularyBuildingPage from "../student-ui/students-pages/student-vocabulary-building-page/StudentVocabularyBuildingPage";
 
-// Session pages
-import AdminSessionTypesPage from "../pages/admin/AdminSessionTypesPage";
-import AdminInstructorManagementPage from "../pages/admin/AdminInstructorManagementPage";
-import StudentBookingPage from "../pages/student/StudentBookingPage";
-import InstructorDashboardPage from "../pages/InstructorDashboardPage";
-import InstructorProfilePage from "../pages/InstructorProfilePage";
-import InstructorPublicProfilePage from "../pages/InstructorPublicProfilePage";
-import InstructorsShowcasePage from "../pages/InstructorsShowcasePage";
-import SessionTypesPage from "../pages/SessionTypesPage";
-import TermsManagement from "../components/sessions/admin/TermsManagement";
+// Blog pages
+import BlogListPage from "../screens/BlogListPage";
+import BlogPostPage from "../screens/BlogPostPage";
+import BlogDashboardPage from "../admin/screens/BlogDashboardPage";
+import BlogPostEditorPage from "../admin/screens/BlogPostEditorPage";
+import BlogCategoryManagementPage from "../admin/screens/BlogCategoryManagementPage";
 
 
 // Temporarily disable lazy loading to debug webpack issue
@@ -69,34 +63,6 @@ const AdminRoute = ({ children }) => {
   if (!userData?.isAdmin) {
     console.log('Access denied: User is not admin');
     return <Navigate to={ROUTES.LANDING} />;
-  }
-  
-  return children;
-};
-
-// Instructor Route component
-const InstructorRoute = ({ children }) => {
-  const { currentUser, userData, loading } = useAuth();
-  
-  if (loading) {
-    return <CenteredLoader />;
-  }
-  
-  if (!currentUser) {
-    return <Navigate to={ROUTES.AUTH} />;
-  }
-  
-  // Wait for userData to load before checking instructor status
-  if (!userData) {
-    return <CenteredLoader />;
-  }
-  
-  // Check if user has instructor or admin privileges
-  const hasInstructorAccess = userData?.isAdmin || userData?.role === 'instructor' || userData?.isInstructor;
-  
-  if (!hasInstructorAccess) {
-    console.log('Access denied: User is not instructor or admin');
-    return <Navigate to={ROUTES.AUTH} />;
   }
   
   return children;
@@ -152,30 +118,35 @@ export const publicRoutes = [
   { path: ROUTES.PRICING, element: <Pricing /> },
   { path: ROUTES.ABOUT, element: <About /> },
   { path: ROUTES.CONTACT, element: <Contact /> },
-  // Public Session Booking Page (no login required)
+  // Blog routes
   {
-    path: ROUTES.STUDENT_BOOKING,
+    path: ROUTES.BLOG,
     element: (
       <AppLayout>
-        <StudentBookingPage />
-      </AppLayout>
-    ),
-  },
-  // Instructors Showcase Page
-  {
-    path: ROUTES.INSTRUCTORS_SHOWCASE,
-    element: (
-      <AppLayout>
-        <InstructorsShowcasePage />
+        <BlogListPage />
       </AppLayout>
     ),
   },
   {
-    path: ROUTES.INSTRUCTOR_PUBLIC_PROFILE,
+    path: ROUTES.BLOG_POST,
     element: (
       <AppLayout>
-        <InstructorPublicProfilePage />
+        <BlogPostPage />
       </AppLayout>
+    ),
+  },
+];
+
+// Protected routes
+export const protectedRoutes = [
+  {
+    path: ROUTES.PROFILE,
+    element: (
+      <ProtectedRoute>
+        <AppLayout>
+          <Profile />
+        </AppLayout>
+      </ProtectedRoute>
     ),
   },
 ];
@@ -193,23 +164,13 @@ export const studentRoutes = [
     ),
   },
   {
-    path: ROUTES.STUDENT_COURSES,
+    path: ROUTES.STUDENT_LESSON_DETAILS,
     element: (
       <StudentRoute>
         <AppLayout>
-          <StudentCoursesPage />
-        </AppLayout>
-      </StudentRoute>
-    ),
-  },
-  {
-    path: ROUTES.STUDENT_LESSON_DETAILS,
-    element: (
-      <PreviewRoute>
-        <AppLayout>
           <StudentLessonDetailsPage />
         </AppLayout>
-      </PreviewRoute>
+      </StudentRoute>
     ),
   },
   {
@@ -242,7 +203,6 @@ export const studentRoutes = [
       </StudentRoute>
     ),
   },
-  // Task Results Route
   {
     path: ROUTES.STUDENT_TASK_RESULTS,
     element: (
@@ -253,18 +213,6 @@ export const studentRoutes = [
       </StudentRoute>
     ),
   },
-  // Generic task route for any task type
-  {
-    path: "/student/tasks/:taskId",
-    element: (
-      <StudentRoute>
-        <AppLayout>
-          <StudentFillInBlanksTaskPage />
-        </AppLayout>
-      </StudentRoute>
-    ),
-  },
-  // Student Vocabulary Building Page
   {
     path: ROUTES.STUDENT_VOCABULARY_BUILDING,
     element: (
@@ -273,55 +221,6 @@ export const studentRoutes = [
           <StudentVocabularyBuildingPage />
         </AppLayout>
       </StudentRoute>
-    ),
-  },
-
-];
-
-// Instructor routes
-export const instructorRoutes = [
-  {
-    path: ROUTES.INSTRUCTOR_DASHBOARD,
-    element: (
-      <InstructorRoute>
-        <AppLayout>
-          <InstructorDashboardPage />
-        </AppLayout>
-      </InstructorRoute>
-    ),
-  },
-  {
-    path: ROUTES.INSTRUCTOR_SESSION_TYPES,
-    element: (
-      <InstructorRoute>
-        <AppLayout>
-          <SessionTypesPage />
-        </AppLayout>
-      </InstructorRoute>
-    ),
-  },
-  {
-    path: ROUTES.INSTRUCTOR_PROFILE,
-    element: (
-      <InstructorRoute>
-        <AppLayout>
-          <InstructorProfilePage />
-        </AppLayout>
-      </InstructorRoute>
-    ),
-  },
-];
-
-// Protected routes
-export const protectedRoutes = [
-  {
-    path: ROUTES.PROFILE,
-    element: (
-      <ProtectedRoute>
-        <AppLayout>
-          <Profile />
-        </AppLayout>
-      </ProtectedRoute>
     ),
   },
 ];
@@ -338,20 +237,8 @@ export const adminRoutes = [
       </AdminRoute>
     ),
   },
-
   {
-    path: "/courses/:id",
-    element: (
-      <AdminRoute>
-        <AppLayout>
-          <CourseDetails />
-        </AppLayout>
-      </AdminRoute>
-    ),
-  },
-
-  {
-    path: "/students",
+    path: ROUTES.STUDENTS,
     element: (
       <AdminRoute>
         <AppLayout>
@@ -361,7 +248,7 @@ export const adminRoutes = [
     ),
   },
   {
-    path: "/enrollments",
+    path: ROUTES.ENROLLMENTS,
     element: (
       <AdminRoute>
         <AppLayout>
@@ -371,7 +258,17 @@ export const adminRoutes = [
     ),
   },
   {
-    path: "/analytics",
+    path: ROUTES.ANALYTICS,
+    element: (
+      <AdminRoute>
+        <AppLayout>
+          <Analytics />
+        </AppLayout>
+      </AdminRoute>
+    ),
+  },
+  {
+    path: ROUTES.STUDENT_STATISTICS,
     element: (
       <AdminRoute>
         <AppLayout>
@@ -400,42 +297,43 @@ export const adminRoutes = [
       </AdminRoute>
     ),
   },
+  // Blog admin routes
   {
-    path: ROUTES.ADMIN_SESSION_TYPES,
+    path: ROUTES.ADMIN_BLOG,
     element: (
       <AdminRoute>
         <AppLayout>
-          <SessionTypesPage />
+          <BlogDashboardPage />
         </AppLayout>
       </AdminRoute>
     ),
   },
   {
-    path: ROUTES.ADMIN_INSTRUCTOR_MANAGEMENT,
+    path: ROUTES.ADMIN_BLOG_CATEGORIES,
     element: (
       <AdminRoute>
         <AppLayout>
-          <AdminInstructorManagementPage />
+          <BlogCategoryManagementPage />
         </AppLayout>
       </AdminRoute>
     ),
   },
   {
-    path: ROUTES.ADMIN_SESSION_DASHBOARD,
+    path: ROUTES.ADMIN_BLOG_NEW,
     element: (
       <AdminRoute>
         <AppLayout>
-          <AdminSessionTypesPage />
+          <BlogPostEditorPage />
         </AppLayout>
       </AdminRoute>
     ),
   },
   {
-    path: ROUTES.ADMIN_TERMS_MANAGEMENT,
+    path: ROUTES.ADMIN_BLOG_EDIT,
     element: (
       <AdminRoute>
         <AppLayout>
-          <TermsManagement />
+          <BlogPostEditorPage />
         </AppLayout>
       </AdminRoute>
     ),
@@ -473,17 +371,9 @@ const AppRoutes = () => {
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
 
-        {/* Instructor routes */}
-        {instructorRoutes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
-
         {/* Redirect old auth routes to new auth screen */}
         <Route path={ROUTES.LOGIN} element={<Navigate to={ROUTES.AUTH} />} />
         <Route path={ROUTES.SIGNUP} element={<Navigate to={ROUTES.AUTH} />} />
-        
-        {/* Redirect admin-sessions to admin/sessions */}
-        <Route path="/admin-sessions" element={<Navigate to={ROUTES.ADMIN_SESSION_DASHBOARD} />} />
 
         {/* Fallback route */}
         <Route path={fallbackRoute.path} element={fallbackRoute.element} />

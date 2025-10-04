@@ -31,6 +31,7 @@ const AppLayout = ({ children }) => {
         onDrawerToggle={handleDrawerToggle}
         showDrawerButton={isMobile}
         menuItems={menuItems}
+        title="Sudanglish"
       />
 
       {/* Mobile Drawer */}

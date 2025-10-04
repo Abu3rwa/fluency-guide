@@ -43,6 +43,9 @@
     "lessons": "{{count}} درس",
     "hours": "{{count}} ساعة",
     "students": "{{count}} طالب",
+    "by": "بواسطة",
+    "certificate": "شهادة",
+    "percentOff": "خصم {{percent}}%",
     "level": {
       "beginner": "مبتدئ",
       "intermediate": "متوسط",
@@ -129,6 +132,8 @@
     "share": "مشاركة",
     "report": "إبلاغ",
     "favorite": "مفضل",
-    "unfavorite": "إزالة من المفضلة"
+    "unfavorite": "إزالة من المفضلة",
+    "hoursSuffix": "س",
+    "hoursUnit": "ساعة"
   }
 }

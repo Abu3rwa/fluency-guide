@@ -35,12 +35,17 @@
     "preview": "Preview",
     "details": "View Details",
     "free": "Free",
+    "registerFree": "Register for Free",
+    "registerNow": "Register Now",
     "bestseller": "Bestseller",
     "new": "New",
     "updated": "Updated",
     "lessons": "{{count}} lessons",
     "hours": "{{count}} hours",
     "students": "{{count}} students",
+    "by": "By",
+    "certificate": "Certificate",
+    "percentOff": "{{percent}}% off",
     "level": {
       "beginner": "Beginner",
       "intermediate": "Intermediate",
@@ -121,6 +126,8 @@
     "share": "Share",
     "report": "Report",
     "favorite": "Favorite",
-    "unfavorite": "Unfavorite"
+    "unfavorite": "Unfavorite",
+    "hoursSuffix": "h",
+    "hoursUnit": "hours"
   }
 }

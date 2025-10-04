@@ -129,6 +129,7 @@ const CourseCard = memo(({
   priority = false 
 }) => {
   const { t } = useTranslation();
+  const { t: tCourses } = useTranslation('courses');
   const { mode } = useCustomTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
@@ -382,7 +383,7 @@ const CourseCard = memo(({
                   color="text.secondary"
                   sx={{ fontSize: "0.85rem" }}
                 >
-                  {duration}h
+                  {typeof duration === 'number' ? `${duration} ${tCourses("common.hoursSuffix", "h")}` : duration}
                 </Typography>
               </Box>
             )}

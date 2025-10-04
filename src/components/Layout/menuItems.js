@@ -1,11 +1,9 @@
-import React from "react";
-import {
+ import {
   Dashboard as DashboardIcon,
   Settings as SettingsIcon,
   People as PeopleIcon,
   School as SchoolIcon,
-  ExitToApp as ExitToAppIcon,
-  Person as PersonIcon,
+   Person as PersonIcon,
   Analytics as AnalyticsIcon,
   Book as BookIcon,
   Assignment as AssignmentIcon,
@@ -16,13 +14,11 @@ import {
   Email as EmailIcon,
   Assessment as AssessmentIcon,
   Group as GroupIcon,
-  VideoLibrary as VideoLibraryIcon,
-  LibraryBooks as LibraryBooksIcon,
-  AccountBalance as AccountBalanceIcon,
-  EventAvailable as CalendarIcon,
+   LibraryBooks as LibraryBooksIcon,
+ 
   BookOnline as BookSessionIcon,
+  BookOnline as BookOnlineIcon,
 } from "@mui/icons-material";
-import { useTranslation } from "react-i18next"; // <-- Add this import
 import { ROUTES } from "../../routes/constants";
 
 
@@ -67,17 +63,40 @@ export const getMenuItems = (user, userData, t) => {
         description: t("menu.performanceReports", "Performance Reports"),
       },
       {
-        text: t("menu.sessions", "Sessions"),
-        icon: <CalendarIcon />,
-        path: ROUTES.ADMIN_SESSION_TYPES,
-        description: t("menu.sessionManagement", "Private Session Management"),
-      },
-      {
-        text: t("menu.instructors", "Instructors"),
-        icon: <SchoolIcon />,
-        path: ROUTES.ADMIN_INSTRUCTOR_MANAGEMENT,
-        description: t("menu.instructorManagement", "Manage Instructor Roles & Performance"),
-      },
+        text: t("menu.blog", "Blog"),
+        icon: <BookOnlineIcon />,
+        // For admin users, provide sub-items for the dropdown menu
+        ...(userData?.isAdmin 
+          ? {
+              items: [
+                {
+                  text: t("menu.viewBlogs", "View Blogs"),
+                  path: ROUTES.BLOG,
+                  description: t("menu.viewPublicBlogs", "View public blog posts"),
+                },
+                {
+                  text: t("menu.blogDashboard", "Blog Dashboard"),
+                  path: ROUTES.ADMIN_BLOG,
+                  description: t("menu.manageBlogPosts", "Manage blog posts"),
+                },
+                {
+                  text: t("menu.newPost", "New Post"),
+                  path: ROUTES.ADMIN_BLOG_NEW,
+                  description: t("menu.createNewBlogPost", "Create a new blog post"),
+                },
+                {
+                  text: t("menu.categories", "Categories"),
+                  path: ROUTES.ADMIN_BLOG_CATEGORIES,
+                  description: t("menu.manageBlogCategories", "Manage blog categories"),
+                },
+              ]
+            }
+          : {
+              path: ROUTES.BLOG,
+              description: t("menu.blogPosts", "Blog Posts"),
+            }
+        ),
+      }, // Added missing comma
       {
         text: t("menu.settings", "Settings"),
         icon: <SettingsIcon />,

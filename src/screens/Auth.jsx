@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Mail, Lock, Eye, EyeOff, User, Sparkles } from "lucide-react";
-import logoVideo from "../assets/logoVideo.mp4";
+import appLogo from "../assets/appLogo.png";
 import { useAuth } from "../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useCustomTheme } from "../contexts/ThemeContext";
 import "./auth.css";
-import BrandLogo from "./auth/BrandLogo";
 import FloatingParticles from "./auth/FloatingParticles";
 import { validateEmail } from "./auth/utils";
 import {
@@ -236,19 +235,15 @@ const Auth = () => {
                 // boxShadow: theme.shadows[4],
               }}
             >
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
+              <img
+                src={appLogo}
+                alt="Sudanglish Logo"
                 style={{
                   width: "100%",
                   height: "100%",
-                  // objectFit: "cover",
+                  objectFit: "contain",
                 }}
-              >
-                <source src={logoVideo} type="video/mp4" />
-              </video>
+              />
             </Box>
             <Typography
               variant="h4"

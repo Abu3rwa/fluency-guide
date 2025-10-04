@@ -1,29 +1,65 @@
 {
   "indexes": [
     {
-      "collectionGroup": "bookings",
+      "collectionGroup": "blogs",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "bookingDate", "order": "DESCENDING" }
+        { "fieldPath": "is_deleted", "order": "ASCENDING" },
+        { "fieldPath": "published_at", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "availability",
+      "collectionGroup": "blogs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "instructorId", "order": "ASCENDING" },
-        { "fieldPath": "date", "order": "ASCENDING" }
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "is_deleted", "order": "ASCENDING" },
+        { "fieldPath": "category_id", "order": "ASCENDING" },
+        { "fieldPath": "published_at", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "sessions",
+      "collectionGroup": "blogs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "instructorId", "order": "ASCENDING" },
-        { "fieldPath": "date", "order": "DESCENDING" }
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "is_deleted", "order": "ASCENDING" },
+        { "fieldPath": "tags", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "published_at", "order": "DESCENDING" }
       ]
     }
   ],
-  "fieldOverrides": []
+  "fieldOverrides": [
+    {
+      "collectionGroup": "categories",
+      "fieldPath": "name_en",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "categories",
+      "fieldPath": "name_ar",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "categories",
+      "fieldPath": "slug",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    }
+  ]
 }

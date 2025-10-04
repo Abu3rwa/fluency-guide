@@ -2,39 +2,35 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // User collection rules
+    // Allow public read access to published blog posts
+    // Allow authenticated admins/instructors to write
+    match /blogs/{blogId} {
+      allow read: if resource.data.status == 'published' && resource.data.is_deleted == false;
+      allow write: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'instructor']);
+    }
+
+    // Allow public read access to categories
+    // Allow authenticated admins to write
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    // Allow public read access to tags
+    // Allow authenticated admins to write
+    match /tags/{tagId} {
+      allow read: if true;
+      allow write: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    // Existing rules below...
     match /users/{userId} {
-      allow read, write: if true;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    
-    // Session types
-    match /sessionTypes/{sessionTypeId} {
-      allow read, write: if true;
-    }
-    
-    // Sessions
-    match /sessions/{sessionId} {
-      allow read, write: if true;
-    }
-    
-    // Availability
-    match /availability/{availabilityId} {
-      allow read, write: if true;
-    }
-    
-    // Bookings (simple rules - allow all operations)
-    match /bookings/{bookingId} {
-      allow read, write: if true;
-    }
-    
-    // Notifications
-    match /notifications/{notificationId} {
-      allow read, write: if true;
-    }
-    
-    // All other collections - allow everything for development
+
+    // Placeholder for other collections - adjust as needed
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import AppRoutes from "./routes";
+import AppRoutes from "./routes/index.jsx";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import CombinedProvider from "./contexts/CombinedProvider";
 import "./index.css";
