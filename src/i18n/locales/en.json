@@ -1,0 +1,138 @@
+{
+  "homepage": {
+    "hero": {
+      "title": "Sudanglish",
+      "subtitle": "Learn English with our comprehensive online courses",
+      "cta_primary": "Start Learning",
+      "cta_secondary": "Browse Courses"
+    },
+    "features": {
+      "title": "Why Choose Us?",
+      "items": {
+        "live_sessions": {
+          "title": "Live Sessions",
+          "description": "Interactive live classes with experienced instructors"
+        },
+        "expert_instructors": {
+          "title": "Expert Instructors",
+          "description": "Learn from qualified English teachers"
+        },
+        "esp_courses": {
+          "title": "ESP Courses",
+          "description": "English for Specific Purposes courses tailored to your needs"
+        },
+        "pdf_guides": {
+          "title": "PDF Guides & E-Books",
+          "description": "Downloadable resources for offline study and reference"
+        },
+        "discussion_forums": {
+          "title": "Discussion Forums",
+          "description": "Connect with other learners to share tips, ask questions, and practice"
+        },
+        "assignments": {
+          "title": "Assignments & Projects",
+          "description": "Hands-on tasks to apply your English skills in practical scenarios"
+        }
+      }
+    },
+    "courses": {
+      "title": "Featured Courses",
+      "browse": "View All Courses",
+      "enroll": "Enroll Now",
+      "duration": "Duration",
+      "instructor": "Instructor",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "ended": "Ended",
+      "not_available": "Not Available",
+      "no_courses": "No courses available at the moment"
+    },
+    "testimonials": {
+      "title": "What Our Students Say"
+    },
+    "stats": {
+      "students": "Active Students",
+      "courses": "Available Courses",
+      "instructors": "Expert Instructors"
+    },
+    "enrollment": {
+      "title": "Get Started in 2 Minutes",
+      "subtitle": "Join thousands of students learning English",
+      "cta": "Enroll Now"
+    }
+  },
+  "common": {
+    "language": "Language",
+    "english": "English",
+    "arabic": "Arabic"
+  },
+  "navigation": {
+    "home": "Home",
+    "courses": "Courses",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "privateLessons": {
+    "title": "Private Lessons",
+    "hoursThisMonth": "Hours This Month",
+    "earnedThisMonth": "Earned This Month",
+    "outstanding": "Outstanding",
+    "students": "Students",
+    "myStudents": "My Students",
+    "addStudent": "Add Student",
+    "editStudent": "Edit Student",
+    "lessons": "Lessons",
+    "logLesson": "Log Lesson",
+    "editLesson": "Edit Lesson",
+    "payments": "Payments",
+    "recordPayment": "Record Payment",
+    "name": "Name",
+    "phone": "Phone",
+    "ratePerHour": "Rate/Hour",
+    "paymentSchedule": "Payment Schedule",
+    "perLesson": "Per Lesson",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "owed": "Owed",
+    "paid": "Paid",
+    "balance": "Balance",
+    "actions": "Actions",
+    "date": "Date",
+    "student": "Student",
+    "duration": "Duration (hrs)",
+    "amount": "Amount",
+    "notes": "Notes",
+    "balanceAfter": "Balance After",
+    "amountPaid": "Amount Paid",
+    "newBalance": "New balance",
+    "hourlyRate": "Hourly Rate (SDG)",
+    "addStudentsFirst": "Add students first",
+    "selectStudent": "Please select a student",
+    "errorSavingLesson": "Error saving lesson",
+    "confirmDeleteLesson": "Are you sure you want to delete this lesson?",
+    "confirmDelete": "Are you sure?",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "dashboard": {
+    "title": "Instructor Dashboard",
+    "subtitle": "Manage your courses and students with ease",
+    "addNewCourse": "Add New Course",
+    "quickActions": "Quick Actions",
+    "newCourse": "New Course",
+    "enrollments": "Enrollments",
+    "needsAttention": "Needs Attention",
+    "pendingEnrollments": "Pending Enrollments",
+    "awaitingApproval": "Awaiting approval",
+    "noPendingEnrollments": "No pending enrollments!",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "totalCourses": "Total Courses",
+    "activeRounds": "Active Rounds",
+    "totalStudents": "Total Students",
+    "averageRating": "Average Rating"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "homepage": {
+    "hero": {
+      "title": "سودانجلش",
+      "subtitle": "تعلم الإنجليزية مع دوراتنا الشاملة عبر الإنترنت",
+      "cta_primary": "ابدأ التعلم",
+      "cta_secondary": "تصفح الدورات"
+    },
+    "features": {
+      "title": "لماذا تختارنا؟",
+      "items": {
+        "live_sessions": {
+          "title": "جلسات مباشرة",
+          "description": "فصول حية تفاعلية مع مدرسين ذوي خبرة"
+        },
+        "expert_instructors": {
+          "title": "مدرسون خبراء",
+          "description": "تعلم من معلمي اللغة الإنجليزية المؤهلين"
+        },
+        "esp_courses": {
+          "title": "دورات الإنجليزية لأغراض محددة",
+          "description": "دورات إنجليزية مصممة خصيصاً لاحتياجاتك المهنية"
+        },
+        "pdf_guides": {
+          "title": "أدلة PDF والكتب الإلكترونية",
+          "description": "موارد قابلة للتحميل للدراسة دون اتصال والمرجع"
+        },
+        "discussion_forums": {
+          "title": "منتديات النقاش",
+          "description": "تواصل مع المتعلمين الآخرين لمشاركة النصائح وطرح الأسئلة والممارسة"
+        },
+        "assignments": {
+          "title": "الواجبات والمشاريع",
+          "description": "مهام عملية لتطبيق مهاراتك في اللغة الإنجليزية في سيناريوهات عملية"
+        }
+      }
+    },
+    "courses": {
+      "title": "الدورات المميزة",
+      "browse": "عرض جميع الدورات",
+      "enroll": "سجل الآن",
+      "duration": "المدة",
+      "instructor": "المدرب",
+      "start_date": "تاريخ البدء",
+      "end_date": "تاريخ الانتهاء",
+      "ended": "انتهى",
+      "not_available": "غير متاح",
+      "no_courses": "لا توجد دورات متاحة في الوقت الحالي"
+    },
+    "testimonials": {
+      "title": "ماذا يقول طلابنا"
+    },
+    "stats": {
+      "students": "طلاب نشطون",
+      "courses": "دورات متاحة",
+      "instructors": "مدرسون خبراء"
+    },
+    "enrollment": {
+      "title": "ابدأ في دقيقتين",
+      "subtitle": "انضم إلى آلاف الطلاب الذين يتعلمون الإنجليزية",
+      "cta": "سجل الآن"
+    }
+  },
+  "common": {
+    "language": "اللغة",
+    "english": "الإنجليزية",
+    "arabic": "العربية"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "courses": "الدورات",
+    "blog": "المدونة",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب"
+  },
+  "privateLessons": {
+    "title": "الدروس الخاصة",
+    "hoursThisMonth": "ساعات هذا الشهر",
+    "earnedThisMonth": "الأرباح هذا الشهر",
+    "outstanding": "المدفوعات المعلقة",
+    "students": "الطلاب",
+    "myStudents": "طلابي",
+    "addStudent": "إضافة طالب",
+    "editStudent": "تعديل طالب",
+    "lessons": "الدروس",
+    "logLesson": "تسجيل درس",
+    "editLesson": "تعديل درس",
+    "payments": "المدفوعات",
+    "recordPayment": "تسجيل دفعة",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "ratePerHour": "السعر/ساعة",
+    "paymentSchedule": "نظام الدفع",
+    "perLesson": "كل درس",
+    "weekly": "أسبوعي",
+    "monthly": "شهري",
+    "owed": "المستحق",
+    "paid": "المدفوع",
+    "balance": "الرصيد",
+    "actions": "إجراءات",
+    "date": "التاريخ",
+    "student": "الطالب",
+    "duration": "المدة (ساعة)",
+    "amount": "المبلغ",
+    "notes": "ملاحظات",
+    "balanceAfter": "الرصيد بعد الدفع",
+    "amountPaid": "المبلغ المدفوع",
+    "newBalance": "الرصيد الجديد",
+    "hourlyRate": "السعر بالساعة (SDG)",
+    "addStudentsFirst": "أضف طلاب أولاً",
+    "selectStudent": "الرجاء اختيار طالب",
+    "errorSavingLesson": "حدث خطأ في حفظ الدرس",
+    "confirmDeleteLesson": "هل أنت متأكد من حذف الدرس؟",
+    "confirmDelete": "هل أنت متأكد؟",
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "subtitle": "إدارة دوراتك وطلابك بكل سهولة",
+    "addNewCourse": "إضافة دورة جديدة",
+    "quickActions": "إجراءات سريعة",
+    "newCourse": "دورة جديدة",
+    "enrollments": "الالتحاقات",
+    "needsAttention": "تحتاج انتباهك",
+    "pendingEnrollments": "التحاقات معلقة",
+    "awaitingApproval": "بانتظار الموافقة",
+    "noPendingEnrollments": "لا توجد التحاقات معلقة!",
+    "confirmed": "مؤكد",
+    "pending": "معلق",
+    "totalCourses": "إجمالي الدورات",
+    "activeRounds": "الجولات النشطة",
+    "totalStudents": "إجمالي الطلاب",
+    "averageRating": "متوسط التقييم"
+  }
+}

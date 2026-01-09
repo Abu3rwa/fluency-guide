@@ -3,10 +3,16 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     // Allow public read access to published blog posts
-    // Allow authenticated admins/instructors to write
+    // Allow authenticated admins to write
     match /blogs/{blogId} {
       allow read: if resource.data.status == 'published' && resource.data.is_deleted == false;
-      allow write: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'instructor']);
+      allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Blog posts collection (used by BlogContext)
+    match /blog_posts/{postId} {
+      allow read: if true;
+      allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
     // Allow public read access to categories
@@ -21,6 +27,93 @@ service cloud.firestore {
     match /tags/{tagId} {
       allow read: if true;
       allow write: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    // Allow public read access to courses
+    // Allow instructors to create/update their own courses
+    match /courses/{courseId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.instructor.uid == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.instructor.uid == request.auth.uid;
+      
+      // Course units - only course owner can manage
+      match /units/{unitId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null && 
+          get(/databases/$(database)/documents/courses/$(courseId)).data.instructor.uid == request.auth.uid;
+        
+        // Lessons within units - only course owner can manage
+        match /lessons/{lessonId} {
+          allow read: if request.auth != null;
+          allow write: if request.auth != null && 
+            get(/databases/$(database)/documents/courses/$(courseId)).data.instructor.uid == request.auth.uid;
+        }
+      }
+    }
+
+    // Allow public read access to aboutSections
+    // Allow instructors/admins to write
+    match /aboutSections/{sectionId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Allow read access to enrollments for authenticated users
+    // Instructors need to see all enrollments for their courses
+    match /enrollments/{enrollmentId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+
+    // Private lessons - only instructor can manage their own
+    match /privateLessons/{lessonId} {
+      allow read: if request.auth != null && 
+        resource.data.instructorId == request.auth.uid;
+      allow create: if request.auth != null && 
+        request.resource.data.instructorId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+        resource.data.instructorId == request.auth.uid;
+    }
+
+    // Private students - only instructor can manage their own
+    match /privateStudents/{studentId} {
+      allow read: if request.auth != null && 
+        resource.data.instructorId == request.auth.uid;
+      allow create: if request.auth != null && 
+        request.resource.data.instructorId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+        resource.data.instructorId == request.auth.uid;
+    }
+
+    // Private payments - only instructor can manage their own
+    match /privatePayments/{paymentId} {
+      allow read: if request.auth != null && 
+        resource.data.instructorId == request.auth.uid;
+      allow create: if request.auth != null && 
+        request.resource.data.instructorId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+        resource.data.instructorId == request.auth.uid;
+    }
+
+    // Allow read/write access to payments for instructors
+    match /payments/{paymentId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null;
+    }
+
+    // Course rounds - only course owner can manage rounds
+    match /course_rounds/{roundId} {
+      // Public read access to see round information
+      allow read: if true;
+      
+      // Only course owner can create rounds
+      allow create: if request.auth != null && 
+        get(/databases/$(database)/documents/courses/$(request.resource.data.courseId)).data.instructor.uid == request.auth.uid;
+      
+      // Only course owner can update/delete rounds
+      allow update, delete: if request.auth != null && 
+        get(/databases/$(database)/documents/courses/$(resource.data.courseId)).data.instructor.uid == request.auth.uid;
     }
 
     // Existing rules below...

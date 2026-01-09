@@ -1,134 +1,79 @@
-html,
-body,
-#root {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  /* overflow-y: hidden; */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-.MuiTypography-root {
-  font-family: "Zain", "Roboto", Arial, sans-serif;
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
-.main-icon {
-  background: #7c3aed7a !important;
-  padding: 4px !important;
-  border-radius: 14px !important;
+* {
+  scroll-behavior: smooth;
 }
 
-/* Arabic Font Variables */
-:root {
-  /* Arabic Fonts */
-  --font-tajawal: "Tajawal", sans-serif;
-  --font-cairo: "Cairo", sans-serif;
-  --font-alexandria: "Alexandria", sans-serif;
-  --font-amiri: "Amiri", serif;
-  --font-noto-serif: "Noto Serif", serif;
-  --font-dm-serif: "DM Serif Text", serif;
-  --font-roboto: "Roboto", sans-serif;
-
-  /* Font Weights */
-  --font-light: 300;
-  --font-regular: 400;
-  --font-medium: 500;
-  --font-semibold: 600;
-  --font-bold: 700;
-  --font-extrabold: 800;
-  --font-black: 900;
+body {
+  font-family: 'Montserrat', 'Tajawal', 'Helvetica Neue', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FDF6E3;
+  color: #374151;
+  line-height: 1.6;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
-/* Utility Classes for Arabic Fonts */
-.font-tajawal {
-  font-family: var(--font-tajawal);
-}
-
-.font-cairo {
-  font-family: var(--font-cairo);
-}
-
-.font-alexandria {
-  font-family: var(--font-alexandria);
-}
-
-.font-amiri {
-  font-family: var(--font-amiri);
-}
-
-.font-noto-serif {
-  font-family: var(--font-noto-serif);
-}
-
-.font-dm-serif {
-  font-family: var(--font-dm-serif);
-}
-
-/* RTL Support for Arabic Text */
 [dir="rtl"] {
-  font-family: var(--font-tajawal);
+  direction: rtl;
 }
 
-/* Responsive font sizes for Arabic text */
-@media (max-width: 768px) {
-  .font-tajawal,
-  .font-cairo,
-  .font-alexandria,
-  .font-amiri,
-  .font-noto-serif,
-  .font-dm-serif {
-    font-size: 0.9em;
+[dir="ltr"] {
+  direction: ltr;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: #FDF6E3;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Orbital Animation Keyframes */
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(140px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(140px) rotate(-360deg);
   }
 }
 
-/* Arabic Text Direction */
-.arabic-text {
-  direction: rtl;
-  text-align: right;
+@keyframes orbitReverse {
+  0% {
+    transform: rotate(180deg) translateX(140px) rotate(-180deg);
+  }
+  100% {
+    transform: rotate(540deg) translateX(140px) rotate(-540deg);
+  }
 }
 
-.arabic-text-center {
-  direction: rtl;
-  text-align: center;
-}
-
-.arabic-text-left {
-  direction: rtl;
-  text-align: left;
-}
-
-/* English Text Direction */
-.english-text {
-  direction: ltr;
-  text-align: left;
-}
-
-/* Mixed Content */
-.mixed-content {
-  unicode-bidi: bidi-override;
-}
-
-/* Blog Global Styles */
-.blog-image {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-.answer-option{
-  width: 300px;
-}
-
-/* Focus Styles for Accessibility */
-button:focus,
-a:focus {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
-}
-
-/* Smooth Transitions */
-* {
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+/* Responsive orbital animation for smaller screens */
+@media (max-width: 600px) {
+  @keyframes orbit {
+    0% {
+      transform: rotate(0deg) translateX(95px) rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg) translateX(95px) rotate(-360deg);
+    }
+  }
 }
