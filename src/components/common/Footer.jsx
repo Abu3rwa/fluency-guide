@@ -18,18 +18,18 @@ function Footer() {
 
   const footerLinks = [
     {
-      title: isArabic ? 'روابط سريعة' : 'Quick Links', links: [
-        { name: isArabic ? 'الرئيسية' : 'Home', path: '/' },
-        { name: isArabic ? 'الدورات' : 'Courses', path: '/courses' },
-        { name: isArabic ? 'المدونة' : 'Blog', path: '/blog' },
-        { name: isArabic ? 'عن المنصة' : 'About Us', path: '/about' },
-        { name: isArabic ? 'اتصل بنا' : 'Contact Us', path: '/contact' },
+      title: t('footer.quickLinks'), links: [
+        { name: t('navigation.home'), path: '/' },
+        { name: t('navigation.courses'), path: '/courses' },
+        { name: t('navigation.blog'), path: '/blog' },
+        { name: t('navigation.about'), path: '/about' },
+        { name: t('navigation.contact'), path: '/contact' },
       ]
     },
     {
-      title: isArabic ? 'قانوني' : 'Legal', links: [
-        { name: isArabic ? 'الشروط والأحكام' : 'Terms of Service', path: '#' },
-        { name: isArabic ? 'سياسة الخصوصية' : 'Privacy Policy', path: '#' },
+      title: t('footer.legal'), links: [
+        { name: t('footer.terms'), path: '#' },
+        { name: t('footer.privacy'), path: '#' },
       ]
     }
   ];
@@ -71,8 +71,7 @@ function Footer() {
                   color: '#F3F4F6',
                 }}
               >
-                {isArabic ? 'سودانجليش' : 'Sudanglish'}
-              </Typography>
+                {t('common.appName')}\n              </Typography>
             </Box>
             <Typography
               variant="body2"
@@ -84,9 +83,7 @@ function Footer() {
                 fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
               }}
             >
-              {isArabic
-                ? 'منصتك الأولى لتعلم اللغة الإنجليزية في السودان. نتعلم، نتطور، ونتواصل مع العالم.'
-                : 'Your premier platform for learning English in Sudan. Learn, grow, and connect with the world.'}
+              {t('footer.description')}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <IconButton size="small" sx={{ color: '#00897B', border: '1px solid #00897B', '&:hover': { bgcolor: '#00897B', color: 'white' } }}>
@@ -152,21 +149,21 @@ function Footer() {
                 fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
               }}
             >
-              {isArabic ? 'تواصل معنا' : 'Contact Us'}
+              {t('footer.contactUs')}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', color: '#D1D5DB' }}>
                 <EmailIcon fontSize="small" sx={{ color: '#D4A574' }} />
-                <Typography variant="body2" sx={{ fontFamily: 'inherit' }}>contact@sudanglish.com</Typography>
+                <Typography variant="body2" sx={{ fontFamily: 'inherit' }}>3bdulhafeez.sd@gmail.com</Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', color: '#D1D5DB' }}>
                 <PhoneIcon fontSize="small" sx={{ color: '#D4A574' }} />
-                <Typography variant="body2" sx={{ fontFamily: 'inherit' }}>+249 123 456 789</Typography>
+                <Typography className="ltr" variant="body2" sx={{ fontFamily: 'inherit' }}>+249 115 337 188</Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', color: '#D1D5DB' }}>
                 <LocationOnIcon fontSize="small" sx={{ color: '#D4A574' }} />
                 <Typography variant="body2" sx={{ fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif" }}>
-                  {isArabic ? 'الخرطوم، السودان' : 'Khartoum, Sudan'}
+                  {t('footer.location')}
                 </Typography>
               </Box>
             </Box>
@@ -193,9 +190,7 @@ function Footer() {
               fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
             }}
           >
-            {isArabic
-              ? `© ${new Date().getFullYear()} سودانجليش. جميع الحقوق محفوظة.`
-              : `© ${new Date().getFullYear()} Sudanglish. All rights reserved.`}
+            {t('footer.copyright', { year: new Date().getFullYear() })}
           </Typography>
           <LanguageSwitcher />
         </Box>

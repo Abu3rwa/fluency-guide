@@ -10,13 +10,8 @@ import {
   CircularProgress,
   Card,
   CardContent,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Header from '../components/common/Header';
 import { useAuth } from '../contexts/AuthContext';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
@@ -31,7 +26,6 @@ function Register() {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'student',
   });
   const [localError, setLocalError] = useState('');
 
@@ -50,34 +44,35 @@ function Register() {
 
     // Validation
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      setLocalError(isArabic ? 'يرجى ملء جميع الحقول' : 'Please fill in all fields');
+      setLocalError(t('errors.requiredFields'));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setLocalError(isArabic ? 'كلمات المرور غير متطابقة' : 'Passwords do not match');
+      setLocalError(t('auth.passwordMismatch'));
       return;
     }
 
     if (formData.password.length < 6) {
-      setLocalError(isArabic ? 'يجب أن تكون كلمة المرور 6 أحرف على الأقل' : 'Password must be at least 6 characters');
+      setLocalError(t('auth.weakPassword'));
       return;
     }
 
     try {
-      await register(formData.email, formData.password, formData.name, formData.role);
+      // All new users are registered as 'student' - instructors must be promoted by admin
+      await register(formData.email, formData.password, formData.name, 'student');
       navigate('/');
     } catch (err) {
-      const errorMessage = err.message || (isArabic ? 'فشل التسجيل' : 'Registration failed');
+      const errorMessage = err.message || t('auth.registerError');
 
       // Format Firebase error messages
       let displayError = errorMessage;
       if (errorMessage.includes('email-already-in-use')) {
-        displayError = isArabic ? 'البريد الإلكتروني قيد الاستخدام بالفعل' : 'Email is already in use';
+        displayError = t('auth.emailInUse');
       } else if (errorMessage.includes('invalid-email')) {
-        displayError = isArabic ? 'البريد الإلكتروني غير صالح' : 'Invalid email format';
+        displayError = t('auth.invalidEmail');
       } else if (errorMessage.includes('weak-password')) {
-        displayError = isArabic ? 'كلمة المرور ضعيفة جداً' : 'Password is too weak';
+        displayError = t('auth.weakPassword');
       }
 
       setLocalError(displayError);
@@ -93,7 +88,6 @@ function Register() {
         backgroundColor: 'background.default',
       }}
     >
-      <Header />
       <Box
         component="main"
         sx={{
@@ -127,12 +121,10 @@ function Register() {
                     fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                   }}
                 >
-                  {isArabic ? 'إنشاء حساب' : 'Create Account'}
+                  {t('auth.createAccount')}
                 </Typography>
                 <Typography color="textSecondary">
-                  {isArabic
-                    ? 'انضم إلينا وابدأ رحلتك التعليمية'
-                    : 'Join us and start your learning journey'}
+                  {t('auth.joinUs')}
                 </Typography>
               </Box>
 
@@ -147,7 +139,7 @@ function Register() {
               <form onSubmit={handleSubmit}>
                 <TextField
                   fullWidth
-                  label={isArabic ? 'الاسم الكامل' : 'Full Name'}
+                  label={t('auth.fullName')}
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
@@ -166,7 +158,7 @@ function Register() {
                 <TextField
                   fullWidth
                   type="email"
-                  label={isArabic ? 'البريد الإلكتروني' : 'Email'}
+                  label={t('auth.email')}
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -185,7 +177,7 @@ function Register() {
                 <TextField
                   fullWidth
                   type="password"
-                  label={isArabic ? 'كلمة المرور' : 'Password'}
+                  label={t('auth.password')}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -193,7 +185,7 @@ function Register() {
                   variant="outlined"
                   required
                   disabled={loading}
-                  helperText={isArabic ? '6 أحرف على الأقل' : 'Minimum 6 characters'}
+                  helperText={t('auth.minChars')}
                   sx={{
                     '& .MuiInputBase-root': {
                       fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
@@ -204,7 +196,7 @@ function Register() {
                 <TextField
                   fullWidth
                   type="password"
-                  label={isArabic ? 'تأكيد كلمة المرور' : 'Confirm Password'}
+                  label={t('auth.confirmPassword')}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
@@ -219,23 +211,8 @@ function Register() {
                   }}
                 />
 
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>{isArabic ? 'نوع الحساب' : 'Account Type'}</InputLabel>
-                  <Select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    label={isArabic ? 'نوع الحساب' : 'Account Type'}
-                    disabled={loading}
-                  >
-                    <MenuItem value="student">
-                      {isArabic ? 'طالب' : 'Student'}
-                    </MenuItem>
-                    <MenuItem value="instructor">
-                      {isArabic ? 'معلم' : 'Instructor'}
-                    </MenuItem>
-                  </Select>
-                </FormControl>
+                {/* Note: Role selection removed for security - all users register as students */}
+                {/* Instructors must be promoted by an administrator */}
 
                 <Button
                   fullWidth
@@ -261,14 +238,14 @@ function Register() {
                   }}
                 >
                   {loading ? <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} /> : null}
-                  {loading ? (isArabic ? 'جاري الإنشاء...' : 'Creating account...') : (isArabic ? 'إنشاء حساب' : 'Create Account')}
+                  {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
                 </Button>
               </form>
 
               {/* Sign In Link */}
               <Box sx={{ textAlign: 'center' }}>
                 <Typography color="textSecondary" variant="body2">
-                  {isArabic ? 'لديك حساب بالفعل؟ ' : 'Already have an account? '}
+                  {t('auth.haveAccount')}
                   <Link
                     to="/login"
                     style={{
@@ -277,7 +254,7 @@ function Register() {
                       fontWeight: 600,
                     }}
                   >
-                    {isArabic ? 'تسجيل الدخول' : 'Sign in'}
+                    {t('auth.signIn')}
                   </Link>
                 </Typography>
               </Box>

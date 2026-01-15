@@ -1,6 +1,16 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
-import { collection, query, where, getDocs, doc, getDoc, orderBy, limit, startAfter } from "firebase/firestore";
-import { db } from "../firebase";
+import React, { createContext, useContext, useCallback } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    fetchPosts as fetchPostsThunk,
+    fetchPostBySlug as fetchPostBySlugThunk,
+    fetchRelatedPosts as fetchRelatedPostsThunk,
+    selectBlogPosts,
+    selectCurrentPost,
+    selectBlogLoading,
+    selectBlogError,
+    selectBlogHasMore,
+    selectRelatedPosts
+} from '../store/slices/blogSlice';
 
 const BlogContext = createContext();
 
@@ -13,129 +23,39 @@ export const useBlog = () => {
 };
 
 export const BlogProvider = ({ children }) => {
-    const [posts, setPosts] = useState([]);
-    const [currentPost, setCurrentPost] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [hasMore, setHasMore] = useState(true);
-    const [lastDoc, setLastDoc] = useState(null);
+    const dispatch = useDispatch();
 
-    const POSTS_PER_PAGE = 6;
+    const posts = useSelector(selectBlogPosts);
+    const currentPost = useSelector(selectCurrentPost);
+    const loading = useSelector(selectBlogLoading);
+    const error = useSelector(selectBlogError);
+    const hasMore = useSelector(selectBlogHasMore);
+
+    // We can expose relatedPosts from store if needed, 
+    // though original context didn't expose state, just the fetcher.
+    const relatedPosts = useSelector(selectRelatedPosts);
 
     const fetchPosts = useCallback(async (category = null, reset = true) => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            let q;
-            const postsRef = collection(db, "blog_posts");
-
-            if (category) {
-                q = query(
-                    postsRef,
-                    where("status", "==", "published"),
-                    where("category.en", "==", category),
-                    orderBy("publishedAt", "desc"),
-                    limit(POSTS_PER_PAGE)
-                );
-            } else {
-                q = query(
-                    postsRef,
-                    where("status", "==", "published"),
-                    orderBy("publishedAt", "desc"),
-                    limit(POSTS_PER_PAGE)
-                );
-            }
-
-            if (!reset && lastDoc) {
-                q = query(
-                    postsRef,
-                    where("status", "==", "published"),
-                    orderBy("publishedAt", "desc"),
-                    startAfter(lastDoc),
-                    limit(POSTS_PER_PAGE)
-                );
-            }
-
-            const snapshot = await getDocs(q);
-            const fetchedPosts = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-
-            if (reset) {
-                setPosts(fetchedPosts);
-            } else {
-                setPosts(prev => [...prev, ...fetchedPosts]);
-            }
-
-            setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
-            setHasMore(snapshot.docs.length === POSTS_PER_PAGE);
-        } catch (err) {
-            console.error("Error fetching posts:", err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, [lastDoc]);
+        dispatch(fetchPostsThunk({ category, reset }));
+    }, [dispatch]);
 
     const fetchPostBySlug = useCallback(async (slug) => {
-        setLoading(true);
-        setError(null);
-        setCurrentPost(null);
-
-        try {
-            const postsRef = collection(db, "blog_posts");
-            const q = query(
-                postsRef,
-                where("slug", "==", slug),
-                where("status", "==", "published"),
-                limit(1)
-            );
-
-            const snapshot = await getDocs(q);
-
-            if (!snapshot.empty) {
-                const postData = {
-                    id: snapshot.docs[0].id,
-                    ...snapshot.docs[0].data()
-                };
-                setCurrentPost(postData);
-                return postData;
-            } else {
-                setError("Post not found");
-                return null;
-            }
-        } catch (err) {
-            console.error("Error fetching post:", err);
-            setError(err.message);
-            return null;
-        } finally {
-            setLoading(false);
+        const resultAction = await dispatch(fetchPostBySlugThunk(slug));
+        if (fetchPostBySlugThunk.fulfilled.match(resultAction)) {
+            return resultAction.payload;
+        } else {
+            return null; // Original context returned null on error/not found
         }
-    }, []);
+    }, [dispatch]);
 
     const fetchRelatedPosts = useCallback(async (category, currentPostId, limitCount = 3) => {
-        try {
-            const postsRef = collection(db, "blog_posts");
-            const q = query(
-                postsRef,
-                where("status", "==", "published"),
-                where("category.en", "==", category),
-                orderBy("publishedAt", "desc"),
-                limit(limitCount + 1)
-            );
-
-            const snapshot = await getDocs(q);
-            return snapshot.docs
-                .map(doc => ({ id: doc.id, ...doc.data() }))
-                .filter(post => post.id !== currentPostId)
-                .slice(0, limitCount);
-        } catch (err) {
-            console.error("Error fetching related posts:", err);
-            return [];
+        const resultAction = await dispatch(fetchRelatedPostsThunk({ category, currentPostId, limitCount }));
+        if (fetchRelatedPostsThunk.fulfilled.match(resultAction)) {
+            return resultAction.payload;
+        } else {
+            return []; // Original context returned empty array on error
         }
-    }, []);
+    }, [dispatch]);
 
     const getCategories = useCallback(() => {
         return [
@@ -150,9 +70,9 @@ export const BlogProvider = ({ children }) => {
 
     const loadMore = useCallback(() => {
         if (hasMore && !loading) {
-            fetchPosts(null, false);
+            dispatch(fetchPostsThunk({ category: null, reset: false }));
         }
-    }, [hasMore, loading, fetchPosts]);
+    }, [hasMore, loading, dispatch]);
 
     const value = {
         posts,
@@ -164,7 +84,8 @@ export const BlogProvider = ({ children }) => {
         fetchPostBySlug,
         fetchRelatedPosts,
         getCategories,
-        loadMore
+        loadMore,
+        relatedPosts // Bonus: now exposed in state
     };
 
     return (

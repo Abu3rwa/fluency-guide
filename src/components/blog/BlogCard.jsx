@@ -10,7 +10,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../contexts/AuthContext";
 
 function BlogCard({ post, compact = false, onDelete }) {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const isArabic = i18n.language === "ar";
     const navigate = useNavigate();
     const { isAdmin } = useAuth();
@@ -78,6 +78,14 @@ function BlogCard({ post, compact = false, onDelete }) {
                         zIndex: 1
                     }}
                 >
+                    {post?.status === 'draft' && (
+                        <Chip
+                            label={t('blog.draft') || 'Draft'}
+                            size="small"
+                            color="warning"
+                            sx={{ height: 24, fontWeight: 700 }}
+                        />
+                    )}
                     <IconButton
                         size="small"
                         onClick={handleEdit}
@@ -205,8 +213,7 @@ function BlogCard({ post, compact = false, onDelete }) {
                                 fontFamily: "'Montserrat', sans-serif"
                             }}
                         >
-                            {readingTime} {isArabic ? "د" : "min"}
-                        </Typography>
+                            {readingTime} {t('blog.minRead')}\n                        </Typography>
                     </Box>
                 </Box>
             </CardContent>

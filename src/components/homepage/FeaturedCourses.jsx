@@ -18,11 +18,7 @@ function FeaturedCourses() {
     fetchCourses();
   }, [fetchCourses]);
 
-  useEffect(() => {
-    console.log('FeaturedCourses - courses:', courses);
-    console.log('FeaturedCourses - loading:', loading);
-    console.log('FeaturedCourses - courses.length:', courses.length);
-  }, [courses, loading]);
+
 
   return (
     <Box
@@ -31,6 +27,7 @@ function FeaturedCourses() {
         backgroundColor: 'background.default',
         maxWidth: '1200px',
         margin: '0 auto',
+        direction: isArabic ? 'rtl' : 'ltr',
       }}
     >
       <Typography
@@ -48,7 +45,7 @@ function FeaturedCourses() {
         {t('homepage.courses.title')}
       </Typography>
 
-      <Grid container spacing={4}>
+      <Grid container spacing={4} justifyContent="center">
         {loading ? (
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', py: 8 }}>
             <CircularProgress />
@@ -224,7 +221,7 @@ function FeaturedCourses() {
         }
       </Grid>
 
-      <Box sx={{ textAlign: 'center', mt: 6 }}>
+      <Box sx={{ textAlign: 'center', mt: 6 }} display='flex' justifyContent="center">
         <Typography
           component="a"
           href="/courses"
@@ -239,7 +236,10 @@ function FeaturedCourses() {
             border: '2px solid',
             borderColor: 'secondary.main',
             borderRadius: '5px',
-            display: 'inline-block',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1,
+            direction: isArabic ? 'rtl' : 'ltr',
             transition: 'all 0.3s ease',
             '&:hover': {
               backgroundColor: 'secondary.main',
@@ -249,10 +249,10 @@ function FeaturedCourses() {
             },
           }}
         >
-          {t('homepage.courses.browse')} →
+          {t('homepage.courses.browse')} {isArabic ? '←' : '→'}
         </Typography>
       </Box>
-    </Box>
+    </Box >
   );
 }
 

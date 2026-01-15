@@ -54,6 +54,9 @@ const InstructorDashboard = lazy(() => import('./pages/InstructorDashboard').cat
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const BlogEditor = lazy(() => import('./pages/BlogEditor'));
+const LessonAttendance = lazy(() => import('./pages/instructor/LessonAttendance'));
+const CourseAttendanceOverview = lazy(() => import('./pages/instructor/CourseAttendanceOverview'));
+const AdminUserManagement = lazy(() => import('./pages/admin/UserManagement'));
 
 const LoadingSpinner = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -115,6 +118,37 @@ function App() {
                           element={
                             <ProtectedRoute requiredRole="instructor">
                               <CourseContentBuilder />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/instructor/course/:courseId/lesson/:lessonId/attendance"
+                          element={
+                            <ProtectedRoute requiredRole="instructor">
+                              <Suspense fallback={<LoadingSpinner />}>
+                                <LessonAttendance />
+                              </Suspense>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/instructor/course/:courseId/attendance"
+                          element={
+                            <ProtectedRoute requiredRole="instructor">
+                              <Suspense fallback={<LoadingSpinner />}>
+                                <CourseAttendanceOverview />
+                              </Suspense>
+                            </ProtectedRoute>
+                          }
+                        />
+                        {/* Admin Routes */}
+                        <Route
+                          path="/admin/users"
+                          element={
+                            <ProtectedRoute requiredRole="admin">
+                              <Suspense fallback={<LoadingSpinner />}>
+                                <AdminUserManagement />
+                              </Suspense>
                             </ProtectedRoute>
                           }
                         />

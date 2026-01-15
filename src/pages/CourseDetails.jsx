@@ -157,7 +157,7 @@ function CourseDetails() {
           }}
         >
           <Alert severity="error">
-            {isArabic ? 'لم يتم العثور على الدورة' : 'Course not found'}
+            {t('courseDetails.notFound')}
           </Alert>
         </Box>
       </Box>
@@ -249,7 +249,7 @@ function CourseDetails() {
             </Box>
 
             <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
-              {isArabic ? 'الوصف' : 'Description'}
+              {t('courseDetails.description')}
             </Typography>
             <Typography variant="body1" color="textSecondary" paragraph>
               {getText(course.description)}
@@ -258,7 +258,7 @@ function CourseDetails() {
             {course.objectives && (
               <>
                 <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
-                  {isArabic ? 'أهداف الدورة' : 'Learning Objectives'}
+                  {t('courseDetails.objectives')}
                 </Typography>
                 <Box component="ul" sx={{ pl: 2, mb: 2 }}>
                   {(() => {
@@ -279,7 +279,7 @@ function CourseDetails() {
             {course.topics && (
               <>
                 <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
-                  {isArabic ? 'المواضيع المغطاة' : 'Topics Covered'}
+                  {t('courseDetails.topics')}
                 </Typography>
                 <Box component="ul" sx={{ pl: 2, mb: 2 }}>
                   {(() => {
@@ -300,7 +300,7 @@ function CourseDetails() {
             {course.requirements && (
               <>
                 <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
-                  {isArabic ? 'المتطلبات' : 'Prerequisites'}
+                  {t('courseDetails.requirements')}
                 </Typography>
                 <Box component="ul" sx={{ pl: 2, mb: 2 }}>
                   {(() => {
@@ -321,7 +321,7 @@ function CourseDetails() {
             {course.instructor && (
               <>
                 <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
-                  {isArabic ? 'المدرس' : 'Instructor'}
+                  {t('courseDetails.instructor')}
                 </Typography>
                 <Card sx={{ mb: 3 }}>
                   <CardContent>
@@ -377,7 +377,7 @@ function CourseDetails() {
             <Card>
               <CardContent>
                 <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
-                  {isArabic ? 'معلومات الدورة' : 'Course Info'}
+                  {t('courseDetails.courseInfo')}
                 </Typography>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
@@ -390,7 +390,7 @@ function CourseDetails() {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                   <PeopleIcon />
                   <Typography variant="body2">
-                    {course.enrolledStudents?.length || 0} / {course.maxStudents} {isArabic ? 'طالب' : 'students'}
+                    {course.enrolledStudents?.length || 0} / {course.maxStudents} {t('courseDetails.students')}
                   </Typography>
                 </Box>
 
@@ -426,7 +426,7 @@ function CourseDetails() {
                     sx={{ mb: 2 }}
                   >
                     <CircularProgress size={20} sx={{ mr: 1 }} />
-                    {isArabic ? 'جاري التحقق...' : 'Checking...'}
+                    {t('courseDetails.checking')}
                   </Button>
                 ) : enrolled ? (
                   <>
@@ -439,7 +439,7 @@ function CourseDetails() {
                         onClick={() => navigate(`/courses/${courseId}/content`)}
                         sx={{ mb: 2 }}
                       >
-                        {isArabic ? 'الذهاب للدورة' : 'Go to Course'}
+                        {t('courseDetails.goToCourse')}
                       </Button>
                     ) : (
                       <Button
@@ -450,13 +450,13 @@ function CourseDetails() {
                         disabled
                         sx={{ mb: 2 }}
                       >
-                        {isArabic ? 'في انتظار التأكيد' : 'Awaiting Confirmation'}
+                        {t('courseDetails.awaitingConfirmation')}
                       </Button>
                     )}
                     <Alert severity={enrollmentStatus === 'confirmed' || enrollmentStatus === 'active' ? 'success' : 'info'} sx={{ mb: 2 }}>
                       {enrollmentStatus === 'confirmed' || enrollmentStatus === 'active'
-                        ? (isArabic ? 'أنت مسجل في هذه الدورة' : 'You are enrolled in this course')
-                        : (isArabic ? 'تسجيلك قيد المراجعة. سيتم إخطارك عند التأكيد.' : 'Your enrollment is pending review. You will be notified when confirmed.')
+                        ? t('courseDetails.enrolledMessage')
+                        : t('courseDetails.pendingMessage')
                       }
                     </Alert>
                   </>
@@ -472,13 +472,13 @@ function CourseDetails() {
                       sx={{ mb: 2 }}
                     >
                       {course.enrolledStudents?.length >= course.maxStudents
-                        ? (isArabic ? 'الدورة ممتلئة' : 'Course is Full')
-                        : (isArabic ? 'الالتحاق الآن' : 'Enroll Now')
+                        ? t('courseDetails.courseFull')
+                        : t('courseDetails.enrollNow')
                       }
                     </Button>
                     {course.enrolledStudents?.length >= course.maxStudents && (
                       <Alert severity="warning">
-                        {isArabic ? 'الدورة ممتلئة' : 'Course is full'}
+                        {t('courseDetails.courseFull')}
                       </Alert>
                     )}
                   </>

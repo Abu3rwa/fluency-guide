@@ -46,8 +46,16 @@ function ProtectedRoute({ children, requiredRole = null }) {
   if (requiredRole) {
     const rolesArray = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
     const userRole = userProfile?.role || 'student';
+    const isAdmin = userProfile?.isAdmin === true;
 
-    if (!rolesArray.includes(userRole)) {
+    // Check if user has required role
+    // 'admin' is a special case - check isAdmin flag instead of role
+    const hasAccess = rolesArray.some(role => {
+      if (role === 'admin') return isAdmin;
+      return userRole === role;
+    });
+
+    if (!hasAccess) {
       return (
         <Box
           sx={{
@@ -64,8 +72,8 @@ function ProtectedRoute({ children, requiredRole = null }) {
             {isArabic ? 'وصول مرفوض' : 'Access Denied'}
           </Typography>
           <Typography color="textSecondary" sx={{ mb: 3 }}>
-            {isArabic 
-              ? 'أنت لا تملك الصلاحيات المطلوبة للوصول إلى هذه الصفحة' 
+            {isArabic
+              ? 'أنت لا تملك الصلاحيات المطلوبة للوصول إلى هذه الصفحة'
               : 'You do not have permission to access this page'}
           </Typography>
           <Typography variant="body2" color="textSecondary">

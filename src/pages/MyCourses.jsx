@@ -88,7 +88,7 @@ function MyCourses() {
             setEnrolledCourses(courses.filter(course => course !== null));
         } catch (err) {
             console.error('Error fetching enrolled courses:', err);
-            setError(isArabic ? 'خطأ في تحميل الدورات' : 'Error loading courses');
+            setError(t('myCourses.loadError'));
         } finally {
             setLoading(false);
         }
@@ -102,7 +102,7 @@ function MyCourses() {
         return (
             <Container maxWidth="lg" sx={{ py: 4 }}>
                 <Alert severity="warning">
-                    {isArabic ? 'يرجى تسجيل الدخول' : 'Please login to view your courses'}
+                    {t('myCourses.loginRequired')}
                 </Alert>
             </Container>
         );
@@ -147,7 +147,7 @@ function MyCourses() {
                             textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                         }}
                     >
-                        {isArabic ? 'دوراتي' : 'My Learning Journey'}
+                        {t('myCourses.title')}
                     </Typography>
                     <Typography
                         variant="h6"
@@ -158,9 +158,7 @@ function MyCourses() {
                             fontSize: { xs: '1rem', md: '1.25rem' },
                         }}
                     >
-                        {isArabic
-                            ? 'تابع تقدمك واستمر في رحلة التعلم'
-                            : 'Track your progress and continue your learning adventure'}
+                        {t('myCourses.subtitle')}
                     </Typography>
                 </Container>
             </Box>
@@ -212,7 +210,7 @@ function MyCourses() {
                                                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                                             }}
                                         >
-                                            {isArabic ? 'إجمالي' : 'Total'}
+                                            {t('myCourses.total')}
                                         </Typography>
                                         <Typography variant="h4" sx={{ fontWeight: 700, color: '#00897B', fontSize: { xs: '1.25rem', sm: '2.125rem' } }}>
                                             {enrolledCourses.length}
@@ -265,7 +263,7 @@ function MyCourses() {
                                                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                                             }}
                                         >
-                                            {isArabic ? 'نشطة' : 'Active'}
+                                            {t('myCourses.active')}
                                         </Typography>
                                         <Typography variant="h4" sx={{ fontWeight: 700, color: '#4CAF50', fontSize: { xs: '1.25rem', sm: '2.125rem' } }}>
                                             {confirmedCourses.length}
@@ -318,7 +316,7 @@ function MyCourses() {
                                                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                                             }}
                                         >
-                                            {isArabic ? 'معلق' : 'Pending'}
+                                            {t('myCourses.pending')}
                                         </Typography>
                                         <Typography variant="h4" sx={{ fontWeight: 700, color: '#FF9800', fontSize: { xs: '1.25rem', sm: '2.125rem' } }}>
                                             {pendingCourses.length}
@@ -371,12 +369,10 @@ function MyCourses() {
                                 fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                             }}
                         >
-                            {isArabic ? 'ابدأ رحلتك التعليمية!' : 'Start Your Learning Journey!'}
+                            {t('myCourses.startJourney')}
                         </Typography>
                         <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 500, mx: 'auto' }}>
-                            {isArabic
-                                ? 'استكشف دوراتنا المتنوعة وابدأ في تطوير مهاراتك اليوم'
-                                : 'Explore our diverse courses and start developing your skills today'}
+                            {t('myCourses.exploreText')}
                         </Typography>
                         <Button
                             variant="contained"
@@ -400,7 +396,7 @@ function MyCourses() {
                                 transition: 'all 0.3s ease',
                             }}
                         >
-                            {isArabic ? 'تصفح الدورات' : 'Browse Courses'}
+                            {t('myCourses.browseCourses')}
                         </Button>
                     </Paper>
                 ) : (
@@ -414,7 +410,7 @@ function MyCourses() {
                                 fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                             }}
                         >
-                            {isArabic ? 'دوراتي المسجلة' : 'My Enrolled Courses'}
+                            {t('myCourses.enrolledCourses')}
                         </Typography>
                         <Grid container spacing={3}>
                             {enrolledCourses.map((course) => (
@@ -466,14 +462,14 @@ function MyCourses() {
                                                     size="small"
                                                     icon={course.enrollmentStatus === 'confirmed' ? <CheckCircleIcon /> : <PendingIcon />}
                                                     label={course.enrollmentStatus === 'confirmed'
-                                                        ? (isArabic ? 'مؤكد' : 'Active')
-                                                        : (isArabic ? 'معلق' : 'Pending')}
+                                                        ? t('myCourses.active')
+                                                        : t('myCourses.pending')}
                                                     color={course.enrollmentStatus === 'confirmed' ? 'success' : 'warning'}
                                                     sx={{ ml: 1, fontWeight: 600 }}
                                                 />
                                             </Box>
                                             <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mb: 2 }}>
-                                                <strong>{isArabic ? 'المدرب:' : 'Instructor:'}</strong>{' '}
+                                                <strong>{t('myCourses.instructor')}</strong>{' '}
                                                 {course.instructor?.name || 'Unknown'}
                                             </Typography>
                                             <Typography
@@ -517,8 +513,8 @@ function MyCourses() {
                                                 }}
                                             >
                                                 {course.enrollmentStatus === 'confirmed'
-                                                    ? (isArabic ? 'متابعة التعلم' : 'Continue Learning')
-                                                    : (isArabic ? 'في انتظار الموافقة' : 'Awaiting Approval')}
+                                                    ? t('myCourses.continueLearning')
+                                                    : t('myCourses.awaitingApproval')}
                                             </Button>
                                         </CardActions>
                                     </Card>

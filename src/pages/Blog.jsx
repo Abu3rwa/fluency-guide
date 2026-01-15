@@ -2,12 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Box, Container, Typography, Button, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { useBlog } from "../contexts/BlogContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    fetchPosts,
+    selectBlogPosts,
+    selectBlogLoading,
+    selectBlogError,
+    selectBlogHasMore
+} from "../store/slices/blogSlice";
+import { selectIsAdmin } from "../store/slices/authSlice";
 import { BlogGrid, CategoryFilter } from "../components/blog";
 import { colors } from "../theme";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -16,27 +23,38 @@ function Blog() {
     const isArabic = i18n.language === "ar";
     const { category: categoryParam } = useParams();
     const navigate = useNavigate();
-    const { isAdmin } = useAuth();
+    const dispatch = useDispatch();
 
-    const {
-        posts,
-        loading,
-        error,
-        hasMore,
-        fetchPosts,
-        getCategories,
-        loadMore
-    } = useBlog();
+    const isAdmin = useSelector(selectIsAdmin);
+
+    const posts = useSelector(selectBlogPosts);
+    const loading = useSelector(selectBlogLoading);
+    const error = useSelector(selectBlogError);
+    const hasMore = useSelector(selectBlogHasMore);
+
+    const categories = [
+        { en: "Learning Tips", ar: "نصائح التعلم" },
+        { en: "English Grammar", ar: "قواعد اللغة الإنجليزية" },
+        { en: "Vocabulary", ar: "المفردات" },
+        { en: "Study Guides", ar: "أدلة الدراسة" },
+        { en: "Success Stories", ar: "قصص النجاح" },
+        { en: "Platform Updates", ar: "تحديثات المنصة" }
+    ];
 
     const [selectedCategory, setSelectedCategory] = useState(categoryParam || null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [postToDelete, setPostToDelete] = useState(null);
     const [deleteError, setDeleteError] = useState(null);
-    const categories = getCategories();
 
     useEffect(() => {
-        fetchPosts(selectedCategory, true);
-    }, [selectedCategory, fetchPosts]);
+        dispatch(fetchPosts({ category: selectedCategory, reset: true }));
+    }, [selectedCategory, dispatch]);
+
+    const loadMore = () => {
+        if (hasMore && !loading) {
+            dispatch(fetchPosts({ category: null, reset: false }));
+        }
+    };
 
     const handleCategorySelect = (category) => {
         setSelectedCategory(category);
@@ -55,10 +73,10 @@ function Blog() {
             await deleteDoc(doc(db, "blog_posts", postToDelete));
             setDeleteDialogOpen(false);
             setPostToDelete(null);
-            fetchPosts(selectedCategory, true);
+            dispatch(fetchPosts({ category: selectedCategory, reset: true }));
         } catch (err) {
             console.error("Error deleting post:", err);
-            setDeleteError(isArabic ? "فشل في حذف المقال" : "Failed to delete post");
+            setDeleteError(t('blog.deleteError'));
         }
     };
 
@@ -92,10 +110,14 @@ function Blog() {
                             fontFamily: "'Montserrat', sans-serif",
                             fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem" },
                             mb: 1,
-                            direction: isArabic ? "rtl" : "ltr"
+                            direction: isArabic ? "rtl" : "ltr",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 2
                         }}
                     >
-                        {isArabic ? "المدونة" : "Blog"}
+                        <AutoStoriesIcon sx={{ fontSize: "inherit" }} />
+                        {t('blog.title')}
                     </Typography>
                     <Typography
                         variant="body1"
@@ -106,9 +128,7 @@ function Blog() {
                             direction: isArabic ? "rtl" : "ltr"
                         }}
                     >
-                        {isArabic
-                            ? "نصائح ومقالات لتعلم اللغة الإنجليزية"
-                            : "Tips and articles for learning English"}
+                        {t('blog.subtitle')}
                     </Typography>
 
                     {isAdmin && (
@@ -128,7 +148,7 @@ function Blog() {
                                 }
                             }}
                         >
-                            {isArabic ? "إنشاء مقال" : "Create Post"}
+                            {t('blog.createPost')}
                         </Button>
                     )}
                 </Container>
@@ -167,7 +187,7 @@ function Blog() {
                                 fontFamily: "'Montserrat', sans-serif"
                             }}
                         >
-                            {isArabic ? "لا توجد مقالات" : "No posts found"}
+                            {t('blog.noPostsFound')}
                         </Typography>
                     </Box>
                 )}
@@ -195,8 +215,8 @@ function Blog() {
                             }}
                         >
                             {loading
-                                ? (isArabic ? "جاري التحميل..." : "Loading...")
-                                : (isArabic ? "تحميل المزيد" : "Load More")}
+                                ? t('common.loading')
+                                : t('blog.loadMore')}
                         </Button>
                     </Box>
                 )}
@@ -210,7 +230,7 @@ function Blog() {
                 }}
             >
                 <DialogTitle sx={{ fontFamily: "'Montserrat', sans-serif" }}>
-                    {isArabic ? "تأكيد الحذف" : "Confirm Delete"}
+                    {t('blog.confirmDelete')}
                 </DialogTitle>
                 <DialogContent>
                     {deleteError && (
@@ -219,9 +239,7 @@ function Blog() {
                         </Alert>
                     )}
                     <DialogContentText sx={{ fontFamily: "'Montserrat', sans-serif" }}>
-                        {isArabic
-                            ? "هل أنت متأكد من حذف هذا المقال؟ لا يمكن التراجع عن هذا الإجراء."
-                            : "Are you sure you want to delete this post? This action cannot be undone."}
+                        {t('blog.deleteConfirmMessage')}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -229,7 +247,7 @@ function Blog() {
                         onClick={handleDeleteCancel}
                         sx={{ fontFamily: "'Montserrat', sans-serif" }}
                     >
-                        {isArabic ? "إلغاء" : "Cancel"}
+                        {t('common.cancel')}
                     </Button>
                     <Button
                         onClick={handleDeleteConfirm}
@@ -240,7 +258,7 @@ function Blog() {
                             borderRadius: 1.5
                         }}
                     >
-                        {isArabic ? "حذف" : "Delete"}
+                        {t('common.delete')}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -79,7 +79,7 @@ function Courses() {
               textShadow: '0 2px 10px rgba(0,0,0,0.2)',
             }}
           >
-            {isArabic ? 'استكشف دوراتنا' : 'Explore Our Courses'}
+            {t('courses.title')}
           </Typography>
           <Typography
             variant="h6"
@@ -90,9 +90,7 @@ function Courses() {
               fontSize: { xs: '1rem', md: '1.25rem' },
             }}
           >
-            {isArabic
-              ? 'اختر من مجموعة واسعة من الدورات المصممة لتطوير مهاراتك'
-              : 'Choose from a wide range of courses designed to enhance your skills'}
+            {t('courses.subtitle')}
           </Typography>
         </Container>
       </Box>
@@ -111,7 +109,7 @@ function Courses() {
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
               <TextField
-                placeholder={isArabic ? 'ابحث عن الدورات...' : 'Search courses...'}
+                placeholder={t('courses.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 fullWidth
@@ -132,11 +130,11 @@ function Courses() {
 
             <Grid item xs={12} md={4}>
               <FormControl fullWidth size="medium">
-                <InputLabel>{isArabic ? 'الفئة' : 'Category'}</InputLabel>
+                <InputLabel>{t('courses.category')}</InputLabel>
                 <Select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  label={isArabic ? 'الفئة' : 'Category'}
+                  label={t('courses.category')}
                   sx={{
                     borderRadius: 2,
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
@@ -144,8 +142,8 @@ function Courses() {
                     },
                   }}
                 >
-                  <MenuItem value="">{isArabic ? 'جميع الفئات' : 'All Categories'}</MenuItem>
-                  <MenuItem value="english">{isArabic ? 'إنجليزي' : 'English'}</MenuItem>
+                  <MenuItem value="">{t('courses.allCategories')}</MenuItem>
+                  <MenuItem value="english">{t('common.english')}</MenuItem>
                   <MenuItem value="business">{isArabic ? 'أعمال' : 'Business'}</MenuItem>
                   <MenuItem value="conversational">{isArabic ? 'محادثة' : 'Conversational'}</MenuItem>
                   <MenuItem value="grammar">{isArabic ? 'قواعد' : 'Grammar'}</MenuItem>
@@ -155,11 +153,11 @@ function Courses() {
 
             <Grid item xs={12} md={4}>
               <FormControl fullWidth size="medium">
-                <InputLabel>{isArabic ? 'المستوى' : 'Level'}</InputLabel>
+                <InputLabel>{t('courses.level')}</InputLabel>
                 <Select
                   value={filterLevel}
                   onChange={(e) => setFilterLevel(e.target.value)}
-                  label={isArabic ? 'المستوى' : 'Level'}
+                  label={t('courses.level')}
                   sx={{
                     borderRadius: 2,
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
@@ -167,10 +165,10 @@ function Courses() {
                     },
                   }}
                 >
-                  <MenuItem value="">{isArabic ? 'جميع المستويات' : 'All Levels'}</MenuItem>
-                  <MenuItem value="beginner">{isArabic ? 'مبتدئ' : 'Beginner'}</MenuItem>
-                  <MenuItem value="intermediate">{isArabic ? 'متوسط' : 'Intermediate'}</MenuItem>
-                  <MenuItem value="advanced">{isArabic ? 'متقدم' : 'Advanced'}</MenuItem>
+                  <MenuItem value="">{t('courses.allLevels')}</MenuItem>
+                  <MenuItem value="beginner">{t('courses.beginner')}</MenuItem>
+                  <MenuItem value="intermediate">{t('courses.intermediate')}</MenuItem>
+                  <MenuItem value="advanced">{t('courses.advanced')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -190,7 +188,7 @@ function Courses() {
               fontSize: '1rem',
             }}
           >
-            {isArabic ? 'لا توجد دورات متاحة' : 'No courses available'}
+            {t('courses.noCourses')}
           </Alert>
         ) : (
           <Grid container spacing={3}>

@@ -27,7 +27,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import SchoolIcon from '@mui/icons-material/School';
 
 const EnrollmentForm = ({ courseId, courseName, roundId, roundNumber, onClose, open }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isArabic = i18n.language === 'ar';
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');

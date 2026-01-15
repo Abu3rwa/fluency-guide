@@ -13,18 +13,18 @@ function Contact() {
   const contactInfo = [
     {
       icon: <EmailIcon sx={{ fontSize: 30 }} />,
-      title: isArabic ? 'البريد الإلكتروني' : 'Email',
-      content: 'contact@sudanglish.com',
+      title: t('auth.email'),
+      content: '3bdulhafeez.sd@gmail.com',
     },
     {
       icon: <PhoneIcon sx={{ fontSize: 30 }} />,
-      title: isArabic ? 'الهاتف' : 'Phone',
-      content: '+249 123 456 789',
+      title: t('contact.phone'),
+      content: '+249 115 337 188',
     },
     {
       icon: <LocationOnIcon sx={{ fontSize: 30 }} />,
-      title: isArabic ? 'العنوان' : 'Address',
-      content: isArabic ? 'الخرطوم، السودان' : 'Khartoum, Sudan',
+      title: t('contact.address'),
+      content: isArabic ? 'أونلاين' : 'Online',
     },
   ];
 
@@ -61,9 +61,7 @@ function Contact() {
               lineHeight: 1.8,
             }}
           >
-            {isArabic
-              ? 'نحن هنا لمساعدتك. تواصل معنا لأي استفسارات أو ملاحظات.'
-              : 'We are here to help. Reach out to us for any questions or feedback.'}
+            {t('contact.subtitle')}
           </Typography>
         </Box>
 
@@ -136,13 +134,13 @@ function Contact() {
                   color: 'primary.main',
                 }}
               >
-                {isArabic ? 'أرسل لنا رسالة' : 'Send us a Message'}
+                {t('contact.sendMessage')}
               </Typography>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label={isArabic ? 'الاسم' : 'Name'}
+                    label={t('contact.name')}
                     variant="outlined"
                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
@@ -150,7 +148,7 @@ function Contact() {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label={isArabic ? 'البريد الإلكتروني' : 'Email'}
+                    label={t('contact.email')}
                     variant="outlined"
                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
@@ -158,7 +156,7 @@ function Contact() {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label={isArabic ? 'الموضوع' : 'Subject'}
+                    label={t('contact.subject')}
                     variant="outlined"
                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
@@ -166,7 +164,7 @@ function Contact() {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label={isArabic ? 'الرسالة' : 'Message'}
+                    label={t('contact.message')}
                     multiline
                     rows={6}
                     variant="outlined"
@@ -188,7 +186,7 @@ function Contact() {
                       fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                     }}
                   >
-                    {isArabic ? 'إرسال الرسالة' : 'Send Message'}
+                    {t('contact.send')}
                   </Button>
                 </Grid>
               </Grid>

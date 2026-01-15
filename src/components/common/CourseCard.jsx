@@ -14,10 +14,12 @@ import SchoolIcon from '@mui/icons-material/School';
 import PeopleIcon from '@mui/icons-material/People';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 
 function CourseCard({ course, isArabic }) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const theme = useTheme();
     const { user } = useAuth();
@@ -171,7 +173,7 @@ function CourseCard({ course, isArabic }) {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <PeopleIcon fontSize="small" color="action" />
                         <Typography variant="caption" color="text.secondary">
-                            {course.currentRound?.enrolledStudents || 0} {isArabic ? 'حالي' : 'current'} / {course.totalStudents || 0} {isArabic ? 'إجمالي' : 'total'}
+                            {course.currentRound?.enrolledStudents || 0} {t('courses.current')} / {course.totalStudents || 0} {t('courses.total')}
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -195,8 +197,8 @@ function CourseCard({ course, isArabic }) {
                     <Chip
                         fullWidth
                         label={enrollmentStatus === 'confirmed'
-                            ? (isArabic ? 'مؤكد - مسجل' : 'Enrolled - Confirmed')
-                            : (isArabic ? 'قيد الانتظار' : 'Pending Approval')}
+                            ? t('enrollment.confirmed')
+                            : t('enrollment.pending')}
                         color={enrollmentStatus === 'confirmed' ? 'success' : 'warning'}
                         sx={{ width: '100%', py: 1.5, fontWeight: 600 }}
                     />
@@ -216,7 +218,7 @@ function CourseCard({ course, isArabic }) {
                             },
                         }}
                     >
-                        View Details
+                        {t('courses.viewDetails')}
                     </Button>
                 )}
             </Box>

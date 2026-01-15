@@ -50,6 +50,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 function CourseContentBuilder() {
     const { courseId } = useParams();
@@ -304,9 +305,18 @@ function CourseContentBuilder() {
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={handleAddUnit}
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 3, mr: 2 }}
                 >
                     {isArabic ? 'إضافة وحدة' : 'Add Unit'}
+                </Button>
+
+                <Button
+                    variant="outlined"
+                    startIcon={<CheckCircleIcon />}
+                    onClick={() => navigate(`/instructor/course/${courseId}/attendance`)}
+                    sx={{ mb: 3 }}
+                >
+                    {isArabic ? 'عرض سجل الحضور' : 'View Attendance'}
                 </Button>
 
                 {units.length === 0 ? (
@@ -347,6 +357,13 @@ function CourseContentBuilder() {
                                                         secondary={lesson.duration ? `${lesson.duration} ${isArabic ? 'دقيقة' : 'min'}` : null}
                                                     />
                                                     <ListItemSecondaryAction>
+                                                        <IconButton 
+                                                            size="small" 
+                                                            onClick={() => navigate(`/instructor/course/${courseId}/lesson/${lesson.id}/attendance`)}
+                                                            title={isArabic ? 'تسجيل الحضور' : 'Mark Attendance'}
+                                                        >
+                                                            <CheckCircleIcon fontSize="small" />
+                                                        </IconButton>
                                                         <IconButton size="small" onClick={() => handleEditLesson(unit.id, lesson)}>
                                                             <EditIcon fontSize="small" />
                                                         </IconButton>

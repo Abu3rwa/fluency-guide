@@ -52,7 +52,7 @@ function ShareButtons({ title, url, imageUrl }) {
                     </IconButton>
                 </Tooltip>
 
-                <Tooltip title={isArabic ? "نسخ الرابط" : "Copy link"}>
+                <Tooltip title={t('blog.copyLink')}>
                     <IconButton onClick={handleCopyLink} sx={{ ...buttonStyle, color: colors.text.secondary }}>
                         <LinkIcon fontSize="small" />
                     </IconButton>
@@ -63,7 +63,7 @@ function ShareButtons({ title, url, imageUrl }) {
                 open={snackbarOpen}
                 autoHideDuration={2000}
                 onClose={() => setSnackbarOpen(false)}
-                message={isArabic ? "تم نسخ الرابط" : "Link copied"}
+                message={t('blog.linkCopied')}
             />
         </>
     );

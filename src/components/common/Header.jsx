@@ -24,13 +24,18 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import CloseIcon from '@mui/icons-material/Close';
+import HomeIcon from '@mui/icons-material/Home';
+import SchoolIcon from '@mui/icons-material/School';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useAuth } from '../../contexts/AuthContext';
-
 import logo from '../../assets/app_logo.png';
 
 function Header() {
@@ -73,11 +78,11 @@ function Header() {
   };
 
   const navLinks = [
-    { key: 'home', path: '/' },
-    { key: 'courses', path: '/courses' },
-    { key: 'blog', path: '/blog' },
-    { key: 'about', path: '/about' },
-    { key: 'contact', path: '/contact' },
+    { key: 'home', path: '/', icon: <HomeIcon /> },
+    { key: 'courses', path: '/courses', icon: <SchoolIcon /> },
+    { key: 'blog', path: '/blog', icon: <AutoStoriesIcon /> },
+    { key: 'about', path: '/about', icon: <InfoIcon /> },
+    { key: 'contact', path: '/contact', icon: <ContactSupportIcon /> },
   ];
 
   const drawer = (
@@ -104,6 +109,20 @@ function Header() {
                 },
               }}
             >
+              <Box
+                sx={{
+                  width: 24,
+                  height: 24,
+                  mr: isArabic ? 1 : 2,
+                  ml: isArabic ? 2 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: location.pathname === link.path ? 'primary.main' : 'inherit'
+                }}
+              >
+                {link.icon}
+              </Box>
               <ListItemText
                 primary={t(`navigation.${link.key}`)}
                 sx={{
@@ -130,6 +149,7 @@ function Header() {
         borderBottom: '2px solid #D4A574',
         boxShadow: 2,
         borderRadius: 0,
+        zIndex: theme.zIndex.drawer + 1
       }}
     >
       <Container maxWidth="xl">
@@ -187,6 +207,7 @@ function Header() {
                     component={Link}
                     to={link.path}
                     onClick={handleNavClick}
+                    startIcon={link.icon}
                     sx={{
                       color: isActive ? 'primary.light' : '#FFFFFF',
                       fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
@@ -202,6 +223,10 @@ function Header() {
                       '&:hover': {
                         color: 'primary.light',
                         bgcolor: 'rgba(244, 196, 48, 0.15)',
+                      },
+                      '& .MuiButton-startIcon': {
+                        marginRight: isArabic ? 0 : '8px',
+                        marginLeft: isArabic ? '8px' : 0,
                       },
                     }}
                   >
@@ -220,40 +245,26 @@ function Header() {
               <>
                 <Button
                   onClick={handleMenuOpen}
-                  endIcon={<PersonIcon />}
                   sx={{
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+                    background: 'transparent',
                     color: '#FFFFFF',
-                    borderColor: 'rgba(255,255,255,0.3)',
-                    borderWidth: 1,
-                    borderStyle: 'solid',
-                    fontWeight: 600,
-                    fontSize: '15px',
-                    px: 2,
-                    py: 1,
-                    borderRadius: 2,
-                    textTransform: 'none',
+                    minWidth: 'auto',
+                    p: 1,
+                    borderRadius: '50%',
                     transition: 'all 0.3s ease',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%)',
-                      borderColor: 'rgba(255,255,255,0.5)',
+                      background: 'rgba(255,255,255,0.1)',
                       transform: 'translateY(-1px)',
                     },
                   }}
                 >
-                  <Avatar
+                  <PersonIcon
                     sx={{
-                      width: 28,
-                      height: 28,
-                      mr: 1,
-                      bgcolor: '#D4A574',
-                      fontSize: '0.875rem',
-                      fontWeight: 700,
+                      width: 32,
+                      height: 32,
+                      color: '#FFFFFF'
                     }}
-                  >
-                    {(userProfile?.name || user?.email)?.[0]?.toUpperCase()}
-                  </Avatar>
-                  {userProfile?.name || user?.email?.split('@')[0]}
+                  />
                 </Button>
                 <Menu
                   anchorEl={anchorEl}
@@ -344,11 +355,10 @@ function Header() {
                         px: 2,
                         '&:hover': {
                           bgcolor: 'rgba(0, 137, 123, 0.08)',
-                          '& .MuiSvgIcon-root': { color: '#00897B' },
                         },
                       }}
                     >
-                      <DashboardIcon fontSize="small" sx={{ color: '#00897B' }} />
+                      <SchoolIcon sx={{ fontSize: 20 }} />
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {isArabic ? 'دوراتي' : 'My Courses'}
                       </Typography>
@@ -368,13 +378,35 @@ function Header() {
                         px: 2,
                         '&:hover': {
                           bgcolor: 'rgba(0, 137, 123, 0.08)',
-                          '& .MuiSvgIcon-root': { color: '#00897B' },
                         },
                       }}
                     >
-                      <DashboardIcon fontSize="small" sx={{ color: '#00897B' }} />
+                      <DashboardIcon sx={{ fontSize: 20 }} />
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {isArabic ? 'لوحة التحكم' : 'Dashboard'}
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userProfile?.isAdmin && (
+                    <MenuItem
+                      component={Link}
+                      to="/admin/users"
+                      onClick={() => {
+                        handleMenuClose();
+                        setMobileOpen(false);
+                      }}
+                      sx={{
+                        gap: 1.5,
+                        py: 1.5,
+                        px: 2,
+                        '&:hover': {
+                          bgcolor: 'rgba(156, 39, 176, 0.08)',
+                        },
+                      }}
+                    >
+                      <AdminPanelSettingsIcon sx={{ fontSize: 20, color: '#9c27b0' }} />
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {isArabic ? 'إدارة المستخدمين' : 'User Management'}
                       </Typography>
                     </MenuItem>
                   )}
@@ -391,7 +423,7 @@ function Header() {
                       },
                     }}
                   >
-                    <LogoutIcon fontSize="small" />
+                    <LogoutIcon sx={{ fontSize: 20 }} />
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       {isArabic ? 'تسجيل الخروج' : 'Logout'}
                     </Typography>
@@ -463,7 +495,7 @@ function Header() {
                 aria-label="open drawer"
                 edge="start"
                 onClick={handleDrawerToggle}
-                sx={{ 
+                sx={{
                   color: '#fff',
                   bgcolor: 'rgba(255,255,255,0.1)',
                   borderRadius: 1,

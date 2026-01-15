@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import HeroSection from '../components/homepage/HeroSection';
 import FeaturesSection from '../components/homepage/FeaturesSection';
 import FeaturedCourses from '../components/homepage/FeaturedCourses';
+import BlogSection from '../components/homepage/BlogSection';
 import SocialProof from '../components/homepage/SocialProof';
 import QuickEnrollment from '../components/homepage/QuickEnrollment';
 
@@ -31,6 +32,7 @@ function HomePage() {
         <HeroSection />
         <FeaturesSection />
         <FeaturedCourses />
+        <BlogSection />
         <SocialProof />
         <QuickEnrollment />
       </Box>

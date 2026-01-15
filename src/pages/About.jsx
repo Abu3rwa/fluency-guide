@@ -12,10 +12,10 @@ function About() {
   const isArabic = i18n.language === 'ar';
 
   const stats = [
-    { number: '1000+', label: isArabic ? 'طالب' : 'Students', icon: <GroupsIcon sx={{ fontSize: 40 }} /> },
-    { number: '50+', label: isArabic ? 'دورة' : 'Courses', icon: <SchoolIcon sx={{ fontSize: 40 }} /> },
-    { number: '20+', label: isArabic ? 'خبير' : 'Experts', icon: <PublicIcon sx={{ fontSize: 40 }} /> },
-    { number: '4.9', label: isArabic ? 'تقييم' : 'Rating', icon: <EmojiEventsIcon sx={{ fontSize: 40 }} /> },
+    { number: '50+', label: isArabic ? 'طالب' : t('about.students'), icon: <GroupsIcon sx={{ fontSize: 40 }} /> },
+    { number: '20+', label: isArabic ? 'دورة' : t('about.coursesCount'), icon: <SchoolIcon sx={{ fontSize: 40 }} /> },
+    { number: '1', label: isArabic ? 'خبير' : t('about.experts'), icon: <PublicIcon sx={{ fontSize: 40 }} /> },
+    { number: '4.9', label: isArabic ? 'تقييم' : t('about.rating'), icon: <EmojiEventsIcon sx={{ fontSize: 40 }} /> },
   ];
 
   return (
@@ -44,7 +44,7 @@ function About() {
               WebkitTextFillColor: 'transparent',
             }}
           >
-            {isArabic ? 'بوابتك إلى العالم' : 'Your Gateway to the World'}
+            {t('about.heroTitle')}
           </Typography>
           <Typography
             variant="h5"
@@ -55,9 +55,7 @@ function About() {
               lineHeight: 1.8,
             }}
           >
-            {isArabic
-              ? 'في سودانجلش، نؤمن بأن اللغة ليست مجرد كلمات، بل هي مفتاح لفرص لا حصر لها. نحن هنا لتمكين السودانيين من التواصل مع العالم بثقة.'
-              : 'At Sudanglish, we believe language is not just words, but a key to endless opportunities. We are here to empower Sudanese people to connect with the world with confidence.'}
+            {t('about.heroDescription')}
           </Typography>
         </Box>
 
@@ -127,7 +125,7 @@ function About() {
                   color: 'primary.main',
                 }}
               >
-                {isArabic ? 'رؤيتنا' : 'Our Vision'}
+                {t('about.vision')}
               </Typography>
               <Typography
                 variant="body1"
@@ -138,9 +136,7 @@ function About() {
                   fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                 }}
               >
-                {isArabic
-                  ? 'رؤيتنا هي بناء جسر لغوي يربط المواهب السودانية بالسوق العالمي، وخلق مجتمع تعليمي مزدهر يتجاوز الحدود.'
-                  : 'Our vision is to build a linguistic bridge connecting Sudanese talent to the global market, creating a thriving educational community that transcends borders.'}
+                {t('about.visionDescription')}
               </Typography>
             </Box>
             <Box>
@@ -153,7 +149,7 @@ function About() {
                   color: 'secondary.main',
                 }}
               >
-                {isArabic ? 'مهمتنا' : 'Our Mission'}
+                {t('about.mission')}
               </Typography>
               <Typography
                 variant="body1"
@@ -164,10 +160,7 @@ function About() {
                   fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                 }}
               >
-                {isArabic
-                  ? 'نحن ملتزمون بتقديم تعليم عالي الجودة للغة الإنجليزية يكون في متناول الجميع، محفزاً، ومصمماً خصيصاً لاحتياجات المتعلمين العرب.'
-                  : 'We are committed to delivering high-quality English education that is accessible, engaging, and specifically tailored to the needs of Arabic learners.'}
-              </Typography>
+                {t('about.missionDescription')}\n              </Typography>
             </Box>
           </Grid>
         </Grid>

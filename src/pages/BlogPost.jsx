@@ -12,7 +12,14 @@ import {
 } from "@mui/material";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useBlog } from "../contexts/BlogContext";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    fetchPostBySlug,
+    fetchRelatedPosts,
+    selectCurrentPost,
+    selectBlogLoading,
+    selectBlogError
+} from "../store/slices/blogSlice";
 import { AuthorBio, ShareButtons, BlogCard } from "../components/blog";
 import { colors } from "../theme";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -25,25 +32,35 @@ function BlogPost() {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const isArabic = i18n.language === "ar";
+    const dispatch = useDispatch();
 
-    const { currentPost, loading, error, fetchPostBySlug, fetchRelatedPosts } = useBlog();
+    const currentPost = useSelector(selectCurrentPost);
+    const loading = useSelector(selectBlogLoading);
+    const error = useSelector(selectBlogError);
+
     const [relatedPosts, setRelatedPosts] = useState([]);
 
     useEffect(() => {
         if (slug) {
-            fetchPostBySlug(slug);
+            dispatch(fetchPostBySlug(slug));
         }
-    }, [slug, fetchPostBySlug]);
+    }, [slug, dispatch]);
 
     useEffect(() => {
         const loadRelated = async () => {
             if (currentPost?.category?.en && currentPost?.id) {
-                const related = await fetchRelatedPosts(currentPost.category.en, currentPost.id, 2);
-                setRelatedPosts(related);
+                const resultAction = await dispatch(fetchRelatedPosts({
+                    category: currentPost.category.en,
+                    currentPostId: currentPost.id,
+                    limitCount: 2
+                }));
+                if (fetchRelatedPosts.fulfilled.match(resultAction)) {
+                    setRelatedPosts(resultAction.payload);
+                }
             }
         };
         loadRelated();
-    }, [currentPost, fetchRelatedPosts]);
+    }, [currentPost, dispatch]);
 
     // Update Open Graph meta tags for social sharing preview
     useEffect(() => {
@@ -118,7 +135,7 @@ function BlogPost() {
             <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
                 <Container maxWidth="lg" sx={{ py: 8, flexGrow: 1 }}>
                     <Alert severity="error" sx={{ mb: 3 }}>
-                        {error || (isArabic ? "المقال غير موجود" : "Post not found")}
+                        {error || t('blog.postNotFound')}
                     </Alert>
                     <MuiLink
                         component={Link}
@@ -134,7 +151,7 @@ function BlogPost() {
                         }}
                     >
                         {!isArabic && <ArrowBackIcon />}
-                        {isArabic ? "العودة للمدونة" : "Back to Blog"}
+                        {t('blog.backToBlog')}
                         {isArabic && <ArrowForwardIcon />}
                     </MuiLink>
                 </Container>
@@ -183,7 +200,7 @@ function BlogPost() {
                             "&:hover": { color: colors.primary.main }
                         }}
                     >
-                        {isArabic ? "الرئيسية" : "Home"}
+                        {t('navigation.home')}
                     </MuiLink>
                     <MuiLink
                         component={Link}
@@ -194,7 +211,7 @@ function BlogPost() {
                             "&:hover": { color: colors.primary.main }
                         }}
                     >
-                        {isArabic ? "المدونة" : "Blog"}
+                        {t('blog.title')}
                     </MuiLink>
                     <Typography
                         sx={{
@@ -279,7 +296,7 @@ function BlogPost() {
                                     fontFamily: "'Montserrat', sans-serif"
                                 }}
                             >
-                                {currentPost.readingTime || 3} {isArabic ? "دقائق للقراءة" : "min read"}
+                                {currentPost.readingTime || 3} {t('blog.minRead')}
                             </Typography>
                         </Box>
 
@@ -290,32 +307,35 @@ function BlogPost() {
 
                     <Box
                         sx={{
+                            direction: isArabic ? "rtl" : "ltr",
+                            textAlign: isArabic ? "right" : "left",
                             "& p": {
                                 fontFamily: "'Montserrat', sans-serif",
                                 fontSize: "1.05rem",
                                 lineHeight: 1.8,
                                 color: colors.text.primary,
                                 mb: 2,
-                                direction: isArabic ? "rtl" : "ltr"
+                                textAlign: isArabic ? "right" : "left"
                             },
                             "& h2, & h3, & h4": {
                                 fontFamily: "'Montserrat', sans-serif",
                                 fontWeight: 700,
-                                color: colors.text.primary,
+                                color: colors.primary.main,
                                 mt: 4,
                                 mb: 2,
-                                direction: isArabic ? "rtl" : "ltr"
+                                textAlign: isArabic ? "right" : "left"
                             },
                             "& ul, & ol": {
                                 fontFamily: "'Montserrat', sans-serif",
                                 pl: isArabic ? 0 : 3,
                                 pr: isArabic ? 3 : 0,
                                 mb: 2,
-                                direction: isArabic ? "rtl" : "ltr"
+                                textAlign: isArabic ? "right" : "left"
                             },
                             "& li": {
                                 mb: 1,
-                                lineHeight: 1.7
+                                lineHeight: 1.7,
+                                textAlign: isArabic ? "right" : "left"
                             },
                             "& a": {
                                 color: colors.primary.main,
@@ -331,13 +351,15 @@ function BlogPost() {
                                 my: 3,
                                 bgcolor: "rgba(0, 137, 123, 0.04)",
                                 borderRadius: 1,
-                                fontStyle: "italic"
+                                fontStyle: "italic",
+                                textAlign: isArabic ? "right" : "left"
                             },
                             "& img": {
                                 maxWidth: "100%",
                                 height: "auto",
                                 borderRadius: 2,
-                                my: 2
+                                my: 2,
+                                display: "block"
                             },
                             "& pre": {
                                 bgcolor: "#1e1e1e",
@@ -346,7 +368,32 @@ function BlogPost() {
                                 borderRadius: 2,
                                 overflow: "auto",
                                 fontSize: "0.9rem",
-                                direction: "ltr"
+                                direction: "ltr",
+                                textAlign: "left"
+                            },
+                            "& code": {
+                                direction: "ltr",
+                                textAlign: "left"
+                            },
+                            "& table": {
+                                width: "100%",
+                                borderCollapse: "collapse",
+                                my: 2,
+                                borderRadius: 1,
+                                overflow: "hidden"
+                            },
+                            "& th, & td": {
+                                border: "1px solid",
+                                borderColor: "divider",
+                                p: 1.5,
+                                textAlign: isArabic ? "right" : "left"
+                            },
+                            "& th": {
+                                bgcolor: "rgba(0, 137, 123, 0.08)",
+                                fontWeight: 600
+                            },
+                            "& tr:nth-of-type(even)": {
+                                bgcolor: "rgba(0, 0, 0, 0.02)"
                             }
                         }}
                         dangerouslySetInnerHTML={{ __html: content }}
@@ -367,7 +414,7 @@ function BlogPost() {
                                 direction: isArabic ? "rtl" : "ltr"
                             }}
                         >
-                            {isArabic ? "مقالات ذات صلة" : "Related Posts"}
+                            {t('blog.relatedPosts')}
                         </Typography>
                         <Box
                             sx={{
@@ -399,7 +446,7 @@ function BlogPost() {
                         }}
                     >
                         {!isArabic && <ArrowBackIcon fontSize="small" />}
-                        {isArabic ? "العودة للمدونة" : "Back to Blog"}
+                        {t('blog.backToBlog')}
                         {isArabic && <ArrowForwardIcon fontSize="small" />}
                     </MuiLink>
                 </Box>

@@ -42,7 +42,7 @@ function Login() {
     setLocalError('');
 
     if (!formData.email || !formData.password) {
-      setLocalError(isArabic ? 'يرجى ملء جميع الحقول' : 'Please fill in all fields');
+      setLocalError(t('errors.requiredFields'));
       return;
     }
 
@@ -50,7 +50,7 @@ function Login() {
       await login(formData.email, formData.password);
       navigate('/');
     } catch (err) {
-      setLocalError(err.message || (isArabic ? 'فشل تسجيل الدخول' : 'Login failed'));
+      setLocalError(err.message || t('auth.loginError'));
     }
   };
 
@@ -97,12 +97,10 @@ function Login() {
                     fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                   }}
                 >
-                  {isArabic ? 'تسجيل الدخول' : 'Sign In'}
+                  {t('auth.signIn')}
                 </Typography>
                 <Typography color="textSecondary">
-                  {isArabic
-                    ? 'أدخل بيانات اعتمادك للوصول إلى حسابك'
-                    : 'Enter your credentials to access your account'}
+                  {t('auth.enterCredentials')}
                 </Typography>
               </Box>
 
@@ -118,7 +116,7 @@ function Login() {
                 <TextField
                   fullWidth
                   type="email"
-                  label={isArabic ? 'البريد الإلكتروني' : 'Email'}
+                  label={t('auth.email')}
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -137,7 +135,7 @@ function Login() {
                 <TextField
                   fullWidth
                   type="password"
-                  label={isArabic ? 'كلمة المرور' : 'Password'}
+                  label={t('auth.password')}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -176,14 +174,14 @@ function Login() {
                   }}
                 >
                   {loading ? <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} /> : null}
-                  {loading ? (isArabic ? 'جاري الدخول...' : 'Signing in...') : (isArabic ? 'دخول' : 'Sign In')}
+                  {loading ? (t('common.loading')) : t('auth.signIn')}
                 </Button>
               </form>
 
               {/* Divider */}
               <Box sx={{ my: 2, textAlign: 'center' }}>
                 <Typography color="textSecondary" variant="body2">
-                  {isArabic ? 'ليس لديك حساب؟ ' : "Don't have an account? "}
+                  {t('auth.noAccount')}
                   <Link
                     to="/register"
                     style={{
@@ -192,7 +190,7 @@ function Login() {
                       fontWeight: 600,
                     }}
                   >
-                    {isArabic ? 'إنشاء حساب جديد' : 'Create one'}
+                    {t('auth.signUp')}
                   </Link>
                 </Typography>
               </Box>

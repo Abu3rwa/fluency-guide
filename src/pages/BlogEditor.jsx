@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../contexts/AuthContext";
-import { useBlog } from "../contexts/BlogContext";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser, selectUserProfile, selectIsAdmin } from "../store/slices/authSlice";
 import { collection, addDoc, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -24,13 +24,54 @@ import SaveIcon from "@mui/icons-material/Save";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+const categories = [
+    { en: "Learning Tips", ar: "نصائح التعلم" },
+    { en: "English Grammar", ar: "قواعد اللغة الإنجليزية" },
+    { en: "Vocabulary", ar: "المفردات" },
+    { en: "Study Guides", ar: "أدلة الدراسة" },
+    { en: "Success Stories", ar: "قصص النجاح" },
+    { en: "Platform Updates", ar: "تحديثات المنصة" }
+];
+
+// Safely register fonts with error handling
+if (typeof ReactQuill !== 'undefined' && ReactQuill.Quill) {
+    try {
+        const Quill = ReactQuill.Quill;
+        const Font = Quill.import('formats/font');
+        // Expanded font whitelist with more nice fonts
+        Font.whitelist = [
+            'montserrat',      // Modern Sans-Serif
+            'tajawal',         // Arabic Sans-Serif
+            'playfair',        // Elegant Serif
+            'inter',           // Clean UI Font
+            'poppins',         // Friendly Sans-Serif
+            'roboto',          // Google's Classic
+            'lora',            // Elegant Serif
+            'opensans',        // Readable Sans
+            'raleway',         // Elegant Sans
+            'merriweather',    // Readable Serif
+            'cairo',           // Arabic Modern
+            'amiri',           // Arabic Serif
+            'almarai',         // Arabic Clean
+            'sans-serif',
+            'serif'
+        ];
+        Quill.register(Font, true);
+    } catch (err) {
+        console.warn('Could not register custom fonts for Quill:', err);
+    }
+}
+
 function BlogEditor() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const isArabic = i18n.language === "ar";
-    const { user, userProfile, isAdmin } = useAuth();
-    const { getCategories } = useBlog();
+
+    // Redux Selectors
+    const user = useSelector(selectUser);
+    const userProfile = useSelector(selectUserProfile);
+    const isAdmin = useSelector(selectIsAdmin);
 
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -38,13 +79,37 @@ function BlogEditor() {
     const [success, setSuccess] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
 
-    const categories = getCategories();
+    // App colors from theme
+    const appColors = [
+        "#374151", // Charcoal Text (Default)
+        "#D4A574", // Warm Sand (Primary)
+        "#F4C430", // Golden Yellow
+        "#B8860B", // Desert Gold
+        "#2563EB", // Deep Blue
+        "#3B82F6", // Navy Blue
+        "#EF4444", // Error Red
+        "#F59E0B", // Warning Orange
+        "#0D9488", // Teal Green
+        "#FDF6E3", // Cream White
+        "#F5F1E8", // Soft Beige
+        "#FFFFFF", // White
+        "#000000"  // Black
+    ];
 
-    // Quill editor configuration
+    // Quill editor configuration with expanded fonts
     const quillModules = {
         toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
+            [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }],
+            [{
+                'font': [
+                    'montserrat', 'inter', 'poppins', 'roboto', 'opensans', 'raleway',  // Sans-Serif
+                    'playfair', 'lora', 'merriweather',  // Serif
+                    'tajawal', 'cairo', 'amiri', 'almarai',  // Arabic
+                    'sans-serif', 'serif'
+                ]
+            }],
             ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': appColors }, { 'background': appColors }],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
             [{ 'direction': 'rtl' }],
             ['blockquote', 'code-block'],
@@ -55,7 +120,7 @@ function BlogEditor() {
     };
 
     const quillFormats = [
-        'header', 'bold', 'italic', 'underline', 'strike',
+        'header', 'font', 'bold', 'italic', 'underline', 'strike', 'color', 'background',
         'list', 'bullet', 'direction', 'blockquote', 'code-block',
         'link', 'image', 'align'
     ];
@@ -230,7 +295,7 @@ function BlogEditor() {
                         onClick={() => navigate("/blog")}
                         sx={{ color: "rgba(255,255,255,0.9)", mb: 1 }}
                     >
-                        {isArabic ? "العودة للمدونة" : "Back to Blog"}
+                        {t('blog.backToBlog')}
                     </Button>
                     <Typography
                         variant="h4"
@@ -241,8 +306,8 @@ function BlogEditor() {
                         }}
                     >
                         {id
-                            ? (isArabic ? "تعديل المقال" : "Edit Post")
-                            : (isArabic ? "إنشاء مقال جديد" : "Create New Post")}
+                            ? t('blog.editPost')
+                            : t('blog.createNewPost')}
                     </Typography>
                 </Container>
             </Box>
@@ -250,7 +315,7 @@ function BlogEditor() {
             <Container maxWidth="lg" sx={{ py: 4 }}>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
                 {success && <Alert severity="success" sx={{ mb: 3 }}>
-                    {isArabic ? "تم الحفظ بنجاح!" : "Saved successfully!"}
+                    {t('blog.savedSuccess')}
                 </Alert>}
 
                 <form onSubmit={handleSubmit}>
@@ -269,6 +334,7 @@ function BlogEditor() {
                                     onChange={(e) => handleChange("title", "en", e.target.value)}
                                     required
                                     sx={{ mb: 2 }}
+                                    InputProps={{ sx: { direction: "ltr", textAlign: "left" } }}
                                 />
 
                                 <TextField
@@ -279,14 +345,15 @@ function BlogEditor() {
                                     multiline
                                     rows={2}
                                     sx={{ mb: 2 }}
+                                    InputProps={{ sx: { direction: "ltr", textAlign: "left" } }}
                                 />
 
                                 <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
                                     Content
                                 </Typography>
                                 <Box sx={{
-                                    '.ql-container': { minHeight: 250, fontSize: '1rem' },
-                                    '.ql-editor': { minHeight: 250 },
+                                    '.ql-container': { minHeight: 250, fontSize: '1rem', direction: 'ltr' },
+                                    '.ql-editor': { minHeight: 250, textAlign: 'left', direction: 'ltr' },
                                     mb: 2,
                                     bgcolor: '#fff',
                                     borderRadius: 1
@@ -356,7 +423,7 @@ function BlogEditor() {
                         <Grid item xs={12}>
                             <Paper sx={{ p: 3, borderRadius: 2 }} elevation={0}>
                                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                                    {isArabic ? "الإعدادات" : "Settings"}
+                                    {t('blog.settings')}
                                 </Typography>
 
                                 <Grid container spacing={2}>
@@ -364,7 +431,7 @@ function BlogEditor() {
                                         <TextField
                                             fullWidth
                                             select
-                                            label={isArabic ? "التصنيف" : "Category"}
+                                            label={t('blog.categories')}
                                             value={formData.category.en}
                                             onChange={(e) => handleCategoryChange(e.target.value)}
                                         >
@@ -380,19 +447,19 @@ function BlogEditor() {
                                         <TextField
                                             fullWidth
                                             select
-                                            label={isArabic ? "الحالة" : "Status"}
+                                            label={t('blog.status')}
                                             value={formData.status}
                                             onChange={(e) => handleChange("status", null, e.target.value)}
                                         >
-                                            <MenuItem value="draft">{isArabic ? "مسودة" : "Draft"}</MenuItem>
-                                            <MenuItem value="published">{isArabic ? "منشور" : "Published"}</MenuItem>
+                                            <MenuItem value="draft">{t('blog.draft')}</MenuItem>
+                                            <MenuItem value="published">{t('blog.published')}</MenuItem>
                                         </TextField>
                                     </Grid>
                                 </Grid>
 
                                 <Box sx={{ mt: 3 }}>
                                     <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                                        {isArabic ? "صورة الغلاف" : "Featured Image"}
+                                        {t('blog.featuredImage')}
                                     </Typography>
 
                                     <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
@@ -405,7 +472,7 @@ function BlogEditor() {
                                             {uploadingImage ? (
                                                 <CircularProgress size={20} />
                                             ) : (
-                                                isArabic ? "رفع صورة" : "Upload Image"
+                                                t('blog.uploadImage')
                                             )}
                                             <input
                                                 type="file"
@@ -417,7 +484,7 @@ function BlogEditor() {
 
                                         <TextField
                                             fullWidth
-                                            placeholder={isArabic ? "أو أدخل رابط الصورة" : "Or paste image URL"}
+                                            placeholder={t('blog.pasteImageUrl')}
                                             value={formData.featuredImage}
                                             onChange={(e) => handleChange("featuredImage", null, e.target.value)}
                                             size="small"
@@ -456,7 +523,7 @@ function BlogEditor() {
                                     onClick={() => navigate("/blog")}
                                     sx={{ borderRadius: 1.5 }}
                                 >
-                                    {isArabic ? "إلغاء" : "Cancel"}
+                                    {t('common.cancel')}
                                 </Button>
                                 <Button
                                     type="submit"
@@ -471,8 +538,8 @@ function BlogEditor() {
                                     }}
                                 >
                                     {saving
-                                        ? (isArabic ? "جاري الحفظ..." : "Saving...")
-                                        : (isArabic ? "حفظ" : "Save")}
+                                        ? t('common.loading')
+                                        : t('common.save')}
                                 </Button>
                             </Box>
                         </Grid>
