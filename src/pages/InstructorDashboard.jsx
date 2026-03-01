@@ -79,6 +79,7 @@ function InstructorDashboard() {
     requirements: { en: '', ar: '' },
     objectives: { en: '', ar: '' },
     topics: { en: '', ar: '' },
+    status: 'draft',
   });
 
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -234,6 +235,7 @@ function InstructorDashboard() {
         requirements: { en: course.requirements?.en || '', ar: course.requirements?.ar || '' },
         objectives: { en: course.objectives?.en || '', ar: course.objectives?.ar || '' },
         topics: { en: course.topics?.en || '', ar: course.topics?.ar || '' },
+        status: course.status || 'draft',
       });
       // Set preview image if thumbnail exists
       if (course.thumbnail) {
@@ -257,6 +259,7 @@ function InstructorDashboard() {
         requirements: { en: '', ar: '' },
         objectives: { en: '', ar: '' },
         topics: { en: '', ar: '' },
+        status: 'draft',
       });
       setPreviewImage(null);
     }
@@ -282,6 +285,7 @@ function InstructorDashboard() {
       requirements: { en: '', ar: '' },
       objectives: { en: '', ar: '' },
       topics: { en: '', ar: '' },
+      status: 'draft',
     });
   };
 
@@ -290,10 +294,10 @@ function InstructorDashboard() {
       setFormMessage({ type: '', text: '' });
       if (editingCourse) {
         // Separate course content from round-specific data
-        const { startDate, endDate, maxStudents, price, ...courseContent } = formData;
+        const { startDate, endDate, maxStudents, price, status, ...courseContent } = formData;
 
-        // Update course content
-        await updateCourse(editingCourse.id, courseContent);
+        // Update course content including status
+        await updateCourse(editingCourse.id, { ...courseContent, status });
 
         // Update current round if it exists
         if (editingCourse.currentRoundId) {
@@ -311,7 +315,6 @@ function InstructorDashboard() {
         await createCourse({
           ...formData,
           instructor: { uid: user.uid, name: user.displayName || 'Instructor' },
-          status: 'published',
         });
         setFormMessage({ type: 'success', text: isArabic ? 'تم إنشاء الدورة بنجاح' : 'Course created successfully!' });
       }
@@ -495,6 +498,9 @@ function InstructorDashboard() {
                         {isArabic ? 'الدورة' : 'Course'}
                       </TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>
+                        {isArabic ? 'الحالة' : 'Status'}
+                      </TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 600 }}>
                         {isArabic ? 'الفئة' : 'Category'}
                       </TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>
@@ -517,13 +523,13 @@ function InstructorDashboard() {
                   <TableBody>
                     {loading ? (
                       <TableRow>
-                        <TableCell colSpan={7} align="center">
+                        <TableCell colSpan={8} align="center">
                           <CircularProgress />
                         </TableCell>
                       </TableRow>
                     ) : instructorCourses.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} align="center">
+                        <TableCell colSpan={8} align="center">
                           {isArabic ? 'لا توجد دورات' : 'No courses yet'}
                         </TableCell>
                       </TableRow>
@@ -532,6 +538,14 @@ function InstructorDashboard() {
                         <TableRow key={course.id} hover>
                           <TableCell>
                             {typeof course.title === 'object' ? course.title[isArabic ? 'ar' : 'en'] : course.title}
+                          </TableCell>
+                          <TableCell align="right">
+                            <Chip
+                              label={course.status === 'published' ? (isArabic ? 'منشور' : 'Published') : (isArabic ? 'مسودة' : 'Draft')}
+                              size="small"
+                              color={course.status === 'published' ? 'success' : 'default'}
+                              variant={course.status === 'published' ? 'filled' : 'outlined'}
+                            />
                           </TableCell>
                           <TableCell align="right">
                             {typeof course.category === 'object' ? course.category[isArabic ? 'ar' : 'en'] : course.category}
@@ -1024,6 +1038,23 @@ function InstructorDashboard() {
                         onChange={(e) => setFormData({ ...formData, maxStudents: parseInt(e.target.value) })}
                         inputProps={{ min: 1, max: 1000 }}
                       />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControl fullWidth>
+                        <InputLabel>{isArabic ? 'حالة الدورة' : 'Course Status'}</InputLabel>
+                        <Select
+                          value={formData.status}
+                          label={isArabic ? 'حالة الدورة' : 'Course Status'}
+                          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        >
+                          <MenuItem value="draft">
+                            {isArabic ? 'مسودة' : 'Draft'}
+                          </MenuItem>
+                          <MenuItem value="published">
+                            {isArabic ? 'منشور' : 'Published'}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
                   </Grid>
                 </Box>

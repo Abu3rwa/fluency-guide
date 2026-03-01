@@ -3,10 +3,22 @@ import { Box, Typography, Grid, Skeleton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { useAuth } from '../../contexts/AuthContext';
 import { StudentsIcon, CoursesIcon, BlogIcon, PrivateLessonsIcon, ProgressIcon, ProfileIcon } from '../../utils/icons';
+
+const FALLBACK_STATS = {
+  students: 50,
+  courses: 20,
+  blogs: 0,
+  instructors: 1,
+  privateLessons: 0,
+  totalHours: 0,
+  loading: false
+};
 
 function SocialProof() {
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
   const isArabic = i18n.language === 'ar';
   const [stats, setStats] = useState({
     students: 0,
@@ -20,27 +32,20 @@ function SocialProof() {
 
   useEffect(() => {
     fetchRealStats();
-  }, []);
+  }, [user]);
 
   const fetchRealStats = async () => {
     try {
-      // Fetch enrollments count (students)
-      const enrollmentsSnap = await getDocs(
-        query(collection(db, 'enrollments'), where('status', '==', 'confirmed'))
-      );
-      const studentsCount = enrollmentsSnap.size;
-
-      // Fetch courses
+      // These are always allowed (public read)
       const coursesSnap = await getDocs(collection(db, 'courses'));
       const coursesCount = coursesSnap.size;
 
-      // Fetch instructors
-      const instructorsSnap = await getDocs(
-        query(collection(db, 'users'), where('role', '==', 'instructor'))
+      const blogsSnap = await getDocs(
+        query(collection(db, 'blog_posts'), where('status', '==', 'published'))
       );
-      const instructorsCount = instructorsSnap.size;
+      const blogsCount = blogsSnap.size;
 
-      // Fetch lessons and calculate total hours
+      // Total hours from units/lessons (public read after rule update)
       let totalMinutes = 0;
       for (const courseDoc of coursesSnap.docs) {
         const unitsSnap = await getDocs(collection(db, `courses/${courseDoc.id}/units`));
@@ -55,15 +60,35 @@ function SocialProof() {
         }
       }
 
-      // Fetch published blog posts
-      const blogsSnap = await getDocs(
-        query(collection(db, 'blog_posts'), where('status', '==', 'published'))
-      );
-      const blogsCount = blogsSnap.size;
+      let studentsCount = FALLBACK_STATS.students;
+      let instructorsCount = FALLBACK_STATS.instructors;
+      let privateLessonsCount = FALLBACK_STATS.privateLessons;
 
-      // Fetch private lessons students
-      const privateLessonsSnap = await getDocs(collection(db, 'private_students'));
-      const privateLessonsCount = privateLessonsSnap.size;
+      // Only fetch permission-restricted data when authenticated
+      if (user) {
+        try {
+          const enrollmentsSnap = await getDocs(
+            query(collection(db, 'enrollments'), where('status', '==', 'confirmed'))
+          );
+          studentsCount = enrollmentsSnap.size;
+        } catch (_) {
+          // use fallback
+        }
+        try {
+          const instructorsSnap = await getDocs(
+            query(collection(db, 'users'), where('role', '==', 'instructor'))
+          );
+          instructorsCount = instructorsSnap.size || 1;
+        } catch (_) {
+          // e.g. non-admin cannot read all users; use fallback
+        }
+        try {
+          const privateLessonsSnap = await getDocs(collection(db, 'privateStudents'));
+          privateLessonsCount = privateLessonsSnap.size;
+        } catch (_) {
+          // use fallback
+        }
+      }
 
       setStats({
         students: studentsCount,
@@ -76,15 +101,7 @@ function SocialProof() {
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
-      setStats({
-        students: 50,
-        courses: 20,
-        blogs: 0,
-        instructors: 1,
-        privateLessons: 0,
-        totalHours: 0,
-        loading: false
-      });
+      setStats({ ...FALLBACK_STATS });
     }
   };
 

@@ -45,6 +45,11 @@ function CourseDetails() {
       // Check if course exists in context
       const contextCourse = courses.find(c => c.id === courseId);
       if (contextCourse) {
+        // Check if course is draft and user is not the instructor
+        if (contextCourse.status === 'draft' && contextCourse.instructor?.uid !== user?.uid) {
+          navigate('/courses');
+          return;
+        }
         setFetchedCourse(contextCourse);
         setLoading(false);
         return;
@@ -55,7 +60,13 @@ function CourseDetails() {
         const courseRef = doc(db, 'courses', courseId);
         const snapshot = await getDoc(courseRef);
         if (snapshot.exists()) {
-          setFetchedCourse({ id: snapshot.id, ...snapshot.data() });
+          const courseData = { id: snapshot.id, ...snapshot.data() };
+          // Check if course is draft and user is not the instructor
+          if (courseData.status === 'draft' && courseData.instructor?.uid !== user?.uid) {
+            navigate('/courses');
+            return;
+          }
+          setFetchedCourse(courseData);
         }
       } catch (error) {
         console.error('Error fetching course:', error);
@@ -65,7 +76,7 @@ function CourseDetails() {
     };
 
     findCourse();
-  }, [courseId, courses]);
+  }, [courseId, courses, user, navigate]);
 
   // Check if user is already enrolled
   useEffect(() => {

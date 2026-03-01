@@ -13,6 +13,8 @@ import {
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { doc, updateDoc, increment } from "firebase/firestore";
+import { db, logEvent } from "../firebase";
 import {
     fetchPostBySlug,
     fetchRelatedPosts,
@@ -61,6 +63,51 @@ function BlogPost() {
         };
         loadRelated();
     }, [currentPost, dispatch]);
+
+    // Track blog post views once per browser session per post.
+    useEffect(() => {
+        if (!currentPost?.id || currentPost?.status !== 'published') {
+            return;
+        }
+
+        const sessionKey = `blog_viewed_${currentPost.id}`;
+        if (sessionStorage.getItem(sessionKey)) {
+            return;
+        }
+
+        // Set first to avoid duplicate increments in StrictMode/re-renders.
+        sessionStorage.setItem(sessionKey, '1');
+
+        const trackView = async () => {
+            try {
+                await updateDoc(doc(db, "blog_posts", currentPost.id), {
+                    viewCount: increment(1),
+                });
+
+                const eventTitle =
+                    typeof currentPost.title === "string"
+                        ? currentPost.title
+                        : currentPost.title?.en || currentPost.title?.ar || "";
+                const eventCategory =
+                    typeof currentPost.category === "string"
+                        ? currentPost.category
+                        : currentPost.category?.en || currentPost.category?.ar || "";
+
+                logEvent("blog_post_viewed", {
+                    post_id: currentPost.id,
+                    post_slug: currentPost.slug || slug || "",
+                    post_title: eventTitle,
+                    category: eventCategory,
+                });
+            } catch (err) {
+                // Allow retry in this session if the write fails.
+                sessionStorage.removeItem(sessionKey);
+                console.error("Error tracking blog view:", err);
+            }
+        };
+
+        trackView();
+    }, [currentPost, slug]);
 
     // Update Open Graph meta tags for social sharing preview
     useEffect(() => {

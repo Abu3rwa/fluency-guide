@@ -17,6 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import PageViewTracker from './components/analytics/PageViewTracker';
 
 // Lazy load context providers and pages
 const AuthProvider = lazy(() => import('./contexts/AuthContext').then(mod => ({ default: mod.AuthProvider })).catch(() => {
@@ -57,6 +58,7 @@ const BlogEditor = lazy(() => import('./pages/BlogEditor'));
 const LessonAttendance = lazy(() => import('./pages/instructor/LessonAttendance'));
 const CourseAttendanceOverview = lazy(() => import('./pages/instructor/CourseAttendanceOverview'));
 const AdminUserManagement = lazy(() => import('./pages/admin/UserManagement'));
+const AdminBlogAnalytics = lazy(() => import('./pages/admin/analytics/BlogAnalytics'));
 
 const LoadingSpinner = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -74,6 +76,7 @@ function App() {
             <CourseProvider>
               <BlogProvider>
                 <Router future={{ v7_relativeSplatPath: true }}>
+                  <PageViewTracker />
                   <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                     <Header />
                     <Box sx={{ flex: 1 }}>
@@ -148,6 +151,16 @@ function App() {
                             <ProtectedRoute requiredRole="admin">
                               <Suspense fallback={<LoadingSpinner />}>
                                 <AdminUserManagement />
+                              </Suspense>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/admin/analytics/blog"
+                          element={
+                            <ProtectedRoute requiredRole="admin">
+                              <Suspense fallback={<LoadingSpinner />}>
+                                <AdminBlogAnalytics />
                               </Suspense>
                             </ProtectedRoute>
                           }

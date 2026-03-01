@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
     Box,
     Container,
@@ -47,6 +47,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PeopleIcon from '@mui/icons-material/People';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 function AdminUserManagement() {
     const { t, i18n } = useTranslation();
@@ -287,23 +288,48 @@ function AdminUserManagement() {
                 }}
             >
                 <Container maxWidth="lg">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <AdminPanelSettingsIcon sx={{ fontSize: 40 }} />
-                        <Typography
-                            variant="h4"
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                                <AdminPanelSettingsIcon sx={{ fontSize: 40 }} />
+                                <Typography
+                                    variant="h4"
+                                    sx={{
+                                        fontWeight: 700,
+                                        fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
+                                    }}
+                                >
+                                    {isArabic ? 'إدارة المستخدمين' : 'User Management'}
+                                </Typography>
+                            </Box>
+                            <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                                {isArabic
+                                    ? 'إدارة حسابات المستخدمين وتحديث أدوارهم'
+                                    : 'Manage user accounts and update their roles'}
+                            </Typography>
+                        </Box>
+                        <Button
+                            component={Link}
+                            to="/admin/analytics/blog"
+                            variant="outlined"
+                            startIcon={<TrendingUpIcon />}
                             sx={{
-                                fontWeight: 700,
+                                color: 'white',
+                                borderColor: 'rgba(255,255,255,0.5)',
+                                '&:hover': {
+                                    borderColor: 'white',
+                                    bgcolor: 'rgba(255,255,255,0.1)'
+                                },
+                                borderRadius: 2,
+                                px: 3,
+                                py: 1,
                                 fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
+                                fontWeight: 600
                             }}
                         >
-                            {isArabic ? 'إدارة المستخدمين' : 'User Management'}
-                        </Typography>
+                            {isArabic ? 'إحصائيات المدونة' : 'Blog Analytics'}
+                        </Button>
                     </Box>
-                    <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                        {isArabic
-                            ? 'إدارة حسابات المستخدمين وتحديث أدوارهم'
-                            : 'Manage user accounts and update their roles'}
-                    </Typography>
                 </Container>
             </Box>
 
@@ -502,12 +528,6 @@ function AdminUserManagement() {
                                                             <EditIcon />
                                                         </IconButton>
                                                     </Tooltip>
-                                                    {/* Delete button placeholder - will be implemented with Firebase Functions */}
-                                                    {/* <Tooltip title={isArabic ? 'حذف' : 'Delete'}>
-                            <IconButton color="error" disabled>
-                              <DeleteIcon />
-                            </IconButton>
-                          </Tooltip> */}
                                                 </TableCell>
                                             </TableRow>
                                         ))

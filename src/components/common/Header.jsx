@@ -22,18 +22,8 @@ import {
   Divider,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import LoginIcon from '@mui/icons-material/Login';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
-import HomeIcon from '@mui/icons-material/Home';
-import SchoolIcon from '@mui/icons-material/School';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import InfoIcon from '@mui/icons-material/Info';
-import ContactSupportIcon from '@mui/icons-material/ContactSupport';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import LogoutIcon from '@mui/icons-material/Logout';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useAuth } from '../../contexts/AuthContext';
 import logo from '../../assets/app_logo.png';
@@ -78,66 +68,273 @@ function Header() {
   };
 
   const navLinks = [
-    { key: 'home', path: '/', icon: <HomeIcon /> },
-    { key: 'courses', path: '/courses', icon: <SchoolIcon /> },
-    { key: 'blog', path: '/blog', icon: <AutoStoriesIcon /> },
-    { key: 'about', path: '/about', icon: <InfoIcon /> },
-    { key: 'contact', path: '/contact', icon: <ContactSupportIcon /> },
+    { key: 'home', path: '/' },
+    { key: 'courses', path: '/courses' },
+    { key: 'blog', path: '/blog' },
+    { key: 'about', path: '/about' },
+    { key: 'contact', path: '/contact' },
   ];
 
+  // Mobile Drawer Content
   const drawer = (
-    <Box sx={{ width: 250, pt: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', px: 2, pb: 2 }}>
-        <IconButton onClick={handleDrawerToggle}>
+    <Box
+      sx={{
+        width: 280,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: '#FFFFFF',
+      }}
+    >
+      {/* Drawer Header */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          px: 2.5,
+          py: 2,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 700,
+            color: '#00695C',
+            fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
+          }}
+        >
+          {isArabic ? 'القائمة' : 'Menu'}
+        </Typography>
+        <IconButton onClick={handleDrawerToggle} size="small">
           <CloseIcon />
         </IconButton>
       </Box>
-      <List>
-        {navLinks.map((link) => (
-          <ListItem key={link.key} disablePadding>
-            <ListItemButton
-              component={Link}
-              to={link.path}
-              onClick={handleNavClick}
-              selected={location.pathname === link.path}
-              sx={{
-                '&.Mui-selected': {
-                  bgcolor: 'rgba(244, 196, 48, 0.15)',
-                  borderRight: isArabic ? 'none' : '3px solid',
-                  borderLeft: isArabic ? '3px solid' : 'none',
-                  borderColor: 'primary.light',
-                },
-              }}
-            >
-              <Box
+
+      {/* Navigation Links */}
+      <List sx={{ flex: 1, py: 2 }}>
+        {navLinks.map((link) => {
+          const isActive = location.pathname === link.path;
+          return (
+            <ListItem key={link.key} disablePadding>
+              <ListItemButton
+                component={Link}
+                to={link.path}
+                onClick={handleNavClick}
                 sx={{
-                  width: 24,
-                  height: 24,
-                  mr: isArabic ? 1 : 2,
-                  ml: isArabic ? 2 : 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: location.pathname === link.path ? 'primary.main' : 'inherit'
+                  py: 1.5,
+                  px: 3,
+                  mx: 1.5,
+                  borderRadius: 2,
+                  mb: 0.5,
+                  bgcolor: isActive ? 'rgba(0, 105, 92, 0.08)' : 'transparent',
+                  '&:hover': {
+                    bgcolor: 'rgba(0, 105, 92, 0.05)',
+                  },
                 }}
               >
-                {link.icon}
-              </Box>
-              <ListItemText
-                primary={t(`navigation.${link.key}`)}
-                sx={{
-                  '& .MuiTypography-root': {
-                    fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
-                  }
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
+                <ListItemText
+                  primary={t(`navigation.${link.key}`)}
+                  sx={{
+                    '& .MuiTypography-root': {
+                      fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
+                      fontWeight: isActive ? 600 : 500,
+                      fontSize: '1rem',
+                      color: isActive ? '#00695C' : '#374151',
+                    }
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
-      <Box sx={{ px: 2, mt: 2 }}>
+
+      {/* Language Switcher */}
+      <Box sx={{ px: 3, py: 2, borderTop: '1px solid', borderColor: 'divider' }}>
         <LanguageSwitcher />
       </Box>
+
+      {/* Auth Buttons in Drawer */}
+      {!isAuthenticated && (
+        <Box sx={{ p: 2.5, borderTop: '1px solid', borderColor: 'divider' }}>
+          <Button
+            component={Link}
+            to="/login"
+            onClick={handleNavClick}
+            fullWidth
+            sx={{
+              py: 1.5,
+              mb: 1.5,
+              color: '#00695C',
+              border: '2px solid #00695C',
+              borderRadius: 2,
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              textTransform: 'none',
+              fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
+              '&:hover': {
+                bgcolor: 'rgba(0, 105, 92, 0.05)',
+                borderColor: '#004D40',
+              },
+            }}
+          >
+            {t('navigation.login')}
+          </Button>
+          <Button
+            component={Link}
+            to="/register"
+            onClick={handleNavClick}
+            fullWidth
+            sx={{
+              py: 1.5,
+              bgcolor: '#00695C',
+              color: '#FFFFFF',
+              borderRadius: 2,
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              textTransform: 'none',
+              fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
+              '&:hover': {
+                bgcolor: '#004D40',
+              },
+            }}
+          >
+            {t('navigation.signup')}
+          </Button>
+        </Box>
+      )}
+
+      {/* User Info in Drawer (when logged in) */}
+      {isAuthenticated && userProfile && (
+        <Box sx={{ p: 2.5, borderTop: '1px solid', borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Avatar
+              sx={{
+                width: 44,
+                height: 44,
+                bgcolor: '#00695C',
+                fontSize: '1.1rem',
+                fontWeight: 700,
+              }}
+            >
+              {(userProfile?.name || user?.email)?.[0]?.toUpperCase()}
+            </Avatar>
+            <Box>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1a1a2e' }}>
+                {userProfile?.name || user?.email?.split('@')[0]}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
+                {userProfile?.role}
+              </Typography>
+            </Box>
+          </Box>
+
+          {userProfile?.role === 'student' && (
+            <Button
+              component={Link}
+              to="/student/my-courses"
+              onClick={handleNavClick}
+              fullWidth
+              sx={{
+                py: 1.2,
+                mb: 1,
+                justifyContent: 'flex-start',
+                color: '#374151',
+                borderRadius: 2,
+                fontWeight: 500,
+                textTransform: 'none',
+                '&:hover': { bgcolor: 'rgba(0, 105, 92, 0.05)' },
+              }}
+            >
+              {isArabic ? 'دوراتي' : 'My Courses'}
+            </Button>
+          )}
+
+          {userProfile?.role === 'instructor' && (
+            <Button
+              component={Link}
+              to="/instructor/dashboard"
+              onClick={handleNavClick}
+              fullWidth
+              sx={{
+                py: 1.2,
+                mb: 1,
+                justifyContent: 'flex-start',
+                color: '#374151',
+                borderRadius: 2,
+                fontWeight: 500,
+                textTransform: 'none',
+                '&:hover': { bgcolor: 'rgba(0, 105, 92, 0.05)' },
+              }}
+            >
+              {isArabic ? 'لوحة التحكم' : 'Dashboard'}
+            </Button>
+          )}
+
+          {userProfile?.isAdmin && (
+            <>
+              <Button
+                component={Link}
+                to="/admin/users"
+                onClick={handleNavClick}
+                fullWidth
+                sx={{
+                  py: 1.2,
+                  mb: 1,
+                  justifyContent: 'flex-start',
+                  color: '#374151',
+                  borderRadius: 2,
+                  fontWeight: 500,
+                  textTransform: 'none',
+                  '&:hover': { bgcolor: 'rgba(0, 105, 92, 0.05)' },
+                }}
+              >
+                {isArabic ? 'إدارة المستخدمين' : 'User Management'}
+              </Button>
+              <Button
+                component={Link}
+                to="/admin/analytics/blog"
+                onClick={handleNavClick}
+                fullWidth
+                sx={{
+                  py: 1.2,
+                  mb: 1,
+                  justifyContent: 'flex-start',
+                  color: '#374151',
+                  borderRadius: 2,
+                  fontWeight: 500,
+                  textTransform: 'none',
+                  '&:hover': { bgcolor: 'rgba(0, 105, 92, 0.05)' },
+                }}
+              >
+                {isArabic ? 'إحصائيات المدونة' : 'Blog Analytics'}
+              </Button>
+            </>
+          )}
+
+          <Button
+            onClick={() => {
+              handleNavClick();
+              handleLogout();
+            }}
+            fullWidth
+            sx={{
+              py: 1.2,
+              justifyContent: 'flex-start',
+              color: '#dc2626',
+              borderRadius: 2,
+              fontWeight: 500,
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'rgba(220, 38, 38, 0.05)' },
+            }}
+          >
+            {isArabic ? 'تسجيل الخروج' : 'Logout'}
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 
@@ -145,15 +342,15 @@ function Header() {
     <AppBar
       position="sticky"
       sx={{
-        background: 'linear-gradient(135deg, #00695C 0%, #004D40 100%)',
-        borderBottom: '2px solid #D4A574',
-        boxShadow: 2,
-        borderRadius: 0,
+        background: '#FFFFFF',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
         zIndex: theme.zIndex.drawer + 1
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 70 } }}>
+        <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 72 }, gap: 2 }}>
           {/* Logo */}
           <Box
             component={Link}
@@ -163,8 +360,7 @@ function Header() {
               display: 'flex',
               alignItems: 'center',
               textDecoration: 'none',
-              flexGrow: { xs: 1, md: 0 },
-              mr: { md: 4 },
+              gap: 1.5,
             }}
           >
             <Box
@@ -172,33 +368,29 @@ function Header() {
               src={logo}
               alt="Sudanglish Logo"
               sx={{
-                height: { xs: '50px', md: '65px' },
+                height: { xs: 40, md: 48 },
                 width: 'auto',
-                bgcolor: 'white',
-                borderRadius: '50%',
-                p: 0.5,
-                mr: isArabic ? 0 : 3,
-                ml: isArabic ? 3 : 0,
               }}
             />
-            <Box
-              component="h2"
+            <Typography
+              variant="h6"
               sx={{
-                fontSize: { xs: '20px', md: '24px' },
                 fontWeight: 700,
-                color: '#FFFFFF',
+                color: '#00695C',
                 fontFamily: isArabic ? 'Tajawal, sans-serif' : 'Montserrat, sans-serif',
-                m: 0,
-                display: { xs: 'none', sm: 'block' }, // Hide text on small screens if needed
+                display: { xs: 'none', sm: 'block' },
               }}
             >
               {isArabic ? 'سودانجلش' : 'Sudanglish'}
-            </Box>
+            </Typography>
           </Box>
+
+          {/* Spacer */}
+          <Box sx={{ flexGrow: 1 }} />
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
                 return (
@@ -207,26 +399,30 @@ function Header() {
                     component={Link}
                     to={link.path}
                     onClick={handleNavClick}
-                    startIcon={link.icon}
                     sx={{
-                      color: isActive ? 'primary.light' : '#FFFFFF',
+                      color: isActive ? '#00695C' : '#4B5563',
                       fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
-                      fontSize: '16px',
-                      fontWeight: 500,
+                      fontSize: '0.95rem',
+                      fontWeight: isActive ? 600 : 500,
                       px: 2,
                       py: 1,
-                      borderRadius: 1,
-                      bgcolor: isActive ? 'rgba(244, 196, 48, 0.15)' : 'transparent',
-                      borderBottom: isActive ? '2px solid' : 'none',
-                      borderColor: 'primary.light',
-                      transition: 'all 0.3s ease',
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      position: 'relative',
+                      '&::after': isActive ? {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 4,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: 20,
+                        height: 2,
+                        bgcolor: '#00695C',
+                        borderRadius: 1,
+                      } : {},
                       '&:hover': {
-                        color: 'primary.light',
-                        bgcolor: 'rgba(244, 196, 48, 0.15)',
-                      },
-                      '& .MuiButton-startIcon': {
-                        marginRight: isArabic ? 0 : '8px',
-                        marginLeft: isArabic ? '8px' : 0,
+                        color: '#00695C',
+                        bgcolor: 'rgba(0, 105, 92, 0.05)',
                       },
                     }}
                   >
@@ -246,25 +442,43 @@ function Header() {
                 <Button
                   onClick={handleMenuOpen}
                   sx={{
-                    background: 'transparent',
-                    color: '#FFFFFF',
-                    minWidth: 'auto',
-                    p: 1,
-                    borderRadius: '50%',
-                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    py: 0.75,
+                    px: 1.5,
+                    borderRadius: 2,
+                    bgcolor: 'rgba(0, 105, 92, 0.05)',
                     '&:hover': {
-                      background: 'rgba(255,255,255,0.1)',
-                      transform: 'translateY(-1px)',
+                      bgcolor: 'rgba(0, 105, 92, 0.1)',
                     },
                   }}
                 >
-                  <PersonIcon
+                  <Avatar
                     sx={{
                       width: 32,
                       height: 32,
-                      color: '#FFFFFF'
+                      bgcolor: '#00695C',
+                      fontSize: '0.9rem',
+                      fontWeight: 700,
                     }}
-                  />
+                  >
+                    {(userProfile?.name || user?.email)?.[0]?.toUpperCase()}
+                  </Avatar>
+                  <Box sx={{ textAlign: 'left', display: { xs: 'none', lg: 'block' } }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 600,
+                        color: '#1a1a2e',
+                        lineHeight: 1.2,
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      {userProfile?.name || user?.email?.split('@')[0]}
+                    </Typography>
+                  </Box>
+                  <KeyboardArrowDownIcon sx={{ color: '#6B7280', fontSize: 20 }} />
                 </Button>
                 <Menu
                   anchorEl={anchorEl}
@@ -280,181 +494,83 @@ function Header() {
                   }}
                   PaperProps={{
                     sx: {
-                      mt: 1.5,
-                      minWidth: 220,
+                      mt: 1,
+                      minWidth: 200,
                       borderRadius: 2,
-                      boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                      overflow: 'visible',
-                      '&::before': {
-                        content: '""',
-                        display: 'block',
-                        position: 'absolute',
-                        top: 0,
-                        right: isArabic ? 'auto' : 14,
-                        left: isArabic ? 14 : 'auto',
-                        width: 10,
-                        height: 10,
-                        bgcolor: 'background.paper',
-                        transform: 'translateY(-50%) rotate(45deg)',
-                        zIndex: 0,
-                      },
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                     },
                   }}
                 >
-                  {/* User Info Section */}
-                  <Box sx={{ px: 2, py: 2, background: 'linear-gradient(135deg, #00897B 0%, #00695C 100%)' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Avatar
-                        sx={{
-                          width: 40,
-                          height: 40,
-                          bgcolor: '#D4A574',
-                          fontSize: '1.25rem',
-                          fontWeight: 700,
-                        }}
-                      >
-                        {(userProfile?.name || user?.email)?.[0]?.toUpperCase()}
-                      </Avatar>
-                      <Box sx={{ flex: 1 }}>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{
-                            fontWeight: 700,
-                            color: '#FFFFFF',
-                            fontSize: '0.95rem',
-                            lineHeight: 1.2,
-                          }}
-                        >
-                          {userProfile?.name || user?.email?.split('@')[0]}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: 'rgba(255,255,255,0.8)',
-                            fontSize: '0.75rem',
-                            textTransform: 'capitalize',
-                          }}
-                        >
-                          {userProfile?.role || 'User'}
-                        </Typography>
-                      </Box>
-                    </Box>
+                  {/* User Info */}
+                  <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1a1a2e' }}>
+                      {userProfile?.name || user?.email?.split('@')[0]}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
+                      {userProfile?.role}
+                    </Typography>
                   </Box>
-                  <Divider />
+
                   {userProfile?.role === 'student' && (
                     <MenuItem
                       component={Link}
                       to="/student/my-courses"
-                      onClick={() => {
-                        handleMenuClose();
-                        setMobileOpen(false);
-                      }}
-                      sx={{
-                        gap: 1.5,
-                        py: 1.5,
-                        px: 2,
-                        '&:hover': {
-                          bgcolor: 'rgba(0, 137, 123, 0.08)',
-                        },
-                      }}
+                      onClick={handleMenuClose}
+                      sx={{ py: 1.5, px: 2 }}
                     >
-                      <SchoolIcon sx={{ fontSize: 20 }} />
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {isArabic ? 'دوراتي' : 'My Courses'}
-                      </Typography>
+                      <Typography variant="body2">{isArabic ? 'دوراتي' : 'My Courses'}</Typography>
                     </MenuItem>
                   )}
+
                   {userProfile?.role === 'instructor' && (
                     <MenuItem
                       component={Link}
                       to="/instructor/dashboard"
-                      onClick={() => {
-                        handleMenuClose();
-                        setMobileOpen(false);
-                      }}
-                      sx={{
-                        gap: 1.5,
-                        py: 1.5,
-                        px: 2,
-                        '&:hover': {
-                          bgcolor: 'rgba(0, 137, 123, 0.08)',
-                        },
-                      }}
+                      onClick={handleMenuClose}
+                      sx={{ py: 1.5, px: 2 }}
                     >
-                      <DashboardIcon sx={{ fontSize: 20 }} />
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {isArabic ? 'لوحة التحكم' : 'Dashboard'}
-                      </Typography>
+                      <Typography variant="body2">{isArabic ? 'لوحة التحكم' : 'Dashboard'}</Typography>
                     </MenuItem>
                   )}
+
                   {userProfile?.isAdmin && (
                     <MenuItem
                       component={Link}
                       to="/admin/users"
-                      onClick={() => {
-                        handleMenuClose();
-                        setMobileOpen(false);
-                      }}
-                      sx={{
-                        gap: 1.5,
-                        py: 1.5,
-                        px: 2,
-                        '&:hover': {
-                          bgcolor: 'rgba(156, 39, 176, 0.08)',
-                        },
-                      }}
+                      onClick={handleMenuClose}
+                      sx={{ py: 1.5, px: 2 }}
                     >
-                      <AdminPanelSettingsIcon sx={{ fontSize: 20, color: '#9c27b0' }} />
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {isArabic ? 'إدارة المستخدمين' : 'User Management'}
-                      </Typography>
+                      <Typography variant="body2">{isArabic ? 'إدارة المستخدمين' : 'User Management'}</Typography>
                     </MenuItem>
                   )}
+
                   <Divider />
+
                   <MenuItem
                     onClick={handleLogout}
-                    sx={{
-                      gap: 1.5,
-                      py: 1.5,
-                      px: 2,
-                      color: 'error.main',
-                      '&:hover': {
-                        bgcolor: 'rgba(211, 47, 47, 0.08)',
-                      },
-                    }}
+                    sx={{ py: 1.5, px: 2, color: '#dc2626' }}
                   >
-                    <LogoutIcon sx={{ fontSize: 20 }} />
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {isArabic ? 'تسجيل الخروج' : 'Logout'}
-                    </Typography>
+                    <Typography variant="body2">{isArabic ? 'تسجيل الخروج' : 'Logout'}</Typography>
                   </MenuItem>
                 </Menu>
               </>
             ) : (
               !isMobile && (
-                <>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                   <Button
                     component={Link}
                     to="/login"
-                    startIcon={<LoginIcon />}
                     sx={{
-                      color: 'primary.light',
-                      borderColor: 'primary.light',
-                      borderWidth: 2,
-                      borderStyle: 'solid',
+                      color: '#00695C',
                       fontWeight: 600,
-                      fontSize: '15px',
+                      fontSize: '0.9rem',
                       px: 2.5,
                       py: 1,
-                      borderRadius: 1,
+                      borderRadius: 2,
                       textTransform: 'none',
-                      transition: 'all 0.3s ease',
+                      fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                       '&:hover': {
-                        bgcolor: 'primary.light',
-                        color: '#374151',
-                        borderColor: 'primary.light',
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 6px 20px rgba(244, 196, 48, 0.25)',
+                        bgcolor: 'rgba(0, 105, 92, 0.05)',
                       },
                     }}
                   >
@@ -463,45 +579,35 @@ function Header() {
                   <Button
                     component={Link}
                     to="/register"
-                    startIcon={<PersonAddIcon />}
                     sx={{
-                      background: 'linear-gradient(135deg, #D4A574 0%, #F4C430 100%)',
+                      bgcolor: '#00695C',
                       color: '#FFFFFF',
-                      fontWeight: 700,
-                      fontSize: '15px',
-                      px: 3,
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      px: 2.5,
                       py: 1,
-                      borderRadius: 1,
+                      borderRadius: 2,
                       textTransform: 'none',
-                      boxShadow: '0 4px 12px rgba(212, 165, 116, 0.3)',
-                      transition: 'all 0.3s ease',
+                      fontFamily: isArabic ? "'Tajawal', sans-serif" : "'Montserrat', sans-serif",
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #B8860B 0%, #D4A574 100%)',
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 8px 24px rgba(212, 165, 116, 0.4)',
+                        bgcolor: '#004D40',
                       },
                     }}
                   >
                     {t('navigation.signup')}
                   </Button>
-                </>
+                </Box>
               )
             )}
 
             {/* Mobile Menu Button */}
             {isMobile && (
               <IconButton
-                color="inherit"
                 aria-label="open drawer"
-                edge="start"
                 onClick={handleDrawerToggle}
                 sx={{
-                  color: '#fff',
-                  bgcolor: 'rgba(255,255,255,0.1)',
-                  borderRadius: 1,
-                  '&:hover': {
-                    bgcolor: 'rgba(255,255,255,0.2)'
-                  }
+                  color: '#374151',
+                  p: 1,
                 }}
               >
                 <MenuIcon />
@@ -517,45 +623,15 @@ function Header() {
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // Better mobile performance
+          keepMounted: true,
+        }}
+        PaperProps={{
+          sx: {
+            boxShadow: '-4px 0 20px rgba(0,0,0,0.1)',
+          },
         }}
       >
         {drawer}
-        {!isAuthenticated && (
-          <Box sx={{ px: 2, pb: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            <Button
-              component={Link}
-              to="/login"
-              onClick={handleNavClick}
-              startIcon={<LoginIcon />}
-              variant="outlined"
-              fullWidth
-              sx={{
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                fontWeight: 600,
-                textTransform: 'none',
-              }}
-            >
-              {t('navigation.login')}
-            </Button>
-            <Button
-              component={Link}
-              to="/register"
-              onClick={handleNavClick}
-              startIcon={<PersonAddIcon />}
-              variant="contained"
-              fullWidth
-              sx={{
-                background: 'linear-gradient(135deg, #D4A574 0%, #F4C430 100%)',
-                fontWeight: 700,
-                textTransform: 'none',
-              }}
-            >
-              {t('navigation.signup')}
-            </Button>
-          </Box>
-        )}
       </Drawer>
     </AppBar>
   );

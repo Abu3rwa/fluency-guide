@@ -96,8 +96,8 @@ export function useAuth() {
   const isStudent = userProfile?.role === 'student';
 
   // Wrap Thunks to match original API (return Promise)
-  const register = useCallback(async (email, password, displayName, role = 'student') => {
-    const resultAction = await dispatch(registerUser({ email, password, displayName, role }));
+  const register = useCallback(async (email, password, displayName, role = 'student', phoneNumber = '') => {
+    const resultAction = await dispatch(registerUser({ email, password, displayName, role, phoneNumber }));
     if (registerUser.fulfilled.match(resultAction)) {
       return resultAction.payload;
     } else {

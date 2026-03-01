@@ -22,15 +22,19 @@ const initialState = {
 
 // Async Thunks
 
-// Fetch all courses
+// Fetch all courses (published, or no status for backward compatibility)
 export const fetchCourses = createAsyncThunk(
     'courses/fetchCourses',
     async (_, { rejectWithValue }) => {
         try {
             const coursesRef = collection(db, 'courses');
             const snapshot = await getDocs(coursesRef);
+            // Show courses that are published or have no status (legacy courses)
+            const publishedDocs = snapshot.docs.filter(
+                (d) => (d.data().status === 'published' || d.data().status === undefined)
+            );
             const coursesList = await Promise.all(
-                snapshot.docs.map(async (courseDoc) => {
+                publishedDocs.map(async (courseDoc) => {
                     const courseData = { id: courseDoc.id, ...courseDoc.data() };
 
                     // Fetch current round data if exists
@@ -99,6 +103,7 @@ export const createCourseWithRound = createAsyncThunk(
             // Create course document (content only)
             const courseRef = await addDoc(collection(db, 'courses'), {
                 ...courseContent,
+                status: 'published',
                 totalRounds: 1,
                 totalStudents: 0,
                 createdAt: Timestamp.now(),
