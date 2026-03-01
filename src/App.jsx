@@ -42,15 +42,7 @@ const CourseDetails = lazy(() => import('./pages/CourseDetails').catch(() => {
   };
 }));
 
-const InstructorDashboard = lazy(() => import('./pages/InstructorDashboard').catch(() => {
-  return {
-    default: () => (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
-        <h1>Instructor Dashboard Coming Soon</h1>
-      </Box>
-    )
-  };
-}));
+const InstructorDashboard = lazy(() => import('./pages/InstructorDashboard'));
 
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));

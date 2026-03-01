@@ -24,6 +24,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArticleIcon from '@mui/icons-material/Article';
 import PeopleIcon from '@mui/icons-material/People';
+import { colors } from '../../../theme';
 
 function BlogAnalytics() {
     const { i18n } = useTranslation();
@@ -220,7 +221,7 @@ function BlogAnalytics() {
         <Box sx={{ minHeight: '100vh', bgcolor: '#f5f7fa', pb: 4 }}>
             <Box
                 sx={{
-                    background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+                    background: `linear-gradient(135deg, ${colors.primary.main} 0%, ${colors.primary.dark} 100%)`,
                     color: 'white',
                     py: 4,
                     px: 3,
@@ -283,7 +284,7 @@ function BlogAnalytics() {
                 <Grid container spacing={3} sx={{ mb: 4 }}>
                     <Grid item xs={12} md={6}>
                         <Card sx={{
-                            background: 'linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%)',
+                            background: `linear-gradient(135deg, ${colors.secondary.light} 0%, ${colors.secondary.main} 100%)`,
                             color: 'white',
                         }}>
                             <CardContent sx={{ textAlign: 'center', py: 3 }}>
@@ -297,7 +298,7 @@ function BlogAnalytics() {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <Card sx={{
-                            background: 'linear-gradient(135deg, #00897B 0%, #00695C 100%)',
+                            background: `linear-gradient(135deg, ${colors.primary.light} 0%, ${colors.primary.main} 100%)`,
                             color: 'white',
                         }}>
                             <CardContent sx={{ textAlign: 'center', py: 3 }}>
@@ -358,7 +359,7 @@ function BlogAnalytics() {
                                             <TableCell>{getCategory(post.category)}</TableCell>
                                             <TableCell>{formatDate(post.publishedAt)}</TableCell>
                                             <TableCell align="right">
-                                                <Typography sx={{ fontWeight: 600, color: '#1976d2' }}>
+                                                <Typography sx={{ fontWeight: 600, color: colors.primary.main }}>
                                                     {post.viewCount.toLocaleString()}
                                                 </Typography>
                                             </TableCell>
